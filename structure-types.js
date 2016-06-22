@@ -52,9 +52,36 @@ class LongType extends IntegerType {
 	}
 }
 
+//Unsigned integer type
+class UnsignedType extends Type {}
+class UnsignedByteType extends UnsignedType {
+	static get _value() {
+		return 0x11;
+	}
+}
+class UnsignedShortType extends UnsignedType {
+	static get _value() {
+		return 0x12;
+	}
+}
+class UnsignedIntType extends UnsignedType {
+	static get _value() {
+		return 0x13;
+	}
+}
+class UnsignedLongType extends UnsignedType {
+	static get _value() {
+		return 0x14;
+	}
+}
+
 module.exports = {
 	ByteType,
 	ShortType,
 	IntType,
-	LongType
+	LongType,
+	UnsignedByteType,
+	UnsignedShortType,
+	UnsignedIntType,
+	UnsignedLongType
 };
