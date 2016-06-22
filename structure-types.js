@@ -2,17 +2,26 @@ const assert = require(__dirname + '/lib/assert.js');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
 
 class Type {
+	//The byte specifying the type (unique to each type class)
 	static get _value() {
 		throw new Error('Generic Type has no value byte');
 	}
+	/*
+		Append the type information to the GrowableBuffer
+		All types start with the byte specified by _value
+		For the most primitive types, this implementation is sufficient
+		Recursive types should override this method, invoking super.addToBuffer() and then adding their own data
+	*/
 	addToBuffer(buffer) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		buffer.add(this.constructor._value);
 	}
+	//Gets the type in buffer form, using a cached value if present
 	toBuffer() {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer();
 		return this.cachedBuffer;
 	}
+	//Generates the type in buffer form
 	_toBuffer() {
 		let buffer = new GrowableBuffer();
 		this.addToBuffer(buffer);
@@ -20,7 +29,7 @@ class Type {
 	}
 }
 
-//Non-recursive type
+//Non-pointer type
 class AbsoluteType extends Type {}
 
 class NullType extends AbsoluteType {
@@ -75,6 +84,19 @@ class UnsignedLongType extends UnsignedType {
 	}
 }
 
+//Floating point type
+class FloatingPointType extends Type {}
+class FloatType extends FloatingPointType {
+	static get _value() {
+		return 0x20;
+	}
+}
+class DoubleType extends FloatingPointType {
+	static get _value() {
+		return 0x21;
+	}
+}
+
 module.exports = {
 	ByteType,
 	ShortType,
@@ -83,5 +105,7 @@ module.exports = {
 	UnsignedByteType,
 	UnsignedShortType,
 	UnsignedIntType,
-	UnsignedLongType
+	UnsignedLongType,
+	FloatType,
+	DoubleType
 };
