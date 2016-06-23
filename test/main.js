@@ -1,0 +1,1 @@
+const t = require(__dirname + '/../structure-types.js');

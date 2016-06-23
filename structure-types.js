@@ -103,13 +103,13 @@ class BooleanType extends AbsoluteType {
 	}
 }
 class BooleanTupleType extends AbsoluteType {
+	static get _value() {
+		return 0x31;
+	}
 	constructor(length) {
 		super();
 		assert.fourByteUnsignedInteger(length);
 		this.length = length;
-	}
-	static get _value() {
-		return 0x31;
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
@@ -135,6 +135,26 @@ class StringType extends AbsoluteType {
 	}
 }
 
+class TupleType extends AbsoluteType {
+	static get _value() {
+		return 0x50;
+	}
+	constructor(type, length) {
+		super();
+		assert.instanceOf(type, Type);
+		assert.fourByteUnsignedInteger(length);
+		this.type = type;
+		this.length = length;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		this.type.addToBuffer(buffer);
+		let lengthBuffer = Buffer.allocUnsafe(4);
+		lengthBuffer.writeUInt32BE(this.length, 0);
+		buffer.addAll(lengthBuffer);
+	}
+}
+
 module.exports = {
 	ByteType,
 	ShortType,
@@ -150,7 +170,6 @@ module.exports = {
 	BooleanTupleType,
 	BooleanArrayType,
 	CharType,
-	StringType
+	StringType,
+	TupleType
 };
-
-console.log(new module.exports.StringType().toBuffer())
