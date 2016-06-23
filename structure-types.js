@@ -124,6 +124,17 @@ class BooleanArrayType extends Type {
 	}
 }
 
+class CharType extends Type {
+	static get _value() {
+		return 0x40;
+	}
+}
+class StringType extends Type {
+	static get _value() {
+		return 0x41;
+	}
+}
+
 module.exports = {
 	ByteType,
 	ShortType,
@@ -137,5 +148,7 @@ module.exports = {
 	DoubleType,
 	BooleanType,
 	BooleanTupleType,
-	BooleanArrayType
+	BooleanArrayType,
+	CharType,
+	StringType
 };
