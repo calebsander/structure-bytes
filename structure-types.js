@@ -154,6 +154,50 @@ class TupleType extends AbsoluteType {
 		buffer.addAll(lengthBuffer);
 	}
 }
+const NAME = 'name';
+const TYPE = 'type';
+class StructType extends AbsoluteType {
+	static get _value() {
+		return 0x51;
+	}
+	//fields should be an array of {type, field} Objects
+	constructor(fields) {
+		super();
+		assert.instanceOf(fields, Array);
+		try { assert.byteUnsignedInteger(fields.length); }
+		catch (e) { throw new Error(String(fields.length) + ' fields is too many'); }
+		this.fields = []; //really a set, but we want ordering to be fixed so that type bytes are consistent
+		this.fieldNames = new Set();
+		for (let field of fields) { //copying fields to this.fields so that resultant StructType is immutable
+			try { assert.instanceOf(field, Object); }
+			catch (e) { throw new Error(String(field) + ' is not a valid field object'); }
+			let fieldName = field[NAME];
+			try { assert.instanceOf(fieldName, String); }
+			catch (e) { throw new Error(String(fieldName) + ' is not a valid field name'); }
+			try { assert.byteUnsignedInteger(Buffer.byteLength(fieldName)); }
+			catch (e) { throw new Error('Field name ' + fieldName + ' is too long'); }
+			try { assert.notIn(fieldName, this.fieldNames); }
+			catch (e) { throw new Error('Duplicate field name: ' + fieldName); }
+			let fieldType = field[TYPE];
+			try { assert.instanceOf(fieldType, Type); }
+			catch (e) { throw new Error(String(fieldType) + ' is not a valid field type'); }
+			let resultField = {};
+			resultField[NAME] = fieldName;
+			resultField[TYPE] = fieldType;
+			this.fields.push(resultField);
+			this.fieldNames.add(fieldName);
+		}
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		buffer.add(this.fields.length);
+		for (let field of this.fields) {
+			buffer.add(Buffer.byteLength(field[NAME]));
+			buffer.addAll(Buffer.from(field[NAME]));
+			field[TYPE].addToBuffer(buffer);
+		}
+	}
+}
 
 module.exports = {
 	ByteType,
@@ -171,5 +215,6 @@ module.exports = {
 	BooleanArrayType,
 	CharType,
 	StringType,
-	TupleType
+	TupleType,
+	StructType
 };
