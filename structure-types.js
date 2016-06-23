@@ -97,6 +97,33 @@ class DoubleType extends FloatingPointType {
 	}
 }
 
+class BooleanType extends Type {
+	static get _value() {
+		return 0x30;
+	}
+}
+class BooleanTupleType extends Type {
+	constructor(length) {
+		super();
+		assert.fourByteUnsignedInteger(length);
+		this.length = length;
+	}
+	static get _value() {
+		return 0x31;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		let lengthBuffer = Buffer.allocUnsafe(4);
+		lengthBuffer.writeUInt32BE(this.length, 0);
+		buffer.addAll(lengthBuffer);
+	}
+}
+class BooleanArrayType extends Type {
+	static get _value() {
+		return 0x32;
+	}
+}
+
 module.exports = {
 	ByteType,
 	ShortType,
@@ -107,5 +134,8 @@ module.exports = {
 	UnsignedIntType,
 	UnsignedLongType,
 	FloatType,
-	DoubleType
+	DoubleType,
+	BooleanType,
+	BooleanTupleType,
+	BooleanArrayType
 };
