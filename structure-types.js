@@ -39,7 +39,7 @@ class NullType extends AbsoluteType {
 }
 
 //Integer type
-class IntegerType extends Type {}
+class IntegerType extends AbsoluteType {}
 class ByteType extends IntegerType {
 	static get _value() {
 		return 0x01;
@@ -62,7 +62,7 @@ class LongType extends IntegerType {
 }
 
 //Unsigned integer type
-class UnsignedType extends Type {}
+class UnsignedType extends AbsoluteType {}
 class UnsignedByteType extends UnsignedType {
 	static get _value() {
 		return 0x11;
@@ -85,7 +85,7 @@ class UnsignedLongType extends UnsignedType {
 }
 
 //Floating point type
-class FloatingPointType extends Type {}
+class FloatingPointType extends AbsoluteType {}
 class FloatType extends FloatingPointType {
 	static get _value() {
 		return 0x20;
@@ -97,12 +97,12 @@ class DoubleType extends FloatingPointType {
 	}
 }
 
-class BooleanType extends Type {
+class BooleanType extends AbsoluteType {
 	static get _value() {
 		return 0x30;
 	}
 }
-class BooleanTupleType extends Type {
+class BooleanTupleType extends AbsoluteType {
 	constructor(length) {
 		super();
 		assert.fourByteUnsignedInteger(length);
@@ -118,18 +118,18 @@ class BooleanTupleType extends Type {
 		buffer.addAll(lengthBuffer);
 	}
 }
-class BooleanArrayType extends Type {
+class BooleanArrayType extends AbsoluteType {
 	static get _value() {
 		return 0x32;
 	}
 }
 
-class CharType extends Type {
+class CharType extends AbsoluteType {
 	static get _value() {
 		return 0x40;
 	}
 }
-class StringType extends Type {
+class StringType extends AbsoluteType {
 	static get _value() {
 		return 0x41;
 	}
@@ -152,3 +152,5 @@ module.exports = {
 	CharType,
 	StringType
 };
+
+console.log(new module.exports.StringType().toBuffer())
