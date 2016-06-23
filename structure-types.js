@@ -167,7 +167,7 @@ class StructType extends AbsoluteType {
 		try { assert.byteUnsignedInteger(fields.length); }
 		catch (e) { throw new Error(String(fields.length) + ' fields is too many'); }
 		this.fields = []; //really a set, but we want ordering to be fixed so that type bytes are consistent
-		this.fieldNames = new Set();
+		let fieldNames = new Set();
 		for (let field of fields) { //copying fields to this.fields so that resultant StructType is immutable
 			try { assert.instanceOf(field, Object); }
 			catch (e) { throw new Error(String(field) + ' is not a valid field object'); }
@@ -176,7 +176,7 @@ class StructType extends AbsoluteType {
 			catch (e) { throw new Error(String(fieldName) + ' is not a valid field name'); }
 			try { assert.byteUnsignedInteger(Buffer.byteLength(fieldName)); }
 			catch (e) { throw new Error('Field name ' + fieldName + ' is too long'); }
-			try { assert.notIn(fieldName, this.fieldNames); }
+			try { assert.notIn(fieldName, fieldNames); }
 			catch (e) { throw new Error('Duplicate field name: ' + fieldName); }
 			let fieldType = field[TYPE];
 			try { assert.instanceOf(fieldType, Type); }
@@ -185,7 +185,7 @@ class StructType extends AbsoluteType {
 			resultField[NAME] = fieldName;
 			resultField[TYPE] = fieldType;
 			this.fields.push(resultField);
-			this.fieldNames.add(fieldName);
+			fieldNames.add(fieldName);
 		}
 	}
 	addToBuffer(buffer) {
@@ -196,6 +196,25 @@ class StructType extends AbsoluteType {
 			buffer.addAll(Buffer.from(field[NAME]));
 			field[TYPE].addToBuffer(buffer);
 		}
+	}
+}
+class ArrayType extends AbsoluteType {
+	static get _value() {
+		return 0x52;
+	}
+	constructor(type) {
+		super();
+		assert.instanceOf(type, Type);
+		this.type = type;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		this.type.addToBuffer(buffer);
+	}
+}
+class SetType extends ArrayType {
+	static get _value() {
+		return 0x53;
 	}
 }
 
@@ -216,5 +235,7 @@ module.exports = {
 	CharType,
 	StringType,
 	TupleType,
-	StructType
+	StructType,
+	ArrayType,
+	SetType
 };
