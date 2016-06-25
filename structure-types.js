@@ -104,10 +104,9 @@ class LongType extends IntegerType {
 		if (strnum.gt(value, '9223372036854775807') || strnum.lt(value, '-9223372036854775808')) throw new Error('Value out of range');
 		let upper = strnum.div(value, LONG_UPPER_SHIFT, true); //get upper signed int
 		let lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT)); //get lower unsigned int
-		if (strnum.gt(lower, '2147483647')) lower = strnum.sub(lower, LONG_UPPER_SHIFT); //make lower int fit in a signed int
 		let byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeInt32BE(Number(upper), 0);
-		byteBuffer.writeInt32BE(Number(lower), 4);
+		byteBuffer.writeUInt32BE(Number(lower), 4);
 		buffer.addAll(byteBuffer);
 	}
 }
@@ -118,20 +117,45 @@ class UnsignedByteType extends UnsignedType {
 	static get _value() {
 		return 0x11;
 	}
+	writeValue(buffer, value) {
+		let byteBuffer = Buffer.allocUnsafe(1);
+		byteBuffer.writeUInt8(value, 0);
+		buffer.addAll(byteBuffer);
+	}
 }
 class UnsignedShortType extends UnsignedType {
 	static get _value() {
 		return 0x12;
+	}
+	writeValue(buffer, value) {
+		let byteBuffer = Buffer.allocUnsafe(2);
+		byteBuffer.writeUInt16BE(value, 0);
+		buffer.addAll(byteBuffer);
 	}
 }
 class UnsignedIntType extends UnsignedType {
 	static get _value() {
 		return 0x13;
 	}
+	writeValue(buffer, value) {
+		let byteBuffer = Buffer.allocUnsafe(4);
+		byteBuffer.writeUInt32BE(value, 0);
+		buffer.addAll(byteBuffer);
+	}
 }
 class UnsignedLongType extends UnsignedType {
 	static get _value() {
 		return 0x14;
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, String);
+		if (strnum.gt(value, '18446744073709551615') || strnum.lt(value, '0')) throw new Error('Value out of range');
+		let upper = strnum.div(value, LONG_UPPER_SHIFT);
+		let lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT));
+		let byteBuffer = Buffer.allocUnsafe(8);
+		byteBuffer.writeUInt32BE(Number(upper), 0);
+		byteBuffer.writeUInt32BE(Number(lower), 4);
+		buffer.addAll(byteBuffer);
 	}
 }
 
