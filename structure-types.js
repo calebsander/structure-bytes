@@ -3,6 +3,7 @@ const BufferStream = require(__dirname + '/lib/buffer-stream.js');
 const config = require(__dirname + '/config.js');
 const crypto = require('crypto');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
+const strnum = require(__dirname + '/lib/strint.js');
 
 class Type {
 	//The byte specifying the type (unique to each type class)
@@ -48,7 +49,7 @@ class Type {
 	}
 	//Writes out the value according to the type spec
 	writeValue(buffer, value) {
-		throw new Error('Generic Type has no meaning');
+		throw new Error('Generic Type has no value representation');
 	}
 }
 
@@ -77,15 +78,37 @@ class ShortType extends IntegerType {
 	static get _value() {
 		return 0x02;
 	}
+	writeValue(buffer, value) {
+		let byteBuffer = Buffer.allocUnsafe(2);
+		byteBuffer.writeInt16BE(value, 0);
+		buffer.addAll(byteBuffer);
+	}
 }
 class IntType extends IntegerType {
 	static get _value() {
 		return 0x03;
 	}
+	writeValue(buffer, value) {
+		let byteBuffer = Buffer.allocUnsafe(4);
+		byteBuffer.writeInt32BE(value, 0);
+		buffer.addAll(byteBuffer);
+	}
 }
+const LONG_UPPER_SHIFT = '4294967296'; //stores the value needed to multiply an integer to shift it left 32 bits - for long math
 class LongType extends IntegerType {
 	static get _value() {
 		return 0x04;
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, String);
+		if (strnum.gt(value, '9223372036854775807') || strnum.lt(value, '-9223372036854775808')) throw new Error('Value out of range');
+		let upper = strnum.div(value, LONG_UPPER_SHIFT, true); //get upper signed int
+		let lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT)); //get lower unsigned int
+		if (strnum.gt(lower, '2147483647')) lower = strnum.sub(lower, LONG_UPPER_SHIFT); //make lower int fit in a signed int
+		let byteBuffer = Buffer.allocUnsafe(8);
+		byteBuffer.writeInt32BE(Number(upper), 0);
+		byteBuffer.writeInt32BE(Number(lower), 4);
+		buffer.addAll(byteBuffer);
 	}
 }
 
