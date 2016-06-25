@@ -259,10 +259,23 @@ class CharType extends AbsoluteType {
 	static get _value() {
 		return 0x40;
 	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, String);
+		assert.assert(value.length === 1, 'String must contain only 1 character');
+		buffer.addAll(Buffer.from(value));
+	}
 }
 class StringType extends AbsoluteType {
 	static get _value() {
 		return 0x41;
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, String);
+		let valueBuffer = Buffer.from(value);
+		let lengthBuffer = Buffer.allocUnsafe(4);
+		lengthBuffer.writeUInt32BE(valueBuffer.length);
+		buffer.addAll(lengthBuffer);
+		buffer.addAll(valueBuffer);
 	}
 }
 
