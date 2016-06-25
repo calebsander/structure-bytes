@@ -192,6 +192,36 @@ class BooleanType extends AbsoluteType {
 	static get _value() {
 		return 0x30;
 	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Boolean);
+		if (value) buffer.add(0b10000000);
+		else buffer.add(0);
+	}
+}
+function dividedByEight(n) {
+	return n >> 3;
+}
+function modEight(n) {
+	return n & 0b111;
+}
+function writeBooleans(buffer, booleans) {
+	assert.instanceOf(booleans, Array);
+	let incompleteBytes = modEight(booleans.length);
+	let bytes = dividedByEight(booleans.length);
+	let length;
+	if (incompleteBytes) length = bytes + 1;
+	else length = bytes;
+	let byteBuffer = Buffer.allocUnsafe(length);
+	if (incompleteBytes) byteBuffer[length - 1] = 0; //clear unused bits
+	let i;
+	for (i = 0; i < booleans.length; i++) {
+		let boolean = booleans[i];
+		assert.instanceOf(boolean, Boolean);
+		let bit = modEight(~modEight(i)); //7 - (i % 8)
+		if (boolean) byteBuffer[dividedByEight(i)] |= 1 << bit;
+		else byteBuffer[dividedByEight(i)] &= ~(1 << bit);
+	}
+	buffer.addAll(byteBuffer);
 }
 class BooleanTupleType extends AbsoluteType {
 	static get _value() {
@@ -208,10 +238,20 @@ class BooleanTupleType extends AbsoluteType {
 		lengthBuffer.writeUInt32BE(this.length, 0);
 		buffer.addAll(lengthBuffer);
 	}
+	writeValue(buffer, value) {
+		if ((value || []).length !== this.length) throw new Error('Length does not match.');
+		writeBooleans(buffer, value);
+	}
 }
 class BooleanArrayType extends AbsoluteType {
 	static get _value() {
 		return 0x32;
+	}
+	writeValue(buffer, value) {
+		let lengthBuffer = Buffer.allocUnsafe(4);
+		lengthBuffer.writeUInt32BE((value || []).length);
+		buffer.addAll(lengthBuffer);
+		writeBooleans(buffer, value);
 	}
 }
 
