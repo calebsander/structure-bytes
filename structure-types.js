@@ -46,6 +46,10 @@ class Type {
 			callback(config.VERSION_STRING + hash);
 		});
 	}
+	//Writes out the value according to the type spec
+	writeValue(buffer, value) {
+		throw new Error('Generic Type has no meaning');
+	}
 }
 
 //Non-pointer type
@@ -62,6 +66,11 @@ class IntegerType extends AbsoluteType {}
 class ByteType extends IntegerType {
 	static get _value() {
 		return 0x01;
+	}
+	writeValue(buffer, value) {
+		let byteBuffer = Buffer.allocUnsafe(1);
+		byteBuffer.writeInt8(value, 0);
+		buffer.addAll(byteBuffer);
 	}
 }
 class ShortType extends IntegerType {

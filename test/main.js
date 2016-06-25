@@ -1,4 +1,5 @@
 const assert = require(__dirname + '/../lib/assert.js');
+const GrowableBuffer = require(__dirname + '/../lib/growable-buffer.js');
 const t = require(__dirname + '/../structure-types.js');
 
 console.log('STRUCT');
@@ -48,5 +49,14 @@ console.log(pointer);
 console.log(pointer.toBuffer());
 
 console.log('SIGNATURES');
-new t.IntType().getSignature(console.log);
-new t.ArrayType(new t.IntType()).getSignature(console.log);
+//new t.IntType().getSignature(console.log);
+//new t.ArrayType(new t.IntType()).getSignature(console.log);
+
+console.log();
+console.log('VALUES');
+let gb;
+console.log('Byte');
+let type = new t.ByteType();
+gb = new GrowableBuffer();
+type.writeValue(gb, -128);
+console.log(gb.toBuffer());
