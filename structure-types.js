@@ -1,4 +1,7 @@
 const assert = require(__dirname + '/lib/assert.js');
+const BufferStream = require(__dirname + '/lib/buffer-stream.js');
+const config = require(__dirname + '/config.js');
+const crypto = require('crypto');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
 
 class Type {
@@ -26,6 +29,22 @@ class Type {
 		let buffer = new GrowableBuffer();
 		this.addToBuffer(buffer);
 		return buffer.toBuffer();
+	}
+	//Gets an SHA256 hash of the type (async)
+	getHash(callback) {
+		assert.instanceOf(callback, Function);
+		let buffer = new GrowableBuffer();
+		this.addToBuffer(buffer);
+		let hash = crypto.createHash('sha256');
+		new BufferStream(buffer).pipe(hash).on('finish', () => {
+			callback(hash.read().toString('base64'));
+		});
+	}
+	//Gets a signature string for the type, identifying version and type information (async)
+	getSignature(callback) {
+		this.getHash((hash) => {
+			callback(config.VERSION_STRING + hash);
+		});
 	}
 }
 

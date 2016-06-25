@@ -46,3 +46,7 @@ console.log('POINTER');
 let pointer = new t.PointerType(new t.LongType());
 console.log(pointer);
 console.log(pointer.toBuffer());
+
+console.log('SIGNATURES');
+new t.IntType().getSignature(console.log);
+new t.ArrayType(new t.IntType()).getSignature(console.log);
