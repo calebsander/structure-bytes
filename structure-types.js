@@ -217,6 +217,37 @@ class SetType extends ArrayType {
 		return 0x53;
 	}
 }
+class MapType extends AbsoluteType {
+	static get _value() {
+		return 0x54;
+	}
+	constructor(keyType, valueType) {
+		super();
+		assert.instanceOf(keyType, Type);
+		assert.instanceOf(valueType, Type);
+		this.keyType = keyType;
+		this.valueType = valueType;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		this.keyType.addToBuffer(buffer);
+		this.valueType.addToBuffer(buffer);
+	}
+}
+class OptionalType extends AbsoluteType {
+	static get _value() {
+		return 0x60;
+	}
+	constructor(type) {
+		super();
+		assert.instanceOf(type, Type);
+		this.type = type;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		this.type.addToBuffer(buffer);
+	}
+}
 
 module.exports = {
 	ByteType,
@@ -237,5 +268,7 @@ module.exports = {
 	TupleType,
 	StructType,
 	ArrayType,
-	SetType
+	SetType,
+	MapType,
+	OptionalType
 };

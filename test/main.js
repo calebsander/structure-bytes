@@ -24,3 +24,19 @@ let set = new t.SetType(
 );
 console.log(set);
 console.log(set.toBuffer());
+
+console.log('MAP');
+let map = new t.MapType(
+  new t.StringType(),
+  new t.StructType([
+    {name: 'a', type: new t.ArrayType(new t.UnsignedByteType())},
+    {name: 'b—c', type: new t.CharType()}
+  ])
+);
+console.log(map);
+console.log(map.toBuffer());
+
+console.log('OPTIONAL');
+let optional = new t.OptionalType(set);
+console.log(optional);
+console.log(optional.toBuffer());
