@@ -160,15 +160,31 @@ class UnsignedLongType extends UnsignedType {
 }
 
 //Floating point type
-class FloatingPointType extends AbsoluteType {}
+class FloatingPointType extends AbsoluteType {
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
+	}
+}
 class FloatType extends FloatingPointType {
 	static get _value() {
 		return 0x20;
+	}
+	writeValue(buffer, value) {
+		super.writeValue(buffer, value);
+		let byteBuffer = Buffer.allocUnsafe(4);
+		byteBuffer.writeFloatBE(value, 0);
+		buffer.addAll(byteBuffer);
 	}
 }
 class DoubleType extends FloatingPointType {
 	static get _value() {
 		return 0x21;
+	}
+	writeValue(buffer, value) {
+		super.writeValue(buffer, value);
+		let byteBuffer = Buffer.allocUnsafe(8);
+		byteBuffer.writeDoubleBE(value, 0);
+		buffer.addAll(byteBuffer);
 	}
 }
 
