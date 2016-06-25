@@ -1,0 +1,34 @@
+{
+  "name": "structure-bytes",
+  "version": "0.0.1",
+  "description": "Efficiently stores data of any shape by separating it into structure and value",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./test/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebsander/structure-bytes.git"
+  },
+  "keywords": [
+    "data",
+    "structure",
+    "bytes",
+    "file",
+    "transfer",
+    "type",
+    "value"
+  ],
+  "author": "Caleb Sander",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/calebsander/structure-bytes/issues"
+  },
+  "homepage": "https://github.com/calebsander/structure-bytes"
+}
