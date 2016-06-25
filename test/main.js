@@ -1,37 +1,38 @@
+const assert = require(__dirname + '/../lib/assert.js');
 const t = require(__dirname + '/../structure-types.js');
 
 console.log('STRUCT');
 let struct = new t.StructType([
-  {name: 'bobbé', type: new t.BooleanType()},
-  {name: '', type: new t.IntType()}
+	{name: 'bobbé', type: new t.BooleanType()},
+	{name: '', type: new t.IntType()}
 ]);
 console.log(struct);
 console.log(struct.toBuffer());
 
 console.log('ARRAY');
 let array = new t.ArrayType(
-  new t.UnsignedIntType()
+	new t.UnsignedIntType()
 );
 console.log(array);
 console.log(array.toBuffer());
 
 console.log('SET');
 let set = new t.SetType(
-  new t.StructType([
-    {name: 'long', type: new t.LongType()},
-    {name: 'str', type: new t.StringType()}
-  ])
+	new t.StructType([
+		{name: 'long', type: new t.LongType()},
+		{name: 'str', type: new t.StringType()}
+	])
 );
 console.log(set);
 console.log(set.toBuffer());
 
 console.log('MAP');
 let map = new t.MapType(
-  new t.StringType(),
-  new t.StructType([
-    {name: 'a', type: new t.ArrayType(new t.UnsignedByteType())},
-    {name: 'b—c', type: new t.CharType()}
-  ])
+	new t.StringType(),
+	new t.StructType([
+		{name: 'a', type: new t.ArrayType(new t.UnsignedByteType())},
+		{name: 'b—c', type: new t.CharType()}
+	])
 );
 console.log(map);
 console.log(map.toBuffer());
@@ -40,3 +41,8 @@ console.log('OPTIONAL');
 let optional = new t.OptionalType(set);
 console.log(optional);
 console.log(optional.toBuffer());
+
+console.log('POINTER');
+let pointer = new t.PointerType(new t.LongType());
+console.log(pointer);
+console.log(pointer.toBuffer());

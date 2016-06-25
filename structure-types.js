@@ -248,6 +248,20 @@ class OptionalType extends AbsoluteType {
 		this.type.addToBuffer(buffer);
 	}
 }
+class PointerType extends Type {
+	static get _value() {
+		return 0x70;
+	}
+	constructor(type) {
+		super();
+		assert.instanceOf(type, AbsoluteType);
+		this.type = type;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		this.type.addToBuffer(buffer);
+	}
+}
 
 module.exports = {
 	ByteType,
@@ -270,5 +284,6 @@ module.exports = {
 	ArrayType,
 	SetType,
 	MapType,
-	OptionalType
+	OptionalType,
+	PointerType
 };
