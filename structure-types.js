@@ -372,10 +372,25 @@ class ArrayType extends AbsoluteType {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
 	}
+	_writeValue(buffer, value) {
+		let lengthBuffer = Buffer.allocUnsafe(4);
+		lengthBuffer.writeUInt32BE(value.length, 0);
+		buffer.addAll(lengthBuffer);
+		for (let instance of value) this.type.writeValue(buffer, instance);
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Array);
+		this._writeValue(buffer, value);
+	}
 }
 class SetType extends ArrayType {
 	static get _value() {
 		return 0x53;
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Set);
+		value.length = value.size;
+		super._writeValue(buffer, value);
 	}
 }
 class MapType extends AbsoluteType {
