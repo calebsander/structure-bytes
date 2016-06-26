@@ -5,6 +5,14 @@ const crypto = require('crypto');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
 const strnum = require(__dirname + '/lib/strint.js');
 
+//Since most things with length store it in a 32-bit unsigned integer,
+//this utility function makes the creation of that buffer easier
+function lengthBuffer(length) {
+	const lengthBuffer = Buffer.allocUnsafe(4);
+	lengthBuffer.writeUInt32BE(length, 0);
+	return lengthBuffer;
+}
+
 class Type {
 	//The byte specifying the type (unique to each type class)
 	static get _value() {
@@ -27,16 +35,16 @@ class Type {
 	}
 	//Generates the type in buffer form
 	_toBuffer() {
-		let buffer = new GrowableBuffer();
+		const buffer = new GrowableBuffer();
 		this.addToBuffer(buffer);
 		return buffer.toBuffer();
 	}
 	//Gets an SHA256 hash of the type (async)
 	getHash(callback) {
 		assert.instanceOf(callback, Function);
-		let buffer = new GrowableBuffer();
+		const buffer = new GrowableBuffer();
 		this.addToBuffer(buffer);
-		let hash = crypto.createHash('sha256');
+		const hash = crypto.createHash('sha256');
 		new BufferStream(buffer).pipe(hash).on('finish', () => {
 			callback(hash.read().toString('base64'));
 		});
@@ -69,8 +77,9 @@ class ByteType extends IntegerType {
 		return 0x01;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
-		let byteBuffer = Buffer.allocUnsafe(1);
+		const byteBuffer = Buffer.allocUnsafe(1);
 		byteBuffer.writeInt8(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -80,8 +89,9 @@ class ShortType extends IntegerType {
 		return 0x02;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
-		let byteBuffer = Buffer.allocUnsafe(2);
+		const byteBuffer = Buffer.allocUnsafe(2);
 		byteBuffer.writeInt16BE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -91,8 +101,9 @@ class IntType extends IntegerType {
 		return 0x03;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
-		let byteBuffer = Buffer.allocUnsafe(4);
+		const byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeInt32BE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -103,11 +114,12 @@ class LongType extends IntegerType {
 		return 0x04;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
 		if (strnum.gt(value, '9223372036854775807') || strnum.lt(value, '-9223372036854775808')) throw new Error('Value out of range');
-		let upper = strnum.div(value, LONG_UPPER_SHIFT, true); //get upper signed int
-		let lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT)); //get lower unsigned int
-		let byteBuffer = Buffer.allocUnsafe(8);
+		const upper = strnum.div(value, LONG_UPPER_SHIFT, true); //get upper signed int
+		const lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT)); //get lower unsigned int
+		const byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeInt32BE(Number(upper), 0);
 		byteBuffer.writeUInt32BE(Number(lower), 4);
 		buffer.addAll(byteBuffer);
@@ -121,8 +133,9 @@ class UnsignedByteType extends UnsignedType {
 		return 0x11;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
-		let byteBuffer = Buffer.allocUnsafe(1);
+		const byteBuffer = Buffer.allocUnsafe(1);
 		byteBuffer.writeUInt8(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -132,8 +145,9 @@ class UnsignedShortType extends UnsignedType {
 		return 0x12;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
-		let byteBuffer = Buffer.allocUnsafe(2);
+		const byteBuffer = Buffer.allocUnsafe(2);
 		byteBuffer.writeUInt16BE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -143,8 +157,9 @@ class UnsignedIntType extends UnsignedType {
 		return 0x13;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
-		let byteBuffer = Buffer.allocUnsafe(4);
+		const byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeUInt32BE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -154,11 +169,12 @@ class UnsignedLongType extends UnsignedType {
 		return 0x14;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
 		if (strnum.gt(value, '18446744073709551615') || strnum.lt(value, '0')) throw new Error('Value out of range');
-		let upper = strnum.div(value, LONG_UPPER_SHIFT);
-		let lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT));
-		let byteBuffer = Buffer.allocUnsafe(8);
+		const upper = strnum.div(value, LONG_UPPER_SHIFT);
+		const lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT));
+		const byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeUInt32BE(Number(upper), 0);
 		byteBuffer.writeUInt32BE(Number(lower), 4);
 		buffer.addAll(byteBuffer);
@@ -168,6 +184,7 @@ class UnsignedLongType extends UnsignedType {
 //Floating point type
 class FloatingPointType extends AbsoluteType {
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Number);
 	}
 }
@@ -177,7 +194,7 @@ class FloatType extends FloatingPointType {
 	}
 	writeValue(buffer, value) {
 		super.writeValue(buffer, value);
-		let byteBuffer = Buffer.allocUnsafe(4);
+		const byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeFloatBE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -188,7 +205,7 @@ class DoubleType extends FloatingPointType {
 	}
 	writeValue(buffer, value) {
 		super.writeValue(buffer, value);
-		let byteBuffer = Buffer.allocUnsafe(8);
+		const byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeDoubleBE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
@@ -199,31 +216,31 @@ class BooleanType extends AbsoluteType {
 		return 0x30;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Boolean);
 		if (value) buffer.add(0b10000000);
 		else buffer.add(0);
 	}
 }
 function dividedByEight(n) {
-	return n >> 3;
+	return n >>> 3;
 }
 function modEight(n) {
 	return n & 0b111;
 }
 function writeBooleans(buffer, booleans) {
 	assert.instanceOf(booleans, Array);
-	let incompleteBytes = modEight(booleans.length);
-	let bytes = dividedByEight(booleans.length);
+	const incompleteBytes = modEight(booleans.length);
+	const bytes = dividedByEight(booleans.length);
 	let length;
 	if (incompleteBytes) length = bytes + 1;
 	else length = bytes;
-	let byteBuffer = Buffer.allocUnsafe(length);
+	const byteBuffer = Buffer.allocUnsafe(length);
 	if (incompleteBytes) byteBuffer[length - 1] = 0; //clear unused bits
-	let i;
-	for (i = 0; i < booleans.length; i++) {
-		let boolean = booleans[i];
+	for (let i = 0; i < booleans.length; i++) {
+		const boolean = booleans[i];
 		assert.instanceOf(boolean, Boolean);
-		let bit = modEight(~modEight(i)); //7 - (i % 8)
+		const bit = modEight(~modEight(i)); //7 - (i % 8)
 		if (boolean) byteBuffer[dividedByEight(i)] |= 1 << bit;
 		else byteBuffer[dividedByEight(i)] &= ~(1 << bit);
 	}
@@ -240,11 +257,10 @@ class BooleanTupleType extends AbsoluteType {
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
-		let lengthBuffer = Buffer.allocUnsafe(4);
-		lengthBuffer.writeUInt32BE(this.length, 0);
-		buffer.addAll(lengthBuffer);
+		buffer.addAll(lengthBuffer(this.length));
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Array);
 		if (value.length !== this.length) throw new Error('Length does not match');
 		writeBooleans(buffer, value);
@@ -256,9 +272,7 @@ class BooleanArrayType extends AbsoluteType {
 	}
 	writeValue(buffer, value) {
 		assert.instanceOf(value, Array);
-		let lengthBuffer = Buffer.allocUnsafe(4);
-		lengthBuffer.writeUInt32BE(value.length);
-		buffer.addAll(lengthBuffer);
+		buffer.addAll(lengthBuffer(value.length));
 		writeBooleans(buffer, value);
 	}
 }
@@ -268,6 +282,7 @@ class CharType extends AbsoluteType {
 		return 0x40;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
 		assert.assert(value.length === 1, 'String must contain only 1 character');
 		buffer.addAll(Buffer.from(value));
@@ -278,11 +293,10 @@ class StringType extends AbsoluteType {
 		return 0x41;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
-		let valueBuffer = Buffer.from(value);
-		let lengthBuffer = Buffer.allocUnsafe(4);
-		lengthBuffer.writeUInt32BE(valueBuffer.length);
-		buffer.addAll(lengthBuffer);
+		const valueBuffer = Buffer.from(value);
+		buffer.addAll(lengthBuffer(valueBuffer.length));
 		buffer.addAll(valueBuffer);
 	}
 }
@@ -301,11 +315,10 @@ class TupleType extends AbsoluteType {
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
-		let lengthBuffer = Buffer.allocUnsafe(4);
-		lengthBuffer.writeUInt32BE(this.length, 0);
-		buffer.addAll(lengthBuffer);
+		buffer.addAll(lengthBuffer(this.length));
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Array);
 		if (value.length !== this.length) throw new Error('Length does not match');
 		for (let instance of value) this.type.writeValue(buffer, instance);
@@ -324,21 +337,21 @@ class StructType extends AbsoluteType {
 		try { assert.byteUnsignedInteger(fields.length); }
 		catch (e) { throw new Error(String(fields.length) + ' fields is too many'); }
 		this.fields = []; //really a set, but we want ordering to be fixed so that type bytes are consistent
-		let fieldNames = new Set();
+		const fieldNames = new Set();
 		for (let field of fields) { //copying fields to this.fields so that resultant StructType is immutable
 			try { assert.instanceOf(field, Object); }
 			catch (e) { throw new Error(String(field) + ' is not a valid field object'); }
-			let fieldName = field[NAME];
+			const fieldName = field[NAME];
 			try { assert.instanceOf(fieldName, String); }
 			catch (e) { throw new Error(String(fieldName) + ' is not a valid field name'); }
 			try { assert.byteUnsignedInteger(Buffer.byteLength(fieldName)); }
 			catch (e) { throw new Error('Field name ' + fieldName + ' is too long'); }
 			try { assert.notIn(fieldName, fieldNames); }
 			catch (e) { throw new Error('Duplicate field name: ' + fieldName); }
-			let fieldType = field[TYPE];
+			const fieldType = field[TYPE];
 			try { assert.instanceOf(fieldType, Type); }
 			catch (e) { throw new Error(String(fieldType) + ' is not a valid field type'); }
-			let resultField = {};
+			const resultField = {};
 			resultField[NAME] = fieldName;
 			resultField[TYPE] = fieldType;
 			this.fields.push(resultField);
@@ -355,6 +368,7 @@ class StructType extends AbsoluteType {
 		}
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Object);
 		for (let field of this.fields) field[TYPE].writeValue(buffer, value[field[NAME]]);
 	}
@@ -373,9 +387,8 @@ class ArrayType extends AbsoluteType {
 		this.type.addToBuffer(buffer);
 	}
 	_writeValue(buffer, value) {
-		let lengthBuffer = Buffer.allocUnsafe(4);
-		lengthBuffer.writeUInt32BE(value.length, 0);
-		buffer.addAll(lengthBuffer);
+		assert.instanceOf(buffer, GrowableBuffer);
+		buffer.addAll(lengthBuffer(value.length));
 		for (let instance of value) this.type.writeValue(buffer, instance);
 	}
 	writeValue(buffer, value) {
@@ -408,6 +421,15 @@ class MapType extends AbsoluteType {
 		super.addToBuffer(buffer);
 		this.keyType.addToBuffer(buffer);
 		this.valueType.addToBuffer(buffer);
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		assert.instanceOf(value, Map);
+		buffer.addAll(lengthBuffer(value.size));
+		for (let [mapKey, mapValue] of value) {
+			this.keyType.writeValue(buffer, mapKey);
+			this.valueType.writeValue(buffer, mapValue);
+		}
 	}
 }
 class OptionalType extends AbsoluteType {
