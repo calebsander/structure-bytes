@@ -218,8 +218,8 @@ class BooleanType extends AbsoluteType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Boolean);
-		if (value) buffer.add(0b10000000);
-		else buffer.add(0);
+		if (value) buffer.add(0xFF);
+		else buffer.add(0x00);
 	}
 }
 function dividedByEight(n) {
@@ -444,6 +444,14 @@ class OptionalType extends AbsoluteType {
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		if (value === null) buffer.add(0x00);
+		else {
+			buffer.add(0xFF);
+			this.type.writeValue(buffer, value);
+		}
 	}
 }
 class PointerType extends Type {
