@@ -69,6 +69,7 @@ class ByteType extends IntegerType {
 		return 0x01;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
 		let byteBuffer = Buffer.allocUnsafe(1);
 		byteBuffer.writeInt8(value, 0);
 		buffer.addAll(byteBuffer);
@@ -79,6 +80,7 @@ class ShortType extends IntegerType {
 		return 0x02;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
 		let byteBuffer = Buffer.allocUnsafe(2);
 		byteBuffer.writeInt16BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -89,6 +91,7 @@ class IntType extends IntegerType {
 		return 0x03;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
 		let byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeInt32BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -118,6 +121,7 @@ class UnsignedByteType extends UnsignedType {
 		return 0x11;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
 		let byteBuffer = Buffer.allocUnsafe(1);
 		byteBuffer.writeUInt8(value, 0);
 		buffer.addAll(byteBuffer);
@@ -128,6 +132,7 @@ class UnsignedShortType extends UnsignedType {
 		return 0x12;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
 		let byteBuffer = Buffer.allocUnsafe(2);
 		byteBuffer.writeUInt16BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -138,6 +143,7 @@ class UnsignedIntType extends UnsignedType {
 		return 0x13;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Number);
 		let byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeUInt32BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -347,6 +353,10 @@ class StructType extends AbsoluteType {
 			buffer.addAll(Buffer.from(field[NAME]));
 			field[TYPE].addToBuffer(buffer);
 		}
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Object);
+		for (let field of this.fields) field[TYPE].writeValue(buffer, value[field[NAME]]);
 	}
 }
 class ArrayType extends AbsoluteType {
