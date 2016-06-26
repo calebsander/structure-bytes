@@ -239,7 +239,8 @@ class BooleanTupleType extends AbsoluteType {
 		buffer.addAll(lengthBuffer);
 	}
 	writeValue(buffer, value) {
-		if ((value || []).length !== this.length) throw new Error('Length does not match.');
+		assert.instanceOf(value, Array);
+		if (value.length !== this.length) throw new Error('Length does not match');
 		writeBooleans(buffer, value);
 	}
 }
@@ -248,8 +249,9 @@ class BooleanArrayType extends AbsoluteType {
 		return 0x32;
 	}
 	writeValue(buffer, value) {
+		assert.instanceOf(value, Array);
 		let lengthBuffer = Buffer.allocUnsafe(4);
-		lengthBuffer.writeUInt32BE((value || []).length);
+		lengthBuffer.writeUInt32BE(value.length);
 		buffer.addAll(lengthBuffer);
 		writeBooleans(buffer, value);
 	}
@@ -296,6 +298,11 @@ class TupleType extends AbsoluteType {
 		let lengthBuffer = Buffer.allocUnsafe(4);
 		lengthBuffer.writeUInt32BE(this.length, 0);
 		buffer.addAll(lengthBuffer);
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Array);
+		if (value.length !== this.length) throw new Error('Length does not match');
+		for (let instance of value) this.type.writeValue(buffer, instance);
 	}
 }
 const NAME = 'name';
