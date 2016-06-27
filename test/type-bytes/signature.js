@@ -6,8 +6,8 @@ new t.ByteType().getSignature((signature) => {
 let waitForFinish = setInterval(() => {
   if (ended === 2) clearInterval(waitForFinish);
 }, 10);
-new t.StructType([
-  {name: 'bcd', type: new t.PointerType(
+new t.StructType({
+  'bcd': new t.PointerType(
     new t.OptionalType(
       new t.SetType(
         new t.MapType(
@@ -20,8 +20,8 @@ new t.StructType([
         )
       )
     )
-  )}
-]).getSignature((signature) => {
+  )
+}).getSignature((signature) => {
   assert.assert(signature === 'AAE=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
   ended++;
 });

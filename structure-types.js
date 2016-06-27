@@ -343,30 +343,24 @@ class StructType extends AbsoluteType {
 	//fields should be an array of {type, field} Objects
 	constructor(fields) {
 		super();
-		assert.instanceOf(fields, Array);
-		try { assert.byteUnsignedInteger(fields.length); }
-		catch (e) { throw new Error(String(fields.length) + ' fields is too many'); }
+		assert.instanceOf(fields, Object);
+		let fieldCount = 0;
+		for (let field in fields) fieldCount++;
+		try { assert.byteUnsignedInteger(fieldCount); }
+		catch (e) { throw new Error(String(fieldCount) + ' fields is too many'); }
 		this.fields = []; //really a set, but we want ordering to be fixed so that type bytes are consistent
-		const fieldNames = new Set();
-		for (let field of fields) { //copying fields to this.fields so that resultant StructType is immutable
-			try { assert.instanceOf(field, Object); }
-			catch (e) { throw new Error(String(field) + ' is not a valid field object'); }
-			const fieldName = field[NAME];
-			try { assert.instanceOf(fieldName, String); }
-			catch (e) { throw new Error(String(fieldName) + ' is not a valid field name'); }
+		for (let fieldName in fields) {
 			try { assert.byteUnsignedInteger(Buffer.byteLength(fieldName)); }
 			catch (e) { throw new Error('Field name ' + fieldName + ' is too long'); }
-			try { assert.notIn(fieldName, fieldNames); }
-			catch (e) { throw new Error('Duplicate field name: ' + fieldName); }
-			const fieldType = field[TYPE];
+			const fieldType = fields[fieldName];
 			try { assert.instanceOf(fieldType, Type); }
 			catch (e) { throw new Error(String(fieldType) + ' is not a valid field type'); }
 			const resultField = {};
 			resultField[NAME] = fieldName;
 			resultField[TYPE] = fieldType;
 			this.fields.push(resultField);
-			fieldNames.add(fieldName);
 		}
+		this.fields.sort((a, b) => a[NAME].localeCompare(b[NAME])); //so field order is predictable
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);

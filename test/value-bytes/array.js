@@ -1,7 +1,7 @@
-let type = new t.ArrayType(new t.StructType([
-  {name: 'a', type: new t.UnsignedShortType()},
-  {name: 'b', type: new t.CharType()}
-]));
+let type = new t.ArrayType(new t.StructType({
+  'a': new t.UnsignedShortType(),
+  'b': new t.CharType()
+}));
 let gb = new GrowableBuffer();
 for (let invalidValue of [undefined, [2, true], 'abc', {a: 'b'}]) {
   assert.throws(() => type.writeValue(gb, invalidValue));

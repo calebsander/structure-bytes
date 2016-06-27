@@ -3,10 +3,10 @@ const octetPointers = new t.PointerType(
     new t.UnsignedByteType()
   )
 );
-let type = new t.StructType([
-  {name: 'a', type: octetPointers},
-  {name: 'b', type: octetPointers}
-]);
+let type = new t.StructType({
+  'a': octetPointers,
+  'b': octetPointers
+});
 let gb = new GrowableBuffer();
 type.writeValue(gb, {
   a: [100, 101, 102, 103, 104],
