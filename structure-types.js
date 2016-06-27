@@ -12,6 +12,21 @@ function lengthBuffer(length) {
 	lengthBuffer.writeUInt32BE(length, 0);
 	return lengthBuffer;
 }
+const BINARY = 'binary';
+//After writing all the values, it is necessary to insert all the values of pointer types
+function setPointers(buffer, root) {
+	if (root) { //ensure this only happens once
+		if (buffer.pointers) {
+			for (let [bufferString, insertionIndices] of buffer.pointers) {
+				const index = buffer.length;
+				buffer.addAll(Buffer.from(bufferString, BINARY));
+				const indexBuffer = Buffer.allocUnsafe(4);
+				indexBuffer.writeUInt32BE(index);
+				for (let insertionIndex of insertionIndices) buffer.setAll(insertionIndex, indexBuffer);
+			}
+		}
+	}
+}
 
 class Type {
 	//The byte specifying the type (unique to each type class)
@@ -317,11 +332,12 @@ class TupleType extends AbsoluteType {
 		this.type.addToBuffer(buffer);
 		buffer.addAll(lengthBuffer(this.length));
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Array);
 		if (value.length !== this.length) throw new Error('Length does not match');
-		for (let instance of value) this.type.writeValue(buffer, instance);
+		for (let instance of value) this.type.writeValue(buffer, instance, false);
+		setPointers(buffer, root);
 	}
 }
 const NAME = 'name';
@@ -367,10 +383,11 @@ class StructType extends AbsoluteType {
 			field[TYPE].addToBuffer(buffer);
 		}
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Object);
-		for (let field of this.fields) field[TYPE].writeValue(buffer, value[field[NAME]]);
+		for (let field of this.fields) field[TYPE].writeValue(buffer, value[field[NAME]], false);
+		setPointers(buffer, root);
 	}
 }
 class ArrayType extends AbsoluteType {
@@ -386,24 +403,25 @@ class ArrayType extends AbsoluteType {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
 	}
-	_writeValue(buffer, value) {
+	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		buffer.addAll(lengthBuffer(value.length));
-		for (let instance of value) this.type.writeValue(buffer, instance);
+		for (let instance of value) this.type.writeValue(buffer, instance, false);
+		setPointers(buffer, root);
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Array);
-		this._writeValue(buffer, value);
+		this._writeValue(buffer, value, root);
 	}
 }
 class SetType extends ArrayType {
 	static get _value() {
 		return 0x53;
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Set);
 		value.length = value.size;
-		super._writeValue(buffer, value);
+		super._writeValue(buffer, value, root);
 	}
 }
 class MapType extends AbsoluteType {
@@ -422,14 +440,15 @@ class MapType extends AbsoluteType {
 		this.keyType.addToBuffer(buffer);
 		this.valueType.addToBuffer(buffer);
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Map);
 		buffer.addAll(lengthBuffer(value.size));
 		for (let [mapKey, mapValue] of value) {
-			this.keyType.writeValue(buffer, mapKey);
-			this.valueType.writeValue(buffer, mapValue);
+			this.keyType.writeValue(buffer, mapKey, false);
+			this.valueType.writeValue(buffer, mapValue, false);
 		}
+		setPointers(buffer, root);
 	}
 }
 class OptionalType extends AbsoluteType {
@@ -445,13 +464,14 @@ class OptionalType extends AbsoluteType {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		if (value === null) buffer.add(0x00);
 		else {
 			buffer.add(0xFF);
-			this.type.writeValue(buffer, value);
+			this.type.writeValue(buffer, value, false);
 		}
+		setPointers(buffer, root);
 	}
 }
 class PointerType extends Type {
@@ -466,6 +486,18 @@ class PointerType extends Type {
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
+	}
+	writeValue(buffer, value, root = true) {
+		if (buffer.pointers === undefined) buffer.pointers = new Map();
+		const valueBuffer = new GrowableBuffer();
+		this.type.writeValue(valueBuffer, value);
+		const valueString = valueBuffer.toBuffer().toString(BINARY); //have to convert the buffer to a string because equivalent buffers are not ===
+		const currentIndex = buffer.length;
+		const previousSet = buffer.pointers.get(valueString);
+		if (previousSet) previousSet.add(currentIndex);
+		else buffer.pointers.set(valueString, new Set([currentIndex]));
+		buffer.addAll(Buffer.allocUnsafe(4)); //placeholder for pointer
+		setPointers(buffer, root);
 	}
 }
 
