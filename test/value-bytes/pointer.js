@@ -1,16 +1,16 @@
 const octetPointers = new t.PointerType(
-  new t.ArrayType(
-    new t.UnsignedByteType()
-  )
+	new t.ArrayType(
+		new t.UnsignedByteType()
+	)
 );
 let type = new t.StructType({
-  'a': octetPointers,
-  'b': octetPointers
+	'a': octetPointers,
+	'b': octetPointers
 });
 let gb = new GrowableBuffer();
 type.writeValue(gb, {
-  a: [100, 101, 102, 103, 104],
-  b: [100, 101, 102, 103, 104]
+	a: [100, 101, 102, 103, 104],
+	b: [100, 101, 102, 103, 104]
 });
 assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0, 5, 100, 101, 102, 103, 104])));
 type = new t.PointerType(new t.LongType());
@@ -28,8 +28,8 @@ gb = new GrowableBuffer();
 type.writeValue(gb, 123);
 assert.assert(gb.toBuffer().equals(Buffer.from([0xFF, 0, 0, 0, 5, 0, 123])));
 type = new t.MapType(
-  new t.PointerType(new t.StringType()),
-  new t.PointerType(new t.ByteType())
+	new t.PointerType(new t.StringType()),
+	new t.PointerType(new t.ByteType())
 );
 gb = new GrowableBuffer();
 let map = new Map();

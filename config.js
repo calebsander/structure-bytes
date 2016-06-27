@@ -8,5 +8,5 @@ VERSION_BUFFER.writeUInt16BE(VERSION, 0);
 const VERSION_STRING = VERSION_BUFFER.toString('base64');
 
 module.exports = {
-  VERSION_STRING
+	VERSION_STRING
 };

@@ -3,7 +3,7 @@ let gb = new GrowableBuffer();
 let invalidMap = new Map();
 invalidMap.set(2, 3);
 for (let invalidValue of [{'c': 2}, undefined, null, invalidMap]) {
-  assert.throws(() => type.writeValue(gb, invalidValue));
+	assert.throws(() => type.writeValue(gb, invalidValue));
 }
 let map = new Map();
 gb = new GrowableBuffer();

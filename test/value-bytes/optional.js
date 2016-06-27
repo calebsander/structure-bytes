@@ -1,11 +1,11 @@
 let type = new t.OptionalType(
-  new t.ArrayType(
-    new t.UnsignedByteType()
-  )
+	new t.ArrayType(
+		new t.UnsignedByteType()
+	)
 );
 let gb = new GrowableBuffer();
 for (let invalidValue of [undefined, 2, [-1], 'abc']) {
-  assert.throws(() => type.writeValue(gb, invalidValue));
+	assert.throws(() => type.writeValue(gb, invalidValue));
 }
 gb = new GrowableBuffer();
 type.writeValue(gb, null);
