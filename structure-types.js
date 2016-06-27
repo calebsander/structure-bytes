@@ -340,7 +340,7 @@ class StructType extends AbsoluteType {
 	static get _value() {
 		return 0x51;
 	}
-	//fields should be an array of {type, field} Objects
+	//fields should be an Object mapping field names to types
 	constructor(fields) {
 		super();
 		assert.instanceOf(fields, Object);
