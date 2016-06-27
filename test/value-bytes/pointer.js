@@ -35,4 +35,4 @@ gb = new GrowableBuffer();
 let map = new Map();
 map.set('abc', -126).set('def', -126);
 type.writeValue(gb, map);
-assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 27, 0, 0, 0, 28, 0, 0, 0, 27, 0, 0, 0, 3, 0x61, 0x62, 0x63, 256 - 126, 0, 0, 0, 3, 0x64, 0x65, 0x66])));
+assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 27, 0, 0, 0, 28, 0, 0, 0, 27, 0, 0, 0, 3, 0x61, 0x62, 0x63, -126 + 256, 0, 0, 0, 3, 0x64, 0x65, 0x66])));

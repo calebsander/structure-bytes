@@ -79,12 +79,6 @@ class Type {
 //Non-pointer type
 class AbsoluteType extends Type {}
 
-class NullType extends AbsoluteType {
-	static get _value() {
-		return 0x00;
-	}
-}
-
 //Integer type
 class IntegerType extends AbsoluteType {}
 class ByteType extends IntegerType {
