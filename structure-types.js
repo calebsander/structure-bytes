@@ -44,6 +44,7 @@ class Type {
 		buffer.add(this.constructor._value);
 	}
 	//Gets the type in buffer form, using a cached value if present
+	//Since types are immutable, the result should never change from the cached value
 	toBuffer() {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer();
 		return this.cachedBuffer;
