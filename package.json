@@ -3,6 +3,9 @@
 	"version": "0.0.1",
 	"description": "Efficiently stores data of any shape by separating it into structure and value",
 	"main": "index.js",
+	"dependencies": {
+		"concat-stream": "1.5.x"
+	},
 	"directories": {
 		"test": "test"
 	},
