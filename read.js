@@ -29,6 +29,12 @@ function consumeType(typeBuffer, offset) {
     case t.UnsignedLongType._value:
       value = new t.UnsignedLongType();
       break;
+    case t.FloatType._value:
+      value = new t.FloatType();
+      break;
+    case t.DoubleType._value:
+      value = new t.DoubleType();
+      break;
     default:
       assert.fail('No such type: 0x' + typeBuffer[0].toString(16))
   }
