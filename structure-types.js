@@ -55,8 +55,16 @@ class Type {
 		this.addToBuffer(buffer);
 		return buffer.toBuffer();
 	}
-	//Gets an SHA256 hash of the type (async)
+	//Gets an SHA256 hash of the type, using a cached value if present (async)
 	getHash(callback) {
+		if (this.cachedHash) callback(this.cachedHash);
+		else this._getHash((hash) => {
+			this.cachedHash = hash;
+			callback(hash);
+		});
+	}
+	//Gets an SHA256 hash of the type (async)
+	_getHash(callback) {
 		assert.instanceOf(callback, Function);
 		const buffer = new GrowableBuffer();
 		this.addToBuffer(buffer);
@@ -65,8 +73,17 @@ class Type {
 			callback(hash.read().toString('base64'));
 		});
 	}
-	//Gets a signature string for the type, identifying version and type information (async)
+	//Gets a signature string for the type, using a cached value if present (async)
 	getSignature(callback) {
+		if (this.cachedSignature) callback(this.cachedSignature);
+		else this._getSignature((signature) => {
+			this.cachedSignature = signature;
+			callback(signature);
+		});
+	}
+	//Gets a signature string for the type, identifying version and type information (async)
+	_getSignature(callback) {
+		assert.instanceOf(callback, Function);
 		this.getHash((hash) => {
 			callback(config.VERSION_STRING + hash);
 		});

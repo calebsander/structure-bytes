@@ -1,6 +1,6 @@
 let ended = 0;
 new t.ByteType().getSignature((signature) => {
-	assert.assert(signature === 'AAE=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
+	assert.assert(signature === 'AAI=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
 	ended++;
 });
 let waitForFinish = setInterval(() => {
@@ -22,6 +22,6 @@ new t.StructType({
 		)
 	)
 }).getSignature((signature) => {
-	assert.assert(signature === 'AAE=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
+	assert.assert(signature === 'AAI=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
 	ended++;
 });
