@@ -22,7 +22,7 @@ gb = new GrowableBuffer();
 let tuple = [];
 for (let i = 0; i < 10; i++) tuple[i] = '0abc0';
 type.writeValue(gb, tuple);
-assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 5, 0x30, 0x61, 0x62, 0x63, 0x30])));
+assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0, 40, 0x30, 0x61, 0x62, 0x63, 0x30, 0])));
 type = new t.OptionalType(new t.PointerType(new t.UnsignedShortType()));
 gb = new GrowableBuffer();
 type.writeValue(gb, 123);
@@ -32,7 +32,6 @@ type = new t.MapType(
 	new t.PointerType(new t.ByteType())
 );
 gb = new GrowableBuffer();
-let map = new Map();
-map.set('abc', -126).set('def', -126);
+let map = new Map().set('abc', -126).set('def', -126);
 type.writeValue(gb, map);
-assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 27, 0, 0, 0, 28, 0, 0, 0, 27, 0, 0, 0, 3, 0x61, 0x62, 0x63, -126 + 256, 0, 0, 0, 3, 0x64, 0x65, 0x66])));
+assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 24, 0, 0, 0, 25, 0, 0, 0, 24, 0x61, 0x62, 0x63, 0, -126 + 256, 0x64, 0x65, 0x66, 0])));

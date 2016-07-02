@@ -306,8 +306,8 @@ class StringType extends AbsoluteType {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
 		const valueBuffer = Buffer.from(value);
-		buffer.addAll(lengthBuffer(valueBuffer.length));
 		buffer.addAll(valueBuffer);
+		buffer.add(0);
 	}
 }
 

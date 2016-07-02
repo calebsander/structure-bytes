@@ -6,4 +6,4 @@ for (let invalidValue of [undefined, null, 2, false, ['abc']]) {
 	});
 }
 type.writeValue(gb, 'abç');
-assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 4, 0x61, 0x62, 0xc3, 0xa7])));
+assert.assert(gb.toBuffer().equals(Buffer.from([0x61, 0x62, 0xc3, 0xa7, 0])));
