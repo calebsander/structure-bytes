@@ -4,7 +4,7 @@ let outBuffer = new GrowableBuffer();
 let ended = false;
 bs.on('data', (chunk) => outBuffer.addAll(chunk)).on('end', () => {
 	ended = true;
-	assert.assert(outBuffer.toBuffer().equals(inBuffer))
+	assert.equal(outBuffer.toBuffer(), inBuffer);
 });
 let waitForFinish = setInterval(() => {
 	if (ended) clearInterval(waitForFinish);
@@ -16,7 +16,7 @@ let outBuffer2 = new GrowableBuffer();
 let ended2 = false;
 bs2.on('data', (chunk) => outBuffer2.addAll(chunk)).on('end', () => {
 	ended2 = true;
-	assert.assert(outBuffer2.toBuffer().equals(inBuffer2))
+	assert.equal(outBuffer2.toBuffer(), inBuffer2);
 });
 let waitForFinish2 = setInterval(() => {
 	if (ended) clearInterval(waitForFinish2);

@@ -11,4 +11,4 @@ type.writeValue(gb, [
 	{a: 7623, b: 'a'},
 	{a: 23, b: 'Ȁ'}
 ]);
-assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80])));
+assert.equal(gb.toBuffer(), Buffer.from([0, 0, 0, 2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]));

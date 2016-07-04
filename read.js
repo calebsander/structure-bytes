@@ -1,9 +1,13 @@
 const assert = require(__dirname + '/lib/assert.js');
 const t = require(__dirname + '/structure-types.js');
 
+function readLengthBuffer(typeBuffer, offset) {
+  return {value: typeBuffer.readUInt32BE(offset), length: 4};
+}
+
 function consumeType(typeBuffer, offset) {
   assert.assert(typeBuffer.length > 0, 'Buffer is empty');
-  let value, length = 0;
+  let value, length = 1;
   switch (typeBuffer[0]) {
     case t.ByteType._value:
       value = new t.ByteType();
@@ -35,10 +39,21 @@ function consumeType(typeBuffer, offset) {
     case t.DoubleType._value:
       value = new t.DoubleType();
       break;
+    case t.BooleanType._value:
+      value = new t.BooleanType();
+      break;
+    case t.BooleanTupleType._value:
+      let tupleLength = readLengthBuffer(typeBuffer, offset + length);
+      value = new t.BooleanTupleType(tupleLength.value);
+      length += tupleLength.length;
+      break;
+    case t.BooleanArrayType._value:
+      value = new t.BooleanArrayType();
+      break;
     default:
       assert.fail('No such type: 0x' + typeBuffer[0].toString(16))
   }
-  return {value, length: length + 1};
+  return {value, length};
 }
 function readType(typeBuffer, offset = 0) {
   assert.instanceOf(typeBuffer, Buffer);

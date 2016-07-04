@@ -8,4 +8,4 @@ for (let invalidValue of [undefined, [2, true], 'abc', {a: 'b'}, new Set([1])]) 
 }
 gb = new GrowableBuffer();
 type.writeValue(gb, new Set());
-assert.assert(gb.toBuffer().equals(Buffer.from([0, 0, 0, 0])));
+assert.equal(gb.toBuffer(), Buffer.from([0, 0, 0, 0]));

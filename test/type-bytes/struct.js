@@ -2,7 +2,7 @@ let struct = new t.StructType({
 	'bobbé': new t.BooleanType(),
 	'': new t.IntType()
 });
-assert.assert(struct.toBuffer().equals(Buffer.from([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30])));
+assert.equal(struct.toBuffer(), Buffer.from([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30]));
 
 assert.throws(() => {
 	let struct = {};
