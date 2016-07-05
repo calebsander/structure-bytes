@@ -92,6 +92,23 @@ function consumeType(typeBuffer, offset) {
       length += setType.length;
       value = new t.SetType(setType.value);
       break;
+    case t.MapType._value:
+      const keyType = consumeType(typeBuffer, offset + length);
+      length += keyType.length;
+      const valueType = consumeType(typeBuffer, offset + length);
+      length += valueType.length;
+      value = new t.MapType(keyType.value, valueType.value);
+      break;
+    case t.OptionalType._value:
+      const optionalType = consumeType(typeBuffer, offset + length);
+      length += optionalType.length;
+      value = new t.OptionalType(optionalType.value);
+      break;
+    case t.PointerType._value:
+      const pointerType = consumeType(typeBuffer, offset + length);
+      length += pointerType.length;
+      value = new t.PointerType(pointerType.value);
+      break;
     default:
       assert.fail('No such type: 0x' + typeBuffer[offset].toString(16))
   }
