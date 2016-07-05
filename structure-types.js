@@ -92,6 +92,18 @@ class Type {
 	writeValue(buffer, value) {
 		throw new Error('Generic Type has no value representation');
 	}
+	//Returns whether the two types are equal
+	equals(otherType) {
+		try { assert.instanceOf(otherType, this.constructor) }
+		catch (e) { return false }
+		for (let param in this) {
+			if (this.hasOwnProperty(param) && !param.startsWith('cached')) {
+				try { assert.equal(otherType[param], this[param]) }
+				catch (e) { return false }
+			}
+		}
+		return true;
+	}
 }
 
 //Non-pointer type

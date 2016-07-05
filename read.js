@@ -1,15 +1,15 @@
 const assert = require(__dirname + '/lib/assert.js');
 const t = require(__dirname + '/structure-types.js');
 
+const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readLengthBuffer(typeBuffer, offset) {
   try { return {value: typeBuffer.readUInt32BE(offset), length: 4} }
-  catch (e) { throw new Error('Buffer is not long enough') }
+  catch (e) { throw new Error(NOT_LONG_ENOUGH) }
 }
-
 function consumeType(typeBuffer, offset) {
-  assert.assert(typeBuffer.length > 0, 'Buffer is empty');
+  assert.assert(typeBuffer.length > 0, NOT_LONG_ENOUGH);
   let value, length = 1;
-  switch (typeBuffer[0]) {
+  switch (typeBuffer[offset]) {
     case t.ByteType._value:
       value = new t.ByteType();
       break;
@@ -44,9 +44,9 @@ function consumeType(typeBuffer, offset) {
       value = new t.BooleanType();
       break;
     case t.BooleanTupleType._value:
-      let tupleLength = readLengthBuffer(typeBuffer, offset + length);
-      value = new t.BooleanTupleType(tupleLength.value);
-      length += tupleLength.length;
+      const booleanTupleLength = readLengthBuffer(typeBuffer, offset + length);
+      value = new t.BooleanTupleType(booleanTupleLength.value);
+      length += booleanTupleLength.length;
       break;
     case t.BooleanArrayType._value:
       value = new t.BooleanArrayType();
@@ -56,6 +56,13 @@ function consumeType(typeBuffer, offset) {
       break;
     case t.StringType._value:
       value = new t.StringType();
+      break;
+    case t.TupleType._value:
+      const tupleType = consumeType(typeBuffer, offset + length);
+      length += tupleType.length;
+      const tupleLength = readLengthBuffer(typeBuffer, offset + length);
+      length += tupleLength.length;
+      value = new t.TupleType(tupleType.value, tupleLength.value);
       break;
     default:
       assert.fail('No such type: 0x' + typeBuffer[0].toString(16))
