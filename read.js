@@ -82,6 +82,16 @@ function consumeType(typeBuffer, offset) {
       }
       value = new t.StructType(fields);
       break;
+    case t.ArrayType._value:
+      const arrayType = consumeType(typeBuffer, offset + length);
+      length += arrayType.length;
+      value = new t.ArrayType(arrayType.value);
+      break;
+    case t.SetType._value:
+      const setType = consumeType(typeBuffer, offset + length);
+      length += setType.length;
+      value = new t.SetType(setType.value);
+      break;
     default:
       assert.fail('No such type: 0x' + typeBuffer[offset].toString(16))
   }
