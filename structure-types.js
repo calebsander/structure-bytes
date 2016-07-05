@@ -370,7 +370,7 @@ class StructType extends AbsoluteType {
 	static get _value() {
 		return 0x51;
 	}
-	//fields should be an Object mapping field names to types
+	//fields should be an Object mapping field names to types, e.g. {field1: new t.ByteType, field2: new t.StringType}
 	constructor(fields) {
 		super();
 		assert.instanceOf(fields, Object);
@@ -390,14 +390,19 @@ class StructType extends AbsoluteType {
 			resultField[TYPE] = fieldType;
 			this.fields.push(resultField);
 		}
-		this.fields.sort((a, b) => a[NAME].localeCompare(b[NAME])); //so field order is predictable
+		this.fields.sort((a, b) => {
+			if (a[NAME] < b[NAME]) return -1;
+			else if (a[NAME] > b[NAME]) return 1;
+			else throw new Error('Should not have any duplicate fields');
+		}); //so field order is predictable
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
 		buffer.add(this.fields.length);
 		for (let field of this.fields) {
-			buffer.add(Buffer.byteLength(field[NAME]));
-			buffer.addAll(Buffer.from(field[NAME]));
+			const nameBuffer = Buffer.from(field[NAME]);
+			buffer.add(nameBuffer.length);
+			buffer.addAll(nameBuffer);
 			field[TYPE].addToBuffer(buffer);
 		}
 	}

@@ -7,7 +7,7 @@ function readLengthBuffer(typeBuffer, offset) {
   catch (e) { throw new Error(NOT_LONG_ENOUGH) }
 }
 function consumeType(typeBuffer, offset) {
-  assert.assert(typeBuffer.length > 0, NOT_LONG_ENOUGH);
+  assert.assert(typeBuffer.length > offset, NOT_LONG_ENOUGH);
   let value, length = 1;
   switch (typeBuffer[offset]) {
     case t.ByteType._value:
@@ -64,8 +64,26 @@ function consumeType(typeBuffer, offset) {
       length += tupleLength.length;
       value = new t.TupleType(tupleType.value, tupleLength.value);
       break;
+    case t.StructType._value:
+      assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
+      const fieldCount = typeBuffer[offset + length];
+      length++;
+      const fields = {};
+      for (let i = 0; i < fieldCount; i++) {
+        assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
+        const nameLength = typeBuffer[offset + length];
+        length++;
+        assert.assert(typeBuffer.length >= offset + length + nameLength);
+        const name = typeBuffer.toString('utf8', offset + length, offset + length + nameLength);
+        length += nameLength;
+        const fieldType = consumeType(typeBuffer, offset + length);
+        fields[name] = fieldType.value;
+        length += fieldType.length;
+      }
+      value = new t.StructType(fields);
+      break;
     default:
-      assert.fail('No such type: 0x' + typeBuffer[0].toString(16))
+      assert.fail('No such type: 0x' + typeBuffer[offset].toString(16))
   }
   return {value, length};
 }
