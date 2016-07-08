@@ -390,11 +390,11 @@ class StructType extends AbsoluteType {
 			resultField[TYPE] = fieldType;
 			this.fields.push(resultField);
 		}
-		this.fields.sort((a, b) => {
+		this.fields.sort((a, b) => { //so field order is predictable
 			if (a[NAME] < b[NAME]) return -1;
 			else if (a[NAME] > b[NAME]) return 1;
 			else throw new Error('Should not have any duplicate fields');
-		}); //so field order is predictable
+		});
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
@@ -474,6 +474,27 @@ class MapType extends AbsoluteType {
 		setPointers(buffer, root);
 	}
 }
+const VALUE = 'value';
+class EnumType extends Type {
+	static get _value() {
+		return 0x55;
+	}
+	constructor({type, values}) {
+		super();
+		assert.instanceOf(type, Type);
+		assert.instanceOf(values, Array);
+		try { assert.byteUnsignedInteger(values.length); }
+		catch (e) { throw new Error(String(values.length) + ' values is too many'); }
+		this.type = type;
+		this.values = values;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		this.type.addToBuffer(buffer);
+		buffer.add(this.values.length);
+		for (let value of this.values) this.type.writeValue(buffer, value);
+	}
+}
 class OptionalType extends AbsoluteType {
 	static get _value() {
 		return 0x60;
@@ -545,6 +566,7 @@ module.exports = {
 	ArrayType,
 	SetType,
 	MapType,
+	EnumType,
 	OptionalType,
 	PointerType
 };
