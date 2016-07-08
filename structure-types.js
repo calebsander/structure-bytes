@@ -344,7 +344,7 @@ class TupleType extends AbsoluteType {
 	static get _value() {
 		return 0x50;
 	}
-	constructor(type, length) {
+	constructor({type, length}) {
 		super();
 		assert.instanceOf(type, Type);
 		assert.fourByteUnsignedInteger(length);

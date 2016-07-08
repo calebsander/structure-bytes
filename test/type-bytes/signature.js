@@ -13,9 +13,10 @@ new t.StructType({
 				new t.MapType(
 					new t.UnsignedIntType(),
 					new t.ArrayType(
-						new t.TupleType(
-							new t.BooleanArrayType(), 5
-						)
+						new t.TupleType({
+							type: new t.BooleanArrayType(),
+							length: 5
+						})
 					)
 				)
 			)

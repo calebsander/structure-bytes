@@ -1,4 +1,7 @@
-let type = new t.TupleType(new t.StringType(), 5);
+let type = new t.TupleType({
+	type: new t.StringType(),
+	length: 5
+});
 let gb = new GrowableBuffer();
 for (let invalidValue of [undefined, null, 'abcde', 7, true, [1, 2, 3, 4, 5], ['a', 'b', 'c', 'd', 5]]) {
 	assert.throws(() => {

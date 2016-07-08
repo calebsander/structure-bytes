@@ -1,11 +1,13 @@
 const fs = require('fs');
 const OUT_FILE = 'value-out';
 
-let type = new t.TupleType(
-  new t.OptionalType(
-    new t.CharType()
-  ), 5
-);
+let type = new t.TupleType({
+  type:
+  	new t.OptionalType(
+	    new t.CharType()
+	  ),
+  length: 5
+});
 let value = ['a', null, 'b', null, 'c'];
 let outStream = fs.createWriteStream(OUT_FILE);
 let ended = false;

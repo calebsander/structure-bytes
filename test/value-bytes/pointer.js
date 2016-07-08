@@ -17,7 +17,10 @@ type = new t.PointerType(new t.LongType());
 gb = new GrowableBuffer();
 type.writeValue(gb, '1234567890');
 assert.equal(gb.toBuffer(), Buffer.from([0, 0, 0, 4, 0, 0, 0, 0, 0x49, 0x96, 0x02, 0xd2]));
-type = new t.TupleType(new t.PointerType(new t.StringType()), 10);
+type = new t.TupleType({
+	type: new t.PointerType(new t.StringType()),
+	length: 10
+});
 gb = new GrowableBuffer();
 let tuple = [];
 for (let i = 0; i < 10; i++) tuple[i] = '0abc0';

@@ -62,7 +62,10 @@ function consumeType(typeBuffer, offset) {
       length += tupleType.length;
       const tupleLength = readLengthBuffer(typeBuffer, offset + length);
       length += tupleLength.length;
-      value = new t.TupleType(tupleType.value, tupleLength.value);
+      value = new t.TupleType({
+        type: tupleType.value,
+        length: tupleLength.value
+      });
       break;
     case t.StructType._value:
       assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
