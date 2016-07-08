@@ -1,6 +1,6 @@
 let type = new t.StructType({
-  'b': new t.BooleanArrayType(),
-  'i': new t.UnsignedIntType(),
+	'b': new t.BooleanArrayType(),
+	'i': new t.UnsignedIntType(),
 	's': new t.StringType()
 });
 let gb = new GrowableBuffer();
