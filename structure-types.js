@@ -9,9 +9,9 @@ const util = require('util');
 //Since most things with length store it in a 32-bit unsigned integer,
 //this utility function makes the creation of that buffer easier
 function lengthBuffer(length) {
-	const lengthBuffer = Buffer.allocUnsafe(4);
-	lengthBuffer.writeUInt32BE(length, 0);
-	return lengthBuffer;
+	const buffer = Buffer.allocUnsafe(4);
+	buffer.writeUInt32BE(length, 0);
+	return buffer;
 }
 const BINARY = 'binary';
 //After writing all the values, it is necessary to insert all the values of pointer types
