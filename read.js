@@ -9,7 +9,7 @@ function readLengthBuffer(typeBuffer, offset) {
 function consumeType(typeBuffer, offset) {
 	assert.assert(typeBuffer.length > offset, NOT_LONG_ENOUGH);
 	let value, length = 1;
-	switch (typeBuffer[offset]) {
+	switch (typeBuffer.readUInt8(offset)) {
 		case t.ByteType._value:
 			value = new t.ByteType();
 			break;
@@ -69,12 +69,12 @@ function consumeType(typeBuffer, offset) {
 			break;
 		case t.StructType._value:
 			assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
-			const fieldCount = typeBuffer[offset + length];
+			const fieldCount = typeBuffer.readUInt8(offset + length);
 			length++;
 			const fields = {};
 			for (let i = 0; i < fieldCount; i++) {
 				assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
-				const nameLength = typeBuffer[offset + length];
+				const nameLength = typeBuffer.readUInt8(offset + length);
 				length++;
 				assert.assert(typeBuffer.length >= offset + length + nameLength);
 				const name = typeBuffer.toString('utf8', offset + length, offset + length + nameLength);
@@ -102,6 +102,23 @@ function consumeType(typeBuffer, offset) {
 			length += valueType.length;
 			value = new t.MapType(keyType.value, valueType.value);
 			break;
+		case t.EnumType._value:
+			const enumType = consumeType(typeBuffer, offset + length);
+			length += enumType.length;
+			assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
+			const valueCount = typeBuffer.readUInt8(offset + length);
+			length++;
+			const values = [];
+			for (let i = 0; i < valueCount; i++) {
+				const value = consumeValue({valueBuffer: typeBuffer, offset: offset + length, type: enumType.value});
+				length += value.length;
+				values[i] = (value.value);
+			}
+			value = new t.EnumType({
+				type: enumType.value,
+				values: values
+			});
+			break;
 		case t.OptionalType._value:
 			const optionalType = consumeType(typeBuffer, offset + length);
 			length += optionalType.length;
@@ -117,12 +134,28 @@ function consumeType(typeBuffer, offset) {
 	}
 	return {value, length};
 }
-function readType(typeBuffer, offset = 0) {
+function readType(typeBuffer) {
 	assert.instanceOf(typeBuffer, Buffer);
-	assert.integer(offset);
-	const {value, length} = consumeType(typeBuffer, offset);
+	const {value, length} = consumeType(typeBuffer, 0);
 	assert.assert(length === typeBuffer.length, 'Did not consume all of the buffer');
 	return value;
+}
+function consumeValue({valueBuffer, offset, type}) {
+	let value, length = 0;
+	switch (type.constructor) {
+		case t.StringType:
+			while (true) {
+				assert.assert(valueBuffer.length > offset + length, NOT_LONG_ENOUGH);
+				if (!valueBuffer.readUInt8(offset + length)) break;
+				length++;
+			}
+			value = valueBuffer.slice(offset, offset + length).toString();
+			length++;
+			break;
+		default:
+			assert.fail('Not a type: ' + util.inspect(type));
+	}
+	return {value, length};
 }
 
 module.exports = {
