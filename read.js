@@ -134,15 +134,19 @@ function consumeType(typeBuffer, offset) {
 	}
 	return {value, length};
 }
-function readType(typeBuffer) {
+function readType(typeBuffer, fullBuffer = true) {
 	assert.instanceOf(typeBuffer, Buffer);
 	const {value, length} = consumeType(typeBuffer, 0);
-	assert.assert(length === typeBuffer.length, 'Did not consume all of the buffer');
+	if (fullBuffer) assert.assert(length === typeBuffer.length, 'Did not consume all of the buffer');
 	return value;
 }
 function consumeValue({valueBuffer, offset, type}) {
 	let value, length = 0;
 	switch (type.constructor) {
+		case t.CharType:
+			value = valueBuffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
+			length += Buffer.byteLength(value);
+			break;
 		case t.StringType:
 			while (true) {
 				assert.assert(valueBuffer.length > offset + length, NOT_LONG_ENOUGH);
@@ -157,7 +161,14 @@ function consumeValue({valueBuffer, offset, type}) {
 	}
 	return {value, length};
 }
+function readValue({valueBuffer, type, offset = 0, fullBuffer = true}) {
+	assert.instanceOf(valueBuffer, Buffer);
+	const {value, length} = consumeValue({valueBuffer, offset: offset, type});
+	if (fullBuffer) assert.assert(length === valueBuffer.length, 'Did not consume all of the buffer');
+	return value;
+}
 
 module.exports = {
-	readType
+	readType,
+	readValue
 };

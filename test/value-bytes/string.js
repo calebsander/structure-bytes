@@ -5,5 +5,7 @@ for (let invalidValue of [undefined, null, 2, false, ['abc']]) {
 		type.writeValue(gb, invalidValue);
 	});
 }
-type.writeValue(gb, 'abç');
+const STRING = 'abç';
+type.writeValue(gb, STRING);
 assert.equal(gb.toBuffer(), Buffer.from([0x61, 0x62, 0xc3, 0xa7, 0]));
+assert.equal(r.readValue({valueBuffer: gb.toBuffer(), type}), STRING);
