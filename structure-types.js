@@ -4,6 +4,7 @@ const config = require(__dirname + '/config.js');
 const crypto = require('crypto');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
 const strnum = require(__dirname + '/lib/strint.js');
+const util = require('util');
 
 //Since most things with length store it in a 32-bit unsigned integer,
 //this utility function makes the creation of that buffer easier
@@ -485,6 +486,15 @@ class EnumType extends Type {
 		assert.instanceOf(values, Array);
 		try { assert.byteUnsignedInteger(values.length); }
 		catch (e) { throw new Error(String(values.length) + ' values is too many'); }
+		const valueBuffers = new Set();
+		for (let value of values) {
+			const buffer = new GrowableBuffer();
+			type.writeValue(buffer, value)
+			const valueBuffer = buffer.toBuffer().toString(BINARY);
+			try { assert.notIn(valueBuffer, valueBuffers) }
+			catch (e) { throw new Error('Value is repeated: ' + util.inspect(value)) }
+			valueBuffers.add(valueBuffer);
+		}
 		this.type = type;
 		this.values = values;
 	}
