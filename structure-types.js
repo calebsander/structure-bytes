@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
 const strint = require(__dirname + '/lib/strint.js');
 const util = require('util');
+const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js');
 
 //Since most things with length store it in a 32-bit unsigned integer,
 //this utility function makes the creation of that buffer easier
@@ -261,12 +262,7 @@ class BooleanType extends AbsoluteType {
 		else buffer.add(0x00);
 	}
 }
-function dividedByEight(n) {
-	return n >>> 3;
-}
-function modEight(n) {
-	return n & 0b111;
-}
+
 function writeBooleans(buffer, booleans) {
 	assert.instanceOf(booleans, Array);
 	const incompleteBytes = modEight(booleans.length);
@@ -378,7 +374,8 @@ class StructType extends AbsoluteType {
 		for (let field in fields) fieldCount++;
 		try { assert.byteUnsignedInteger(fieldCount); }
 		catch (e) { throw new Error(String(fieldCount) + ' fields is too many'); }
-		this.fields = []; //really a set, but we want ordering to be fixed so that type bytes are consistent
+		this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
+		let i = 0;
 		for (let fieldName in fields) {
 			try { assert.byteUnsignedInteger(Buffer.byteLength(fieldName)); }
 			catch (e) { throw new Error('Field name ' + fieldName + ' is too long'); }
@@ -388,7 +385,8 @@ class StructType extends AbsoluteType {
 			const resultField = {};
 			resultField[NAME] = fieldName;
 			resultField[TYPE] = fieldType;
-			this.fields.push(resultField);
+			this.fields[i] = resultField;
+			i++;
 		}
 		this.fields.sort((a, b) => { //so field order is predictable
 			if (a[NAME] < b[NAME]) return -1;

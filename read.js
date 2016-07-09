@@ -1,11 +1,12 @@
 const assert = require(__dirname + '/lib/assert.js');
+const bitMath = require(__dirname + '/lib/bit-math.js');
 const strint = require(__dirname + '/lib/strint.js');
 const t = require(__dirname + '/structure-types.js');
 const util = require('util');
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
-function readLengthBuffer(typeBuffer, offset) {
-	try { return {value: typeBuffer.readUInt32BE(offset), length: 4} }
+function readLengthBuffer(buffer, offset) {
+	try { return {value: buffer.readUInt32BE(offset), length: 4} }
 	catch (e) { throw new Error(NOT_LONG_ENOUGH) }
 }
 function consumeType(typeBuffer, offset) {
@@ -112,7 +113,7 @@ function consumeType(typeBuffer, offset) {
 			length++;
 			const values = [];
 			for (let i = 0; i < valueCount; i++) {
-				const value = consumeValue({valueBuffer: typeBuffer, offset: offset + length, type: enumType.value});
+				const value = consumeValue({buffer: typeBuffer, offset: offset + length, type: enumType.value});
 				length += value.length;
 				values[i] = (value.value);
 			}
@@ -142,75 +143,108 @@ function readType(typeBuffer, fullBuffer = true) {
 	if (fullBuffer) assert.assert(length === typeBuffer.length, 'Did not consume all of the buffer');
 	return value;
 }
-function consumeValue({valueBuffer, offset, type}) {
+function readBooleans({buffer, offset, count}) {
+	const value = new Array(count);
+	const incompleteBytes = bitMath.modEight(value.length);
+	const bytes = bitMath.dividedByEight(value.length);
+	let byteLength;
+	if (incompleteBytes) byteLength = bytes + 1;
+	else byteLength = bytes;
+	for (let i = 0; i < byteLength; i++) {
+		const byte = buffer.readUInt8(offset + i);
+		for (let bit = 0; bit < 8; bit++) {
+			const index = i * 8 + bit;
+			if (index === value.length) break;
+			value[index] = !!(byte & (1 << bitMath.modEight(~bitMath.modEight(bit))));
+		}
+	}
+	return {value, length: byteLength};
+}
+function consumeValue({buffer, offset, type}) {
 	let value, length = 0;
 	switch (type.constructor) {
 		case t.ByteType:
-			value = valueBuffer.readInt8(offset);
+			value = buffer.readInt8(offset);
 			length++;
 			break;
 		case t.ShortType:
-			value = valueBuffer.readInt16BE(offset);
+			value = buffer.readInt16BE(offset);
 			length += 2;
 			break;
 		case t.IntType:
-			value = valueBuffer.readInt32BE(offset);
+			value = buffer.readInt32BE(offset);
 			length += 4;
 			break;
 		case t.LongType:
-			const upper = valueBuffer.readInt32BE(offset);
-			const lower = valueBuffer.readUInt32BE(offset + 4);
+			const upper = buffer.readInt32BE(offset);
+			const lower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
 			length += 8;
 			break;
 		case t.UnsignedByteType:
-			value = valueBuffer.readUInt8(offset);
+			value = buffer.readUInt8(offset);
 			length++;
 			break;
 		case t.UnsignedShortType:
-			value = valueBuffer.readUInt16BE(offset);
+			value = buffer.readUInt16BE(offset);
 			length += 2;
 			break;
 		case t.UnsignedIntType:
-			value = valueBuffer.readUInt32BE(offset);
+			value = buffer.readUInt32BE(offset);
 			length += 4;
 			break;
 		case t.UnsignedLongType:
-			const unsignedUpper = valueBuffer.readUInt32BE(offset);
-			const unsignedLower = valueBuffer.readUInt32BE(offset + 4);
+			const unsignedUpper = buffer.readUInt32BE(offset);
+			const unsignedLower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
 			length += 8;
 			break;
 		case t.FloatType:
-			value = valueBuffer.readFloatBE(offset);
+			value = buffer.readFloatBE(offset);
 			length += 4;
 			break;
 		case t.DoubleType:
-			value = valueBuffer.readDoubleBE(offset);
+			value = buffer.readDoubleBE(offset);
 			length += 8;
 			break;
+		case t.BooleanType:
+			const readByte = buffer.readUInt8(offset)
+			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
+			value = !!readByte;
+			length++;
+			break;
+		case t.BooleanArrayType:
+			const booleanArrayLength = readLengthBuffer(buffer, offset);
+			length += booleanArrayLength.length;
+			const booleanArray = readBooleans({buffer, offset: offset + length, count: booleanArrayLength.value});
+			length += booleanArray.length;
+			({value} = booleanArray);
+			break;
+		case t.BooleanTupleType:
+			({value, length} = readBooleans({buffer, offset, count: type.length}));
+			break;
 		case t.CharType:
-			value = valueBuffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
+			value = buffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
 			length += Buffer.byteLength(value);
 			break;
 		case t.StringType:
 			while (true) {
-				assert.assert(valueBuffer.length > offset + length, NOT_LONG_ENOUGH);
-				if (!valueBuffer.readUInt8(offset + length)) break;
+				assert.assert(buffer.length > offset + length, NOT_LONG_ENOUGH);
+				if (!buffer.readUInt8(offset + length)) break;
 				length++;
 			}
-			value = valueBuffer.slice(offset, offset + length).toString();
+			value = buffer.slice(offset, offset + length).toString();
 			length++;
 			break;
 		default:
-			assert.fail('Not a type: ' + util.inspect(type));
+			assert.fail('Not a structure type: ' + util.inspect(type));
 	}
 	return {value, length};
 }
-function readValue({valueBuffer, type, offset = 0, fullBuffer = true}) {
-	assert.instanceOf(valueBuffer, Buffer);
-	const {value, length} = consumeValue({valueBuffer, offset: offset, type});
-	if (fullBuffer) assert.assert(length === valueBuffer.length, 'Did not consume all of the buffer');
+function readValue({buffer, type, offset = 0, fullBuffer = true}) {
+	assert.instanceOf(buffer, Buffer);
+	const {value, length} = consumeValue({buffer, offset: offset, type});
+	if (fullBuffer) assert.assert(length === buffer.length, 'Did not consume all of the buffer');
 	return value;
 }
 
