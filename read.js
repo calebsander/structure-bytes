@@ -181,6 +181,14 @@ function consumeValue({valueBuffer, offset, type}) {
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
 			length += 8;
 			break;
+		case t.FloatType:
+			value = valueBuffer.readFloatBE(offset);
+			length += 4;
+			break;
+		case t.DoubleType:
+			value = valueBuffer.readDoubleBE(offset);
+			length += 8;
+			break;
 		case t.CharType:
 			value = valueBuffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
 			length += Buffer.byteLength(value);
