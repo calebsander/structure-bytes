@@ -3,7 +3,7 @@ const BufferStream = require(__dirname + '/lib/buffer-stream.js');
 const config = require(__dirname + '/config.js');
 const crypto = require('crypto');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
-const strnum = require(__dirname + '/lib/strint.js');
+const strint = require(__dirname + '/lib/strint.js');
 const util = require('util');
 
 //Since most things with length store it in a 32-bit unsigned integer,
@@ -148,7 +148,6 @@ class IntType extends IntegerType {
 		buffer.addAll(byteBuffer);
 	}
 }
-const LONG_UPPER_SHIFT = '4294967296'; //stores the value needed to multiply an integer to shift it left 32 bits - for long math
 class LongType extends IntegerType {
 	static get _value() {
 		return 0x04;
@@ -156,9 +155,9 @@ class LongType extends IntegerType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
-		if (strnum.gt(value, '9223372036854775807') || strnum.lt(value, '-9223372036854775808')) throw new Error('Value out of range');
-		const upper = strnum.div(value, LONG_UPPER_SHIFT, true); //get upper signed int
-		const lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT)); //get lower unsigned int
+		if (strint.gt(value, '9223372036854775807') || strint.lt(value, '-9223372036854775808')) throw new Error('Value out of range');
+		const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true); //get upper signed int
+		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
 		const byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeInt32BE(Number(upper), 0);
 		byteBuffer.writeUInt32BE(Number(lower), 4);
@@ -211,9 +210,9 @@ class UnsignedLongType extends UnsignedType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
-		if (strnum.gt(value, '18446744073709551615') || strnum.lt(value, '0')) throw new Error('Value out of range');
-		const upper = strnum.div(value, LONG_UPPER_SHIFT);
-		const lower = strnum.sub(value, strnum.mul(upper, LONG_UPPER_SHIFT));
+		if (strint.gt(value, '18446744073709551615') || strint.lt(value, '0')) throw new Error('Value out of range');
+		const upper = strint.div(value, strint.LONG_UPPER_SHIFT);
+		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT));
 		const byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeUInt32BE(Number(upper), 0);
 		byteBuffer.writeUInt32BE(Number(lower), 4);

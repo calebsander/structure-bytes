@@ -1,5 +1,7 @@
 const assert = require(__dirname + '/lib/assert.js');
+const strint = require(__dirname + '/lib/strint.js');
 const t = require(__dirname + '/structure-types.js');
+const util = require('util');
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readLengthBuffer(typeBuffer, offset) {
@@ -143,6 +145,24 @@ function readType(typeBuffer, fullBuffer = true) {
 function consumeValue({valueBuffer, offset, type}) {
 	let value, length = 0;
 	switch (type.constructor) {
+		case t.ByteType:
+			value = valueBuffer.readInt8(offset);
+			length++;
+			break;
+		case t.ShortType:
+			value = valueBuffer.readUInt16BE(offset);
+			length += 2;
+			break;
+		case t.IntType:
+			value = valueBuffer.readInt32BE(offset);
+			length += 4;
+			break;
+		case t.LongType:
+			const upper = valueBuffer.readInt32BE(offset);
+			const lower = valueBuffer.readUInt32BE(offset + 4);
+			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
+			length += 8;
+			break;
 		case t.CharType:
 			value = valueBuffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
 			length += Buffer.byteLength(value);
