@@ -150,7 +150,7 @@ function consumeValue({valueBuffer, offset, type}) {
 			length++;
 			break;
 		case t.ShortType:
-			value = valueBuffer.readUInt16BE(offset);
+			value = valueBuffer.readInt16BE(offset);
 			length += 2;
 			break;
 		case t.IntType:
@@ -161,6 +161,24 @@ function consumeValue({valueBuffer, offset, type}) {
 			const upper = valueBuffer.readInt32BE(offset);
 			const lower = valueBuffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
+			length += 8;
+			break;
+		case t.UnsignedByteType:
+			value = valueBuffer.readUInt8(offset);
+			length++;
+			break;
+		case t.UnsignedShortType:
+			value = valueBuffer.readUInt16BE(offset);
+			length += 2;
+			break;
+		case t.UnsignedIntType:
+			value = valueBuffer.readUInt32BE(offset);
+			length += 4;
+			break;
+		case t.UnsignedLongType:
+			const unsignedUpper = valueBuffer.readUInt32BE(offset);
+			const unsignedLower = valueBuffer.readUInt32BE(offset + 4);
+			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
 			length += 8;
 			break;
 		case t.CharType:

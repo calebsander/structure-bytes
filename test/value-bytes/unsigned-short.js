@@ -1,4 +1,6 @@
 let type = new t.UnsignedShortType();
 let gb = new GrowableBuffer();
-type.writeValue(gb, 65535);
-assert.equal(gb.toBuffer(), Buffer.from([0xff, 0xff]));
+const VALUE = 65535;
+type.writeValue(gb, VALUE);
+assert.equal(gb.toBuffer(), Buffer.alloc(2, 0xff));
+assert.equal(r.readValue({valueBuffer: gb.toBuffer(), type}), VALUE);
