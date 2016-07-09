@@ -561,6 +561,7 @@ class PointerType extends Type {
 }
 
 module.exports = {
+	Type,
 	ByteType,
 	ShortType,
 	IntType,

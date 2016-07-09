@@ -240,8 +240,8 @@ function consumeValue({buffer, offset, type}) {
 			value = new Array(type.length);
 			for (let i = 0; i < type.length; i++) {
 				const tupleElement = consumeValue({buffer, offset: offset + length, type: type.type});
-				value[i] = tupleElement.value;
 				length += tupleElement.length;
+				value[i] = tupleElement.value;
 			}
 			break;
 		case t.StructType:
@@ -254,6 +254,26 @@ function consumeValue({buffer, offset, type}) {
 				length += readField.length;
 			}
 			break;
+		case t.ArrayType:
+			const arrayLength = readLengthBuffer(buffer, offset);
+			length += arrayLength.length;
+			value = new Array(arrayLength.value);
+			for (let i = 0; i < value.length; i++) {
+				const arrayElement = consumeValue({buffer, offset: offset + length, type: type.type});
+				length += arrayElement.length;
+				value[i] = arrayElement.value;
+			}
+			break;
+		case t.SetType:
+			const setLength = readLengthBuffer(buffer, offset);
+			length += setLength.length;
+			value = new Set();
+			for (let i = 0; i < setLength.value; i++) {
+				const setElement = consumeValue({buffer, offset: offset + length, type: type.type});
+				length += setElement.length;
+				value.add(setElement.value);
+			}
+			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
 	}
@@ -261,6 +281,7 @@ function consumeValue({buffer, offset, type}) {
 }
 function readValue({buffer, type, offset = 0, fullBuffer = true}) {
 	assert.instanceOf(buffer, Buffer);
+	assert.instanceOf(type, t.Type);
 	const {value, length} = consumeValue({buffer, offset: offset, type});
 	if (fullBuffer) assert.assert(length === buffer.length, 'Did not consume all of the buffer');
 	return value;
