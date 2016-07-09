@@ -236,6 +236,14 @@ function consumeValue({buffer, offset, type}) {
 			value = buffer.slice(offset, offset + length).toString();
 			length++;
 			break;
+		case t.TupleType:
+			value = new Array(type.length);
+			for (let i = 0; i < type.length; i++) {
+				const tupleElement = consumeValue({buffer, offset: offset + length, type: type.type});
+				value[i] = tupleElement.value;
+				length += tupleElement.length;
+			}
+			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
 	}
