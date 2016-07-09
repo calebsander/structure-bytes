@@ -244,6 +244,16 @@ function consumeValue({buffer, offset, type}) {
 				length += tupleElement.length;
 			}
 			break;
+		case t.StructType:
+			value = {};
+			for (let field of type.fields) {
+				const fieldName = field.name;
+				const fieldType = field.type;
+				const readField = consumeValue({buffer, offset: offset + length, type: fieldType});
+				value[fieldName] = readField.value;
+				length += readField.length;
+			}
+			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
 	}

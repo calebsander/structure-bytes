@@ -33,7 +33,7 @@ Data types:
 	- `String` (an array of UTF-8 characters that also stores its total byte length)
 - Recursive types
 	- `Tuple<Type>` (a constant-length array of `Type`s)
-	- `Struct` (a fixed collection of up to 255 fields, each with a string (up to 255 bytes) name and a type
+	- `Struct` (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)
 	- `Array<Type>` (a variable-length array of `Type`s)
 	- `Set<Type>` (like an `Array`, except creates a set when read)
 	- `Map<KeyType, ValueType>` (a mapping of `KeyType` instances to `ValueType` instances)
