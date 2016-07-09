@@ -486,23 +486,31 @@ class EnumType extends Type {
 		assert.instanceOf(values, Array);
 		try { assert.byteUnsignedInteger(values.length); }
 		catch (e) { throw new Error(String(values.length) + ' values is too many'); }
-		const valueBuffers = new Set();
-		for (let value of values) {
+		const valueIndices = new Map();
+		for (let i = 0; i < values.length; i++) {
+			const value = values[i];
 			const buffer = new GrowableBuffer();
 			type.writeValue(buffer, value)
 			const valueBuffer = buffer.toBuffer().toString(BINARY);
-			try { assert.notIn(valueBuffer, valueBuffers) }
-			catch (e) { throw new Error('Value is repeated: ' + util.inspect(value)) }
-			valueBuffers.add(valueBuffer);
+			assert.assert(!valueIndices.has(valueBuffer), 'Value is repeated: ' + util.inspect(value));
+			valueIndices.set(valueBuffer, i);
 		}
 		this.type = type;
-		this.values = values;
+		this.valueIndices = valueIndices;
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
-		buffer.add(this.values.length);
-		for (let value of this.values) this.type.writeValue(buffer, value);
+		buffer.add(this.valueIndices.size);
+		for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer));
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		const valueBuffer = new GrowableBuffer();
+		this.type.writeValue(valueBuffer, value);
+		const index = this.valueIndices.get(valueBuffer.toBuffer().toString(BINARY));
+		assert.assert(index !== undefined, 'Not a valid enum value: ' + util.inspect(value));
+		buffer.add(index);
 	}
 }
 class OptionalType extends AbsoluteType {
