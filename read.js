@@ -274,6 +274,18 @@ function consumeValue({buffer, offset, type}) {
 				value.add(setElement.value);
 			}
 			break;
+		case t.MapType:
+			const mapSize = readLengthBuffer(buffer, offset);
+			length += mapSize.length;
+			value = new Map();
+			for (let i = 0; i < mapSize.value; i++) {
+				const keyElement = consumeValue({buffer, offset: offset + length, type: type.keyType});
+				length += keyElement.length;
+				const valueElement = consumeValue({buffer, offset: offset + length, type: type.valueType});
+				length += valueElement.length;
+				value.set(keyElement.value, valueElement.value);
+			}
+			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
 	}
