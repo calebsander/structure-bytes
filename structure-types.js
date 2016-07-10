@@ -493,6 +493,7 @@ class EnumType extends Type {
 			valueIndices.set(valueBuffer, i);
 		}
 		this.type = type;
+		this.values = values;
 		this.valueIndices = valueIndices;
 	}
 	addToBuffer(buffer) {

@@ -161,61 +161,61 @@ function readBooleans({buffer, offset, count}) {
 	return {value, length: byteLength};
 }
 function consumeValue({buffer, offset, type}) {
-	let value, length = 0;
+	let value, length;
 	switch (type.constructor) {
 		case t.ByteType:
 			value = buffer.readInt8(offset);
-			length++;
+			length = 1;
 			break;
 		case t.ShortType:
 			value = buffer.readInt16BE(offset);
-			length += 2;
+			length = 2;
 			break;
 		case t.IntType:
 			value = buffer.readInt32BE(offset);
-			length += 4;
+			length = 4;
 			break;
 		case t.LongType:
 			const upper = buffer.readInt32BE(offset);
 			const lower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
-			length += 8;
+			length = 8;
 			break;
 		case t.UnsignedByteType:
 			value = buffer.readUInt8(offset);
-			length++;
+			length = 1;
 			break;
 		case t.UnsignedShortType:
 			value = buffer.readUInt16BE(offset);
-			length += 2;
+			length = 2;
 			break;
 		case t.UnsignedIntType:
 			value = buffer.readUInt32BE(offset);
-			length += 4;
+			length = 4;
 			break;
 		case t.UnsignedLongType:
 			const unsignedUpper = buffer.readUInt32BE(offset);
 			const unsignedLower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
-			length += 8;
+			length = 8;
 			break;
 		case t.FloatType:
 			value = buffer.readFloatBE(offset);
-			length += 4;
+			length = 4;
 			break;
 		case t.DoubleType:
 			value = buffer.readDoubleBE(offset);
-			length += 8;
+			length = 8;
 			break;
 		case t.BooleanType:
 			const readByte = buffer.readUInt8(offset)
 			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
 			value = !!readByte;
-			length++;
+			length = 1;
 			break;
 		case t.BooleanArrayType:
 			const booleanArrayLength = readLengthBuffer(buffer, offset);
-			length += booleanArrayLength.length;
+			length = booleanArrayLength.length;
 			const booleanArray = readBooleans({buffer, offset: offset + length, count: booleanArrayLength.value});
 			length += booleanArray.length;
 			({value} = booleanArray);
@@ -225,18 +225,20 @@ function consumeValue({buffer, offset, type}) {
 			break;
 		case t.CharType:
 			value = buffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
-			length += Buffer.byteLength(value);
+			length = Buffer.byteLength(value);
 			break;
 		case t.StringType:
+			length = 0;
 			while (true) {
 				assert.assert(buffer.length > offset + length, NOT_LONG_ENOUGH);
 				if (!buffer.readUInt8(offset + length)) break;
 				length++;
 			}
 			value = buffer.slice(offset, offset + length).toString();
-			length++;
+			length++; //account for null byte
 			break;
 		case t.TupleType:
+			length = 0;
 			value = new Array(type.length);
 			for (let i = 0; i < type.length; i++) {
 				const tupleElement = consumeValue({buffer, offset: offset + length, type: type.type});
@@ -245,6 +247,7 @@ function consumeValue({buffer, offset, type}) {
 			}
 			break;
 		case t.StructType:
+			length = 0;
 			value = {};
 			for (let field of type.fields) {
 				const fieldName = field.name;
@@ -256,7 +259,7 @@ function consumeValue({buffer, offset, type}) {
 			break;
 		case t.ArrayType:
 			const arrayLength = readLengthBuffer(buffer, offset);
-			length += arrayLength.length;
+			length = arrayLength.length;
 			value = new Array(arrayLength.value);
 			for (let i = 0; i < value.length; i++) {
 				const arrayElement = consumeValue({buffer, offset: offset + length, type: type.type});
@@ -266,7 +269,7 @@ function consumeValue({buffer, offset, type}) {
 			break;
 		case t.SetType:
 			const setLength = readLengthBuffer(buffer, offset);
-			length += setLength.length;
+			length = setLength.length;
 			value = new Set();
 			for (let i = 0; i < setLength.value; i++) {
 				const setElement = consumeValue({buffer, offset: offset + length, type: type.type});
@@ -276,7 +279,7 @@ function consumeValue({buffer, offset, type}) {
 			break;
 		case t.MapType:
 			const mapSize = readLengthBuffer(buffer, offset);
-			length += mapSize.length;
+			length = mapSize.length;
 			value = new Map();
 			for (let i = 0; i < mapSize.value; i++) {
 				const keyElement = consumeValue({buffer, offset: offset + length, type: type.keyType});
@@ -285,6 +288,12 @@ function consumeValue({buffer, offset, type}) {
 				length += valueElement.length;
 				value.set(keyElement.value, valueElement.value);
 			}
+			break;
+		case t.EnumType:
+			const valueIndex = buffer.readUInt8(offset);
+			length = 1;
+			value = type.values[valueIndex];
+			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid');
 			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
