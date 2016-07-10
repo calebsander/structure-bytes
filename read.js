@@ -208,7 +208,7 @@ function consumeValue({buffer, offset, type}) {
 			length = 8;
 			break;
 		case t.BooleanType:
-			const readByte = buffer.readUInt8(offset)
+			const readByte = buffer.readUInt8(offset);
 			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
 			value = !!readByte;
 			length = 1;
@@ -294,6 +294,17 @@ function consumeValue({buffer, offset, type}) {
 			length = 1;
 			value = type.values[valueIndex];
 			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid');
+			break;
+		case t.OptionalType:
+			const optionalByte = buffer.readUInt8(offset);
+			assert.assert((optionalByte === 0x00 || optionalByte === 0xFF), '0x' + optionalByte.toString(16) + ' is an invalid Optional byte');
+			length = 1;
+			if (optionalByte) {
+				const subValue = consumeValue({buffer, offset: offset + length, type: type.type});
+				length += subValue.length;
+				value = subValue.value;
+			}
+			else value = null;
 			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
