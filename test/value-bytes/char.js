@@ -9,4 +9,4 @@ type.writeValue(gb, 'é');
 assert.equal(gb.toBuffer(), Buffer.from([0xc3, 0xa9]));
 
 const buffer = Buffer.from([0x61, 0xc3, 0xa9, 0x62]); //aéb
-assert.equal(r.readValue({buffer, offset: 1, type, fullBuffer: false}), 'é');
+assert.equal(r.readValue({buffer, offset: 1, type}), 'é');

@@ -306,16 +306,20 @@ function consumeValue({buffer, offset, type}) {
 			}
 			else value = null;
 			break;
+		case t.PointerType:
+			const location = readLengthBuffer(buffer, offset);
+			length = location.length;
+			value = consumeValue({buffer, offset: location.value, type: type.type}).value;
+			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
 	}
 	return {value, length};
 }
-function readValue({buffer, type, offset = 0, fullBuffer = true}) {
+function readValue({buffer, type, offset = 0}) {
 	assert.instanceOf(buffer, Buffer);
 	assert.instanceOf(type, t.Type);
 	const {value, length} = consumeValue({buffer, offset: offset, type});
-	if (fullBuffer) assert.assert(length === buffer.length, 'Did not consume all of the buffer');
 	return value;
 }
 
