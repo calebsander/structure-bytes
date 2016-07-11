@@ -12,9 +12,23 @@ let type = new t.ArrayType(
 let outStream = fs.createWriteStream(OUT_FILE);
 let s = new Simultaneity();
 s.addTask(() => {
-	io.writeType(type, outStream).on('sb-written', () => {
+	io.writeType({type, outStream}).on('sb-written', () => {
 		let result = fs.readFileSync(OUT_FILE);
 		assert.equal(result, Buffer.from([0x52, 0x51, 2, 3, 0x61, 0x62, 0x63, 0x41, 3, 0x64, 0x65, 0x66, 0x52, 0x02]));
+		s.taskFinished();
+	});
+});
+s.addTask(() => {
+	io.readType(new BufferStream(type.toBuffer()), (err, readType) => {
+		if (err) throw err;
+		assert.equal(readType, type);
+		s.taskFinished();
+	});
+});
+s.addTask(() => {
+	io.readType(new BufferStream(Buffer.from([0])), (err, readType) => {
+		assert.assert(err, 'No error occurred');
+		assert.equal(readType, null);
 		s.taskFinished();
 	});
 });

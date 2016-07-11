@@ -8,6 +8,7 @@ const r = require(__dirname + '/../read.js');
 const Simultaneity = require(__dirname + '/../lib/simultaneity.js');
 const t = require(__dirname + '/../structure-types.js');
 
+let asyncErrors = 0;
 fs.readdir(__dirname, (err, testSuites) => {
 	if (err) throw err;
 	let passed = 0;
@@ -35,7 +36,12 @@ fs.readdir(__dirname, (err, testSuites) => {
 		});
 	}
 	process.on('exit', () => {
-		console.log(String(passed) + ' tests out of ' + String(total) + ' passed (' + Math.round(passed / total * 100) + '%)');
-		process.exitCode = total - passed;
+		console.log(String(passed) + ' (synchronous parts of) tests out of ' + String(total) + ' passed (' + Math.round(passed / total * 100) + '%)');
+		process.exitCode = total - passed + asyncErrors;
+	}).on('uncaughtException', (err) => {
+		console.log('Error occurred in async test:');
+		console.log(err);
+		Simultaneity.endAll();
+		asyncErrors++;
 	});
 });
