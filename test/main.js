@@ -5,6 +5,7 @@ const BufferStream = require(__dirname + '/../lib/buffer-stream.js');
 const GrowableBuffer = require(__dirname + '/../lib/growable-buffer.js');
 const io = require(__dirname + '/../io.js');
 const r = require(__dirname + '/../read.js');
+const Simultaneity = require(__dirname + '/../lib/simultaneity.js');
 const t = require(__dirname + '/../structure-types.js');
 
 fs.readdir(__dirname, (err, testSuites) => {

@@ -1,28 +1,31 @@
-let ended = 0;
-new t.ByteType().getSignature((signature) => {
-	assert.equal(signature, 'AAM=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
-	ended++;
+let s = new Simultaneity();
+s.addTask(() => {
+	new t.ByteType().getSignature((signature) => {
+		assert.equal(signature, 'AAM=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
+		s.taskFinished();
+	});
 });
-let waitForFinish = setInterval(() => {
-	if (ended === 2) clearInterval(waitForFinish);
-}, 10);
-new t.StructType({
-	'bcd': new t.PointerType(
-		new t.OptionalType(
-			new t.SetType(
-				new t.MapType(
-					new t.UnsignedIntType(),
-					new t.ArrayType(
-						new t.TupleType({
-							type: new t.BooleanArrayType(),
-							length: 5
-						})
+s.addTask(() => {
+	new t.StructType({
+		'bcd': new t.PointerType(
+			new t.OptionalType(
+				new t.SetType(
+					new t.MapType(
+						new t.UnsignedIntType(),
+						new t.ArrayType(
+							new t.TupleType({
+								type: new t.BooleanArrayType(),
+								length: 5
+							})
+						)
 					)
 				)
 			)
 		)
-	)
-}).getSignature((signature) => {
-	assert.equal(signature, 'AAM=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
-	ended++;
+	}).getSignature((signature) => {
+		assert.equal(signature, 'AAM=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
+		s.taskFinished();
+	});
 });
+let waitForFinish = setInterval(() => {}, 10);
+s.callback(() => clearInterval(waitForFinish));
