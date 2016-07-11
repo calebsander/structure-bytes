@@ -49,5 +49,19 @@ const io = module.exports = {
 			catch (e) { callback(e, null) }
 			if (type) callback(null, type);
 		});
+	},
+	readValue: ({inStream, type}, callback) => {
+		assert.instanceOf(inStream, stream.Readable);
+		assert.instanceOf(callback, Function);
+		const segments = [];
+		inStream.on('data', (chunk) => segments.push(chunk));
+		inStream.on('error', close).on('error', (err) => callback(err, null));
+		inStream.on('end', () => {
+			const buffer = Buffer.concat(segments);
+			let value;
+			try { value = r.readValue({buffer, type}) }
+			catch (e) { callback(e, null) }
+			if (value) callback(null, value);
+		});
 	}
 };

@@ -21,6 +21,7 @@ s.addTask(() => {
 s.addTask(() => {
 	io.readType(new BufferStream(type.toBuffer()), (err, readType) => {
 		if (err) throw err;
+		assert.equal(err, null);
 		assert.equal(readType, type);
 		s.taskFinished();
 	});
