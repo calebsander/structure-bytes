@@ -324,6 +324,7 @@ function readValue({buffer, type, offset = 0}) {
 }
 
 module.exports = {
+	_consumeType: consumeType,
 	readType,
 	readValue
 };
