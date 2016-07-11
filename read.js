@@ -150,6 +150,7 @@ function readBooleans({buffer, offset, count}) {
 	let byteLength;
 	if (incompleteBytes) byteLength = bytes + 1;
 	else byteLength = bytes;
+	assert.assert(buffer.length >= offset + byteLength, NOT_LONG_ENOUGH);
 	for (let i = 0; i < byteLength; i++) {
 		const byte = buffer.readUInt8(offset + i);
 		for (let bit = 0; bit < 8; bit++) {
@@ -164,54 +165,64 @@ function consumeValue({buffer, offset, type}) {
 	let value, length;
 	switch (type.constructor) {
 		case t.ByteType:
-			value = buffer.readInt8(offset);
 			length = 1;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readInt8(offset);
 			break;
 		case t.ShortType:
-			value = buffer.readInt16BE(offset);
 			length = 2;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readInt16BE(offset);
 			break;
 		case t.IntType:
-			value = buffer.readInt32BE(offset);
 			length = 4;
+			value = buffer.readInt32BE(offset);
 			break;
 		case t.LongType:
+			length = 8;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
 			const upper = buffer.readInt32BE(offset);
 			const lower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
-			length = 8;
 			break;
 		case t.UnsignedByteType:
-			value = buffer.readUInt8(offset);
 			length = 1;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readUInt8(offset);
 			break;
 		case t.UnsignedShortType:
-			value = buffer.readUInt16BE(offset);
 			length = 2;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readUInt16BE(offset);
 			break;
 		case t.UnsignedIntType:
-			value = buffer.readUInt32BE(offset);
 			length = 4;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readUInt32BE(offset);
 			break;
 		case t.UnsignedLongType:
+			length = 8;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
 			const unsignedUpper = buffer.readUInt32BE(offset);
 			const unsignedLower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
-			length = 8;
 			break;
 		case t.FloatType:
-			value = buffer.readFloatBE(offset);
 			length = 4;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readFloatBE(offset);
 			break;
 		case t.DoubleType:
-			value = buffer.readDoubleBE(offset);
 			length = 8;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			value = buffer.readDoubleBE(offset);
 			break;
 		case t.BooleanType:
+			length = 1;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
 			const readByte = buffer.readUInt8(offset);
 			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
 			value = !!readByte;
-			length = 1;
 			break;
 		case t.BooleanArrayType:
 			const booleanArrayLength = readLengthBuffer(buffer, offset);
@@ -224,6 +235,7 @@ function consumeValue({buffer, offset, type}) {
 			({value, length} = readBooleans({buffer, offset, count: type.length}));
 			break;
 		case t.CharType:
+			assert.assert(buffer.length > offset, NOT_LONG_ENOUGH);
 			value = buffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
 			length = Buffer.byteLength(value);
 			break;
@@ -290,15 +302,17 @@ function consumeValue({buffer, offset, type}) {
 			}
 			break;
 		case t.EnumType:
-			const valueIndex = buffer.readUInt8(offset);
 			length = 1;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			const valueIndex = buffer.readUInt8(offset);
 			value = type.values[valueIndex];
 			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid');
 			break;
 		case t.OptionalType:
+			length = 1;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
 			const optionalByte = buffer.readUInt8(offset);
 			assert.assert((optionalByte === 0x00 || optionalByte === 0xFF), '0x' + optionalByte.toString(16) + ' is an invalid Optional byte');
-			length = 1;
 			if (optionalByte) {
 				const subValue = consumeValue({buffer, offset: offset + length, type: type.type});
 				length += subValue.length;
