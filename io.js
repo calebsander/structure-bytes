@@ -10,14 +10,14 @@ function close() {
 }
 
 const io = module.exports = {
-	writeType: ({type, outStream}) => {
+	writeType({type, outStream}) {
 		assert.instanceOf(type, t.Type);
 		assert.instanceOf(outStream, stream.Writable);
 		return new BufferStream(type.toBuffer()).pipe(outStream).on('error', close).on('finish', function() {
 			this.emit('sb-written');
 		});
 	},
-	writeValue: ({type, value, outStream}) => {
+	writeValue({type, value, outStream}) {
 		assert.instanceOf(type, t.Type);
 		assert.instanceOf(outStream, stream.Writable);
 		const valueBuffer = new GrowableBuffer();
@@ -26,7 +26,7 @@ const io = module.exports = {
 			this.emit('sb-written');
 		});
 	},
-	writeTypeAndValue: ({type, value, outStream}) => {
+	writeTypeAndValue({type, value, outStream}) {
 		assert.instanceOf(type, t.Type);
 		assert.instanceOf(outStream, stream.Writable);
 		const typeStream = new BufferStream(type.toBuffer());
@@ -36,7 +36,7 @@ const io = module.exports = {
 		});
 		return outStream;
 	},
-	readType: (inStream, callback) => {
+	readType(inStream, callback) {
 		assert.instanceOf(inStream, stream.Readable);
 		assert.instanceOf(callback, Function);
 		const segments = [];
@@ -50,7 +50,7 @@ const io = module.exports = {
 			if (type) callback(null, type);
 		});
 	},
-	readValue: ({inStream, type}, callback) => {
+	readValue({inStream, type}, callback) {
 		assert.instanceOf(inStream, stream.Readable);
 		assert.instanceOf(callback, Function);
 		const segments = [];
@@ -64,7 +64,7 @@ const io = module.exports = {
 			if (value) callback(null, value);
 		});
 	},
-	readTypeAndValue: (inStream, callback) => {
+	readTypeAndValue(inStream, callback) {
 		assert.instanceOf(inStream, stream.Readable);
 		assert.instanceOf(callback, Function);
 		const segments = [];
