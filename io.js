@@ -45,7 +45,7 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
-			try { type = r.readType(buffer) }
+			try { type = r.type(buffer) }
 			catch (e) { callback(e, null) }
 			if (type) callback(null, type);
 		});
@@ -59,7 +59,7 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let value;
-			try { value = r.readValue({buffer, type}) }
+			try { value = r.value({buffer, type}) }
 			catch (e) { callback(e, null) }
 			if (value) callback(null, value);
 		});
@@ -77,7 +77,7 @@ const io = module.exports = {
 			catch (e) { callback(e, null) }
 			if (type) {
 				let value;
-				try { value = r.readValue({buffer, offset: type.length, type: type.value})}
+				try { value = r.value({buffer, offset: type.length, type: type.value})}
 				catch (e) { callback(e, null) }
 				if (value) callback(null, value);
 			}

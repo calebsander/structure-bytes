@@ -15,4 +15,4 @@ const VALUE = [
 ];
 type.writeValue(gb, VALUE);
 assert.equal(gb.toBuffer(), Buffer.from([0, 0, 0, 2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]));
-assert.equal(r.readValue({buffer: gb.toBuffer(), type}), VALUE);
+assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE);

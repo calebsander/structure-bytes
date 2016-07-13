@@ -1,3 +1,6 @@
+//For use with browserify
+if (__dirname === '/') __dirname = '';
+
 const assert = require(__dirname + '/lib/assert.js');
 const BufferStream = require(__dirname + '/lib/buffer-stream.js');
 const config = require(__dirname + '/config.js');

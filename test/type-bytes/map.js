@@ -6,4 +6,4 @@ let map = new t.MapType(
 	})
 );
 assert.equal(map.toBuffer(), Buffer.from([0x54, 0x41, 0x51, 2, 1, 0x61, 0x52, 0x11, 5, 0x62, 0xe2, 0x80, 0x94, 0x63, 0x40]));
-assert.equal(r.readType(map.toBuffer()), map);
+assert.equal(r.type(map.toBuffer()), map);

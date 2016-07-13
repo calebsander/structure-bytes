@@ -137,7 +137,7 @@ function consumeType(typeBuffer, offset) {
 	}
 	return {value, length};
 }
-function readType(typeBuffer, fullBuffer = true) {
+function type(typeBuffer, fullBuffer = true) {
 	assert.instanceOf(typeBuffer, Buffer);
 	const {value, length} = consumeType(typeBuffer, 0);
 	if (fullBuffer) assert.assert(length === typeBuffer.length, 'Did not consume all of the buffer');
@@ -330,7 +330,7 @@ function consumeValue({buffer, offset, type}) {
 	}
 	return {value, length};
 }
-function readValue({buffer, type, offset = 0}) {
+function value({buffer, type, offset = 0}) {
 	assert.instanceOf(buffer, Buffer);
 	assert.instanceOf(type, t.Type);
 	const {value, length} = consumeValue({buffer, offset: offset, type});
@@ -339,6 +339,6 @@ function readValue({buffer, type, offset = 0}) {
 
 module.exports = {
 	_consumeType: consumeType,
-	readType,
-	readValue
+	type,
+	value
 };

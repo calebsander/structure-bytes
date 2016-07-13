@@ -4,4 +4,4 @@ let type = new t.TupleType({
 });
 let buffer = type.toBuffer();
 assert.equal(buffer, Buffer.from([0x50, 0x32, 0, 0, 0, 3]));
-assert.equal(r.readType(buffer), type);
+assert.equal(r.type(buffer), type);

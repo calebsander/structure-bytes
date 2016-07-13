@@ -15,4 +15,4 @@ gb = new GrowableBuffer();
 const VALUE = new Set().add({a: 2, b: 'c'}).add({a: 420, b: '-'});
 type.writeValue(gb, VALUE);
 assert.equal(gb.toBuffer(), Buffer.from([0, 0, 0, 2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]));
-assert.equal(r.readValue({buffer: gb.toBuffer(), type}), VALUE);
+assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE);
