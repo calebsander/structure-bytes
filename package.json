@@ -3,6 +3,9 @@
 	"version": "0.0.3",
 	"description": "Efficiently stores data of any shape by separating it into structure and value",
 	"main": "index.js",
+	"devDependencies": {
+		"browserify": "13.0.x"
+	},
 	"directories": {
 		"test": "test"
 	},
