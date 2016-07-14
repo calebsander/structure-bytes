@@ -194,20 +194,32 @@ class UnsignedIntType extends UnsignedType {
 		buffer.addAll(byteBuffer);
 	}
 }
+function writeUnsignedLong(buffer, value) {
+	assert.instanceOf(buffer, GrowableBuffer);
+	assert.instanceOf(value, String);
+	if (strint.gt(value, '18446744073709551615') || strint.lt(value, '0')) throw new Error('Value out of range');
+	const upper = strint.div(value, strint.LONG_UPPER_SHIFT);
+	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT));
+	const byteBuffer = Buffer.allocUnsafe(8);
+	byteBuffer.writeUInt32BE(Number(upper), 0);
+	byteBuffer.writeUInt32BE(Number(lower), 4);
+	buffer.addAll(byteBuffer);
+}
 class UnsignedLongType extends UnsignedType {
 	static get _value() {
 		return 0x14;
 	}
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, String);
-		if (strint.gt(value, '18446744073709551615') || strint.lt(value, '0')) throw new Error('Value out of range');
-		const upper = strint.div(value, strint.LONG_UPPER_SHIFT);
-		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT));
-		const byteBuffer = Buffer.allocUnsafe(8);
-		byteBuffer.writeUInt32BE(Number(upper), 0);
-		byteBuffer.writeUInt32BE(Number(lower), 4);
-		buffer.addAll(byteBuffer);
+		writeUnsignedLong(buffer, value);
+	}
+}
+class DateType extends AbsoluteType {
+	static get _value() {
+		return 0x15;
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Date);
+		writeUnsignedLong(buffer, String(value.getTime()));
 	}
 }
 
@@ -564,6 +576,7 @@ module.exports = {
 	UnsignedShortType,
 	UnsignedIntType,
 	UnsignedLongType,
+	DateType,
 	FloatType,
 	DoubleType,
 	BooleanType,
