@@ -4,7 +4,7 @@ if (__dirname === '/') __dirname = '';
 const assert = require(__dirname + '/lib/assert.js');
 const BufferStream = require(__dirname + '/lib/buffer-stream.js');
 const config = require(__dirname + '/config.js');
-const crypto = require('crypto');
+const createHash = require('sha.js');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
 const strint = require(__dirname + '/lib/strint.js');
 const util = require('util');
@@ -61,37 +61,24 @@ class Type {
 		return buffer.toBuffer();
 	}
 	//Gets an SHA256 hash of the type, using a cached value if present (async)
-	getHash(callback) {
-		if (this.cachedHash) callback(this.cachedHash);
-		else this._getHash((hash) => {
-			this.cachedHash = hash;
-			callback(hash);
-		});
+	getHash() {
+		if (!this.cachedHash) this.cachedHash = this._getHash();
+		return this.cachedHash;
 	}
 	//Gets an SHA256 hash of the type (async)
-	_getHash(callback) {
-		assert.instanceOf(callback, Function);
-		const buffer = new GrowableBuffer();
-		this.addToBuffer(buffer);
-		const hash = crypto.createHash('sha256');
-		new BufferStream(buffer).pipe(hash).on('finish', () => {
-			callback(hash.read().toString('base64'));
-		});
+	_getHash() {
+		const hash = createHash('sha256');
+		hash.update(this.toBuffer());
+		return hash.digest('base64');
 	}
 	//Gets a signature string for the type, using a cached value if present (async)
-	getSignature(callback) {
-		if (this.cachedSignature) callback(this.cachedSignature);
-		else this._getSignature((signature) => {
-			this.cachedSignature = signature;
-			callback(signature);
-		});
+	getSignature() {
+		if (!this.cachedSignature) this.cachedSignature = this._getSignature();
+		return this.cachedSignature;
 	}
 	//Gets a signature string for the type, identifying version and type information (async)
-	_getSignature(callback) {
-		assert.instanceOf(callback, Function);
-		this.getHash((hash) => {
-			callback(config.VERSION_STRING + hash);
-		});
+	_getSignature() {
+		return config.VERSION_STRING + this.getHash();
 	}
 	//Writes out the value according to the type spec
 	writeValue(buffer, value) {
