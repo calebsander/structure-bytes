@@ -37,6 +37,9 @@ function consumeType(typeBuffer, offset) {
 		case t.UnsignedLongType._value:
 			value = new t.UnsignedLongType();
 			break;
+		case t.DateType._value:
+			value = new t.DateType();
+			break;
 		case t.FloatType._value:
 			value = new t.FloatType();
 			break;
@@ -201,11 +204,13 @@ function consumeValue({buffer, offset, type}) {
 			value = buffer.readUInt32BE(offset);
 			break;
 		case t.UnsignedLongType:
+		case t.DateType:
 			length = 8;
 			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
 			const unsignedUpper = buffer.readUInt32BE(offset);
 			const unsignedLower = buffer.readUInt32BE(offset + 4);
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
+			if (type.constructor === t.DateType) value = new Date(Number(value));
 			break;
 		case t.FloatType:
 			length = 4;
