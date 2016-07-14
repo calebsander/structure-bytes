@@ -310,6 +310,7 @@ class BooleanArrayType extends AbsoluteType {
 	}
 	writeValue(buffer, value) {
 		assert.instanceOf(value, Array);
+		assert.fourByteUnsignedInteger(value.length);
 		buffer.addAll(lengthBuffer(value.length));
 		writeBooleans(buffer, value);
 	}
@@ -429,6 +430,7 @@ class ArrayType extends AbsoluteType {
 	}
 	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer);
+		assert.fourByteUnsignedInteger(value.length);
 		buffer.addAll(lengthBuffer(value.length));
 		for (let instance of value) this.type.writeValue(buffer, instance, false);
 		setPointers(buffer, root);
@@ -467,6 +469,7 @@ class MapType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Map);
+		assert.fourByteUnsignedInteger(value.size);
 		buffer.addAll(lengthBuffer(value.size));
 		for (let [mapKey, mapValue] of value) {
 			this.keyType.writeValue(buffer, mapKey, false);
