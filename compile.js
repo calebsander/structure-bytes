@@ -16,4 +16,5 @@ exposeFile(b, '/lib/growable-buffer.js');
 exposeFile(b, '/lib/bit-math.js');
 exposeFile(b, '/lib/strint.js');
 exposeFile(b, '/structure-types.js');
+b.transform('babelify', {presets: ['es2015']});
 b.bundle().pipe(fs.createWriteStream(__dirname + '/compiled/upload.js'));

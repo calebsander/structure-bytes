@@ -1,5 +1,10 @@
 (() => {
 	const assert = require('/lib/assert.js');
+	assert.instanceOf(window.Map, Function);
+	assert.instanceOf(window.Set, Function);
+	assert.instanceOf(window.ArrayBuffer, Function);
+	assert.instanceOf(window.Uint8Array, Function);
+	assert.instanceOf(window.Symbol, Function);
 	const GrowableBuffer = require('/lib/growable-buffer.js');
 	window.$ = window.jQuery = require('/client-side/jquery.js');
 	require('/client-side/binary-ajax.js');
