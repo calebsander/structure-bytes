@@ -23,6 +23,7 @@ Data types:
 	- `UnsignedInt` (4-byte unsigned integer)
 	- `UnsignedLong` (8-byte unsigned integer)
 	- `BigUnsignedInt` (planned; any number of bytes of precision)
+	- `Date` (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)
 	- `Float` (IEEE 32-bit floating-point number)
 	- `Double` (IEEE 64-bit floating-point number)
 	- `BigFloat` (planned; 16-bit exponent and any number of bytes of precision)

@@ -3,7 +3,7 @@ if (__dirname === '/') __dirname = '';
 
 const assert = require(__dirname + '/lib/assert.js');
 
-const VERSION = 3;
+const VERSION = 4;
 assert.between(0, VERSION, 65536);
 const VERSION_BYTES = 2;
 const VERSION_BUFFER = Buffer.allocUnsafe(VERSION_BYTES);

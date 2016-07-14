@@ -1,4 +1,4 @@
-assert.equal(new t.ByteType().getSignature(), 'AAM=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
+assert.equal(new t.ByteType().getSignature(), 'AAQ=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
 let type = new t.StructType({
 	bcd: new t.PointerType(
 		new t.OptionalType(
@@ -16,4 +16,4 @@ let type = new t.StructType({
 		)
 	)
 });
-assert.equal(type.getSignature(), 'AAM=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
+assert.equal(type.getSignature(), 'AAQ=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=');
