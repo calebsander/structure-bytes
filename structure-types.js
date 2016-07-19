@@ -522,15 +522,15 @@ class ChoiceType extends Type {
 	}
 	constructor(types) {
 		super();
-		assert.instanceOf(types, Set);
-		try { assert.byteUnsignedInteger(types.size); }
-		catch (e) { throw new Error(String(types.size) + ' types is too many'); }
+		assert.instanceOf(types, Array);
+		try { assert.byteUnsignedInteger(types.length); }
+		catch (e) { throw new Error(String(types.length) + ' types is too many'); }
 		for (let type of types) assert.instanceOf(type, Type);
 		this.types = types;
 	}
 	addToBuffer(buffer) {
 		super.addToBuffer(buffer);
-		buffer.add(this.types.size);
+		buffer.add(this.types.length);
 		for (let type of this.types) type.addToBuffer(buffer);
 	}
 	writeValue(buffer, value) {

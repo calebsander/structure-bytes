@@ -73,7 +73,7 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
-			try { type = r._consumeType(buffer, false) }
+			try { type = r._consumeType(buffer, 0) }
 			catch (e) { callback(e, null) }
 			if (type) {
 				let value;

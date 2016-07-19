@@ -125,6 +125,18 @@ function consumeType(typeBuffer, offset) {
 				values: values
 			});
 			break;
+		case t.ChoiceType._value:
+			assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
+			const typeCount = typeBuffer.readUInt8(offset + length);
+			length++;
+			const types = new Array(typeCount);
+			for (let i = 0; i < typeCount; i++) {
+				const type = consumeType(typeBuffer, offset + length);
+				types[i] = type.value;
+				length += type.length;
+			}
+			value = new t.ChoiceType(types);
+			break;
 		case t.OptionalType._value:
 			const optionalType = consumeType(typeBuffer, offset + length);
 			length += optionalType.length;
@@ -312,6 +324,14 @@ function consumeValue({buffer, offset, type}) {
 			const valueIndex = buffer.readUInt8(offset);
 			value = type.values[valueIndex];
 			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid');
+			break;
+		case t.ChoiceType:
+			length = 1;
+			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
+			const typeIndex = buffer.readUInt8(offset);
+			const subValue = consumeValue({buffer, offset: offset + length, type: type.types[typeIndex]});
+			length += subValue.length;
+			value = subValue.value;
 			break;
 		case t.OptionalType:
 			length = 1;
