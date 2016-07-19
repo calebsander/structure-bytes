@@ -5,8 +5,10 @@ const BufferStream = require(__dirname + '/../lib/buffer-stream.js');
 const GrowableBuffer = require(__dirname + '/../lib/growable-buffer.js');
 const io = require(__dirname + '/../io.js');
 const r = require(__dirname + '/../read.js');
+const ReplaceStream = require(__dirname + '/../lib/replace-stream.js');
 const Simultaneity = require(__dirname + '/../lib/simultaneity.js');
 const t = require(__dirname + '/../structure-types.js');
+const util = require(__dirname + '/../lib/util-inspect.js');
 
 let asyncErrors = 0;
 fs.readdir(__dirname, (err, testSuites) => {

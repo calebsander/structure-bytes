@@ -10,6 +10,7 @@ const type = new sb.ArrayType(
 	})
 );
 
+const PORT = 8080;
 http.createServer((req, res) => {
 	if (req.url === '/uploadtest') {
 		sb.readValue({inStream: req, type}, (err, value) => {
@@ -34,5 +35,5 @@ http.createServer((req, res) => {
 		});
 		readStream.pipe(res);
 	}
-}).listen(8080);
-console.log('Running');
+}).listen(PORT);
+console.log('Listening on port ' + String(PORT));
