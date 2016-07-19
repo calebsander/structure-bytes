@@ -516,6 +516,42 @@ class EnumType extends Type {
 		buffer.add(index);
 	}
 }
+class ChoiceType extends Type {
+	static get _value() {
+		return 0x56;
+	}
+	constructor(types) {
+		super();
+		assert.instanceOf(types, Set);
+		try { assert.byteUnsignedInteger(types.size); }
+		catch (e) { throw new Error(String(types.size) + ' types is too many'); }
+		for (let type of types) assert.instanceOf(type, Type);
+		this.types = types;
+	}
+	addToBuffer(buffer) {
+		super.addToBuffer(buffer);
+		buffer.add(this.types.size);
+		for (let type of this.types) type.addToBuffer(buffer);
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		let i = 0;
+		let success = false;
+		for (let type of this.types) {
+			let valueBuffer = new GrowableBuffer();
+			try { type.writeValue(valueBuffer, value) }
+			catch (e) {
+				i++;
+				continue;
+			}
+			buffer.add(i);
+			buffer.addAll(valueBuffer.toBuffer());
+			success = true;
+			break;
+		}
+		if (!success) assert.fail('No types matched: ' + util.inspect(success));
+	}
+}
 class OptionalType extends AbsoluteType {
 	static get _value() {
 		return 0x60;
@@ -590,6 +626,7 @@ module.exports = {
 	SetType,
 	MapType,
 	EnumType,
+	ChoiceType,
 	OptionalType,
 	PointerType
 };
