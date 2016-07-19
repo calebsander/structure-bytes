@@ -9,6 +9,7 @@ const type = new sb.ArrayType(
 		id: new sb.UnsignedShortType
 	})
 );
+const VALUE = [{name: 'John', id: 2}, {name: 'Jane', id: 10}];
 
 const PORT = 8080;
 http.createServer((req, res) => {
@@ -19,11 +20,15 @@ http.createServer((req, res) => {
 				console.log(err);
 			}
 			else {
-				assert.equal(value, [{name: 'John', id: 2}, {name: 'Jane', id: 10}]);
+				assert.equal(value, VALUE);
 				console.log('Got upload');
 				res.end('Success');
 			}
 		});
+	}
+	else if (req.url.startsWith('/downloadtest')) {
+		sb.httpRespond({req, res, type, value: VALUE});
+		console.log('Sent download');
 	}
 	else {
 		if (req.url === '/') req.url = '/client-test/files/index.html';

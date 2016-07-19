@@ -8,35 +8,76 @@ function exposeFile(b, name, fileName = name) {
 	b.require(__dirname + fileName, {expose: name});
 }
 
-console.log('Compiling');
-let b = browserify();
-b.add(fs.createReadStream(__dirname + '/client-side/upload.js'));
+let uploadB = browserify();
+uploadB.add(__dirname + '/client-side/upload.js');
+let downloadB = browserify();
+downloadB.add(__dirname + '/client-side/download.js');
 
-var s = new Simultaneity;
-for (let utilFile of ['/lib/assert', '/structure-types']) {
+let s = new Simultaneity;
+for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
 	s.addTask(() => {
 		fs.createReadStream(__dirname + utilFile + '.js')
 		.pipe(new ReplaceStream("require('util')", "require('/lib/util-inspect.js')"))
-		.pipe(fs.createWriteStream(__dirname + utilFile + '-no-util.js')).on('finish', () => {
-			exposeFile(b, utilFile + '.js', utilFile + '-no-util.js')
+		.pipe(fs.createWriteStream(__dirname + utilFile + '-noutil.js')).on('finish', () => {
 			s.taskFinished();
 		});
 	});
 }
+for (let zlibFile of ['/io']) {
+	s.addTask(() => {
+		fs.createReadStream(__dirname + zlibFile + '.js')
+		.pipe(new ReplaceStream("const zlib = require('zlib');", ''))
+		.pipe(fs.createWriteStream(__dirname + zlibFile + '-nozlib.js')).on('finish', () => {
+			s.taskFinished();
+		});
+	});
+}
+console.log('Replacing large dependencies');
 s.callback(() => {
-	exposeFile(b, '/client-side/binary-ajax.js');
-	exposeFile(b, '/config.js');
-	exposeFile(b, '/lib/buffer-stream.js');
-	exposeFile(b, '/lib/growable-buffer.js');
-	exposeFile(b, '/lib/bit-math.js');
-	exposeFile(b, '/lib/strint.js');
-	exposeFile(b, '/lib/util-inspect.js');
+	compile(uploadB, {
+		modifiedFiles: {
+			noutil: ['/lib/assert', '/structure-types']
+		},
+		exposeFiles: [
+			'/client-side/binary-ajax.js',
+			'/config.js',
+			'/lib/buffer-stream.js',
+			'/lib/growable-buffer.js',
+			'/lib/bit-math.js',
+			'/lib/strint.js',
+			'/lib/util-inspect.js'
+		],
+		outputFile: '/compiled/upload.js'
+	});
+	compile(downloadB, {
+		modifiedFiles: {
+			noutil: ['/lib/assert', '/structure-types', '/read'],
+			nozlib: ['/io']
+		},
+		exposeFiles: [
+			'/client-side/binary-ajax.js',
+			'/config.js',
+			'/lib/buffer-stream.js',
+			'/lib/growable-buffer.js',
+			'/lib/bit-math.js',
+			'/lib/strint.js',
+			'/lib/util-inspect.js'
+		],
+		outputFile: '/compiled/download.js'
+	});
+});
+function compile(b, {modifiedFiles, exposeFiles, outputFile}) {
+	console.log('Compiling ' + outputFile);
+	for (let ending in modifiedFiles) {
+		for (let file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js');
+	}
+	for (let file of exposeFiles) exposeFile(b, file);
 	b.transform('babelify', {presets: ['es2015']});
-	b.bundle().pipe(fs.createWriteStream(__dirname + '/compiled/upload.js')).on('finish', () => {
-		console.log('Uglifying');
-		const uglified = uglify.minify(__dirname + '/compiled/upload.js').code;
-		fs.writeFile(__dirname + '/compiled/upload.js', uglified, (err) => {
+	b.bundle().pipe(fs.createWriteStream(__dirname + outputFile)).on('finish', () => {
+		console.log('Uglifying ' + outputFile);
+		const uglified = uglify.minify(__dirname + outputFile).code;
+		fs.writeFile(__dirname + outputFile, uglified, (err) => {
 			if (err) throw err;
 		});
 	});
-});
+}

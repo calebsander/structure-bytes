@@ -1,3 +1,6 @@
+//For use with browserify
+if (__dirname === '/') __dirname = '';
+
 const assert = require(__dirname + '/lib/assert.js');
 const bitMath = require(__dirname + '/lib/bit-math.js');
 const strint = require(__dirname + '/lib/strint.js');
