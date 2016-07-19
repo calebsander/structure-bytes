@@ -14,16 +14,14 @@ b.add(fs.createReadStream(__dirname + '/client-side/upload.js'));
 
 var s = new Simultaneity();
 for (let utilFile of ['/lib/assert', '/structure-types']) {
-	s.addTask(((utilFile) => {
-		return () => {
-			fs.createReadStream(__dirname + utilFile + '.js')
-			.pipe(new ReplaceStream("require('util')", "require('/lib/util-inspect.js')"))
-			.pipe(fs.createWriteStream(__dirname + utilFile + '-no-util.js')).on('finish', () => {
-				exposeFile(b, utilFile + '.js', utilFile + '-no-util.js')
-				s.taskFinished();
-			});
-		}
-	})(utilFile));
+	s.addTask(() => {
+		fs.createReadStream(__dirname + utilFile + '.js')
+		.pipe(new ReplaceStream("require('util')", "require('/lib/util-inspect.js')"))
+		.pipe(fs.createWriteStream(__dirname + utilFile + '-no-util.js')).on('finish', () => {
+			exposeFile(b, utilFile + '.js', utilFile + '-no-util.js')
+			s.taskFinished();
+		});
+	});
 }
 s.callback(() => {
 	exposeFile(b, '/client-side/binary-ajax.js');
