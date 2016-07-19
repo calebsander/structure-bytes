@@ -1,6 +1,6 @@
 {
 	"name": "structure-bytes",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Efficiently stores data of any shape by separating it into structure and value",
 	"main": "index.js",
 	"devDependencies": {

@@ -39,5 +39,6 @@ Data types:
 	- `Set<Type>` (like an `Array`, except creates a set when read)
 	- `Map<KeyType, ValueType>` (a mapping of `KeyType` instances to `ValueType` instances)
 	- `Enum<Type>` (a fixed set of up to 255 `Type`s; useful when only a small subset of `Type` instances represent possible values, especially with `String`s)
+	- `Choice` (a fixed set of up to 255 types that values can take on)
 	- `Optional<Type>` (either `null` or an instance of `Type`)
 	- `Pointer<Type>` (allows multiple long instances of `Type` with the same bytes to be stored only once)
