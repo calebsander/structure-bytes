@@ -1,5 +1,5 @@
-let type = new t.StringType();
-let gb = new GrowableBuffer();
+let type = new t.StringType;
+let gb = new GrowableBuffer;
 for (let invalidValue of [undefined, null, 2, false, ['abc']]) {
 	assert.throws(() => {
 		type.writeValue(gb, invalidValue);

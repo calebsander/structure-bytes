@@ -5,8 +5,8 @@ const sb = require(__dirname + '/../index.js');
 
 const type = new sb.ArrayType(
 	new sb.StructType({
-		name: new sb.StringType(),
-		id: new sb.UnsignedShortType()
+		name: new sb.StringType,
+		id: new sb.UnsignedShortType
 	})
 );
 

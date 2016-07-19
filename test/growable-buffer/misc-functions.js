@@ -1,9 +1,9 @@
-let gb = new GrowableBuffer();
+let gb = new GrowableBuffer;
 for (let i = 0; i < 10; i++) gb.addAll(Buffer.from('abc'));
-let gb2 = new GrowableBuffer();
+let gb2 = new GrowableBuffer;
 gb2.addAll(Buffer.from('abc'.repeat(10)));
 assert.equal(gb.toBuffer(), gb2.toBuffer());
-gb = new GrowableBuffer();
+gb = new GrowableBuffer;
 for (let i = 0; i < 100; i++) {
 	assert.throws(() => gb.set(i, i));
 	gb.add(i);

@@ -1,9 +1,9 @@
 let type = new t.StructType({
-	b: new t.BooleanArrayType(),
-	i: new t.UnsignedIntType(),
-	s: new t.StringType()
+	b: new t.BooleanArrayType,
+	i: new t.UnsignedIntType,
+	s: new t.StringType
 });
-let gb = new GrowableBuffer();
+let gb = new GrowableBuffer;
 assert.throws(() => {
 	type.writeValue(gb, {});
 });

@@ -1,5 +1,5 @@
 let type = new t.TupleType({
-	type: new t.BooleanArrayType(),
+	type: new t.BooleanArrayType,
 	length: 3
 });
 let buffer = type.toBuffer();

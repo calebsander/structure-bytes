@@ -4,10 +4,10 @@ let type = new t.StructType({
 		new t.OptionalType(
 			new t.SetType(
 				new t.MapType(
-					new t.UnsignedIntType(),
+					new t.UnsignedIntType,
 					new t.ArrayType(
 						new t.TupleType({
-							type: new t.BooleanArrayType(),
+							type: new t.BooleanArrayType,
 							length: 5
 						})
 					)

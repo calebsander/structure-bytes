@@ -3,14 +3,14 @@ const OUT_FILE = 'type-out';
 
 let type = new t.ArrayType(
 	new t.StructType({
-		abc: new t.StringType(),
+		abc: new t.StringType,
 		def: new t.ArrayType(
-			new t.ShortType()
+			new t.ShortType
 		)
 	})
 );
 let outStream = fs.createWriteStream(OUT_FILE);
-let s = new Simultaneity();
+let s = new Simultaneity;
 s.addTask(() => {
 	io.writeType({type, outStream}).on('sb-written', () => {
 		let result = fs.readFileSync(OUT_FILE);

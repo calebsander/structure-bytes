@@ -1,14 +1,14 @@
 let type = new t.TupleType({
-	type: new t.StringType(),
+	type: new t.StringType,
 	length: 5
 });
-let gb = new GrowableBuffer();
+let gb = new GrowableBuffer;
 for (let invalidValue of [undefined, null, 'abcde', 7, true, [1, 2, 3, 4, 5], ['a', 'b', 'c', 'd', 5], ['a', 'b', 'c', 'd', 'e', 'f']]) {
 	assert.throws(() => {
 		type.writeValue(gb, invalidValue);
 	});
 }
-gb = new GrowableBuffer();
+gb = new GrowableBuffer;
 const VALUE = [
 	'',
 	'a',

@@ -1,4 +1,4 @@
-let a = new GrowableBuffer();
+let a = new GrowableBuffer;
 assert.equal(a.buffer.length, 10);
 a = new GrowableBuffer(100);
 assert.equal(a.buffer.length, 100);

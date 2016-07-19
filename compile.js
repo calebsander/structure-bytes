@@ -12,7 +12,7 @@ console.log('Compiling');
 let b = browserify();
 b.add(fs.createReadStream(__dirname + '/client-side/upload.js'));
 
-var s = new Simultaneity();
+var s = new Simultaneity;
 for (let utilFile of ['/lib/assert', '/structure-types']) {
 	s.addTask(() => {
 		fs.createReadStream(__dirname + utilFile + '.js')

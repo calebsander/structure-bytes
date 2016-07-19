@@ -1,14 +1,14 @@
 let type = new t.ArrayType(
 	new t.StructType({
-		a: new t.UnsignedShortType(),
-		b: new t.CharType()
+		a: new t.UnsignedShortType,
+		b: new t.CharType
 	})
 );
-let gb = new GrowableBuffer();
+let gb = new GrowableBuffer;
 for (let invalidValue of [undefined, [2, true], 'abc', {a: 'b'}]) {
 	assert.throws(() => type.writeValue(gb, invalidValue));
 }
-gb = new GrowableBuffer();
+gb = new GrowableBuffer;
 const VALUE = [
 	{a: 7623, b: 'a'},
 	{a: 23, b: 'Ȁ'}

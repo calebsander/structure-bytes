@@ -56,7 +56,7 @@ class Type {
 	}
 	//Generates the type in buffer form
 	_toBuffer() {
-		const buffer = new GrowableBuffer();
+		const buffer = new GrowableBuffer;
 		this.addToBuffer(buffer);
 		return buffer.toBuffer();
 	}
@@ -503,10 +503,10 @@ class EnumType extends Type {
 		assert.instanceOf(values, Array);
 		try { assert.byteUnsignedInteger(values.length); }
 		catch (e) { throw new Error(String(values.length) + ' values is too many'); }
-		const valueIndices = new Map();
+		const valueIndices = new Map;
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i];
-			const buffer = new GrowableBuffer();
+			const buffer = new GrowableBuffer;
 			type.writeValue(buffer, value)
 			const valueBuffer = buffer.toBuffer().toString(BINARY);
 			assert.assert(!valueIndices.has(valueBuffer), 'Value is repeated: ' + util.inspect(value));
@@ -524,7 +524,7 @@ class EnumType extends Type {
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		const valueBuffer = new GrowableBuffer();
+		const valueBuffer = new GrowableBuffer;
 		this.type.writeValue(valueBuffer, value, false);
 		const index = this.valueIndices.get(valueBuffer.toBuffer().toString(BINARY));
 		assert.assert(index !== undefined, 'Not a valid enum value: ' + util.inspect(value));
@@ -554,7 +554,7 @@ class ChoiceType extends Type {
 		let i = 0;
 		let success = false;
 		for (let type of this.types) {
-			let valueBuffer = new GrowableBuffer();
+			let valueBuffer = new GrowableBuffer;
 			try { type.writeValue(valueBuffer, value, false) }
 			catch (e) {
 				i++;
@@ -606,8 +606,8 @@ class PointerType extends Type {
 		this.type.addToBuffer(buffer);
 	}
 	writeValue(buffer, value, root = true) {
-		if (buffer.pointers === undefined) buffer.pointers = new Map();
-		const valueBuffer = new GrowableBuffer();
+		if (buffer.pointers === undefined) buffer.pointers = new Map;
+		const valueBuffer = new GrowableBuffer;
 		this.type.writeValue(valueBuffer, value);
 		const valueString = valueBuffer.toBuffer().toString(BINARY); //have to convert the buffer to a string because equivalent buffers are not ===
 		const currentIndex = buffer.length;

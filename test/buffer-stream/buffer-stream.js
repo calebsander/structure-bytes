@@ -1,6 +1,6 @@
 let inBuffer = Buffer.allocUnsafe(0);
 let bs = new BufferStream(inBuffer);
-let outBuffer = new GrowableBuffer();
+let outBuffer = new GrowableBuffer;
 let ended = false;
 bs.on('data', (chunk) => outBuffer.addAll(chunk)).on('end', () => {
 	ended = true;
@@ -12,7 +12,7 @@ let waitForFinish = setInterval(() => {
 
 let inBuffer2 = Buffer.allocUnsafe(100000);
 let bs2 = new BufferStream(inBuffer2);
-let outBuffer2 = new GrowableBuffer();
+let outBuffer2 = new GrowableBuffer;
 let ended2 = false;
 bs2.on('data', (chunk) => outBuffer2.addAll(chunk)).on('end', () => {
 	ended2 = true;

@@ -4,14 +4,14 @@ const OUT_FILE = 'value-out';
 let type = new t.TupleType({
 	type:
 		new t.OptionalType(
-			new t.CharType()
+			new t.CharType
 		),
 	length: 5
 });
 let value = ['a', null, 'b', null, 'c'];
 let outStream = fs.createWriteStream(OUT_FILE);
 const VALUE_BUFFER = Buffer.from([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63]);
-let s = new Simultaneity();
+let s = new Simultaneity;
 s.addTask(() => {
 	io.writeValue({type, value, outStream}).on('sb-written', () => {
 		let result = fs.readFileSync(OUT_FILE);

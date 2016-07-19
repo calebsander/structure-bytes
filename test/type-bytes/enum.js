@@ -1,13 +1,13 @@
 for (let invalidValues of ['asdf', [2], [true], [undefined], ['abc', 3], ['1', '2', '1']]) {
 	assert.throws(() => {
 		new t.EnumType({
-			type: new t.StringType(),
+			type: new t.StringType,
 			values: invalidValues
 		});
 	});
 }
 let type = new t.EnumType({
-	type: new t.StringType(),
+	type: new t.StringType,
 	values: [
 		'ABC',
 		'DEF',

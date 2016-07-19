@@ -20,7 +20,7 @@ const io = module.exports = {
 	writeValue({type, value, outStream}) {
 		assert.instanceOf(type, t.Type);
 		assert.instanceOf(outStream, stream.Writable);
-		const valueBuffer = new GrowableBuffer();
+		const valueBuffer = new GrowableBuffer;
 		type.writeValue(valueBuffer, value);
 		return new BufferStream(valueBuffer).pipe(outStream).on('error', close).on('finish', function() {
 			this.emit('sb-written');

@@ -3,7 +3,7 @@ for (let i = 0; i < 100000; i++) gb.add(i % 0x100);
 let i;
 for (i = 0; i < 100000; i++) assert.equal(gb.get(i), i % 0x100);
 assert.throws(() => gb.get(i));
-gb = new GrowableBuffer();
+gb = new GrowableBuffer;
 assert.equal(gb.buffer.length, 10);
 gb.grow(100);
 assert.equal(gb.buffer.length, 200);

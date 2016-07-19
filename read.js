@@ -14,40 +14,40 @@ function consumeType(typeBuffer, offset) {
 	let value, length = 1;
 	switch (typeBuffer.readUInt8(offset)) {
 		case t.ByteType._value:
-			value = new t.ByteType();
+			value = new t.ByteType;
 			break;
 		case t.ShortType._value:
-			value = new t.ShortType();
+			value = new t.ShortType;
 			break;
 		case t.IntType._value:
-			value = new t.IntType();
+			value = new t.IntType;
 			break;
 		case t.LongType._value:
-			value = new t.LongType();
+			value = new t.LongType;
 			break;
 		case t.UnsignedByteType._value:
-			value = new t.UnsignedByteType();
+			value = new t.UnsignedByteType;
 			break;
 		case t.UnsignedShortType._value:
-			value = new t.UnsignedShortType();
+			value = new t.UnsignedShortType;
 			break;
 		case t.UnsignedIntType._value:
-			value = new t.UnsignedIntType();
+			value = new t.UnsignedIntType;
 			break;
 		case t.UnsignedLongType._value:
-			value = new t.UnsignedLongType();
+			value = new t.UnsignedLongType;
 			break;
 		case t.DateType._value:
-			value = new t.DateType();
+			value = new t.DateType;
 			break;
 		case t.FloatType._value:
-			value = new t.FloatType();
+			value = new t.FloatType;
 			break;
 		case t.DoubleType._value:
-			value = new t.DoubleType();
+			value = new t.DoubleType;
 			break;
 		case t.BooleanType._value:
-			value = new t.BooleanType();
+			value = new t.BooleanType;
 			break;
 		case t.BooleanTupleType._value:
 			const booleanTupleLength = readLengthBuffer(typeBuffer, offset + length);
@@ -55,13 +55,13 @@ function consumeType(typeBuffer, offset) {
 			length += booleanTupleLength.length;
 			break;
 		case t.BooleanArrayType._value:
-			value = new t.BooleanArrayType();
+			value = new t.BooleanArrayType;
 			break;
 		case t.CharType._value:
-			value = new t.CharType();
+			value = new t.CharType;
 			break;
 		case t.StringType._value:
-			value = new t.StringType();
+			value = new t.StringType;
 			break;
 		case t.OctetsType._value:
 			value = new t.OctetsType;
@@ -310,7 +310,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.SetType:
 			const setLength = readLengthBuffer(buffer, offset);
 			length = setLength.length;
-			value = new Set();
+			value = new Set;
 			for (let i = 0; i < setLength.value; i++) {
 				const setElement = consumeValue({buffer, offset: offset + length, type: type.type});
 				length += setElement.length;
@@ -320,7 +320,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.MapType:
 			const mapSize = readLengthBuffer(buffer, offset);
 			length = mapSize.length;
-			value = new Map();
+			value = new Map;
 			for (let i = 0; i < mapSize.value; i++) {
 				const keyElement = consumeValue({buffer, offset: offset + length, type: type.keyType});
 				length += keyElement.length;

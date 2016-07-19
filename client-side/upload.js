@@ -14,7 +14,7 @@
 		assert.instanceOf(type, sb.Type);
 		assert.instanceOf(options, Object);
 		if (!(options.type === 'POST' || options.method === 'POST')) throw new Error('Must use POST when uploading');
-		const buffer = new GrowableBuffer();
+		const buffer = new GrowableBuffer;
 		type.writeValue(buffer, value);
 		options.processData = false;
 		const rawBuffer = buffer.rawBuffer;
