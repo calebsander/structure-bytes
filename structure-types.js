@@ -338,6 +338,21 @@ class StringType extends AbsoluteType {
 		buffer.add(0);
 	}
 }
+class OctetsType extends AbsoluteType {
+	static get _value() {
+		return 0x42;
+	}
+	constructor() {
+		super();
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		assert.instanceOf(value, Buffer);
+		assert.fourByteUnsignedInteger(value.length);
+		buffer.addAll(lengthBuffer(value.length));
+		buffer.addAll(value);
+	}
+}
 
 class TupleType extends AbsoluteType {
 	static get _value() {
@@ -507,13 +522,14 @@ class EnumType extends Type {
 		buffer.add(this.valueIndices.size);
 		for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer));
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		const valueBuffer = new GrowableBuffer();
-		this.type.writeValue(valueBuffer, value);
+		this.type.writeValue(valueBuffer, value, false);
 		const index = this.valueIndices.get(valueBuffer.toBuffer().toString(BINARY));
 		assert.assert(index !== undefined, 'Not a valid enum value: ' + util.inspect(value));
 		buffer.add(index);
+		setPointers(buffer, root);
 	}
 }
 class ChoiceType extends Type {
@@ -533,13 +549,13 @@ class ChoiceType extends Type {
 		buffer.add(this.types.length);
 		for (let type of this.types) type.addToBuffer(buffer);
 	}
-	writeValue(buffer, value) {
+	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		let i = 0;
 		let success = false;
 		for (let type of this.types) {
 			let valueBuffer = new GrowableBuffer();
-			try { type.writeValue(valueBuffer, value) }
+			try { type.writeValue(valueBuffer, value, false) }
 			catch (e) {
 				i++;
 				continue;
@@ -550,6 +566,7 @@ class ChoiceType extends Type {
 			break;
 		}
 		if (!success) assert.fail('No types matched: ' + util.inspect(success));
+		setPointers(buffer, root);
 	}
 }
 class OptionalType extends AbsoluteType {
@@ -620,6 +637,7 @@ module.exports = {
 	BooleanArrayType,
 	CharType,
 	StringType,
+	OctetsType,
 	TupleType,
 	StructType,
 	ArrayType,

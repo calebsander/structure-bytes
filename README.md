@@ -32,6 +32,7 @@ Data types:
 	- `BooleanArray` (a variable-length array of `Boolean`s)
 	- `Char` (a single UTF-8 character)
 	- `String` (an array of UTF-8 characters that also stores its total byte length)
+	- `Octets` (a `Buffer` (raw binary data))
 - Recursive types
 	- `Tuple<Type>` (a constant-length array of `Type`s)
 	- `Struct` (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)

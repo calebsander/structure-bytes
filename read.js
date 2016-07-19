@@ -63,6 +63,9 @@ function consumeType(typeBuffer, offset) {
 		case t.StringType._value:
 			value = new t.StringType();
 			break;
+		case t.OctetsType._value:
+			value = new t.OctetsType;
+			break;
 		case t.TupleType._value:
 			const tupleType = consumeType(typeBuffer, offset + length);
 			length += tupleType.length;
@@ -265,6 +268,14 @@ function consumeValue({buffer, offset, type}) {
 			}
 			value = buffer.slice(offset, offset + length).toString();
 			length++; //account for null byte
+			break;
+		case t.OctetsType:
+			const octetsLength = readLengthBuffer(buffer, offset);
+			length = octetsLength.length;
+			const finalLength = length + octetsLength.value;
+			assert.assert(buffer.length >= offset + finalLength, NOT_LONG_ENOUGH);
+			value = buffer.slice(offset + length, offset + finalLength);
+			length = finalLength;
 			break;
 		case t.TupleType:
 			length = 0;
