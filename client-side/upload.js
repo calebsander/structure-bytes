@@ -6,7 +6,6 @@
 	assert.instanceOf(window.Uint8Array, Function);
 	assert.instanceOf(window.Symbol, Function);
 	const GrowableBuffer = require('/lib/growable-buffer.js');
-	window.$ = window.jQuery = require('/client-side/jquery.js');
 	require('/client-side/binary-ajax.js');
 	if (window.sb === undefined) window.sb = require('/structure-types.js');
 	else if (!(window.sb instanceof Object)) throw new Error('window.sb is already defined');

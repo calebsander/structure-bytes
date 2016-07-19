@@ -25,7 +25,6 @@ for (let utilFile of ['/lib/assert', '/structure-types']) {
 }
 s.callback(() => {
 	exposeFile(b, '/client-side/binary-ajax.js');
-	exposeFile(b, '/client-side/jquery.js');
 	exposeFile(b, '/config.js');
 	exposeFile(b, '/lib/buffer-stream.js');
 	exposeFile(b, '/lib/growable-buffer.js');
