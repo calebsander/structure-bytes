@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.IntType;
 let gb = new GrowableBuffer;
 const VALUE = -2147483648;

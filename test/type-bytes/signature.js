@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 assert.equal(new t.ByteType().getSignature(), 'AAY=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=');
 let type = new t.StructType({
 	bcd: new t.PointerType(

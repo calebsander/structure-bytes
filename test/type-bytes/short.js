@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.ShortType;
 let buffer = type.toBuffer();
 assert.equal(buffer, Buffer.from([0x02]));

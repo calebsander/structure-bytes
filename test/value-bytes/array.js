@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.ArrayType(
 	new t.StructType({
 		a: new t.UnsignedShortType,

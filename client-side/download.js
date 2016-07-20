@@ -1,3 +1,4 @@
+/*eslint-env browser*/
 (() => {
 	if (window.sb === undefined) window.sb = require('/structure-types.js');
 	else if (!(window.sb instanceof Object)) throw new Error('window.sb is already defined');
@@ -9,7 +10,6 @@
 	assert.instanceOf(window.Symbol, Function);
 	require('/client-side/binary-ajax.js');
 	const BufferStream = require('/lib/buffer-stream.js');
-	const GrowableBuffer = require('/lib/growable-buffer.js');
 	const io = require('/io.js');
 	const r = require('/read.js');
 	const BASE_64 = 'base64';
@@ -66,7 +66,7 @@
 			else {
 				io.readType(inStream, (err, type) => {
 					if (err) throw err;
-					const inStream = new BufferStream(data)
+					const inStream = new BufferStream(data);
 					io.readTypeAndValue(inStream, (err, value) => {
 						if (err) throw err;
 						typeCache[typeName] = {sig, type};
@@ -76,6 +76,6 @@
 				});
 			}
 		};
-		$.ajax(options);
+		$.ajax(options); //eslint-disable-line no-undef
 	};
 })();

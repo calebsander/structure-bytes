@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-console*/
 const fs = require('fs');
 
 const index = require(__dirname + '/../index.js');

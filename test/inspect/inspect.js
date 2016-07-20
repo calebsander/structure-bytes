@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 assert.equal(util.inspect(23), '23');
 assert.equal(util.inspect(true), 'true');
 assert.equal(util.inspect(false), 'false');
@@ -13,6 +14,6 @@ assert.equal(util.inspect(new Set([1, 2])), 'Set {1, 2}');
 assert.equal(util.inspect(new Map), 'Map {}');
 assert.equal(util.inspect(new Map().set(1, 2).set(3, 4)), 'Map {1 => 2, 3 => 4}');
 class A {
-	constructor() { this.one = '1' }
+	constructor() { this.one = '1' } //eslint-disable-line semi
 }
 assert.equal(util.inspect(new A), 'A {"one":"1"}');

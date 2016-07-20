@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.StructType({
 	b: new t.BooleanArrayType,
 	i: new t.UnsignedIntType,

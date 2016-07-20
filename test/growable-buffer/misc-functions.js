@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let gb = new GrowableBuffer;
 for (let i = 0; i < 10; i++) gb.addAll(Buffer.from('abc'));
 let gb2 = new GrowableBuffer;

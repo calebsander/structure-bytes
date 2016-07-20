@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let struct = new t.StructType({
 	'bobbé': new t.BooleanType,
 	'': new t.IntType

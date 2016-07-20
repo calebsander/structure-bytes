@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let map = new t.MapType(
 	new t.StringType,
 	new t.StructType({

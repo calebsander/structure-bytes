@@ -2,7 +2,6 @@
 if (__dirname === '/') __dirname = '';
 
 const assert = require(__dirname + '/lib/assert.js');
-const BufferStream = require(__dirname + '/lib/buffer-stream.js');
 const config = require(__dirname + '/config.js');
 const createHash = require('sha.js');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
@@ -81,17 +80,17 @@ class Type {
 		return config.VERSION_STRING + this.getHash();
 	}
 	//Writes out the value according to the type spec
-	writeValue(buffer, value) {
+	writeValue(buffer, value) { //eslint-disable-line no-unused-vars
 		throw new Error('Generic Type has no value representation');
 	}
 	//Returns whether the two types are equal
 	equals(otherType) {
-		try { assert.instanceOf(otherType, this.constructor) }
-		catch (e) { return false }
+		try { assert.instanceOf(otherType, this.constructor) } //eslint-disable-line semi
+		catch (e) { return false } //eslint-disable-line semi
 		for (let param in this) {
 			if (this.hasOwnProperty(param) && !param.startsWith('cached')) {
-				try { assert.equal(otherType[param], this[param]) }
-				catch (e) { return false }
+				try { assert.equal(otherType[param], this[param]) } //eslint-disable-line semi
+				catch (e) { return false } //eslint-disable-line semi
 			}
 		}
 		return true;
@@ -389,7 +388,7 @@ class StructType extends AbsoluteType {
 		super();
 		assert.instanceOf(fields, Object);
 		let fieldCount = 0;
-		for (let field in fields) fieldCount++;
+		for (let _ in fields) fieldCount++; //eslint-disable-line no-unused-vars
 		try { assert.byteUnsignedInteger(fieldCount); }
 		catch (e) { throw new Error(String(fieldCount) + ' fields is too many'); }
 		this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
@@ -492,7 +491,6 @@ class MapType extends AbsoluteType {
 		setPointers(buffer, root);
 	}
 }
-const VALUE = 'value';
 class EnumType extends Type {
 	static get _value() {
 		return 0x55;
@@ -507,7 +505,7 @@ class EnumType extends Type {
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i];
 			const buffer = new GrowableBuffer;
-			type.writeValue(buffer, value)
+			type.writeValue(buffer, value);
 			const valueBuffer = buffer.toBuffer().toString(BINARY);
 			assert.assert(!valueIndices.has(valueBuffer), 'Value is repeated: ' + util.inspect(value));
 			valueIndices.set(valueBuffer, i);
@@ -520,7 +518,7 @@ class EnumType extends Type {
 		super.addToBuffer(buffer);
 		this.type.addToBuffer(buffer);
 		buffer.add(this.valueIndices.size);
-		for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer));
+		for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer)); //eslint-disable-line no-unused-vars
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -555,7 +553,7 @@ class ChoiceType extends Type {
 		let success = false;
 		for (let type of this.types) {
 			let valueBuffer = new GrowableBuffer;
-			try { type.writeValue(valueBuffer, value, false) }
+			try { type.writeValue(valueBuffer, value, false) } //eslint-disable-line semi
 			catch (e) {
 				i++;
 				continue;

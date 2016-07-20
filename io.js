@@ -49,8 +49,8 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
-			try { type = r.type(buffer, false) }
-			catch (e) { callback(e, null) }
+			try { type = r.type(buffer, false) } //eslint-disable-line semi
+			catch (e) { callback(e, null) } //eslint-disable-line semi
 			if (type) callback(null, type);
 		});
 	},
@@ -63,8 +63,8 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let value;
-			try { value = r.value({buffer, type}) }
-			catch (e) { callback(e, null) }
+			try { value = r.value({buffer, type}) } //eslint-disable-line semi
+			catch (e) { callback(e, null) } //eslint-disable-line semi
 			if (value) callback(null, value);
 		});
 	},
@@ -77,12 +77,12 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
-			try { type = r._consumeType(buffer, 0) }
-			catch (e) { callback(e, null) }
+			try { type = r._consumeType(buffer, 0) } //eslint-disable-line semi
+			catch (e) { callback(e, null) } //eslint-disable-line semi
 			if (type) {
 				let value;
-				try { value = r.value({buffer, offset: type.length, type: type.value})}
-				catch (e) { callback(e, null) }
+				try { value = r.value({buffer, offset: type.length, type: type.value}) } //eslint-disable-line semi
+				catch (e) { callback(e, null) } //eslint-disable-line semi
 				if (value) callback(null, value);
 			}
 		});
@@ -92,7 +92,7 @@ const io = module.exports = {
 		res.setHeader('Content-Type', 'application/octet-stream');
 		res.setHeader('Content-Encoding', 'gzip');
 		res.setHeader('sig', type.getSignature());
-		const outStream = zlib.createGzip();
+		const outStream = zlib.createGzip(); //eslint-disable-line no-undef
 		if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream});
 		else io.writeTypeAndValue({type, value, outStream});
 		outStream.pipe(res);

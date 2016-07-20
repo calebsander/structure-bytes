@@ -1,3 +1,4 @@
+/*eslint-disable no-console*/
 const browserify = require('browserify');
 const fs = require('fs');
 const ReplaceStream = require(__dirname + '/lib/replace-stream.js');

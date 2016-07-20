@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.ChoiceType([new t.UnsignedByteType, new t.UnsignedIntType, new t.StringType]);
 let gb = new GrowableBuffer;
 type.writeValue(gb, 23);

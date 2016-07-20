@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 for (let invalidValues of ['asdf', [2], [true], [undefined], ['abc', 3], ['1', '2', '1']]) {
 	assert.throws(() => {
 		new t.EnumType({

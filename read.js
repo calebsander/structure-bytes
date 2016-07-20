@@ -9,8 +9,8 @@ const util = require('util');
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readLengthBuffer(buffer, offset) {
-	try { return {value: buffer.readUInt32BE(offset), length: 4} }
-	catch (e) { throw new Error(NOT_LONG_ENOUGH) }
+	try { return {value: buffer.readUInt32BE(offset), length: 4} } //eslint-disable-line semi
+	catch (e) { throw new Error(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
 function consumeType(typeBuffer, offset) {
 	assert.assert(typeBuffer.length > offset, NOT_LONG_ENOUGH);
@@ -154,7 +154,7 @@ function consumeType(typeBuffer, offset) {
 			value = new t.PointerType(pointerType.value);
 			break;
 		default:
-			assert.fail('No such type: 0x' + typeBuffer[offset].toString(16))
+			assert.fail('No such type: 0x' + typeBuffer[offset].toString(16));
 	}
 	return {value, length};
 }
@@ -264,7 +264,7 @@ function consumeValue({buffer, offset, type}) {
 			break;
 		case t.StringType:
 			length = 0;
-			while (true) {
+			for (;;) {
 				assert.assert(buffer.length > offset + length, NOT_LONG_ENOUGH);
 				if (!buffer.readUInt8(offset + length)) break;
 				length++;
@@ -372,7 +372,7 @@ function consumeValue({buffer, offset, type}) {
 function value({buffer, type, offset = 0}) {
 	assert.instanceOf(buffer, Buffer);
 	assert.instanceOf(type, t.Type);
-	const {value, length} = consumeValue({buffer, offset: offset, type});
+	const {value} = consumeValue({buffer, offset: offset, type});
 	return value;
 }
 

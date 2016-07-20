@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.StringType;
 let gb = new GrowableBuffer;
 for (let invalidValue of [undefined, null, 2, false, ['abc']]) {

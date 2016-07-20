@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.UnsignedLongType;
 let gb = new GrowableBuffer;
 const VALUE = '18446744073709551615';

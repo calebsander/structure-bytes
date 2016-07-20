@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.EnumType({
 	type: new t.StringType,
 	values: [

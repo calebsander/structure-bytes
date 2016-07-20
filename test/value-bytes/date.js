@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.DateType;
 let gb = new GrowableBuffer;
 const VALUE = new Date(1468516005643);

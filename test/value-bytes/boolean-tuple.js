@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.BooleanTupleType(11);
 let gb = new GrowableBuffer;
 const VALUE = [true, false, true, true, false, true, true, true, false, false, true];

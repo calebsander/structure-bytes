@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let s = new Simultaneity;
 s.addTask(() => {
 	let stream = new BufferStream(Buffer.from('aéééébcéééféghé'));

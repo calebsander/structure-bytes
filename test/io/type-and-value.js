@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 const fs = require('fs');
 const OUT_FILE = 'type-value-out';
 
@@ -8,9 +9,11 @@ const BUFFER = Buffer.from([0x54, 0x41, 0x13, 0, 0, 0, 3, 0x61, 0x62, 0x63, 0, 0
 let s = new Simultaneity;
 s.addTask(() => {
 	io.writeTypeAndValue({type, value, outStream}).on('sb-written', () => {
-		let result = fs.readFileSync(OUT_FILE);
-		assert.equal(result, BUFFER);
-		s.taskFinished();
+		fs.readFile(OUT_FILE, (err, data) => {
+			if (err) throw err;
+			assert.equal(data, BUFFER);
+			s.taskFinished();
+		});
 	});
 });
 s.addTask(() => {

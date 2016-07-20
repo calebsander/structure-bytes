@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let set = new t.SetType(
 	new t.StructType({
 		'long': new t.LongType,

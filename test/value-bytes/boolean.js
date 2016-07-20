@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.BooleanType;
 let gb = new GrowableBuffer;
 type.writeValue(gb, false);

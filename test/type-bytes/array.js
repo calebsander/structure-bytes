@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let array = new t.ArrayType(
 	new t.UnsignedIntType
 );

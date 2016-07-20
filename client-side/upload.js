@@ -1,3 +1,4 @@
+/*eslint-env browser*/
 (() => {
 	const assert = require('/lib/assert.js');
 	assert.instanceOf(window.Map, Function);
@@ -10,7 +11,7 @@
 	if (window.sb === undefined) window.sb = require('/structure-types.js');
 	else if (!(window.sb instanceof Object)) throw new Error('window.sb is already defined');
 	window.sb.upload = ({type, value}, options) => {
-		assert.instanceOf(type, sb.Type);
+		assert.instanceOf(type, window.sb.Type);
 		assert.instanceOf(options, Object);
 		if (!(options.type === 'POST' || options.method === 'POST')) throw new Error('Must use POST when uploading');
 		const buffer = new GrowableBuffer;
@@ -18,6 +19,6 @@
 		options.processData = false;
 		const rawBuffer = buffer.rawBuffer;
 		options.data = rawBuffer.buffer.slice(0, buffer.length);
-		$.ajax(options);
+		$.ajax(options); //eslint-disable-line no-undef
 	};
 })();

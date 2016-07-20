@@ -1,3 +1,4 @@
+/*eslint-disable no-console*/
 const assert = require(__dirname + '/../lib/assert.js');
 const fs = require('fs');
 const http = require('http');
@@ -16,7 +17,7 @@ http.createServer((req, res) => {
 	if (req.url === '/uploadtest') {
 		sb.readValue({inStream: req, type}, (err, value) => {
 			if (err) {
-				res.end('Error occurred')
+				res.end('Error occurred');
 				console.log(err);
 			}
 			else {

@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.MapType(new t.CharType, new t.UnsignedByteType);
 let gb = new GrowableBuffer;
 for (let invalidValue of [{'c': 2}, undefined, null, new Map().set(2, 3)]) {

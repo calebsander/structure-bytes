@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.DoubleType;
 let gb = new GrowableBuffer;
 type.writeValue(gb, -Infinity);

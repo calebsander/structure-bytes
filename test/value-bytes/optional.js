@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.OptionalType(
 	new t.ArrayType(
 		new t.UnsignedByteType

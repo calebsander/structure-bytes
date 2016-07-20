@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.TupleType({
 	type: new t.BooleanArrayType,
 	length: 3

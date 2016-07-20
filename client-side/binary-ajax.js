@@ -1,3 +1,4 @@
+/*eslint-env browser*/
 //from https://gist.githubusercontent.com/SaneMethod/7548768/raw/ae22b1fa2e6f56ae6c87ad0d7fbae8fd511e781f/jquery-ajax-blob-arraybuffer.js
 (function($){
 	/**
@@ -15,7 +16,7 @@
 	 * This revision now includes sending headers, resolves the stack overflow in abort(), and sets the status text
 	 * into the response if the request is unsuccessful.
 	 */
-	$.ajaxTransport("+*", function(options, originalOptions, jqXHR){
+	$.ajaxTransport('+*', function(options){
 		// Test for the conditions that mean we can/want to send/receive blobs or arraybuffers - we need XMLHttpRequest
 		// level 2 (so feature-detect against window.FormData), feature detect against window.Blob or window.ArrayBuffer,
 		// and then check to see if the dataType is blob/arraybuffer or the data itself is a Blob/ArrayBuffer
@@ -75,4 +76,4 @@
 			};
 		}
 	});
-})(jQuery);
+})(jQuery); //eslint-disable-line no-undef

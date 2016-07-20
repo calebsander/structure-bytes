@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 const octetPointers = new t.PointerType(
 	new t.ArrayType(
 		new t.UnsignedByteType

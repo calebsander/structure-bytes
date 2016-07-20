@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let a = new GrowableBuffer;
 assert.equal(a.buffer.length, 10);
 a = new GrowableBuffer(100);

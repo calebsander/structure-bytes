@@ -1,3 +1,4 @@
+/*eslint-disable no-undef*/
 let type = new t.ByteType;
 let gb = new GrowableBuffer;
 type.writeValue(gb, -128);
