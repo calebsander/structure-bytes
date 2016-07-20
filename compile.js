@@ -2,7 +2,7 @@ const browserify = require('browserify');
 const fs = require('fs');
 const ReplaceStream = require(__dirname + '/lib/replace-stream.js');
 const Simultaneity = require(__dirname + '/lib/simultaneity.js');
-const uglify = require('uglify-js2');
+const uglify = require('uglify-js');
 
 function exposeFile(b, name, fileName = name) {
 	b.require(__dirname + fileName, {expose: name});
