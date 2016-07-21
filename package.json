@@ -8,8 +8,7 @@
 		"babel-preset-es2015": "6.9.x",
 		"browserify": "13.0.x",
 		"coveralls": "2.11.x",
-		"jscoverage": "0.6.x",
-		"mocha-lcov-reporter": "1.2.x",
+		"istanbul": "0.3.5",
 		"sha.js": "2.4.x",
 		"uglify-js": "2.7.x"
 	},
@@ -17,7 +16,8 @@
 		"test": "test"
 	},
 	"scripts": {
-		"test": "node ./test/main.js"
+		"test": "node ./test/main.js",
+		"test-travis": "./node_modules/istanbul/lib/cli.js cover npm -- test"
 	},
 	"repository": {
 		"type": "git",
