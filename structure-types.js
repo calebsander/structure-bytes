@@ -101,6 +101,12 @@ class Type {
 	writeValue(buffer, value) { //eslint-disable-line no-unused-vars
 		throw new Error('Generic Type has no value representation');
 	}
+	//Writes out the value, taking care of the GrowableBuffer instantiation
+	valueBuffer(value) {
+		const buffer = new GrowableBuffer();
+		this.writeValue(buffer, value);
+		return buffer.toBuffer();
+	}
 	//Returns whether the two types are equal
 	equals(otherType) {
 		try { assert.instanceOf(otherType, this.constructor) } //eslint-disable-line semi

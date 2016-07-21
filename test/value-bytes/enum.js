@@ -7,16 +7,11 @@ let type = new t.EnumType({
 		'MISSING'
 	]
 });
-let gb = new GrowableBuffer;
-type.writeValue(gb, 'AVAILABLE');
-assert.equal(gb.toBuffer(), Buffer.from([0]));
-gb = new GrowableBuffer;
-type.writeValue(gb, 'IN_USE');
-assert.equal(gb.toBuffer(), Buffer.from([1]));
-gb = new GrowableBuffer;
-type.writeValue(gb, 'MISSING');
-assert.equal(gb.toBuffer(), Buffer.from([2]));
-assert.equal(r.value({buffer: gb.toBuffer(), type}), 'MISSING');
+assert.equal(type.valueBuffer('AVAILABLE'), Buffer.from([0]));
+assert.equal(type.valueBuffer('IN_USE'), Buffer.from([1]));
+let valueBuffer = type.valueBuffer('MISSING');
+assert.equal(valueBuffer, Buffer.from([2]));
+assert.equal(r.value({buffer: valueBuffer, type}), 'MISSING');
 assert.throws(() => type.writeValue(gb, 'OTHER'));
 assert.throws(() => type.writeValue(gb, 101));
 assert.throws(() => r.value({buffer: Buffer.from([3]), type}));

@@ -14,7 +14,8 @@ let outStream = fs.createWriteStream(OUT_FILE);
 const VALUE_BUFFER = Buffer.from([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63]);
 let s = new Simultaneity;
 s.addTask(() => {
-	io.writeValue({type, value, outStream}).on('sb-written', () => {
+	io.writeValue({type, value, outStream}, (err) => {
+		if (err) throw err;
 		let result = fs.readFileSync(OUT_FILE);
 		assert.equal(result, VALUE_BUFFER);
 		s.taskFinished();

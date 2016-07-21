@@ -64,15 +64,11 @@
 				});
 			}
 			else {
-				io.readType(inStream, (err, type) => {
+				io.readTypeAndValue(inStream, (err, type, value) => {
 					if (err) throw err;
-					const inStream = new BufferStream(data);
-					io.readTypeAndValue(inStream, (err, value) => {
-						if (err) throw err;
-						typeCache[typeName] = {sig, type};
-						saveTypeCache();
-						success(value, textStatus, jqXHR);
-					});
+					typeCache[typeName] = {sig, type};
+					saveTypeCache();
+					success(value, textStatus, jqXHR);
 				});
 			}
 		};
