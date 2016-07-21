@@ -32,6 +32,8 @@ function setPointers(buffer, root) {
 	}
 }
 
+const REPEATED_TYPE = 0xFF; //type byte indicating next 2 bytes are an unsigned short containing the location of the type
+
 class Type {
 	//The byte specifying the type (unique to each type class)
 	static get _value() {
@@ -41,11 +43,27 @@ class Type {
 		Append the type information to the GrowableBuffer
 		All types start with the byte specified by _value
 		For the most primitive types, this implementation is sufficient
-		Recursive types should override this method, invoking super.addToBuffer() and then adding their own data
+		Recursive types should override this method, invoking super.addToBuffer() and then adding their own data if it returns true
 	*/
 	addToBuffer(buffer) {
 		assert.instanceOf(buffer, GrowableBuffer);
+		if (this.cachedTypeLocations) {
+			const location = this.cachedTypeLocations.get(buffer);
+			if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
+				buffer.add(REPEATED_TYPE);
+				const offsetBuffer = Buffer.allocUnsafe(2);
+				try { //error will be thrown if offset didn't fit in a 2-byte integer, so fall through to explicitly writing the bytes
+					offsetBuffer.writeUInt16BE(buffer.length - location, 0);
+					buffer.addAll(offsetBuffer);
+					return false;
+				}
+				catch (e) {} //eslint-disable-line no-empty
+			}
+		}
+		else this.cachedTypeLocations = new Map;
+		this.cachedTypeLocations.set(buffer, buffer.length);
 		buffer.add(this.constructor._value);
+		return true;
 	}
 	//Gets the type in buffer form, using a cached value if present
 	//Since types are immutable, the result should never change from the cached value
@@ -292,8 +310,7 @@ class BooleanTupleType extends AbsoluteType {
 		this.length = length;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		buffer.addAll(lengthBuffer(this.length));
+		if (super.addToBuffer(buffer)) buffer.addAll(lengthBuffer(this.length));
 	}
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -365,9 +382,10 @@ class TupleType extends AbsoluteType {
 		this.length = length;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		this.type.addToBuffer(buffer);
-		buffer.addAll(lengthBuffer(this.length));
+		if (super.addToBuffer(buffer)) {
+			this.type.addToBuffer(buffer);
+			buffer.addAll(lengthBuffer(this.length));
+		}
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -412,13 +430,14 @@ class StructType extends AbsoluteType {
 		});
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		buffer.add(this.fields.length);
-		for (let field of this.fields) {
-			const nameBuffer = Buffer.from(field[NAME]);
-			buffer.add(nameBuffer.length);
-			buffer.addAll(nameBuffer);
-			field[TYPE].addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) {
+			buffer.add(this.fields.length);
+			for (let field of this.fields) {
+				const nameBuffer = Buffer.from(field[NAME]);
+				buffer.add(nameBuffer.length);
+				buffer.addAll(nameBuffer);
+				field[TYPE].addToBuffer(buffer);
+			}
 		}
 	}
 	writeValue(buffer, value, root = true) {
@@ -438,8 +457,7 @@ class ArrayType extends AbsoluteType {
 		this.type = type;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		this.type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
 	}
 	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -475,9 +493,10 @@ class MapType extends AbsoluteType {
 		this.valueType = valueType;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		this.keyType.addToBuffer(buffer);
-		this.valueType.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) {
+			this.keyType.addToBuffer(buffer);
+			this.valueType.addToBuffer(buffer);
+		}
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -515,10 +534,11 @@ class EnumType extends Type {
 		this.valueIndices = valueIndices;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		this.type.addToBuffer(buffer);
-		buffer.add(this.valueIndices.size);
-		for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer)); //eslint-disable-line no-unused-vars
+		if (super.addToBuffer(buffer)) {
+			this.type.addToBuffer(buffer);
+			buffer.add(this.valueIndices.size);
+			for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer)); //eslint-disable-line no-unused-vars
+		}
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -543,9 +563,10 @@ class ChoiceType extends Type {
 		this.types = types;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		buffer.add(this.types.length);
-		for (let type of this.types) type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) {
+			buffer.add(this.types.length);
+			for (let type of this.types) type.addToBuffer(buffer);
+		}
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -577,8 +598,7 @@ class OptionalType extends AbsoluteType {
 		this.type = type;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		this.type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
@@ -600,8 +620,7 @@ class PointerType extends Type {
 		this.type = type;
 	}
 	addToBuffer(buffer) {
-		super.addToBuffer(buffer);
-		this.type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
 	}
 	writeValue(buffer, value, root = true) {
 		if (buffer.pointers === undefined) buffer.pointers = new Map;
@@ -644,5 +663,6 @@ module.exports = {
 	EnumType,
 	ChoiceType,
 	OptionalType,
-	PointerType
+	PointerType,
+	REPEATED_TYPE
 };
