@@ -9,7 +9,8 @@ let tribeType = new t.StructType({
 	members: new t.SetType(personType),
 	money: new t.MapType(personType, new t.FloatType)
 });
-assert.equal(tribeType.toBuffer(),
+let buffer = tribeType.toBuffer();
+assert.equal(buffer,
 	Buffer.concat([
 		Buffer.from([0x51, 3, 6, 0x6c, 0x65, 0x61, 0x64, 0x65, 0x72]),
 		personType.toBuffer(),
@@ -17,6 +18,7 @@ assert.equal(tribeType.toBuffer(),
 		Buffer.from([5, 0x6d, 0x6f, 0x6e, 0x65, 0x79, 0x54, t.REPEATED_TYPE, 0, 37, 0x20])
 	])
 );
+assert.equal(r.type(buffer), tribeType);
 let personCube = new t.ArrayType(
 	new t.ArrayType(
 		new t.ArrayType(

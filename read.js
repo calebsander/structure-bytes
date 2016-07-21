@@ -13,6 +13,7 @@ function readLengthBuffer(buffer, offset) {
 	catch (e) { throw new Error(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
 function consumeType(typeBuffer, offset) {
+	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset));
 	assert.assert(typeBuffer.length > offset, NOT_LONG_ENOUGH);
 	let value, length = 1;
 	switch (typeBuffer.readUInt8(offset)) {
@@ -152,6 +153,12 @@ function consumeType(typeBuffer, offset) {
 			const pointerType = consumeType(typeBuffer, offset + length);
 			length += pointerType.length;
 			value = new t.PointerType(pointerType.value);
+			break;
+		case t.REPEATED_TYPE:
+			const newLength = length + 2;
+			assert.assert(typeBuffer.length >= offset + newLength, NOT_LONG_ENOUGH);
+			({value} = consumeType(typeBuffer, offset + length - typeBuffer.readUInt16BE(offset + length)));
+			length = newLength;
 			break;
 		default:
 			assert.fail('No such type: 0x' + typeBuffer[offset].toString(16));
