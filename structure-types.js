@@ -42,6 +42,8 @@ class Type {
 	/**
 	 * The type byte that uniquely identifies a type.
 	 * Accessing this will throw an error on the {@link Type} class.
+	 * @readonly
+	 * @type {number}
 	 */
 	static get _value() {
 		throw new Error('Generic Type has no value byte');
