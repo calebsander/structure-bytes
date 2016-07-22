@@ -1,6 +1,27 @@
-let combined = {};
-for (let module of ['config', 'io', 'read', 'structure-types']) {
-	module = require(__dirname + '/' + module + '.js');
-	for (let attribute in module) combined[attribute] = module[attribute];
+/**
+ * The NodeJS Buffer object
+ * @external Buffer
+ * @see {@link https://nodejs.org/api/buffer.html}
+ */
+/**
+ * The NodeJS HTTP library
+ * @external http
+ * @see {@link https://nodejs.org/api/http.html}
+ */
+/**
+ * @class IncomingMessage
+ * @memberof external:http
+ * @see {@link https://nodejs.org/api/http.html#http_class_http_incomingmessage}
+ */
+/**
+ * @class ServerResponse
+ * @memberof external:http
+ * @see {@link https://nodejs.org/api/http.html#http_class_http_serverresponse}
+ */
+
+module.exports = {};
+for (let sbModule of ['config', 'io', 'structure-types']) {
+	sbModule = require(__dirname + '/' + sbModule + '.js');
+	for (let attribute in sbModule) module.exports[attribute] = sbModule[attribute];
 }
-module.exports = combined;
+module.exports.r = require(__dirname + '/read.js');

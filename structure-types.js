@@ -80,7 +80,7 @@ class Type {
 	/**
 	 * Gets the type in buffer form, using a cached value if present.
 	 * Since types are immutable, the result should never change from the cached value.
-	 * @return {Buffer} A Buffer containing the type bytes
+	 * @return {external:Buffer} A Buffer containing the type bytes
 	 */
 	toBuffer() {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer();
@@ -90,7 +90,7 @@ class Type {
 	 * Generates the type buffer, recomputed each time
 	 * @private
 	 * @see Type#toBuffer
-	 * @return {Buffer} A Buffer containing the type bytes
+	 * @return {external:Buffer} A Buffer containing the type bytes
 	 */
 	_toBuffer() {
 		const buffer = new GrowableBuffer;
@@ -150,7 +150,7 @@ class Type {
 	 * See this type's {@link writeValue()} documentation
 	 * for acceptable values.
 	 * @param value The value to write
-	 * @return {Buffer} a {@link Buffer} storing the value (assuming the type is known)
+	 * @return {external:Buffer} a {@link Buffer} storing the value (assuming the type is known)
 	 * @see Type#writeValue
 	 */
 	valueBuffer(value) {
@@ -626,7 +626,7 @@ class OctetsType extends AbsoluteType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {Buffer} value The value to write
+	 * @param {external:Buffer} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {

@@ -4,6 +4,8 @@ which jsdoc > /dev/null
 jsdoc --verbose -c js-conf.json \
 README.md \
 structure-types.js \
-lib/growable-buffer.js
+io.js \
+lib/growable-buffer.js \
+index.js
 rm -r doc
 mv out doc
