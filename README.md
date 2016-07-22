@@ -2,6 +2,7 @@
 A NodeJS library for making more efficient data transfers by separating the structure from the values and efficiently storing each as byte arrays.
 
 [![Build Status](https://travis-ci.org/calebsander/structure-bytes.svg?branch=master)](https://travis-ci.org/calebsander/structure-bytes)
+[![Coverage Status](https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=feature%2Fcoveralls)](https://coveralls.io/github/calebsander/structure-bytes?branch=feature%2Fcoveralls)
 
 ## Concept
 Most data nowadays is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON or YAML) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. To accomplish this, the project was designed with several principles in mind:
