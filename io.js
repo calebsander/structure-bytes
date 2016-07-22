@@ -104,7 +104,7 @@ const io = module.exports = {
 		res.setHeader('sig', type.getSignature());
 		const outStream = zlib.createGzip(); //eslint-disable-line no-undef
 		if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream}, (err) => {
-			if (err) callback(err)
+			if (err) callback(err);
 		});
 		else io.writeTypeAndValue({type, value, outStream}, (err) => {
 			if (err) callback(err);

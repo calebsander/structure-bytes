@@ -103,7 +103,7 @@ class Type {
 	}
 	//Writes out the value, taking care of the GrowableBuffer instantiation
 	valueBuffer(value) {
-		const buffer = new GrowableBuffer();
+		const buffer = new GrowableBuffer;
 		this.writeValue(buffer, value);
 		return buffer.toBuffer();
 	}

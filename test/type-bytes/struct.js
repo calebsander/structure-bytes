@@ -15,3 +15,10 @@ assert.throws(() => {
 	for (let i = 1; i <= 256; i++) struct[((i % 2) ? 'a' : 'b').repeat(Math.floor(i / 2))] = new t.IntType;
 	new t.StructType(struct);
 });
+let longString = 'a'.repeat(256);
+assert.throws(() => new t.StructType({
+	[longString]: new t.ByteType
+}));
+assert.throws(() => new t.StructType({
+	field: new Date()
+}));

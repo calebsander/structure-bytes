@@ -28,6 +28,35 @@ module.exports = {
 		],
 		"no-case-declarations": [
 			"off"
+		],
+		"no-multiple-empty-lines": [
+			"error",
+			{
+				"max": 1,
+				"maxEOF": 0,
+				"maxBOF": 0
+			}
+		],
+		"camelcase": [
+			"error",
+			{"properties": "always"}
+		],
+		"brace-style": [
+			"error",
+			"stroustrup",
+			{"allowSingleLine": true}
+		],
+		"comma-dangle": [
+			"error",
+			"never"
+		],
+		"new-cap": [
+			"error",
+			{
+				"newIsCap": true,
+				"capIsNew": true,
+				"properties": true
+			}
 		]
 	}
 };

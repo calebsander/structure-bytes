@@ -1,5 +1,7 @@
 /*eslint-disable no-undef*/
-for (let invalidValues of ['asdf', [2], [true], [undefined], ['abc', 3], ['1', '2', '1']]) {
+let tooManyValues = new Array(256);
+for (let i = 0; i < tooManyValues.length; i++) tooManyValues[i] = 'A'.repeat(i);
+for (let invalidValues of ['asdf', [2], [true], [undefined], ['abc', 3], ['1', '2', '1'], tooManyValues]) {
 	assert.throws(() => {
 		new t.EnumType({
 			type: new t.StringType,

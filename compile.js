@@ -27,7 +27,7 @@ for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
 for (let zlibFile of ['/io']) {
 	s.addTask(() => {
 		fs.createReadStream(__dirname + zlibFile + '.js')
-		.pipe(new ReplaceStream("const zlib = require('zlib');", ''))
+		.pipe(new ReplaceStream("const zlib = require('zlib');\n", ''))
 		.pipe(fs.createWriteStream(__dirname + zlibFile + '-nozlib.js')).on('finish', () => {
 			s.taskFinished();
 		});
