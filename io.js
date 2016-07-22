@@ -25,9 +25,9 @@ const io = module.exports = {
 	 * Writes the contents of [type.toBuffer()]{@link Type#toBuffer}
 	 * followed by a null byte.
 	 * Calls {@link callback} when done.
-	 * @param {{type, outStream}} param
-	 * @param {Type} param.type The type to write
-	 * @param {stream.Writable} param.outStream The stream to write to
+	 * @param {{type, outStream}} params
+	 * @param {Type} params.type The type to write
+	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
 	 */
 	writeType({type, outStream}, callback) {
@@ -46,10 +46,10 @@ const io = module.exports = {
 	 * Writes the contents of [type.valueBuffer(value)]{@link Type#valueBuffer}
 	 * followed by a null byte.
 	 * Calls {@link callback} when done.
-	 * @param {{type, value, outStream}} param
-	 * @param {Type} param.type The type to use to write the value
-	 * @param {type} param.value The value to write
-	 * @param {stream.Writable} param.outStream The stream to write to
+	 * @param {{type, value, outStream}} params
+	 * @param {Type} params.type The type to use to write the value
+	 * @param {type} params.value The value to write
+	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
 	 */
 	writeValue({type, value, outStream}, callback) {
@@ -71,11 +71,11 @@ const io = module.exports = {
 	 * followed by the contents of [type.valueBuffer(value)]{@link Type#valueBuffer},
 	 * and then a null byte.
 	 * Calls {@link callback} when done.
-	 * @param {{type, value, outStream}} param
-	 * @param {Type} param.type The type to write
+	 * @param {{type, value, outStream}} params
+	 * @param {Type} params.type The type to write
 	 * and to use to write the value
-	 * @param {type} param.value The value to write
-	 * @param {stream.Writable} param.outStream The stream to write to
+	 * @param {type} params.value The value to write
+	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
 	 */
 	writeTypeAndValue({type, value, outStream}, callback) {
@@ -134,9 +134,9 @@ const io = module.exports = {
 	 * This should be used when reading from sources
 	 * written to by {@link writeValue}.
 	 * Calls {@link callback} with the value when done.
-	 * @param {{type, inStream}} param
-	 * @param {Type} param.type The type that wrote the value bytes
-	 * @param {stream.Readable} param.inStream The stream to read from
+	 * @param {{type, inStream}} params
+	 * @param {Type} params.type The type that wrote the value bytes
+	 * @param {stream.Readable} params.inStream The stream to read from
 	 * @param {valueCallback} callback
 	 */
 	readValue({type, inStream}, callback) {
@@ -197,11 +197,11 @@ const io = module.exports = {
 	 * Will only send the value if the signatures match.
 	 * Response is gzipped to decrease size.
 	 * Calls {@link callback} when done.
-	 * @param {{req, res, type, value}} param
-	 * @param {external:http.IncomingMessage} param.req The client request
-	 * @param {external:http.ServerResponse} param.res The server response
-	 * @param {Type} param.type The type of the message
-	 * @param {type} param.value The value to send
+	 * @param {{req, res, type, value}} params
+	 * @param {external:http.IncomingMessage} params.req The client request
+	 * @param {external:http.ServerResponse} params.res The server response
+	 * @param {Type} params.type The type of the message
+	 * @param {type} params.value The value to send
 	 * @param {errCallback} callback
 	 */
 	httpRespond({req, res, type, value}, callback) {

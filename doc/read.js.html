@@ -1,4 +1,32 @@
-//For use with browserify
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: read.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: read.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>//For use with browserify
 if (__dirname === '/') __dirname = '';
 
 const assert = require(__dirname + '/lib/assert.js');
@@ -85,7 +113,7 @@ function consumeType(typeBuffer, offset) {
 			const fieldCount = typeBuffer.readUInt8(offset + length);
 			length++;
 			const fields = {};
-			for (let i = 0; i < fieldCount; i++) {
+			for (let i = 0; i &lt; fieldCount; i++) {
 				assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
 				const nameLength = typeBuffer.readUInt8(offset + length);
 				length++;
@@ -122,7 +150,7 @@ function consumeType(typeBuffer, offset) {
 			const valueCount = typeBuffer.readUInt8(offset + length);
 			length++;
 			const values = [];
-			for (let i = 0; i < valueCount; i++) {
+			for (let i = 0; i &lt; valueCount; i++) {
 				const value = consumeValue({buffer: typeBuffer, offset: offset + length, type: enumType.value});
 				length += value.length;
 				values[i] = (value.value);
@@ -137,7 +165,7 @@ function consumeType(typeBuffer, offset) {
 			const typeCount = typeBuffer.readUInt8(offset + length);
 			length++;
 			const types = new Array(typeCount);
-			for (let i = 0; i < typeCount; i++) {
+			for (let i = 0; i &lt; typeCount; i++) {
 				const type = consumeType(typeBuffer, offset + length);
 				types[i] = type.value;
 				length += type.length;
@@ -179,12 +207,12 @@ function readBooleans({buffer, offset, count}) {
 	if (incompleteBytes) byteLength = bytes + 1;
 	else byteLength = bytes;
 	assert.assert(buffer.length >= offset + byteLength, NOT_LONG_ENOUGH);
-	for (let i = 0; i < byteLength; i++) {
+	for (let i = 0; i &lt; byteLength; i++) {
 		const byte = buffer.readUInt8(offset + i);
-		for (let bit = 0; bit < 8; bit++) {
+		for (let bit = 0; bit &lt; 8; bit++) {
 			const index = i * 8 + bit;
 			if (index === value.length) break;
-			value[index] = !!(byte & (1 << bitMath.modEight(~bitMath.modEight(bit))));
+			value[index] = !!(byte &amp; (1 &lt;&lt; bitMath.modEight(~bitMath.modEight(bit))));
 		}
 	}
 	return {value, length: byteLength};
@@ -290,7 +318,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.TupleType:
 			length = 0;
 			value = new Array(type.length);
-			for (let i = 0; i < type.length; i++) {
+			for (let i = 0; i &lt; type.length; i++) {
 				const tupleElement = consumeValue({buffer, offset: offset + length, type: type.type});
 				length += tupleElement.length;
 				value[i] = tupleElement.value;
@@ -311,7 +339,7 @@ function consumeValue({buffer, offset, type}) {
 			const arrayLength = readLengthBuffer(buffer, offset);
 			length = arrayLength.length;
 			value = new Array(arrayLength.value);
-			for (let i = 0; i < value.length; i++) {
+			for (let i = 0; i &lt; value.length; i++) {
 				const arrayElement = consumeValue({buffer, offset: offset + length, type: type.type});
 				length += arrayElement.length;
 				value[i] = arrayElement.value;
@@ -321,7 +349,7 @@ function consumeValue({buffer, offset, type}) {
 			const setLength = readLengthBuffer(buffer, offset);
 			length = setLength.length;
 			value = new Set;
-			for (let i = 0; i < setLength.value; i++) {
+			for (let i = 0; i &lt; setLength.value; i++) {
 				const setElement = consumeValue({buffer, offset: offset + length, type: type.type});
 				length += setElement.length;
 				value.add(setElement.value);
@@ -331,7 +359,7 @@ function consumeValue({buffer, offset, type}) {
 			const mapSize = readLengthBuffer(buffer, offset);
 			length = mapSize.length;
 			value = new Map;
-			for (let i = 0; i < mapSize.value; i++) {
+			for (let i = 0; i &lt; mapSize.value; i++) {
 				const keyElement = consumeValue({buffer, offset: offset + length, type: type.keyType});
 				length += keyElement.length;
 				const valueElement = consumeValue({buffer, offset: offset + length, type: type.valueType});
@@ -415,4 +443,26 @@ module.exports = {
 	 * @return The value that was read
 	 */
 	value
-};
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Buffer.html">Buffer</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -53,9 +53,9 @@ const io = module.exports = {
 	 * Writes the contents of [type.toBuffer()]{@link Type#toBuffer}
 	 * followed by a null byte.
 	 * Calls {@link callback} when done.
-	 * @param {{type, outStream}} param
-	 * @param {Type} param.type The type to write
-	 * @param {stream.Writable} param.outStream The stream to write to
+	 * @param {{type, outStream}} params
+	 * @param {Type} params.type The type to write
+	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
 	 */
 	writeType({type, outStream}, callback) {
@@ -74,10 +74,10 @@ const io = module.exports = {
 	 * Writes the contents of [type.valueBuffer(value)]{@link Type#valueBuffer}
 	 * followed by a null byte.
 	 * Calls {@link callback} when done.
-	 * @param {{type, value, outStream}} param
-	 * @param {Type} param.type The type to use to write the value
-	 * @param {type} param.value The value to write
-	 * @param {stream.Writable} param.outStream The stream to write to
+	 * @param {{type, value, outStream}} params
+	 * @param {Type} params.type The type to use to write the value
+	 * @param {type} params.value The value to write
+	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
 	 */
 	writeValue({type, value, outStream}, callback) {
@@ -99,11 +99,11 @@ const io = module.exports = {
 	 * followed by the contents of [type.valueBuffer(value)]{@link Type#valueBuffer},
 	 * and then a null byte.
 	 * Calls {@link callback} when done.
-	 * @param {{type, value, outStream}} param
-	 * @param {Type} param.type The type to write
+	 * @param {{type, value, outStream}} params
+	 * @param {Type} params.type The type to write
 	 * and to use to write the value
-	 * @param {type} param.value The value to write
-	 * @param {stream.Writable} param.outStream The stream to write to
+	 * @param {type} params.value The value to write
+	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
 	 */
 	writeTypeAndValue({type, value, outStream}, callback) {
@@ -162,9 +162,9 @@ const io = module.exports = {
 	 * This should be used when reading from sources
 	 * written to by {@link writeValue}.
 	 * Calls {@link callback} with the value when done.
-	 * @param {{type, inStream}} param
-	 * @param {Type} param.type The type that wrote the value bytes
-	 * @param {stream.Readable} param.inStream The stream to read from
+	 * @param {{type, inStream}} params
+	 * @param {Type} params.type The type that wrote the value bytes
+	 * @param {stream.Readable} params.inStream The stream to read from
 	 * @param {valueCallback} callback
 	 */
 	readValue({type, inStream}, callback) {
@@ -225,11 +225,11 @@ const io = module.exports = {
 	 * Will only send the value if the signatures match.
 	 * Response is gzipped to decrease size.
 	 * Calls {@link callback} when done.
-	 * @param {{req, res, type, value}} param
-	 * @param {external:http.IncomingMessage} param.req The client request
-	 * @param {external:http.ServerResponse} param.res The server response
-	 * @param {Type} param.type The type of the message
-	 * @param {type} param.value The value to send
+	 * @param {{req, res, type, value}} params
+	 * @param {external:http.IncomingMessage} params.req The client request
+	 * @param {external:http.ServerResponse} params.res The server response
+	 * @param {Type} params.type The type of the message
+	 * @param {type} params.value The value to send
 	 * @param {errCallback} callback
 	 */
 	httpRespond({req, res, type, value}, callback) {
@@ -261,7 +261,7 @@ const io = module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Buffer.html">Buffer</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Global</h3><ul><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Buffer.html">Buffer</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
 </nav>
 
 <br class="clear">

@@ -652,9 +652,9 @@ class TupleType extends AbsoluteType {
 		return 0x50;
 	}
 	/**
-	 * @param {{type, length}} param
-	 * @param {Type} param.type The type of each element in the tuple
-	 * @param {number} param.length The number of elements in the tuple
+	 * @param {{type, length}} params
+	 * @param {Type} params.type The type of each element in the tuple
+	 * @param {number} params.length The number of elements in the tuple
 	 * Must fit in a 4-byte unsigned integer.
 	 */
 	constructor({type, length}) {
@@ -932,9 +932,9 @@ class EnumType extends Type {
 		return 0x55;
 	}
 	/**
-	 * @param {{type, value}} param
-	 * @param {Type} param.type The type of each element in the tuple
-	 * @param {type[]} param.values The possible distinct values.
+	 * @param {{type, value}} params
+	 * @param {Type} params.type The type of each element in the tuple
+	 * @param {type[]} params.values The possible distinct values.
 	 * Cannot contain more than 255 values.
 	 * @throws {Error} If any value is invalid for {@link type}
 	 */

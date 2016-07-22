@@ -4,6 +4,7 @@ which jsdoc > /dev/null
 jsdoc --verbose -c js-conf.json \
 README.md \
 structure-types.js \
+read.js \
 io.js \
 lib/growable-buffer.js \
 index.js
