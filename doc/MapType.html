@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: IntType</title>
+    <title>JSDoc: Class: MapType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: IntType</h1>
+    <h1 class="page-title">Class: MapType</h1>
 
     
 
@@ -28,9 +28,10 @@
 
 <header>
     
-        <h2>IntType</h2>
+        <h2>MapType</h2>
         
-            <div class="class-description">A type storing a 4-byte signed integer</div>
+            <div class="class-description">A type storing a variable-size mapping of keys of one type to values of another.
+The size of any map must fit in a 4-byte unsigned integer.</div>
         
     
 </header>
@@ -44,7 +45,7 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="IntType"><span class="type-signature"></span>new IntType<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="MapType"><span class="type-signature"></span>new MapType<span class="signature">(keyType, valueType)</span><span class="type-signature"></span></h4>
 
     
 
@@ -56,6 +57,78 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>keyType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Type.html">Type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of each key in the map</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>valueType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Type.html">Type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of each value in the map</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -91,7 +164,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line242">line 242</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line866">line 866</a>
     </li></ul></dd>
     
 
@@ -114,6 +187,16 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>//For storing friendships (a mapping of people to their set of friends)
+let personType = new sb.StructType({...});
+let type = new sb.MapType(
+  personType,
+  new sb.SetType(personType)
+);</code></pre>
 
 
 
@@ -233,12 +316,12 @@ invoking <a href="Type.html#addToBuffer"><code>super.addToBuffer()</code></a> an
     
 
     
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="Type.html#addToBuffer">Type#addToBuffer</a>
     </li></ul></dd>
-    
-
     
 
     
@@ -1034,7 +1117,7 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Map.&lt;keyType, valueType></span>
 
 
             
@@ -1044,7 +1127,7 @@ for acceptable values.
 
             
 
-            <td class="description last">The value to write</td>
+            <td class="description last">The value to write. Size of the map must fit in a 4-byte unsigned integer.</td>
         </tr>
 
     
@@ -1090,7 +1173,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line252">line 252</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line899">line 899</a>
     </li></ul></dd>
     
 
@@ -1142,6 +1225,15 @@ for acceptable values.
     
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let friendMap = new Map;
+friendMap.set(person1, new Set().add(person2).add(person3));
+friendMap.set(person2, new Set([person1]));
+friendMap.set(person3, new Set([person1]));
+type.writeValue(buffer, friendMap);</code></pre>
 
 
 

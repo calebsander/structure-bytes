@@ -1,5 +1,8 @@
 {
 	"templates": {
-		"monospaceLinks": true
+		"monospaceLinks": true,
+		"default": {
+			"includeDate": false
+		}
 	}
 }

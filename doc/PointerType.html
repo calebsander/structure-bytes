@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: IntType</title>
+    <title>JSDoc: Class: PointerType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: IntType</h1>
+    <h1 class="page-title">Class: PointerType</h1>
 
     
 
@@ -28,9 +28,11 @@
 
 <header>
     
-        <h2>IntType</h2>
+        <h2>PointerType</h2>
         
-            <div class="class-description">A type storing a 4-byte signed integer</div>
+            <div class="class-description">A type storing a value of another type through a pointer.
+If you expect to have the same value repeated many times,
+using a pointer will decrease the size of the value <code>Buffer</code>.</div>
         
     
 </header>
@@ -44,7 +46,7 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="IntType"><span class="type-signature"></span>new IntType<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="PointerType"><span class="type-signature"></span>new PointerType<span class="signature">(type)</span><span class="type-signature"></span></h4>
 
     
 
@@ -56,6 +58,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Type.html">Type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of any value</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -91,7 +142,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line242">line 242</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1121">line 1121</a>
     </li></ul></dd>
     
 
@@ -114,6 +165,23 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>//If the same people will be used many times
+let personType = new sb.PointerType(
+  new sb.StructType({
+    dob: new sb.DateType,
+    id: new sb.UnsignedShortType,
+    name: new sb.StringType
+  })
+);
+let tribeType = new sb.StructType({
+  leader: personType,
+  members: new sb.SetType(personType),
+  money: new sb.MapType(personType, new sb.FloatType)
+});</code></pre>
 
 
 
@@ -233,12 +301,12 @@ invoking <a href="Type.html#addToBuffer"><code>super.addToBuffer()</code></a> an
     
 
     
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="Type.html#addToBuffer">Type#addToBuffer</a>
     </li></ul></dd>
-    
-
     
 
     
@@ -1034,7 +1102,7 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">type</span>
 
 
             
@@ -1090,7 +1158,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line252">line 252</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1163">line 1163</a>
     </li></ul></dd>
     
 
@@ -1142,6 +1210,30 @@ for acceptable values.
     
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let louis = {
+  dob: new Date(1437592284193),
+  id: 9,
+  name: 'Louis'
+},
+garfield = {
+  dob: new Date(1437592284194),
+  id: 17,
+  name: 'Garfield'
+};
+let value = {
+  leader: {
+    dob: new Date(1437592284192),
+    id: 10,
+    name: 'Joe'
+  },
+  members: new Set().add(louis).add(garfield),
+  money: new Map().set(louis, 23.05).set(garfield, -10.07)
+};
+tribeType.writeValue(buffer, value);</code></pre>
 
 
 

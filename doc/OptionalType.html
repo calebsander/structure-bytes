@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: IntType</title>
+    <title>JSDoc: Class: OptionalType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: IntType</h1>
+    <h1 class="page-title">Class: OptionalType</h1>
 
     
 
@@ -28,9 +28,9 @@
 
 <header>
     
-        <h2>IntType</h2>
+        <h2>OptionalType</h2>
         
-            <div class="class-description">A type storing a 4-byte signed integer</div>
+            <div class="class-description">A type storing a value of another type or <code>null</code></div>
         
     
 </header>
@@ -44,7 +44,7 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="IntType"><span class="type-signature"></span>new IntType<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="OptionalType"><span class="type-signature"></span>new OptionalType<span class="signature">(type)</span><span class="type-signature"></span></h4>
 
     
 
@@ -56,6 +56,55 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Type.html">Type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of any non-<code>null</code> value</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -91,7 +140,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line242">line 242</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1060">line 1060</a>
     </li></ul></dd>
     
 
@@ -114,6 +163,16 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>//If you have a job slot that may or may not be filled
+let personType = new sb.StructType({...});
+let type = new sb.StructType({
+  title: new sb.StringType,
+  employee: new sb.OptionalType(personType)
+});</code></pre>
 
 
 
@@ -233,12 +292,12 @@ invoking <a href="Type.html#addToBuffer"><code>super.addToBuffer()</code></a> an
     
 
     
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="Type.html#addToBuffer">Type#addToBuffer</a>
     </li></ul></dd>
-    
-
     
 
     
@@ -1034,7 +1093,10 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">null</span>
+|
+
+<span class="param-type">type</span>
 
 
             
@@ -1090,7 +1152,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line252">line 252</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1090">line 1090</a>
     </li></ul></dd>
     
 
@@ -1142,6 +1204,18 @@ for acceptable values.
     
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>type.writeValue(buffer, {
+  title: 'Manager',
+  employee: person1
+});
+type.writeValue(buffer, {
+  title: 'Assistant Librarian',
+  employee: null
+});</code></pre>
 
 
 

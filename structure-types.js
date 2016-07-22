@@ -52,7 +52,7 @@ class Type {
 	 * For the most primitive types, this implementation is sufficient.
 	 * Recursive types should override this method,
 	 * invoking [super.addToBuffer()]{@link Type#addToBuffer} and then adding their own data if it returns true.
-	 * @arg {GrowableBuffer} buffer - the buffer to apped to
+	 * @param {GrowableBuffer} buffer The buffer to append to
 	 * @return {boolean} {@link false} if it wrote a pointer to a previous instance, {@link true} if it wrote the type byte. Intended to only be used internally.
 	 */
 	addToBuffer(buffer) {
@@ -133,7 +133,7 @@ class Type {
 		return config.VERSION_STRING + this.getHash();
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @abstract
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param value The value to write
@@ -144,7 +144,9 @@ class Type {
 		throw new Error('Generic Type has no value representation');
 	}
 	/**
-	 * Gets a {@link Buffer} containing the value in binary format
+	 * Gets a {@link Buffer} containing the value in binary format.
+	 * See this type's {@link writeValue()} documentation
+	 * for acceptable values.
 	 * @param value The value to write
 	 * @return {Buffer} a {@link Buffer} storing the value (assuming the type is known)
 	 * @see Type#writeValue
@@ -196,10 +198,9 @@ class ByteType extends IntegerType {
 		return 0x01;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -220,10 +221,9 @@ class ShortType extends IntegerType {
 		return 0x02;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -244,10 +244,9 @@ class IntType extends IntegerType {
 		return 0x03;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -268,10 +267,9 @@ class LongType extends IntegerType {
 		return 0x04;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {string} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -302,10 +300,9 @@ class UnsignedByteType extends UnsignedType {
 		return 0x11;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -326,10 +323,9 @@ class UnsignedShortType extends UnsignedType {
 		return 0x12;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -350,10 +346,9 @@ class UnsignedIntType extends UnsignedType {
 		return 0x13;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -385,10 +380,9 @@ class UnsignedLongType extends UnsignedType {
 		return 0x14;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {string} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -406,10 +400,9 @@ class DateType extends AbsoluteType {
 		return 0x15;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {Date} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -438,10 +431,9 @@ class FloatType extends FloatingPointType {
 		return 0x20;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -461,10 +453,9 @@ class DoubleType extends FloatingPointType {
 		return 0x21;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {number} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -485,10 +476,9 @@ class BooleanType extends AbsoluteType {
 		return 0x30;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {boolean} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -539,10 +529,9 @@ class BooleanTupleType extends AbsoluteType {
 		if (super.addToBuffer(buffer)) buffer.addAll(lengthBuffer(this.length));
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {Boolean[]} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -563,10 +552,9 @@ class BooleanArrayType extends AbsoluteType {
 		return 0x32;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {Boolean[]} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -587,10 +575,9 @@ class CharType extends AbsoluteType {
 		return 0x40;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {string} value The value to write (must be only 1 character long)
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -610,10 +597,9 @@ class StringType extends AbsoluteType {
 		return 0x41;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {string} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -636,10 +622,9 @@ class OctetsType extends AbsoluteType {
 		return 0x42;
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {Buffer} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -666,7 +651,7 @@ class TupleType extends AbsoluteType {
 	}
 	/**
 	 * @param {{type, length}} param
-	 * @param {Type} param.type The type of an element in the tuple
+	 * @param {Type} param.type The type of each element in the tuple
 	 * @param {number} param.length The number of elements in the tuple
 	 * Must fit in a 4-byte unsigned integer.
 	 */
@@ -684,10 +669,9 @@ class TupleType extends AbsoluteType {
 		}
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {type[]} value The value to write
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * type.writeValue(buffer, [10, 5, 101, 43, 889]);
@@ -704,7 +688,7 @@ class TupleType extends AbsoluteType {
 const NAME = 'name';
 const TYPE = 'type';
 /**
- * A type storing up to 255 named fields.
+ * A type storing up to 255 named fields
  * @example
  * //For storing a person's information
  * let type = new sb.StructType({
@@ -720,7 +704,7 @@ class StructType extends AbsoluteType {
 		return 0x51;
 	}
 	/**
-	 * @param {Object.<string, Type>} param A mapping of field names to their types.
+	 * @param {Object.<string, Type>} fields A mapping of field names to their types.
 	 * There can be no more than 255 fields.
 	 * Each field name must be at most 255 bytes long in UTF-8.
 	 */
@@ -763,10 +747,9 @@ class StructType extends AbsoluteType {
 		}
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {Object} value The value to write. Each field must have a valid value supplied.
-	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * type.writeValue(buffer, {
@@ -782,10 +765,23 @@ class StructType extends AbsoluteType {
 		setPointers(buffer, root);
 	}
 }
+/**
+ * A type storing a variable-length array of values of the same type.
+ * The length of any value must fit in a 4-byte unsigned integer.
+ * @example
+ * //For storing some number of people in order
+ * let personType = new sb.StructType({...});
+ * let type = new sb.ArrayType(personType);
+ * @extends Type
+ * @inheritdoc
+ */
 class ArrayType extends AbsoluteType {
 	static get _value() {
 		return 0x52;
 	}
+	/**
+	 * @param {Type} type The type of each element in the array
+	 */
 	constructor(type) {
 		super();
 		assert.instanceOf(type, Type);
@@ -794,6 +790,11 @@ class ArrayType extends AbsoluteType {
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
 	}
+	/**
+	 * Writes any iterable value to the buffer;
+	 * used by ArrayType and SetType
+	 * @private
+	*/
 	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.fourByteUnsignedInteger(value.length);
@@ -801,25 +802,75 @@ class ArrayType extends AbsoluteType {
 		for (let instance of value) this.type.writeValue(buffer, instance, false);
 		setPointers(buffer, root);
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {type[]} value The value to write. Length of the array must fit in a 4-byte unsigned integer.
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, [person1, person2, person3]);
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Array);
 		this._writeValue(buffer, value, root);
 	}
 }
+/**
+ * A type storing a variable-size set of values of the same type.
+ * The size of any value must fit in a 4-byte unsigned integer.
+ * Works much like {@link ArrayType} except all values are {@link Set}s.
+ * @example
+ * //For storing some number of people
+ * let personType = new sb.StructType({...});
+ * let type = new sb.SetType(personType);
+ * @extends ArrayType
+ * @inheritdoc
+ */
 class SetType extends ArrayType {
 	static get _value() {
 		return 0x53;
 	}
+	/**
+	 * @param {Type} type The type of each element in the set
+	 */
+	constructor(type) {
+		super(type);
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {Set.<type>} value The value to write. Size of the set must fit in a 4-byte unsigned integer.
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, new Set().add(person1).add(person2).add(person3));
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Set);
 		value.length = value.size;
-		super._writeValue(buffer, value, root);
+		this._writeValue(buffer, value, root);
 	}
 }
+/**
+ * A type storing a variable-size mapping of keys of one type to values of another.
+ * The size of any map must fit in a 4-byte unsigned integer.
+ * @example
+ * //For storing friendships (a mapping of people to their set of friends)
+ * let personType = new sb.StructType({...});
+ * let type = new sb.MapType(
+ *   personType,
+ *   new sb.SetType(personType)
+ * );
+ * @extends Type
+ * @inheritdoc
+ */
 class MapType extends AbsoluteType {
 	static get _value() {
 		return 0x54;
 	}
+	/**
+	 * @param {Type} keyType The type of each key in the map
+	 * @param {Type} valueType The type of each value in the map
+	 */
 	constructor(keyType, valueType) {
 		super();
 		assert.instanceOf(keyType, Type);
@@ -833,6 +884,18 @@ class MapType extends AbsoluteType {
 			this.valueType.addToBuffer(buffer);
 		}
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {Map.<keyType, valueType>} value The value to write. Size of the map must fit in a 4-byte unsigned integer.
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * let friendMap = new Map;
+	 * friendMap.set(person1, new Set().add(person2).add(person3));
+	 * friendMap.set(person2, new Set([person1]));
+	 * friendMap.set(person3, new Set([person1]));
+	 * type.writeValue(buffer, friendMap);
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Map);
@@ -845,22 +908,44 @@ class MapType extends AbsoluteType {
 		setPointers(buffer, root);
 	}
 }
+/**
+ * A type storing a value in a fixed set of possible values.
+ * There can be at most 255 possible values.
+ * @example
+ * //Storing different species' characteristics
+ * const HUMAN = {heightFt: 6, speedMph: 28};
+ * const CHEETAH = {heightFt: 3, speedMph: 70};
+ * let type = new sb.EnumType({
+ *   type: new sb.StructType({
+ *     heightFt: new sb.FloatType,
+ *     speedMph: new sb.UnsignedByteType
+ *   }),
+ *   values: [HUMAN, CHEETAH]
+ * });
+ * @extends Type
+ * @inheritdoc
+ */
 class EnumType extends Type {
 	static get _value() {
 		return 0x55;
 	}
+	/**
+	 * @param {{type, value}} param
+	 * @param {Type} param.type The type of each element in the tuple
+	 * @param {type[]} param.values The possible distinct values.
+	 * Cannot contain more than 255 values.
+	 * @throws {Error} If any value is invalid for {@link type}
+	 */
 	constructor({type, values}) {
 		super();
-		assert.instanceOf(type, Type);
+		assert.instanceOf(type, AbsoluteType);
 		assert.instanceOf(values, Array);
 		try { assert.byteUnsignedInteger(values.length); }
 		catch (e) { throw new Error(String(values.length) + ' values is too many'); }
 		const valueIndices = new Map;
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i];
-			const buffer = new GrowableBuffer;
-			type.writeValue(buffer, value);
-			const valueBuffer = buffer.toBuffer().toString(BINARY);
+			const valueBuffer = type.valueBuffer(value).toString(BINARY);
 			assert.assert(!valueIndices.has(valueBuffer), 'Value is repeated: ' + util.inspect(value));
 			valueIndices.set(valueBuffer, i);
 		}
@@ -872,9 +957,17 @@ class EnumType extends Type {
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer);
 			buffer.add(this.valueIndices.size);
-			for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer)); //eslint-disable-line no-unused-vars
+			for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(Buffer.from(valueBuffer, BINARY)); //eslint-disable-line no-unused-vars
 		}
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {type} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, CHEETAH);
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		const valueBuffer = new GrowableBuffer;
@@ -885,10 +978,30 @@ class EnumType extends Type {
 		setPointers(buffer, root);
 	}
 }
+/**
+ * A type storing a value of one of several fixed types.
+ * The list of possible types must contain at most 255 types.
+ * @example
+ * //If you have a lot of numbers that fit in an unsigned byte
+ * //but could conceivably have one that requires a long
+ * let type = new sb.ChoiceType([
+ *   new sb.UnsignedByteType,
+ *   new sb.UnsignedLongType
+ * ]);
+ * @extends Type
+ * @inheritdoc
+ */
 class ChoiceType extends Type {
 	static get _value() {
 		return 0x56;
 	}
+	/**
+	 * @param {Type[]} types The list of possible types.
+	 * Cannot contain more than 255 types.
+	 * Values will be written using the first type in the list
+	 * that successfully writes the value,
+	 * so place higher priority types earlier.
+	 */
 	constructor(types) {
 		super();
 		assert.instanceOf(types, Array);
@@ -903,6 +1016,15 @@ class ChoiceType extends Type {
 			for (let type of this.types) type.addToBuffer(buffer);
 		}
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, 10); //writes as an unsigned byte
+	 * type.writeValue(buffer, 1000); //writes as an unsigned long
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		let i = 0;
@@ -923,10 +1045,25 @@ class ChoiceType extends Type {
 		setPointers(buffer, root);
 	}
 }
+/**
+ * A type storing a value of another type or {@link null}
+ * @example
+ * //If you have a job slot that may or may not be filled
+ * let personType = new sb.StructType({...});
+ * let type = new sb.StructType({
+ *   title: new sb.StringType,
+ *   employee: new sb.OptionalType(personType)
+ * });
+ * @extends Type
+ * @inheritdoc
+ */
 class OptionalType extends AbsoluteType {
 	static get _value() {
 		return 0x60;
 	}
+	/**
+	 * @param {Type} type The type of any non-{@link null} value
+	 */
 	constructor(type) {
 		super();
 		assert.instanceOf(type, Type);
@@ -935,6 +1072,21 @@ class OptionalType extends AbsoluteType {
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {null|type} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, {
+	 *   title: 'Manager',
+	 *   employee: person1
+	 * });
+	 * type.writeValue(buffer, {
+	 *   title: 'Assistant Librarian',
+	 *   employee: null
+	 * });
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		if (value === null) buffer.add(0x00);
@@ -945,10 +1097,34 @@ class OptionalType extends AbsoluteType {
 		setPointers(buffer, root);
 	}
 }
+/**
+ * A type storing a value of another type through a pointer.
+ * If you expect to have the same value repeated many times,
+ * using a pointer will decrease the size of the value {@link Buffer}.
+ * @example
+ * //If the same people will be used many times
+ * let personType = new sb.PointerType(
+ *   new sb.StructType({
+ *     dob: new sb.DateType,
+ *     id: new sb.UnsignedShortType,
+ *     name: new sb.StringType
+ *   })
+ * );
+ * let tribeType = new sb.StructType({
+ *   leader: personType,
+ *   members: new sb.SetType(personType),
+ *   money: new sb.MapType(personType, new sb.FloatType)
+ * });
+ * @extends Type
+ * @inheritdoc
+ */
 class PointerType extends Type {
 	static get _value() {
 		return 0x70;
 	}
+	/**
+	 * @param {Type} type The type of any value
+	 */
 	constructor(type) {
 		super();
 		assert.instanceOf(type, AbsoluteType);
@@ -957,6 +1133,33 @@ class PointerType extends Type {
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {type} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * let louis = {
+	 *   dob: new Date(1437592284193),
+	 *   id: 9,
+	 *   name: 'Louis'
+	 * },
+	 * garfield = {
+	 *   dob: new Date(1437592284194),
+	 *   id: 17,
+	 *   name: 'Garfield'
+	 * };
+	 * let value = {
+	 *   leader: {
+	 *     dob: new Date(1437592284192),
+	 *     id: 10,
+	 *     name: 'Joe'
+	 *   },
+	 *   members: new Set().add(louis).add(garfield),
+	 *   money: new Map().set(louis, 23.05).set(garfield, -10.07)
+	 * };
+	 * tribeType.writeValue(buffer, value);
+	 */
 	writeValue(buffer, value, root = true) {
 		if (buffer.pointers === undefined) buffer.pointers = new Map;
 		const valueBuffer = new GrowableBuffer;

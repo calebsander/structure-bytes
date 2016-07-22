@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: IntType</title>
+    <title>JSDoc: Class: EnumType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: IntType</h1>
+    <h1 class="page-title">Class: EnumType</h1>
 
     
 
@@ -28,9 +28,10 @@
 
 <header>
     
-        <h2>IntType</h2>
+        <h2>EnumType</h2>
         
-            <div class="class-description">A type storing a 4-byte signed integer</div>
+            <div class="class-description">A type storing a value in a fixed set of possible values.
+There can be at most 255 possible values.</div>
         
     
 </header>
@@ -44,7 +45,7 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="IntType"><span class="type-signature"></span>new IntType<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="EnumType"><span class="type-signature"></span>new EnumType<span class="signature">(param)</span><span class="type-signature"></span></h4>
 
     
 
@@ -56,6 +57,128 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>param</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Type.html">Type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of each element in the tuple</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;type></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The possible distinct values.
+Cannot contain more than 255 values.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -91,7 +214,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line242">line 242</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line928">line 928</a>
     </li></ul></dd>
     
 
@@ -114,6 +237,20 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>//Storing different species' characteristics
+const HUMAN = {heightFt: 6, speedMph: 28};
+const CHEETAH = {heightFt: 3, speedMph: 70};
+let type = new sb.EnumType({
+  type: new sb.StructType({
+    heightFt: new sb.FloatType,
+    speedMph: new sb.UnsignedByteType
+  }),
+  values: [HUMAN, CHEETAH]
+});</code></pre>
 
 
 
@@ -233,12 +370,12 @@ invoking <a href="Type.html#addToBuffer"><code>super.addToBuffer()</code></a> an
     
 
     
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="Type.html#addToBuffer">Type#addToBuffer</a>
     </li></ul></dd>
-    
-
     
 
     
@@ -1034,7 +1171,7 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">type</span>
 
 
             
@@ -1090,7 +1227,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line252">line 252</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line971">line 971</a>
     </li></ul></dd>
     
 
@@ -1142,6 +1279,11 @@ for acceptable values.
     
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>type.writeValue(buffer, CHEETAH);</code></pre>
 
 
 
