@@ -376,10 +376,12 @@ function consumeValue({buffer, offset, type}) {
 	}
 	return {value, length};
 }
-function value({buffer, type, offset = 0}) {
+function value({buffer, type, offset}) {
 	assert.instanceOf(buffer, Buffer);
 	assert.instanceOf(type, t.Type);
-	const {value} = consumeValue({buffer, offset: offset, type});
+	if (offset === undefined) offset = 0; //for some reason, isparta doesn't like default parameters inside destructuring
+	assert.instanceOf(offset, Number);
+	const {value} = consumeValue({buffer, offset, type});
 	return value;
 }
 
