@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: External: Buffer</title>
+    <title>JSDoc: Source: lib/buffer-stream.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,104 +17,62 @@
 
 <div id="main">
 
-    <h1 class="page-title">External: Buffer</h1>
+    <h1 class="page-title">Source: lib/buffer-stream.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>Buffer</h2>
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const assert = require(__dirname + '/assert.js');
+const GrowableBuffer = require(__dirname + '/growable-buffer.js');
+const stream = require('stream');
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description">The NodeJS Buffer object</div>
-        
+/**
+ * A class for creating a readable stream
+ * out of a [Buffer]{@link external:Buffer} or {@link GrowableBuffer}.
+ * When dealing with very large buffers,
+ * this allows chunks to be sent as they are requested
+ * rather than stuffing the whole buffer into the stream at once.
+ * The stream is intended mainly to be piped
+ * into write streams.
+ */
+class BufferStream extends stream.Readable {
+	/**
+	 * @param {external:Buffer|GrowableBuffer} buffer
+	 * The buffer whose data to use.
+	 * If a {@link GrowableBuffer} is used, only the
+	 * occupied portion will be written by the stream.
+	 * Future additions to the {@link GrowableBuffer}
+	 * will not be written.
+	 * If bytes inside the [Buffer]{@link external:Buffer}
+	 * or occupied portion are changed, behavior is undefined.
+	 */
+	constructor(buffer) {
+		super();
+		if (Buffer.isBuffer(buffer)) this.buffer = buffer;
+		else if (buffer &amp;&amp; buffer.constructor === GrowableBuffer) this.buffer = buffer.rawBuffer;
+		else assert.fail('Expected Buffer, got ' + (buffer ? buffer.constructor.name : String(buffer))); //buffer should always have a constructor if it is neither undefined nor null
+		this.offset = 0;
+		this.end = buffer.length;
+	}
+	_read(size) {
+		if (this.offset &lt; this.end) {
+			this.push(this.buffer.slice(this.offset, Math.min(this.offset + size, this.end)));
+			this.offset += size;
+		}
+		else {
+			this.push(null);
+			this.emit('bs-written');
+		}
+	}
+}
 
-        
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="https://nodejs.org/api/buffer.html">https://nodejs.org/api/buffer.html</a></li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+module.exports = BufferStream;</code></pre>
+        </article>
+    </section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: External: Buffer</title>
+    <title>JSDoc: Class: BufferStream</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">External: Buffer</h1>
+    <h1 class="page-title">Class: BufferStream</h1>
 
     
 
@@ -28,7 +28,15 @@
 
 <header>
     
-        <h2>Buffer</h2>
+        <h2>BufferStream</h2>
+        
+            <div class="class-description">A class for creating a readable stream
+out of a <a href="external-Buffer.html"><code>Buffer</code></a> or <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a>.
+When dealing with very large buffers,
+this allows chunks to be sent as they are requested
+rather than stuffing the whole buffer into the stream at once.
+The stream is intended mainly to be piped
+into write streams.</div>
         
     
 </header>
@@ -37,10 +45,85 @@
     <div class="container-overview">
     
         
-            <div class="description">The NodeJS Buffer object</div>
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="BufferStream"><span class="type-signature"></span>new BufferStream<span class="signature">(buffer)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
         
 
         
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>buffer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="external-Buffer.html">external:Buffer</a></span>
+|
+
+<span class="param-type"><a href="GrowableBuffer.html">GrowableBuffer</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The buffer whose data to use.
+If a <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a> is used, only the
+occupied portion will be written by the stream.
+Future additions to the <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a>
+will not be written.
+If bytes inside the <a href="external-Buffer.html"><code>Buffer</code></a>
+or occupied portion are changed, behavior is undefined.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
 
 
 <dl class="details">
@@ -72,26 +155,32 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line1">line 1</a>
+        <a href="lib_buffer-stream.js.html">lib/buffer-stream.js</a>, <a href="lib_buffer-stream.js.html#line14">line 14</a>
     </li></ul></dd>
     
 
     
 
     
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="https://nodejs.org/api/buffer.html">https://nodejs.org/api/buffer.html</a></li>
-        </ul>
-    </dd>
-    
 
     
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     </div>
 
