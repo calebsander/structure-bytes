@@ -8,4 +8,6 @@ assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE);
 
 let fullType = new t.BooleanTupleType(16);
 const VALUE2 = [true, false, true, false, true, false, true, false, false, true, false, true, false, true, false, true];
-assert.equal(fullType.valueBuffer(VALUE2), Buffer.from([0b10101010, 0b01010101]));
+let buffer = fullType.valueBuffer(VALUE2);
+assert.equal(buffer, Buffer.from([0b10101010, 0b01010101]));
+assert.equal(r.value({buffer, type: fullType}), VALUE2);
