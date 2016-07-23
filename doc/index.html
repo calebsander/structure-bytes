@@ -44,7 +44,8 @@
 
     <section>
         <article><h1>structure-bytes</h1><p>A NodeJS library for making more efficient data transfers by separating the structure from the values and efficiently storing each as byte arrays.</p>
-<p><a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
+<p><a href="https://www.npmjs.com/package/structure-bytes"><img src="https://img.shields.io/npm/v/structure-bytes.svg" alt="npm"></a>
+<a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/calebsander/structure-bytes?branch=master"><img src="https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master" alt="Coverage Status"></a></p>
 <h2>Concept</h2><p>Most data nowadays is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON or YAML) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. To accomplish this, the project was designed with several principles in mind:</p>
 <ul>
@@ -258,7 +259,12 @@ http.createServer((req, res) => {
             }
         });
     });
-&lt;/script></code></pre><h2>Versioning</h2><p>Versions will be of the form <code>x.y.z</code>. <code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>. <code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases. <code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
+&lt;/script></code></pre><h2>Versioning</h2><p>Versions will be of the form <code>x.y.z</code>.
+<code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>.
+<code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases.
+<code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
+<h2>Testing</h2><p>To test the NodeJS code, run <code>npm test</code>.
+To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page and each page should alert <code>Success</code>.</p>
 <p><em>Caleb Sander, 2016</em></p></article>
     </section>
 
