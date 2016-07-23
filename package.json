@@ -1,8 +1,11 @@
 {
 	"name": "structure-bytes",
-	"version": "2.0.7",
+	"version": "2.1.7",
 	"description": "Efficiently stores data of any shape by separating it into structure and value",
 	"main": "index.js",
+	"dependencies": {
+		"sha.js": "2.4.x"
+	},
 	"devDependencies": {
 		"babel-cli": "6.11.x",
 		"babelify": "7.3.x",
@@ -10,7 +13,6 @@
 		"browserify": "13.0.x",
 		"coveralls": "2.11.x",
 		"isparta": "4.0.x",
-		"sha.js": "2.4.x",
 		"uglify-js": "2.7.x"
 	},
 	"directories": {
