@@ -49,6 +49,9 @@ Most data nowadays is stored in files or transfered over HTTP as either text fil
 	- `Optional<Type>` (either `null` or an instance of `Type`)
 	- `Pointer<Type>` (allows multiple long instances of `Type` with the same bytes to be stored only once)
 
+## Documentation
+The `doc` folder is hosted at https://calebsander.github.io/structure-bytes/doc/.
+
 ## Examples
 ### Type creation
 ````javascript
