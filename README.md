@@ -31,7 +31,7 @@ Most data nowadays is stored in files or transfered over HTTP as either text fil
 	- `Date` (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)
 	- `Float` (IEEE 32-bit floating-point number)
 	- `Double` (IEEE 64-bit floating-point number)
-	- (planned) `BigFloat` (16-bit exponent and up to 256 bytes of precision number of bytes of precision)
+	- (planned) `BigFloat` (16-bit exponent and up to 256 bytes of precision)
 	- `Boolean` (a single true or false value)
 	- `BooleanTuple` (a constant-length array of `Boolean`s)
 	- `BooleanArray` (a variable-length array of `Boolean`s)
