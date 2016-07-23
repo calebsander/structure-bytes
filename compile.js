@@ -5,10 +5,6 @@ const ReplaceStream = require(__dirname + '/lib/replace-stream.js');
 const Simultaneity = require(__dirname + '/lib/simultaneity.js');
 const uglify = require('uglify-js');
 
-function exposeFile(b, name, fileName = name) {
-	b.require(__dirname + fileName, {expose: name});
-}
-
 let uploadB = browserify();
 uploadB.add(__dirname + '/client-side/upload.js');
 let downloadB = browserify();
@@ -33,8 +29,26 @@ for (let zlibFile of ['/io']) {
 		});
 	});
 }
-console.log('Replacing large dependencies');
+console.log('Compiling: Replacing large dependencies');
 s.callback(() => {
+	function exposeFile(b, name, fileName = name) {
+		b.require(__dirname + fileName, {expose: name});
+	}
+	function compile(b, {modifiedFiles, exposeFiles, outputFile}) {
+		console.log('Compiling: Browserifying and babelifying ' + outputFile);
+		for (let ending in modifiedFiles) {
+			for (let file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js');
+		}
+		for (let file of exposeFiles) exposeFile(b, file);
+		b.transform('babelify', {presets: ['es2015']});
+		b.bundle().pipe(fs.createWriteStream(__dirname + outputFile)).on('finish', () => {
+			console.log('Compiling: Uglifying ' + outputFile);
+			const uglified = uglify.minify(__dirname + outputFile).code;
+			fs.writeFile(__dirname + outputFile, uglified, (err) => {
+				if (err) throw err;
+			});
+		});
+	}
 	compile(uploadB, {
 		modifiedFiles: {
 			noutil: ['/lib/assert', '/structure-types']
@@ -67,18 +81,3 @@ s.callback(() => {
 		outputFile: '/compiled/download.js'
 	});
 });
-function compile(b, {modifiedFiles, exposeFiles, outputFile}) {
-	console.log('Compiling ' + outputFile);
-	for (let ending in modifiedFiles) {
-		for (let file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js');
-	}
-	for (let file of exposeFiles) exposeFile(b, file);
-	b.transform('babelify', {presets: ['es2015']});
-	b.bundle().pipe(fs.createWriteStream(__dirname + outputFile)).on('finish', () => {
-		console.log('Uglifying ' + outputFile);
-		const uglified = uglify.minify(__dirname + outputFile).code;
-		fs.writeFile(__dirname + outputFile, uglified, (err) => {
-			if (err) throw err;
-		});
-	});
-}
