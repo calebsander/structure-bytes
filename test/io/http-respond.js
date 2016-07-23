@@ -15,11 +15,11 @@ let server = http.createServer((req, res) => {
 server.listen(port);
 
 let requestOptions = {
-  hostname: 'localhost',
-  port,
-  path: '/',
-  method: 'GET',
-  headers: {}
+	hostname: 'localhost',
+	port,
+	path: '/',
+	method: 'GET',
+	headers: {}
 };
 http.get(requestOptions, (res) => {
 	assert.equal(res.headers.sig, type.getSignature());

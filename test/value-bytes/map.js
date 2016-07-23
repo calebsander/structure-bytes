@@ -1,8 +1,16 @@
 /*eslint-disable no-undef*/
 let type = new t.MapType(new t.CharType, new t.UnsignedByteType);
 let gb = new GrowableBuffer;
-for (let invalidValue of [{'c': 2}, undefined, null, new Map().set(2, 3)]) {
-	assert.throws(() => type.writeValue(gb, invalidValue));
+for (let [invalidValue, message] of [
+	[{'c': 2}, '{ c: 2 } is not an instance of Map'],
+	[undefined, 'undefined is not an instance of Map'],
+	[null, 'null is not an instance of Map'],
+	[new Map().set(2, 3), '2 is not an instance of String']
+]) {
+	assert.throws(
+		() => type.writeValue(gb, invalidValue),
+		message
+	);
 }
 let map = new Map;
 gb = new GrowableBuffer;

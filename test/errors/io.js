@@ -2,7 +2,7 @@
 let s = new Simultaneity;
 s.addTask(() => {
 	io.readTypeAndValue(new BufferStream(Buffer.from([t.ArrayType._value])), (err, type, value) => {
-		assert.assert(err, 'No error thrown');
+		assert.message(err, 'Buffer is not long enough');
 		assert.equal(type, null);
 		assert.equal(value, null);
 		s.taskFinished();
@@ -15,7 +15,7 @@ s.addTask(() => {
 		Buffer.from([0, 0, 0, 1])
 	]);
 	io.readTypeAndValue(new BufferStream(typeValueBuffer), (err, type, value) => {
-		assert.assert(err, 'No error thrown');
+		assert.message(err, 'Buffer is not long enough');
 		assert.equal(type, null);
 		assert.equal(value, null);
 		s.taskFinished();
@@ -24,7 +24,7 @@ s.addTask(() => {
 s.addTask(() => {
 	let errorStream = fs.createReadStream(__dirname + '/asdfasdf');
 	io.readType(errorStream, (err, type) => {
-		assert.assert(err);
+		assert.message(err, 'ENOENT');
 		assert.equal(type, null);
 		s.taskFinished();
 	});
@@ -33,7 +33,7 @@ s.addTask(() => {
 	let type = new t.StringType;
 	let errorStream = fs.createReadStream(__dirname + '/asdfasdf');
 	io.readValue({type, inStream: errorStream}, (err, value) => {
-		assert.assert(err);
+		assert.message(err, 'ENOENT');
 		assert.equal(value, null);
 		s.taskFinished();
 	});
@@ -41,7 +41,7 @@ s.addTask(() => {
 s.addTask(() => {
 	let errorStream = fs.createReadStream(__dirname + '/asdfasdf');
 	io.readTypeAndValue(errorStream, (err, type, value) => {
-		assert.assert(err);
+		assert.message(err, 'ENOENT');
 		assert.equal(type, null);
 		assert.equal(value, null);
 		s.taskFinished();

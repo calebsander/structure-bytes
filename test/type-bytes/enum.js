@@ -1,13 +1,24 @@
 /*eslint-disable no-undef*/
 let tooManyValues = new Array(256);
 for (let i = 0; i < tooManyValues.length; i++) tooManyValues[i] = 'A'.repeat(i);
-for (let invalidValues of ['asdf', [2], [true], [undefined], ['abc', 3], ['1', '2', '1'], tooManyValues]) {
-	assert.throws(() => {
-		new t.EnumType({
-			type: new t.StringType,
-			values: invalidValues
-		});
-	});
+for (let [invalidValues, message] of [
+	['asdf', "'asdf' is not an instance of Array"],
+	[[2], '2 is not an instance of String'],
+	[[true], 'true is not an instance of String'],
+	[[undefined], 'undefined is not an instance of String'],
+	[['abc', 3], '3 is not an instance of String'],
+	[['1', '2', '1'], "Value is repeated: '1'"],
+	[tooManyValues, '256 values is too many']
+]) {
+	assert.throws(
+		() => {
+			new t.EnumType({
+				type: new t.StringType,
+				values: invalidValues
+			});
+		},
+		message
+	);
 }
 let type = new t.EnumType({
 	type: new t.StringType,

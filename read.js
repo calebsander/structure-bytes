@@ -12,6 +12,10 @@ function readLengthBuffer(buffer, offset) {
 	try { return {value: buffer.readUInt32BE(offset), length: 4} } //eslint-disable-line semi
 	catch (e) { throw new Error(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
+function pad(str, digits) {
+	if (str.length < digits) return '0'.repeat(digits - str.length) + str;
+	else return str;
+}
 function consumeType(typeBuffer, offset) {
 	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset));
 	assert.assert(typeBuffer.length > offset, NOT_LONG_ENOUGH);
@@ -89,7 +93,7 @@ function consumeType(typeBuffer, offset) {
 				assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
 				const nameLength = typeBuffer.readUInt8(offset + length);
 				length++;
-				assert.assert(typeBuffer.length >= offset + length + nameLength);
+				assert.assert(typeBuffer.length >= offset + length + nameLength, NOT_LONG_ENOUGH);
 				const name = typeBuffer.toString('utf8', offset + length, offset + length + nameLength);
 				length += nameLength;
 				const fieldType = consumeType(typeBuffer, offset + length);
@@ -161,7 +165,7 @@ function consumeType(typeBuffer, offset) {
 			length = newLength;
 			break;
 		default:
-			assert.fail('No such type: 0x' + typeBuffer[offset].toString(16));
+			assert.fail('No such type: 0x' + pad(typeBuffer[offset].toString(16), 2));
 	}
 	return {value, length};
 }

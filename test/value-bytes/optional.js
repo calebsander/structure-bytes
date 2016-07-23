@@ -5,8 +5,16 @@ let type = new t.OptionalType(
 	)
 );
 let gb = new GrowableBuffer;
-for (let invalidValue of [undefined, 2, [-1], 'abc']) {
-	assert.throws(() => type.writeValue(gb, invalidValue));
+for (let [invalidValue, message] of [
+	[undefined, 'undefined is not an instance of Array'],
+	[2, '2 is not an instance of Array'],
+	[[-1], '"value" argument is out of bounds'], //error thrown by Buffer.writeUInt8(-1)
+	['abc', "'abc' is not an instance of Array"]
+]) {
+	assert.throws(
+		() => type.writeValue(gb, invalidValue),
+		message
+	);
 }
 gb = new GrowableBuffer;
 type.writeValue(gb, null);

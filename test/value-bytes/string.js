@@ -1,10 +1,17 @@
 /*eslint-disable no-undef*/
 let type = new t.StringType;
 let gb = new GrowableBuffer;
-for (let invalidValue of [undefined, null, 2, false, ['abc']]) {
-	assert.throws(() => {
-		type.writeValue(gb, invalidValue);
-	});
+for (let [invalidValue, message] of [
+	[undefined, 'undefined is not an instance of String'],
+	[null, 'null is not an instance of String'],
+	[2, '2 is not an instance of String'],
+	[false, 'false is not an instance of String'],
+	[['abc'], "[ 'abc' ] is not an instance of String"]
+]) {
+	assert.throws(
+		() => type.writeValue(gb, invalidValue),
+		message
+	);
 }
 const STRING = 'abç';
 type.writeValue(gb, STRING);

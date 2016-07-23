@@ -30,7 +30,7 @@ s.addTask(() => {
 });
 s.addTask(() => {
 	io.readType(new BufferStream(Buffer.from([0])), (err, readType) => {
-		assert.assert(err, 'No error occurred');
+		assert.message(err, 'No such type: 0x00');
 		assert.equal(readType, null);
 		s.taskFinished();
 	});

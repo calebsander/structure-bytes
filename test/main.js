@@ -68,7 +68,7 @@ fs.readdir(__dirname, (err, testSuites) => {
 			Math.round(passed / total * 100) +
 			'%)'
 		);
-		process.exitCode = total - passed + asyncErrors
+		process.exitCode = total - passed + asyncErrors;
 	}).on('uncaughtException', (err) => {
 		console.log('Error occurred in async test:');
 		console.log(err);

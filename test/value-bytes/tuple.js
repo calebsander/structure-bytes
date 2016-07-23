@@ -4,10 +4,20 @@ let type = new t.TupleType({
 	length: 5
 });
 let gb = new GrowableBuffer;
-for (let invalidValue of [undefined, null, 'abcde', 7, true, [1, 2, 3, 4, 5], ['a', 'b', 'c', 'd', 5], ['a', 'b', 'c', 'd', 'e', 'f']]) {
-	assert.throws(() => {
-		type.writeValue(gb, invalidValue);
-	});
+for (let [invalidValue, message] of [
+	[undefined, 'undefined is not an instance of Array'],
+	[null, 'null is not an instance of Array'],
+	['abcde', "'abcde' is not an instance of Array"],
+	[7, '7 is not an instance of Array'],
+	[true, 'true is not an instance of Array'],
+	[[1, 2, 3, 4, 5], '1 is not an instance of String'],
+	[['a', 'b', 'c', 'd', 5], '5 is not an instance of String'],
+	[['a', 'b', 'c', 'd', 'e', 'f'], 'Length does not match: expected 5 but got 6']
+]) {
+	assert.throws(
+		() => type.writeValue(gb, invalidValue),
+		message
+	);
 }
 gb = new GrowableBuffer;
 const VALUE = [

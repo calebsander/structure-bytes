@@ -6,8 +6,17 @@ let type = new t.SetType(
 	})
 );
 let gb = new GrowableBuffer;
-for (let invalidValue of [undefined, [2, true], 'abc', {a: 'b'}, new Set([1])]) {
-	assert.throws(() => type.writeValue(gb, invalidValue));
+for (let [invalidValue, message] of [
+	[undefined, 'undefined is not an instance of Set'],
+	[[2, true], '[ 2, true ] is not an instance of Set'],
+	['abc', "'abc' is not an instance of Set"],
+	[{a: 'b'}, "{ a: 'b' } is not an instance of Set"],
+	[new Set([1]), '1 is not an instance of Object']
+]) {
+	assert.throws(
+		() => type.writeValue(gb, invalidValue),
+		message
+	);
 }
 gb = new GrowableBuffer;
 type.writeValue(gb, new Set);

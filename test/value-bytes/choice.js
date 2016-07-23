@@ -12,4 +12,7 @@ gb = new GrowableBuffer;
 type.writeValue(gb, 'boop');
 assert.equal(gb.toBuffer(), Buffer.from([2, 0x62, 0x6f, 0x6f, 0x70, 0]));
 assert.equal(r.value({buffer: gb.toBuffer(), type}), 'boop');
-assert.throws(() => type.writeValue(gb, true));
+assert.throws(
+	() => type.writeValue(gb, true),
+	'No types matched: true'
+);

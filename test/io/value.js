@@ -30,7 +30,7 @@ s.addTask(() => {
 });
 s.addTask(() => {
 	io.readValue({type, inStream: new BufferStream(Buffer.from([0x00]))}, (err, readValue) => {
-		assert.assert(err, 'No error occurred');
+		assert.message(err, 'Buffer is not long enough');
 		assert.equal(readValue, null);
 		s.taskFinished();
 	});

@@ -5,4 +5,7 @@ let VALUE = Buffer.from([0xc1, 0xb5, 0x4c, 0x97, 0x9e, 0x9a, 0xde, 0x5b, 0x46, 0
 type.writeValue(gb, VALUE);
 assert.equal(gb.toBuffer(), Buffer.concat([Buffer.from([0, 0, 0, 100]), VALUE]));
 assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE);
-assert.throws(() => r.value({buffer: Buffer.from([0, 0, 0, 1]), type}));
+assert.throws(
+	() => r.value({buffer: Buffer.from([0, 0, 0, 1]), type}),
+	'Buffer is not long enough'
+);

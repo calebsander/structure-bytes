@@ -10,4 +10,7 @@ for (let i = 0; i < tooManyTypes.length; i++) {
 	for (let j = 0; j < i; j++) type = new t.ArrayType(type);
 	tooManyTypes[i] = type;
 }
-assert.throws(() => new t.ChoiceType(tooManyTypes));
+assert.throws(
+	() => new t.ChoiceType(tooManyTypes),
+	'256 types is too many'
+);

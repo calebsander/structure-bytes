@@ -3,6 +3,15 @@ let a = new GrowableBuffer;
 assert.equal(a.buffer.length, 10);
 a = new GrowableBuffer(100);
 assert.equal(a.buffer.length, 100);
-for (let invalidSize of [-1, Number.MAX_SAFE_INTEGER + 1, null, true, 'abc']) {
-	assert.throws(() => new GrowableBuffer(invalidSize));
+for (let [invalidSize, message] of [
+	[-1, '-1 is not a valid buffer length'],
+	[Number.MAX_SAFE_INTEGER + 1, '9007199254740992 is not a valid buffer length'],
+	[null, 'null is not a valid buffer length'],
+	[true, 'true is not a valid buffer length'],
+	['abc', 'abc is not a valid buffer length']
+]) {
+	assert.throws(
+		() => new GrowableBuffer(invalidSize),
+		message
+	);
 }

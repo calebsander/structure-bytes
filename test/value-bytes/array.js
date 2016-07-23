@@ -6,8 +6,16 @@ let type = new t.ArrayType(
 	})
 );
 let gb = new GrowableBuffer;
-for (let invalidValue of [undefined, [2, true], 'abc', {a: 'b'}]) {
-	assert.throws(() => type.writeValue(gb, invalidValue));
+for (let [invalidValue, message] of [
+	[undefined, 'undefined is not an instance of Array'],
+	[[2, true], '2 is not an instance of Object'],
+	['abc', "'abc' is not an instance of Array"],
+	[{a: 'b'}, "{ a: 'b' } is not an instance of Array"]
+]) {
+	assert.throws(
+		() => type.writeValue(gb, invalidValue),
+		message
+	);
 }
 gb = new GrowableBuffer;
 const VALUE = [
