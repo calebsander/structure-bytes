@@ -245,6 +245,13 @@ Client-side:
 ````
 
 ## Versioning
-Versions will be of the form `x.y.z`. `x` is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was `0`. `y` is the minor release; changes to it represent bug-fixing, non-breaking releases. `z` is the version of the type and value specification, which is independent of the API version. It should match the version set in `config.js`.
+Versions will be of the form `x.y.z`.
+`x` is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was `0`.
+`y` is the minor release; changes to it represent bug-fixing, non-breaking releases.
+`z` is the version of the type and value specification, which is independent of the API version. It should match the version set in `config.js`.
+
+## Testing
+To test the NodeJS code, run `npm test`.
+To test the HTTP transaction code, run `node client-test/server.js` and open `localhost:8080` in your browser. Open each link in a new page and each page should alert `Success`.
 
 _Caleb Sander, 2016_
