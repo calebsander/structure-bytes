@@ -21,5 +21,31 @@ s.addTask(() => {
 		s.taskFinished();
 	});
 });
+s.addTask(() => {
+	let errorStream = fs.createReadStream(__dirname + '/asdfasdf');
+	io.readType(errorStream, (err, type) => {
+		assert.assert(err);
+		assert.equal(type, null);
+		s.taskFinished();
+	});
+});
+s.addTask(() => {
+	let type = new t.StringType;
+	let errorStream = fs.createReadStream(__dirname + '/asdfasdf');
+	io.readValue({type, inStream: errorStream}, (err, value) => {
+		assert.assert(err);
+		assert.equal(value, null);
+		s.taskFinished();
+	});
+});
+s.addTask(() => {
+	let errorStream = fs.createReadStream(__dirname + '/asdfasdf');
+	io.readTypeAndValue(errorStream, (err, type, value) => {
+		assert.assert(err);
+		assert.equal(type, null);
+		assert.equal(value, null);
+		s.taskFinished();
+	});
+});
 let wait = setInterval(() => {}, 10);
 s.callback(() => clearInterval(wait));

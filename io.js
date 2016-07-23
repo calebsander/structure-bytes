@@ -9,10 +9,6 @@ const stream = require('stream');
 const t = require(__dirname + '/structure-types.js');
 const zlib = require('zlib');
 
-function close() {
-	this.end();
-}
-
 const io = module.exports = {
 	/**
 	 * A callback that receives an error object, if any was thrown.
@@ -35,7 +31,9 @@ const io = module.exports = {
 		assert.instanceOf(outStream, [stream.Writable, stream.Duplex]);
 		if (callback === undefined) callback = () => {};
 		assert.instanceOf(callback, Function);
-		return new BufferStream(type.toBuffer()).pipe(outStream).on('error', function(err) {
+		const typeStream = new BufferStream(type.toBuffer());
+		return typeStream.pipe(outStream).on('error', function(err) {
+			typeStream.close();
 			this.end();
 			callback(err);
 		}).on('finish', () => callback(null));
@@ -59,7 +57,9 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const valueBuffer = new GrowableBuffer;
 		type.writeValue(valueBuffer, value);
-		return new BufferStream(valueBuffer).pipe(outStream).on('error', function(err) {
+		const valueStream = new BufferStream(valueBuffer);
+		return valueStream.pipe(outStream).on('error', function(err) {
+			valueStream.close();
 			this.end();
 			callback(err);
 		}).on('finish', () => callback(null));
@@ -84,7 +84,10 @@ const io = module.exports = {
 		if (callback === undefined) callback = () => {};
 		assert.instanceOf(callback, Function);
 		const typeStream = new BufferStream(type.toBuffer());
-		typeStream.pipe(outStream, {end: false}).on('error', close);
+		typeStream.pipe(outStream, {end: false}).on('error', function() {
+			typeStream.close();
+			this.end();
+		});
 		typeStream.on('bs-written', () => { //can't listen for finish because it isn't called on a pipe without an end
 			io.writeValue({type, value, outStream}, callback);
 		});
@@ -111,7 +114,10 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const segments = [];
 		inStream.on('data', (chunk) => segments.push(chunk));
-		inStream.on('error', close).on('error', (err) => callback(err, null));
+		inStream.on('error', function(err) {
+			this.close();
+			callback(err, null);
+		});
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
@@ -144,7 +150,10 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const segments = [];
 		inStream.on('data', (chunk) => segments.push(chunk));
-		inStream.on('error', close).on('error', (err) => callback(err, null));
+		inStream.on('error', function(err) {
+			this.close();
+			callback(err, null);
+		});
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let value;
@@ -175,7 +184,10 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const segments = [];
 		inStream.on('data', (chunk) => segments.push(chunk));
-		inStream.on('error', close).on('error', (err) => callback(err, null, null));
+		inStream.on('error', function(err) {
+			this.close();
+			callback(err, null, null);
+		});
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
