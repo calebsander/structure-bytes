@@ -709,7 +709,9 @@ class TupleType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Array);
-		if (value.length !== this.length) throw new Error('Length does not match');
+		if (value.length !== this.length) {
+			throw new Error('Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
+		}
 		for (let instance of value) this.type.writeValue(buffer, instance, false);
 		setPointers(buffer, root);
 	}
@@ -791,7 +793,11 @@ class StructType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Object);
-		for (let field of this.fields) field[TYPE].writeValue(buffer, value[field[NAME]], false);
+		for (let field of this.fields) {
+			const fieldValue = value[field[NAME]];
+			if (fieldValue === undefined) throw new Error('Value for field ' + field[NAME] + ' missing');
+			field[TYPE].writeValue(buffer, fieldValue, false);
+		}
 		setPointers(buffer, root);
 	}
 }
@@ -1071,7 +1077,7 @@ class ChoiceType extends Type {
 			success = true;
 			break;
 		}
-		if (!success) assert.fail('No types matched: ' + util.inspect(success));
+		if (!success) assert.fail('No types matched: ' + util.inspect(value));
 		setPointers(buffer, root);
 	}
 }
