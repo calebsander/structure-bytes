@@ -33,7 +33,6 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const typeStream = new BufferStream(type.toBuffer());
 		return typeStream.pipe(outStream).on('error', function(err) {
-			typeStream.close();
 			this.end();
 			callback(err);
 		}).on('finish', () => callback(null));
@@ -57,9 +56,7 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const valueBuffer = new GrowableBuffer;
 		type.writeValue(valueBuffer, value);
-		const valueStream = new BufferStream(valueBuffer);
-		return valueStream.pipe(outStream).on('error', function(err) {
-			valueStream.close();
+		return new BufferStream(valueBuffer).pipe(outStream).on('error', function(err) {
 			this.end();
 			callback(err);
 		}).on('finish', () => callback(null));
@@ -85,7 +82,6 @@ const io = module.exports = {
 		assert.instanceOf(callback, Function);
 		const typeStream = new BufferStream(type.toBuffer());
 		typeStream.pipe(outStream, {end: false}).on('error', function() {
-			typeStream.close();
 			this.end();
 		});
 		typeStream.on('bs-written', () => { //can't listen for finish because it isn't called on a pipe without an end
@@ -115,7 +111,7 @@ const io = module.exports = {
 		const segments = [];
 		inStream.on('data', (chunk) => segments.push(chunk));
 		inStream.on('error', function(err) {
-			this.close();
+			this.destroy();
 			callback(err, null);
 		});
 		inStream.on('end', () => {
@@ -151,7 +147,7 @@ const io = module.exports = {
 		const segments = [];
 		inStream.on('data', (chunk) => segments.push(chunk));
 		inStream.on('error', function(err) {
-			this.close();
+			this.destroy();
 			callback(err, null);
 		});
 		inStream.on('end', () => {
@@ -185,7 +181,7 @@ const io = module.exports = {
 		const segments = [];
 		inStream.on('data', (chunk) => segments.push(chunk));
 		inStream.on('error', function(err) {
-			this.close();
+			this.destroy();
 			callback(err, null, null);
 		});
 		inStream.on('end', () => {
@@ -220,19 +216,23 @@ const io = module.exports = {
 		assert.instanceOf(type, t.Type);
 		if (callback === undefined) callback = () => {};
 		assert.instanceOf(callback, Function);
-		res.setHeader('Content-Type', 'application/octet-stream');
-		res.setHeader('Content-Encoding', 'gzip');
-		res.setHeader('sig', type.getSignature());
-		const outStream = zlib.createGzip(); //eslint-disable-line no-undef
-		if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream}, (err) => {
-			if (err) callback(err);
-		});
-		else io.writeTypeAndValue({type, value, outStream}, (err) => {
-			if (err) callback(err);
-		});
-		outStream.pipe(res).on('error', (err) => {
-			this.close();
-			callback(err);
-		}).on('finish', () => callback(null));
+		try {
+			res.setHeader('Content-Type', 'application/octet-stream');
+			res.setHeader('Content-Encoding', 'gzip');
+			res.setHeader('sig', type.getSignature());
+			const outStream = zlib.createGzip(); //eslint-disable-line no-undef
+			if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream}, (err) => {
+				if (err) callback(err);
+			});
+			else io.writeTypeAndValue({type, value, outStream}, (err) => {
+				if (err) callback(err);
+			});
+			outStream.pipe(res).on('error', function(err) {
+				this.end();
+				outStream.close();
+				callback(err);
+			}).on('finish', () => callback(null));
+		}
+		catch (err) { callback(err) }
 	}
 };

@@ -47,5 +47,43 @@ s.addTask(() => {
 		s.taskFinished();
 	});
 });
+let intsType = new t.ArrayType(
+	new t.OptionalType(
+		new t.UnsignedIntType
+	)
+);
+s.addTask(() => {
+	let errorStream = fs.createWriteStream(__dirname + '/asdf/asdf');
+	assert.equal(errorStream.writable, true);
+	let type = intsType;
+	io.writeType({type, outStream: errorStream}, (err) => {
+		assert.message(err, 'ENOENT');
+		assert.equal(errorStream.writable, false);
+		s.taskFinished();
+	});
+});
+let intsValue = [null, 10, 30, 20, null, 55];
+s.addTask(() => {
+	let errorStream = fs.createWriteStream(__dirname + '/asdf/asdf');
+	assert.equal(errorStream.writable, true);
+	let type = intsType;
+	let value = intsValue;
+	io.writeValue({type, value, outStream: errorStream}, (err) => {
+		assert.message(err, 'ENOENT');
+		assert.equal(errorStream.writable, false);
+		s.taskFinished();
+	});
+});
+s.addTask(() => {
+	let errorStream = fs.createWriteStream(__dirname + '/asdf/asdf');
+	assert.equal(errorStream.writable, true);
+	let type = intsType;
+	let value = intsValue;
+	io.writeTypeAndValue({type, value, outStream: errorStream}, (err) => {
+		assert.message(err, 'ENOENT');
+		assert.equal(errorStream.writable, false);
+		s.taskFinished();
+	});
+});
 let wait = setInterval(() => {}, 10);
 s.callback(() => clearInterval(wait));
