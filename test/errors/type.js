@@ -10,3 +10,4 @@ assert.throws(
 );
 assert.equal(new t.UnsignedIntType().equals(new t.UnsignedLongType), false);
 assert.equal(new t.BooleanTupleType(5).equals(new t.BooleanTupleType(6)), false);
+assert.equal(new t.ArrayType(new t.CharType).equals(new t.SetType(new t.CharType)), false);

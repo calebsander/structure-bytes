@@ -17,3 +17,7 @@ class A {
 	constructor() { this.one = '1' } //eslint-disable-line semi
 }
 assert.equal(util.inspect(new A), 'A {"one":"1"}');
+let B = function() {
+	this.two = '2';
+};
+assert.equal(util.inspect(new B), '{"two":"2"}');

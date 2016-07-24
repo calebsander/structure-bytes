@@ -7,3 +7,7 @@ assert.throws(
 	() => r.value({buffer: Buffer.from([]), type: new t.Type}),
 	'Not a structure type: Type {}'
 );
+assert.throws(
+	() => r.type(Buffer.from([0xaa])),
+	'No such type: 0xaa'
+);
