@@ -5,10 +5,12 @@ const ReplaceStream = require(__dirname + '/lib/replace-stream.js');
 const Simultaneity = require(__dirname + '/lib/simultaneity.js');
 const uglify = require('uglify-js');
 
-let uploadB = browserify();
+const uploadB = browserify();
 uploadB.add(__dirname + '/client-side/upload.js');
-let downloadB = browserify();
+const downloadB = browserify();
 downloadB.add(__dirname + '/client-side/download.js');
+const uploadDownloadB = browserify();
+uploadDownloadB.add(__dirname + '/client-side/upload-download.js');
 
 let s = new Simultaneity;
 for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
@@ -29,6 +31,34 @@ for (let zlibFile of ['/io']) {
 		});
 	});
 }
+s.addTask(() => {
+	let uploadCode, downloadCode;
+	const loadS = new Simultaneity;
+	loadS.addTask(() => {
+		fs.readFile(__dirname + '/client-side/upload.js', (err, data) => {
+			if (err) throw err;
+			uploadCode = data;
+			loadS.taskFinished();
+		});
+	});
+	loadS.addTask(() => {
+		fs.readFile(__dirname + '/client-side/download.js', (err, data) => {
+			if (err) throw err;
+			downloadCode = data;
+			loadS.taskFinished();
+		});
+	});
+	loadS.callback(() => {
+		fs.writeFile(
+			__dirname + '/client-side/upload-download.js',
+			Buffer.concat([uploadCode, downloadCode]),
+			(err) => {
+				if (err) throw err;
+				s.taskFinished();
+			}
+		);
+	});
+});
 console.log('Compiling: Replacing large dependencies');
 s.callback(() => {
 	function exposeFile(b, name, fileName = name) {
@@ -55,8 +85,8 @@ s.callback(() => {
 		},
 		exposeFiles: [
 			'/client-side/binary-ajax.js',
+			'/client-side/common.js',
 			'/config.js',
-			'/lib/buffer-stream.js',
 			'/lib/growable-buffer.js',
 			'/lib/bit-math.js',
 			'/lib/strint.js',
@@ -71,6 +101,7 @@ s.callback(() => {
 		},
 		exposeFiles: [
 			'/client-side/binary-ajax.js',
+			'/client-side/common.js',
 			'/config.js',
 			'/lib/buffer-stream.js',
 			'/lib/growable-buffer.js',
@@ -79,5 +110,22 @@ s.callback(() => {
 			'/lib/util-inspect.js'
 		],
 		outputFile: '/compiled/download.js'
+	});
+	compile(uploadDownloadB, {
+		modifiedFiles: {
+			noutil: ['/lib/assert', '/structure-types', '/read'],
+			nozlib: ['/io']
+		},
+		exposeFiles: [
+			'/client-side/binary-ajax.js',
+			'/client-side/common.js',
+			'/config.js',
+			'/lib/buffer-stream.js',
+			'/lib/growable-buffer.js',
+			'/lib/bit-math.js',
+			'/lib/strint.js',
+			'/lib/util-inspect.js'
+		],
+		outputFile: '/compiled/upload-download.js'
 	});
 });

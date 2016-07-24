@@ -1,15 +1,8 @@
 /*eslint-env browser*/
 (() => {
+	require('/client-side/common.js');
 	const assert = require('/lib/assert.js');
-	assert.instanceOf(window.Map, Function);
-	assert.instanceOf(window.Set, Function);
-	assert.instanceOf(window.ArrayBuffer, Function);
-	assert.instanceOf(window.Uint8Array, Function);
-	assert.instanceOf(window.Symbol, Function);
 	const GrowableBuffer = require('/lib/growable-buffer.js');
-	require('/client-side/binary-ajax.js');
-	if (window.sb === undefined) window.sb = require('/structure-types.js');
-	else if (!(window.sb instanceof Object)) throw new Error('window.sb is already defined');
 	window.sb.upload = ({type, value}, options) => {
 		assert.instanceOf(type, window.sb.Type);
 		assert.instanceOf(options, Object);

@@ -227,11 +227,7 @@ const io = module.exports = {
 			else io.writeTypeAndValue({type, value, outStream}, (err) => {
 				if (err) callback(err);
 			});
-			outStream.pipe(res).on('error', function(err) {
-				this.end();
-				outStream.close();
-				callback(err);
-			}).on('finish', () => callback(null));
+			outStream.pipe(res).on('finish', () => callback(null));
 		}
 		catch (err) { callback(err) }
 	}
