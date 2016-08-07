@@ -34,7 +34,6 @@ assert.throws(
 class EqualsThrows {
 	equals() {
 		throw new Error('Equals is not implemented');
-		return true;
 	}
 }
 assert.throws(

@@ -1,5 +1,6 @@
+/*eslint-disable no-undef*/
 assert.throws(
-	() => new BufferStream(),
+	() => new BufferStream,
 	'Expected Buffer, got undefined'
 );
 assert.throws(
