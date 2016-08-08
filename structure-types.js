@@ -185,6 +185,16 @@ class Type {
 */
 class AbsoluteType extends Type {}
 
+function strToNum(str) {
+	if (str) { //avoid errors with undefined.constructor and null.constructor; also '' is invalid
+		if (str.constructor === String) {
+			const converted = Number(str);
+			if (!isNaN(converted)) return converted;
+		}
+	}
+	return undefined;
+}
+
 /**
  * A type storing an signed integer
  * @private
@@ -202,12 +212,14 @@ class ByteType extends IntegerType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.integer(value);
 		const byteBuffer = Buffer.allocUnsafe(1);
 		byteBuffer.writeInt8(value, 0);
 		buffer.addAll(byteBuffer);
@@ -225,12 +237,14 @@ class ShortType extends IntegerType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.integer(value);
 		const byteBuffer = Buffer.allocUnsafe(2);
 		byteBuffer.writeInt16BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -248,12 +262,14 @@ class IntType extends IntegerType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.integer(value);
 		const byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeInt32BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -293,7 +309,7 @@ class LongType extends IntegerType {
  */
 class UnsignedType extends AbsoluteType {}
 /**
- * A type storing a 1-byte signed integer
+ * A type storing a 1-byte unsigned integer
  * @extends Type
  * @inheritdoc
  */
@@ -304,19 +320,21 @@ class UnsignedByteType extends UnsignedType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.integer(value);
 		const byteBuffer = Buffer.allocUnsafe(1);
 		byteBuffer.writeUInt8(value, 0);
 		buffer.addAll(byteBuffer);
 	}
 }
 /**
- * A type storing a 2-byte signed integer
+ * A type storing a 2-byte unsigned integer
  * @extends Type
  * @inheritdoc
  */
@@ -327,19 +345,21 @@ class UnsignedShortType extends UnsignedType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.integer(value);
 		const byteBuffer = Buffer.allocUnsafe(2);
 		byteBuffer.writeUInt16BE(value, 0);
 		buffer.addAll(byteBuffer);
 	}
 }
 /**
- * A type storing a 4-byte signed integer
+ * A type storing a 4-byte unsigned integer
  * @extends Type
  * @inheritdoc
  */
@@ -350,12 +370,14 @@ class UnsignedIntType extends UnsignedType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.integer(value);
 		const byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeUInt32BE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -417,12 +439,7 @@ class DateType extends AbsoluteType {
  * A type storing a [floating-point number]{@linkplain https://en.wikipedia.org/wiki/Floating_point}
  * @private
  */
-class FloatingPointType extends AbsoluteType {
-	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Number);
-	}
-}
+class FloatingPointType extends AbsoluteType {}
 /**
  * A type storing a 4-byte [IEEE floating point]{@linkplain https://en.wikipedia.org/wiki/IEEE_floating_point}
  * @extends Type
@@ -435,11 +452,14 @@ class FloatType extends FloatingPointType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		super.writeValue(buffer, value);
+		assert.instanceOf(buffer, GrowableBuffer);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.instanceOf(value, Number);
 		const byteBuffer = Buffer.allocUnsafe(4);
 		byteBuffer.writeFloatBE(value, 0);
 		buffer.addAll(byteBuffer);
@@ -457,11 +477,14 @@ class DoubleType extends FloatingPointType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {number} value The value to write
+	 * @param {number|string} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		super.writeValue(buffer, value);
+		assert.instanceOf(buffer, GrowableBuffer);
+		const convertedValue = strToNum(value);
+		if (convertedValue !== undefined) value = convertedValue;
+		assert.instanceOf(value, Number);
 		const byteBuffer = Buffer.allocUnsafe(8);
 		byteBuffer.writeDoubleBE(value, 0);
 		buffer.addAll(byteBuffer);

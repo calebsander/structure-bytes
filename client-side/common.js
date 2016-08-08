@@ -1,4 +1,4 @@
-/*eslint-disable no-undef*/
+/*eslint-env browser*/
 const assert = require('/lib/assert.js');
 assert.instanceOf(window.Map, Function);
 assert.instanceOf(window.Set, Function);

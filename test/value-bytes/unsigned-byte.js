@@ -2,5 +2,6 @@
 let type = new t.UnsignedByteType;
 let gb = new GrowableBuffer;
 type.writeValue(gb, 255);
-assert.equal(gb.toBuffer(), Buffer.from([0xff]));
+assert.equal(gb.toBuffer(), Buffer.from([255]));
 assert.equal(r.value({buffer: gb.toBuffer(), type}), 255);
+assert.equal(type.valueBuffer('128'), Buffer.from([128]));
