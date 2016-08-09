@@ -47,7 +47,7 @@ class Type {
 	 * @type {number}
 	 */
 	static get _value() {
-		throw new Error('Generic Type has no value byte');
+		assert.fail('Generic Type has no value byte');
 	}
 	/**
 	 * Appends the type information to a {@link GrowableBuffer}.
@@ -142,7 +142,7 @@ class Type {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) { //eslint-disable-line no-unused-vars
-		throw new Error('Generic Type has no value representation');
+		assert.fail('Generic Type has no value representation');
 	}
 	/**
 	 * Gets a {@link Buffer} containing the value in binary format.
@@ -295,7 +295,7 @@ class LongType extends IntegerType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, String);
-		if (strint.gt(value, '9223372036854775807') || strint.lt(value, '-9223372036854775808')) throw new Error('Value out of range');
+		if (strint.gt(value, '9223372036854775807') || strint.lt(value, '-9223372036854775808')) assert.fail('Value out of range');
 		const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true); //get upper signed int
 		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
 		const byteBuffer = new ArrayBuffer(8);
@@ -392,7 +392,7 @@ class UnsignedIntType extends UnsignedType {
 function writeUnsignedLong(buffer, value) {
 	assert.instanceOf(buffer, GrowableBuffer);
 	assert.instanceOf(value, String);
-	if (strint.gt(value, '18446744073709551615') || strint.lt(value, '0')) throw new Error('Value out of range');
+	if (strint.gt(value, '18446744073709551615') || strint.lt(value, '0')) assert.fail('Value out of range');
 	const upper = strint.div(value, strint.LONG_UPPER_SHIFT);
 	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT));
 	const byteBuffer = new ArrayBuffer(8);
@@ -569,7 +569,7 @@ class BooleanTupleType extends AbsoluteType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Array);
-		if (value.length !== this.length) throw new Error('Length does not match');
+		if (value.length !== this.length) assert.fail('Length does not match');
 		writeBooleans(buffer, value);
 	}
 }
@@ -712,7 +712,7 @@ class TupleType extends AbsoluteType {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Array);
 		if (value.length !== this.length) {
-			throw new Error('Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
+			assert.fail('Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
 		}
 		for (let instance of value) this.type.writeValue(buffer, instance, false);
 		setPointers(buffer, root);
@@ -749,16 +749,16 @@ class StructType extends AbsoluteType {
 		let fieldCount = 0;
 		for (let _ in fields) fieldCount++; //eslint-disable-line no-unused-vars
 		try { assert.byteUnsignedInteger(fieldCount); }
-		catch (e) { throw new Error(String(fieldCount) + ' fields is too many'); }
+		catch (e) { assert.fail(String(fieldCount) + ' fields is too many'); }
 		this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
 		let i = 0;
 		for (let fieldName in fields) {
 			const fieldNameBuffer = bufferString.fromString(fieldName);
 			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength); }
-			catch (e) { throw new Error('Field name ' + fieldName + ' is too long'); }
+			catch (e) { assert.fail('Field name ' + fieldName + ' is too long'); }
 			const fieldType = fields[fieldName];
 			try { assert.instanceOf(fieldType, Type); }
-			catch (e) { throw new Error(String(fieldType) + ' is not a valid field type'); }
+			catch (e) { assert.fail(String(fieldType) + ' is not a valid field type'); }
 			const resultField = {};
 			resultField[NAME] = fieldName;
 			resultField[TYPE] = fieldType;
@@ -769,7 +769,7 @@ class StructType extends AbsoluteType {
 		this.fields.sort((a, b) => { //so field order is predictable
 			if (a[NAME] < b[NAME]) return -1;
 			else if (a[NAME] > b[NAME]) return 1;
-			else throw new Error('Should not have any duplicate fields');
+			else assert.fail('Should not have any duplicate fields');
 		});
 	}
 	addToBuffer(buffer) {
@@ -800,7 +800,7 @@ class StructType extends AbsoluteType {
 		assert.instanceOf(value, Object);
 		for (let field of this.fields) {
 			const fieldValue = value[field[NAME]];
-			if (fieldValue === undefined) throw new Error('Value for field ' + field[NAME] + ' missing');
+			if (fieldValue === undefined) assert.fail('Value for field ' + field[NAME] + ' missing');
 			field[TYPE].writeValue(buffer, fieldValue, false);
 		}
 		setPointers(buffer, root);
@@ -982,7 +982,7 @@ class EnumType extends Type {
 		assert.instanceOf(type, AbsoluteType); //pointer types don't make sense because each value should be distinct
 		assert.instanceOf(values, Array);
 		try { assert.byteUnsignedInteger(values.length); }
-		catch (e) { throw new Error(String(values.length) + ' values is too many'); }
+		catch (e) { assert.fail(String(values.length) + ' values is too many'); }
 		const valueIndices = new Map;
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i];
@@ -1049,7 +1049,7 @@ class ChoiceType extends Type {
 		super();
 		assert.instanceOf(types, Array);
 		try { assert.byteUnsignedInteger(types.length); }
-		catch (e) { throw new Error(String(types.length) + ' types is too many'); }
+		catch (e) { assert.fail(String(types.length) + ' types is too many'); }
 		for (let type of types) assert.instanceOf(type, Type);
 		this.types = types;
 	}

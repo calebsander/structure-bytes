@@ -16,7 +16,7 @@ function readLengthBuffer(buffer, offset) {
 			length: 4
 		};
 	}
-	catch (e) { throw new Error(NOT_LONG_ENOUGH) } //eslint-disable-line semi
+	catch (e) { assert.fail(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
 function pad(str, digits) {
 	if (str.length < digits) return '0'.repeat(digits - str.length) + str;

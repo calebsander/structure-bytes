@@ -1,7 +1,7 @@
 /*eslint-disable no-undef*/
 let s = new Simultaneity;
 s.addTask(() => {
-	io.readTypeAndValue(new BufferStream(Buffer.from([t.ArrayType._value])), (err, type, value) => {
+	io.readTypeAndValue(new BufferStream(bufferFrom([t.ArrayType._value])), (err, type, value) => {
 		assert.message(err, 'Buffer is not long enough');
 		assert.equal(type, null);
 		assert.equal(value, null);
@@ -10,9 +10,9 @@ s.addTask(() => {
 });
 s.addTask(() => {
 	let type = new t.ArrayType(new t.UnsignedShortType);
-	let typeValueBuffer = Buffer.concat([
+	let typeValueBuffer = concat([
 		type.toBuffer(),
-		Buffer.from([0, 0, 0, 1])
+		bufferFrom([0, 0, 0, 1])
 	]);
 	io.readTypeAndValue(new BufferStream(typeValueBuffer), (err, type, value) => {
 		assert.message(err, 'Buffer is not long enough');
@@ -56,7 +56,7 @@ s.addTask(() => {
 	let errorStream = fs.createWriteStream(__dirname + '/asdf/asdf');
 	assert.equal(errorStream.writable, true);
 	let type = intsType;
-	io.writeType({type, outStream: errorStream}, (err) => {
+	io.writeType({type, outStream: errorStream}, err => {
 		assert.message(err, 'ENOENT');
 		assert.equal(errorStream.writable, false);
 		s.taskFinished();
@@ -68,7 +68,7 @@ s.addTask(() => {
 	assert.equal(errorStream.writable, true);
 	let type = intsType;
 	let value = intsValue;
-	io.writeValue({type, value, outStream: errorStream}, (err) => {
+	io.writeValue({type, value, outStream: errorStream}, err => {
 		assert.message(err, 'ENOENT');
 		assert.equal(errorStream.writable, false);
 		s.taskFinished();
@@ -79,7 +79,7 @@ s.addTask(() => {
 	assert.equal(errorStream.writable, true);
 	let type = intsType;
 	let value = intsValue;
-	io.writeTypeAndValue({type, value, outStream: errorStream}, (err) => {
+	io.writeTypeAndValue({type, value, outStream: errorStream}, err => {
 		assert.message(err, 'ENOENT');
 		assert.equal(errorStream.writable, false);
 		s.taskFinished();

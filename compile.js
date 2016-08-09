@@ -22,15 +22,6 @@ for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
 		});
 	});
 }
-for (let zlibFile of ['/io']) {
-	s.addTask(() => {
-		fs.createReadStream(__dirname + zlibFile + '.js')
-		.pipe(new ReplaceStream("const zlib = require('zlib');\n", ''))
-		.pipe(fs.createWriteStream(__dirname + zlibFile + '-nozlib.js')).on('finish', () => {
-			s.taskFinished();
-		});
-	});
-}
 s.addTask(() => {
 	let uploadCode, downloadCode;
 	const loadS = new Simultaneity;
@@ -60,6 +51,16 @@ s.addTask(() => {
 	});
 });
 console.log('Compiling: Replacing large dependencies');
+const downloadFiles = [
+	'/client-side/binary-ajax.js',
+	'/client-side/common.js',
+	'/config.js',
+	'/lib/bit-math.js',
+	'/lib/buffer-string.js',
+	'/lib/growable-buffer.js',
+	'/lib/strint.js',
+	'/lib/util-inspect.js'
+];
 s.callback(() => {
 	function exposeFile(b, name, fileName = name) {
 		b.require(__dirname + fileName, {expose: name});
@@ -87,8 +88,9 @@ s.callback(() => {
 			'/client-side/binary-ajax.js',
 			'/client-side/common.js',
 			'/config.js',
-			'/lib/growable-buffer.js',
 			'/lib/bit-math.js',
+			'/lib/buffer-string.js',
+			'/lib/growable-buffer.js',
 			'/lib/strint.js',
 			'/lib/util-inspect.js'
 		],
@@ -96,36 +98,16 @@ s.callback(() => {
 	});
 	compile(downloadB, {
 		modifiedFiles: {
-			noutil: ['/lib/assert', '/structure-types', '/read'],
-			nozlib: ['/io']
+			noutil: ['/lib/assert', '/structure-types', '/read']
 		},
-		exposeFiles: [
-			'/client-side/binary-ajax.js',
-			'/client-side/common.js',
-			'/config.js',
-			'/lib/buffer-stream.js',
-			'/lib/growable-buffer.js',
-			'/lib/bit-math.js',
-			'/lib/strint.js',
-			'/lib/util-inspect.js'
-		],
+		exposeFiles: downloadFiles,
 		outputFile: '/compiled/download.js'
 	});
 	compile(uploadDownloadB, {
 		modifiedFiles: {
-			noutil: ['/lib/assert', '/structure-types', '/read'],
-			nozlib: ['/io']
+			noutil: ['/lib/assert', '/structure-types', '/read']
 		},
-		exposeFiles: [
-			'/client-side/binary-ajax.js',
-			'/client-side/common.js',
-			'/config.js',
-			'/lib/buffer-stream.js',
-			'/lib/growable-buffer.js',
-			'/lib/bit-math.js',
-			'/lib/strint.js',
-			'/lib/util-inspect.js'
-		],
+		exposeFiles: downloadFiles,
 		outputFile: '/compiled/upload-download.js'
 	});
 });

@@ -9,6 +9,10 @@ const stream = require('stream');
 const t = require(__dirname + '/structure-types.js');
 const zlib = require('zlib');
 
+function toArrayBuffer(buffer) {
+	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+}
+
 const io = module.exports = {
 	/**
 	 * A callback that receives an error object, if any was thrown.
@@ -109,7 +113,7 @@ const io = module.exports = {
 		assert.instanceOf(inStream, stream.Readable);
 		assert.instanceOf(callback, Function);
 		const segments = [];
-		inStream.on('data', (chunk) => segments.push(chunk));
+		inStream.on('data', chunk => segments.push(chunk));
 		inStream.on('error', function(err) {
 			this.destroy();
 			callback(err, null);
@@ -117,7 +121,7 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
-			try { type = r.type(buffer, false) } //eslint-disable-line semi
+			try { type = r.type(toArrayBuffer(buffer), false) } //eslint-disable-line semi
 			catch (e) { callback(e, null) } //eslint-disable-line semi
 			if (type) callback(null, type);
 		});
@@ -153,7 +157,7 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let value;
-			try { value = r.value({buffer, type}) } //eslint-disable-line semi
+			try { value = r.value({buffer: toArrayBuffer(buffer), type}) } //eslint-disable-line semi
 			catch (e) { callback(e, null) } //eslint-disable-line semi
 			if (value) callback(null, value);
 		});
@@ -187,11 +191,11 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
-			try { type = r._consumeType(buffer, 0) } //eslint-disable-line semi
+			try { type = r._consumeType(toArrayBuffer(buffer), 0) } //eslint-disable-line semi
 			catch (e) { callback(e, null, null) } //eslint-disable-line semi
 			if (type) {
 				let value;
-				try { value = r.value({buffer, offset: type.length, type: type.value}) } //eslint-disable-line semi
+				try { value = r.value({buffer: toArrayBuffer(buffer), offset: type.length, type: type.value}) } //eslint-disable-line semi
 				catch (e) { callback(e, null, null) } //eslint-disable-line semi
 				if (value) callback(null, type.value, value);
 			}

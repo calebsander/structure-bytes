@@ -2,8 +2,6 @@
 (() => {
 	require('/client-side/common.js');
 	const assert = require('/lib/assert.js');
-	const BufferStream = require('/lib/buffer-stream.js');
-	const io = require('/io.js');
 	const r = require('/read.js');
 	const BASE_64 = 'base64';
 	const typeCache = {};
@@ -46,23 +44,19 @@
 			}
 		}
 		options.success = (data, textStatus, jqXHR) => {
-			data = Buffer.from(data);
-			const inStream = new BufferStream(data);
 			const sig = jqXHR.getResponseHeader('sig');
 			if (typeInCache && typeCache[typeName].sig === sig) {
 				const type = typeCache[typeName].type;
-				io.readValue({inStream, type}, (err, value) => {
-					if (err) throw err;
-					success(value, textStatus, jqXHR);
-				});
+				const value = r.value({buffer: data, type});
+				success(value, textStatus, jqXHR);
 			}
 			else {
-				io.readTypeAndValue(inStream, (err, type, value) => {
-					if (err) throw err;
-					typeCache[typeName] = {sig, type};
-					saveTypeCache();
-					success(value, textStatus, jqXHR);
-				});
+				const readType = r._consumeType(data, 0);
+				const value = r.value({buffer: data, offset: readType.length, type: readType.value});
+				const type = readType.value;
+				typeCache[typeName] = {sig, type};
+				saveTypeCache();
+				success(value, textStatus, jqXHR);
 			}
 		};
 		$.ajax(options); //eslint-disable-line no-undef

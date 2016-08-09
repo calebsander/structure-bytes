@@ -73,7 +73,7 @@ fs.readdir(__dirname, (err, testSuites) => {
 		});
 	}
 	suitesS.callback(() => { //wait until all suites have been scanned to run tests
-		testsS.callback(() => {}/*require(__dirname + '/../compile.js')*/); //not run as a test so that coverage is generated
+		testsS.callback(() => require(__dirname + '/../compile.js')); //not run as a test so that coverage is generated
 	});
 	process.on('exit', () => {
 		console.log(

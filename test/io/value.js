@@ -11,13 +11,13 @@ let type = new t.TupleType({
 });
 let value = ['a', null, 'b', null, 'c'];
 let outStream = fs.createWriteStream(OUT_FILE);
-const VALUE_BUFFER = Buffer.from([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63]);
+const VALUE_BUFFER = bufferFrom([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63]);
 let s = new Simultaneity;
 s.addTask(() => {
-	io.writeValue({type, value, outStream}, (err) => {
+	io.writeValue({type, value, outStream}, err => {
 		if (err) throw err;
 		let result = fs.readFileSync(OUT_FILE);
-		assert.equal(result, VALUE_BUFFER);
+		assert.equal(result, Buffer.from(VALUE_BUFFER));
 		s.taskFinished();
 	});
 });
@@ -29,7 +29,7 @@ s.addTask(() => {
 	});
 });
 s.addTask(() => {
-	io.readValue({type, inStream: new BufferStream(Buffer.from([0x00]))}, (err, readValue) => {
+	io.readValue({type, inStream: new BufferStream(bufferFrom([0x00]))}, (err, readValue) => {
 		assert.message(err, 'Buffer is not long enough');
 		assert.equal(readValue, null);
 		s.taskFinished();
