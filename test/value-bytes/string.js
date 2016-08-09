@@ -15,5 +15,5 @@ for (let [invalidValue, message] of [
 }
 const STRING = 'abç';
 type.writeValue(gb, STRING);
-assert.equal(gb.toBuffer(), Buffer.from([0x61, 0x62, 0xc3, 0xa7, 0]));
+assert.equal(gb.toBuffer(), bufferFrom([0x61, 0x62, 0xc3, 0xa7, 0]));
 assert.equal(r.value({buffer: gb.toBuffer(), type}), STRING);

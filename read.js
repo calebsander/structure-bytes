@@ -3,13 +3,19 @@ if (__dirname === '/') __dirname = '';
 
 const assert = require(__dirname + '/lib/assert.js');
 const bitMath = require(__dirname + '/lib/bit-math.js');
+const bufferString = require(__dirname + '/lib/buffer-string.js');
 const strint = require(__dirname + '/lib/strint.js');
 const t = require(__dirname + '/structure-types.js');
 const util = require('util');
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readLengthBuffer(buffer, offset) {
-	try { return {value: buffer.readUInt32BE(offset), length: 4} } //eslint-disable-line semi
+	try {
+		return {
+			value: new DataView(buffer).getUint32(offset),
+			length: 4
+		};
+	}
 	catch (e) { throw new Error(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
 function pad(str, digits) {
@@ -18,9 +24,9 @@ function pad(str, digits) {
 }
 function consumeType(typeBuffer, offset) {
 	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset));
-	assert.assert(typeBuffer.length > offset, NOT_LONG_ENOUGH);
+	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH);
 	let value, length = 1;
-	switch (typeBuffer.readUInt8(offset)) {
+	switch (new DataView(typeBuffer).getUint8(offset)) {
 		case t.ByteType._value:
 			value = new t.ByteType;
 			break;
@@ -85,16 +91,17 @@ function consumeType(typeBuffer, offset) {
 			});
 			break;
 		case t.StructType._value:
-			assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
-			const fieldCount = typeBuffer.readUInt8(offset + length);
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH);
+			const castBuffer = new Uint8Array(typeBuffer);
+			const fieldCount = castBuffer[offset + length];
 			length++;
 			const fields = {};
 			for (let i = 0; i < fieldCount; i++) {
-				assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
-				const nameLength = typeBuffer.readUInt8(offset + length);
+				assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH);
+				const nameLength = castBuffer[offset + length];
 				length++;
-				assert.assert(typeBuffer.length >= offset + length + nameLength, NOT_LONG_ENOUGH);
-				const name = typeBuffer.toString('utf8', offset + length, offset + length + nameLength);
+				assert.assert(typeBuffer.byteLength >= offset + length + nameLength, NOT_LONG_ENOUGH);
+				const name = bufferString.toString(castBuffer.subarray(offset + length, offset + length + nameLength));
 				length += nameLength;
 				const fieldType = consumeType(typeBuffer, offset + length);
 				fields[name] = fieldType.value;
@@ -122,14 +129,14 @@ function consumeType(typeBuffer, offset) {
 		case t.EnumType._value:
 			const enumType = consumeType(typeBuffer, offset + length);
 			length += enumType.length;
-			assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
-			const valueCount = typeBuffer.readUInt8(offset + length);
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH);
+			const valueCount = new Uint8Array(typeBuffer)[offset + length];
 			length++;
 			const values = [];
 			for (let i = 0; i < valueCount; i++) {
 				const value = consumeValue({buffer: typeBuffer, offset: offset + length, type: enumType.value});
 				length += value.length;
-				values[i] = (value.value);
+				values[i] = value.value;
 			}
 			value = new t.EnumType({
 				type: enumType.value,
@@ -137,8 +144,8 @@ function consumeType(typeBuffer, offset) {
 			});
 			break;
 		case t.ChoiceType._value:
-			assert.assert(typeBuffer.length > offset + length, NOT_LONG_ENOUGH);
-			const typeCount = typeBuffer.readUInt8(offset + length);
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH);
+			const typeCount = new Uint8Array(typeBuffer)[offset + length];
 			length++;
 			const types = new Array(typeCount);
 			for (let i = 0; i < typeCount; i++) {
@@ -160,19 +167,20 @@ function consumeType(typeBuffer, offset) {
 			break;
 		case t.REPEATED_TYPE:
 			const newLength = length + 2;
-			assert.assert(typeBuffer.length >= offset + newLength, NOT_LONG_ENOUGH);
-			({value} = consumeType(typeBuffer, offset + length - typeBuffer.readUInt16BE(offset + length)));
+			assert.assert(typeBuffer.byteLength >= offset + newLength, NOT_LONG_ENOUGH);
+			const locationOffset = new DataView(typeBuffer).getUint16(offset + length);
+			({value} = consumeType(typeBuffer, offset + length - locationOffset));
 			length = newLength;
 			break;
 		default:
-			assert.fail('No such type: 0x' + pad(typeBuffer[offset].toString(16), 2));
+			assert.fail('No such type: 0x' + pad(new Uint8Array(typeBuffer)[offset].toString(16), 2));
 	}
 	return {value, length};
 }
 function type(typeBuffer, fullBuffer = true) {
-	assert.instanceOf(typeBuffer, Buffer);
+	assert.instanceOf(typeBuffer, ArrayBuffer);
 	const {value, length} = consumeType(typeBuffer, 0);
-	if (fullBuffer) assert.assert(length === typeBuffer.length, 'Did not consume all of the buffer');
+	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer');
 	return value;
 }
 function readBooleans({buffer, offset, count}) {
@@ -182,9 +190,10 @@ function readBooleans({buffer, offset, count}) {
 	let byteLength;
 	if (incompleteBytes) byteLength = bytes + 1;
 	else byteLength = bytes;
-	assert.assert(buffer.length >= offset + byteLength, NOT_LONG_ENOUGH);
+	assert.assert(buffer.byteLength >= offset + byteLength, NOT_LONG_ENOUGH);
+	const castBuffer = new Uint8Array(buffer);
 	for (let i = 0; i < byteLength; i++) {
-		const byte = buffer.readUInt8(offset + i);
+		const byte = castBuffer[offset + i];
 		for (let bit = 0; bit < 8; bit++) {
 			const index = i * 8 + bit;
 			if (index === value.length) break;
@@ -198,63 +207,67 @@ function consumeValue({buffer, offset, type}) {
 	switch (type.constructor) {
 		case t.ByteType:
 			length = 1;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readInt8(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new Int8Array(buffer)[offset];
 			break;
 		case t.ShortType:
 			length = 2;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readInt16BE(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const shortView = new DataView(buffer);
+			value = shortView.getInt16(offset);
 			break;
 		case t.IntType:
 			length = 4;
-			value = buffer.readInt32BE(offset);
+			const intView = new DataView(buffer);
+			value = intView.getInt32(offset);
 			break;
 		case t.LongType:
 			length = 8;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			const upper = buffer.readInt32BE(offset);
-			const lower = buffer.readUInt32BE(offset + 4);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const longView = new DataView(buffer);
+			const upper = longView.getInt32(offset);
+			const lower = longView.getUint32(offset + 4);
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
 			break;
 		case t.UnsignedByteType:
 			length = 1;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readUInt8(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new DataView(buffer).getUint8(offset);
 			break;
 		case t.UnsignedShortType:
 			length = 2;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readUInt16BE(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new DataView(buffer).getUint16(offset);
 			break;
 		case t.UnsignedIntType:
 			length = 4;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readUInt32BE(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new DataView(buffer).getUint32(offset);
 			break;
 		case t.UnsignedLongType:
 		case t.DateType:
 			length = 8;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			const unsignedUpper = buffer.readUInt32BE(offset);
-			const unsignedLower = buffer.readUInt32BE(offset + 4);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const unsignedLongView = new DataView(buffer);
+			const unsignedUpper = unsignedLongView.getUint32(offset);
+			const unsignedLower = unsignedLongView.getUint32(offset + 4);
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
 			if (type.constructor === t.DateType) value = new Date(Number(value));
 			break;
 		case t.FloatType:
 			length = 4;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readFloatBE(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new DataView(buffer).getFloat32(offset);
 			break;
 		case t.DoubleType:
 			length = 8;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			value = buffer.readDoubleBE(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new DataView(buffer).getFloat64(offset);
 			break;
 		case t.BooleanType:
 			length = 1;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			const readByte = buffer.readUInt8(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const readByte = new DataView(buffer).getUint8(offset);
 			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
 			value = !!readByte;
 			break;
@@ -269,25 +282,24 @@ function consumeValue({buffer, offset, type}) {
 			({value, length} = readBooleans({buffer, offset, count: type.length}));
 			break;
 		case t.CharType:
-			assert.assert(buffer.length > offset, NOT_LONG_ENOUGH);
-			value = buffer.slice(offset, offset + 4).toString()[0]; //UTF-8 codepoint can't be more than 4 bytes
-			length = Buffer.byteLength(value);
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH);
+			value = bufferString.toString(new Uint8Array(buffer).subarray(offset, offset + 4))[0]; //UTF-8 codepoint can't be more than 4 bytes
+			length = bufferString.fromString(value).byteLength;
 			break;
 		case t.StringType:
-			length = 0;
-			for (;;) {
-				assert.assert(buffer.length > offset + length, NOT_LONG_ENOUGH);
-				if (!buffer.readUInt8(offset + length)) break;
-				length++;
+			const castBuffer = new Uint8Array(buffer);
+			for (length = 0; ; length++) {
+				assert.assert(buffer.byteLength > offset + length, NOT_LONG_ENOUGH);
+				if (!castBuffer[offset + length]) break;
 			}
-			value = buffer.slice(offset, offset + length).toString();
+			value = bufferString.toString(new Uint8Array(buffer).subarray(offset, offset + length));
 			length++; //account for null byte
 			break;
 		case t.OctetsType:
 			const octetsLength = readLengthBuffer(buffer, offset);
-			length = octetsLength.length;
+			({length} = octetsLength);
 			const finalLength = length + octetsLength.value;
-			assert.assert(buffer.length >= offset + finalLength, NOT_LONG_ENOUGH);
+			assert.assert(buffer.byteLength >= offset + finalLength, NOT_LONG_ENOUGH);
 			value = buffer.slice(offset + length, offset + finalLength);
 			length = finalLength;
 			break;
@@ -345,24 +357,24 @@ function consumeValue({buffer, offset, type}) {
 			break;
 		case t.EnumType:
 			length = 1;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			const valueIndex = buffer.readUInt8(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const valueIndex = new Uint8Array(buffer)[offset];
 			value = type.values[valueIndex];
 			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid');
 			break;
 		case t.ChoiceType:
 			length = 1;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			const typeIndex = buffer.readUInt8(offset);
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const typeIndex = new Uint8Array(buffer)[offset];
 			const subValue = consumeValue({buffer, offset: offset + length, type: type.types[typeIndex]});
 			length += subValue.length;
 			value = subValue.value;
 			break;
 		case t.OptionalType:
 			length = 1;
-			assert.assert(buffer.length >= offset + length, NOT_LONG_ENOUGH);
-			const optionalByte = buffer.readUInt8(offset);
-			assert.assert((optionalByte === 0x00 || optionalByte === 0xFF), '0x' + optionalByte.toString(16) + ' is an invalid Optional byte');
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const optionalByte = new Uint8Array(buffer)[offset];
+			assert.assert(optionalByte === 0x00 || optionalByte === 0xFF, '0x' + optionalByte.toString(16) + ' is an invalid Optional byte');
 			if (optionalByte) {
 				const subValue = consumeValue({buffer, offset: offset + length, type: type.type});
 				length += subValue.length;
@@ -381,7 +393,7 @@ function consumeValue({buffer, offset, type}) {
 	return {value, length};
 }
 function value({buffer, type, offset}) {
-	assert.instanceOf(buffer, Buffer);
+	assert.instanceOf(buffer, ArrayBuffer);
 	assert.instanceOf(type, t.Type);
 	if (offset === undefined) offset = 0; //for some reason, isparta doesn't like default parameters inside destructuring
 	assert.instanceOf(offset, Number);

@@ -4,7 +4,7 @@ let struct = new t.StructType({
 	'': new t.IntType
 });
 let buffer = struct.toBuffer();
-assert.equal(buffer, Buffer.from([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30]));
+assert.equal(buffer, bufferFrom([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30]));
 assert.equal(r.type(buffer), struct);
 for (let i = 0; i < buffer.length; i++) {
 	assert.throws(

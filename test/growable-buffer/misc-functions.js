@@ -1,8 +1,8 @@
 /*eslint-disable no-undef*/
 let gb = new GrowableBuffer;
-for (let i = 0; i < 10; i++) gb.addAll(Buffer.from('abc'));
+for (let i = 0; i < 10; i++) gb.addAll(bufferString.fromString('abc'));
 let gb2 = new GrowableBuffer;
-gb2.addAll(Buffer.from('abc'.repeat(10)));
+gb2.addAll(bufferString.fromString('abc'.repeat(10)));
 assert.equal(gb.toBuffer(), gb2.toBuffer());
 gb = new GrowableBuffer;
 for (let i = 0; i < 100; i++) {
@@ -12,7 +12,7 @@ for (let i = 0; i < 100; i++) {
 	);
 	gb.add(i);
 }
-let buffer = Buffer.alloc(4, 0xbe);
+let buffer = bufferFill(4, 0xbe);
 for (let i = 0; i < 100; i++) {
 	if (i > 96) {
 		assert.throws(

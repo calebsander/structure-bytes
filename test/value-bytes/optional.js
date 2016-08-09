@@ -8,7 +8,7 @@ let gb = new GrowableBuffer;
 for (let [invalidValue, message] of [
 	[undefined, 'undefined is not an instance of Array'],
 	[2, '2 is not an instance of Array'],
-	[[-1], '"value" argument is out of bounds'], //error thrown by Buffer.writeUInt8(-1)
+	[[-1], 'Value out of range (-1 is not in [0,256))'],
 	['abc', "'abc' is not an instance of Array"]
 ]) {
 	assert.throws(
@@ -18,10 +18,10 @@ for (let [invalidValue, message] of [
 }
 gb = new GrowableBuffer;
 type.writeValue(gb, null);
-assert.equal(gb.toBuffer(), Buffer.from([0x00]));
+assert.equal(gb.toBuffer(), bufferFrom([0x00]));
 assert.equal(r.value({buffer: gb.toBuffer(), type}), null);
 gb = new GrowableBuffer;
 const VALUE = [1, 10, 100];
 type.writeValue(gb, VALUE);
-assert.equal(gb.toBuffer(), Buffer.from([0xFF, 0, 0, 0, 3, 1, 10, 100]));
+assert.equal(gb.toBuffer(), bufferFrom([0xFF, 0, 0, 0, 3, 1, 10, 100]));
 assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE);

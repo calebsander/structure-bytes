@@ -7,10 +7,10 @@ let type = new t.EnumType({
 		'MISSING'
 	]
 });
-assert.equal(type.valueBuffer('AVAILABLE'), Buffer.from([0]));
-assert.equal(type.valueBuffer('IN_USE'), Buffer.from([1]));
+assert.equal(type.valueBuffer('AVAILABLE'), bufferFrom([0]));
+assert.equal(type.valueBuffer('IN_USE'), bufferFrom([1]));
 let valueBuffer = type.valueBuffer('MISSING');
-assert.equal(valueBuffer, Buffer.from([2]));
+assert.equal(valueBuffer, bufferFrom([2]));
 assert.equal(r.value({buffer: valueBuffer, type}), 'MISSING');
 let gb = new GrowableBuffer;
 assert.throws(
@@ -22,7 +22,7 @@ assert.throws(
 	'101 is not an instance of String'
 );
 assert.throws(
-	() => r.value({buffer: Buffer.from([3]), type}),
+	() => r.value({buffer: bufferFrom([3]), type}),
 	'Index 3 is invalid'
 );
 
@@ -38,4 +38,4 @@ type = new t.EnumType({
 		CHEETAH
 	]
 });
-assert.equal(type.valueBuffer(CHEETAH), Buffer.from([1]));
+assert.equal(type.valueBuffer({heightFt: 3, speedMph: 70}), bufferFrom([1]));

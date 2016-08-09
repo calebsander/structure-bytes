@@ -7,6 +7,7 @@ const path = require('path');
 const index = require(__dirname + '/../index.js');
 const assert = require(__dirname + '/../lib/assert.js');
 const BufferStream = require(__dirname + '/../lib/buffer-stream.js');
+const bufferString = require(__dirname + '/../lib/buffer-string.js');
 const GrowableBuffer = require(__dirname + '/../lib/growable-buffer.js');
 const io = index;
 const r = index.r;
@@ -14,6 +15,21 @@ const ReplaceStream = require(__dirname + '/../lib/replace-stream.js');
 const Simultaneity = require(__dirname + '/../lib/simultaneity.js');
 const t = index;
 const util = require(__dirname + '/../lib/util-inspect.js');
+function bufferFrom(bytes) {
+	const buffer = new ArrayBuffer(bytes.length);
+	new Uint8Array(buffer).set(bytes);
+	return buffer;
+}
+function bufferFill(length, value) {
+	const buffer = new ArrayBuffer(length);
+	new Uint8Array(buffer).fill(value);
+	return buffer;
+}
+function concat(buffers) {
+	const gb = new GrowableBuffer;
+	for (let buffer of buffers) gb.addAll(buffer);
+	return gb.toBuffer();
+}
 
 let asyncErrors = 0;
 fs.readdir(__dirname, (err, testSuites) => {
@@ -57,7 +73,7 @@ fs.readdir(__dirname, (err, testSuites) => {
 		});
 	}
 	suitesS.callback(() => { //wait until all suites have been scanned to run tests
-		testsS.callback(() => require(__dirname + '/../compile.js')); //not run as a test so that coverage is generated
+		testsS.callback(() => {}/*require(__dirname + '/../compile.js')*/); //not run as a test so that coverage is generated
 	});
 	process.on('exit', () => {
 		console.log(

@@ -16,7 +16,7 @@ for (let [invalidValue, message] of [
 	);
 }
 type.writeValue(gb, 'é');
-assert.equal(gb.toBuffer(), Buffer.from([0xc3, 0xa9]));
+assert.equal(gb.toBuffer(), bufferFrom([0xc3, 0xa9]));
 
-const buffer = Buffer.from([0x61, 0xc3, 0xa9, 0x62]); //aéb
+const buffer = bufferFrom([0x61, 0xc3, 0xa9, 0x62]); //aéb
 assert.equal(r.value({buffer, offset: 1, type}), 'é');

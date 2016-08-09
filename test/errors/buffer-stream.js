@@ -1,9 +1,9 @@
 /*eslint-disable no-undef*/
 assert.throws(
 	() => new BufferStream,
-	'Expected Buffer, got undefined'
+	'Expected ArrayBuffer or GrowableBuffer, got undefined'
 );
 assert.throws(
 	() => new BufferStream([1, 2, 3]),
-	'Expected Buffer, got Array'
+	'Expected ArrayBuffer or GrowableBuffer, got Array'
 );
