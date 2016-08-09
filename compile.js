@@ -43,7 +43,7 @@ s.addTask(() => {
 		fs.writeFile(
 			__dirname + '/client-side/upload-download.js',
 			Buffer.concat([uploadCode, downloadCode]),
-			(err) => {
+			err => {
 				if (err) throw err;
 				s.taskFinished();
 			}
@@ -75,7 +75,7 @@ s.callback(() => {
 		b.bundle().pipe(fs.createWriteStream(__dirname + outputFile)).on('finish', () => {
 			console.log('Compiling: Uglifying ' + outputFile);
 			const uglified = uglify.minify(__dirname + outputFile).code;
-			fs.writeFile(__dirname + outputFile, uglified, (err) => {
+			fs.writeFile(__dirname + outputFile, uglified, err => {
 				if (err) throw err;
 			});
 		});

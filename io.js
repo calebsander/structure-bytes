@@ -149,7 +149,7 @@ const io = module.exports = {
 		assert.instanceOf(inStream, stream.Readable);
 		assert.instanceOf(callback, Function);
 		const segments = [];
-		inStream.on('data', (chunk) => segments.push(chunk));
+		inStream.on('data', chunk => segments.push(chunk));
 		inStream.on('error', function(err) {
 			this.destroy();
 			callback(err, null);
@@ -183,7 +183,7 @@ const io = module.exports = {
 		assert.instanceOf(inStream, stream.Readable);
 		assert.instanceOf(callback, Function);
 		const segments = [];
-		inStream.on('data', (chunk) => segments.push(chunk));
+		inStream.on('data', chunk => segments.push(chunk));
 		inStream.on('error', function(err) {
 			this.destroy();
 			callback(err, null, null);
@@ -225,10 +225,10 @@ const io = module.exports = {
 			res.setHeader('Content-Encoding', 'gzip');
 			res.setHeader('sig', type.getSignature());
 			const outStream = zlib.createGzip(); //eslint-disable-line no-undef
-			if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream}, (err) => {
+			if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream}, err => {
 				if (err) callback(err);
 			});
-			else io.writeTypeAndValue({type, value, outStream}, (err) => {
+			else io.writeTypeAndValue({type, value, outStream}, err => {
 				if (err) callback(err);
 			});
 			outStream.pipe(res).on('finish', () => callback(null));
