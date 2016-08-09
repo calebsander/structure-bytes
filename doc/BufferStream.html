@@ -31,7 +31,8 @@
         <h2>BufferStream</h2>
         
             <div class="class-description">A class for creating a readable stream
-out of a <a href="external-Buffer.html"><code>Buffer</code></a> or <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a>.
+out of an <a href="external-ArrayBuffer.html"><code>ArrayBuffer</code></a>
+or a <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a>.
 When dealing with very large buffers,
 this allows chunks to be sent as they are requested
 rather than stuffing the whole buffer into the stream at once.
@@ -95,7 +96,7 @@ into write streams.</div>
             <td class="type">
             
                 
-<span class="param-type"><a href="external-Buffer.html">external:Buffer</a></span>
+<span class="param-type"><a href="external-ArrayBuffer.html">external:ArrayBuffer</a></span>
 |
 
 <span class="param-type"><a href="GrowableBuffer.html">GrowableBuffer</a></span>
@@ -113,7 +114,7 @@ If a <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a> is used, only
 occupied portion will be written by the stream.
 Future additions to the <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a>
 will not be written.
-If bytes inside the <a href="external-Buffer.html"><code>Buffer</code></a>
+If bytes inside the <a href="external-ArrayBuffer.html"><code>ArrayBuffer</code></a>
 or occupied portion are changed, behavior is undefined.</td>
         </tr>
 
@@ -155,7 +156,7 @@ or occupied portion are changed, behavior is undefined.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_buffer-stream.js.html">lib/buffer-stream.js</a>, <a href="lib_buffer-stream.js.html#line14">line 14</a>
+        <a href="lib_buffer-stream.js.html">lib/buffer-stream.js</a>, <a href="lib_buffer-stream.js.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -211,7 +212,7 @@ or occupied portion are changed, behavior is undefined.</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Buffer.html">Buffer</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
 </nav>
 
 <br class="clear">

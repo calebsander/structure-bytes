@@ -81,7 +81,7 @@ class Type {
 	/**
 	 * Gets the type in buffer form, using a cached value if present.
 	 * Since types are immutable, the result should never change from the cached value.
-	 * @return {external:Buffer} A Buffer containing the type bytes
+	 * @return {external:ArrayBuffer} A Buffer containing the type bytes
 	 */
 	toBuffer() {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer();
@@ -91,7 +91,7 @@ class Type {
 	 * Generates the type buffer, recomputed each time
 	 * @private
 	 * @see Type#toBuffer
-	 * @return {external:Buffer} A Buffer containing the type bytes
+	 * @return {external:ArrayBuffer} A Buffer containing the type bytes
 	 */
 	_toBuffer() {
 		const buffer = new GrowableBuffer;
@@ -149,7 +149,7 @@ class Type {
 	 * See this type's {@link writeValue()} documentation
 	 * for acceptable values.
 	 * @param value The value to write
-	 * @return {external:Buffer} a {@link Buffer} storing the value (assuming the type is known)
+	 * @return {external:ArrayBuffer} a {@link Buffer} storing the value (assuming the type is known)
 	 * @see Type#writeValue
 	 */
 	valueBuffer(value) {

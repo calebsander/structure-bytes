@@ -1,7 +1,7 @@
 /**
- * The NodeJS Buffer object
- * @external Buffer
- * @see {@link https://nodejs.org/api/buffer.html}
+ * The JavaScript ArrayBuffer class
+ * @external ArrayBuffer
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer}
  */
 /**
  * The NodeJS HTTP library
