@@ -26,7 +26,7 @@ function consumeType(typeBuffer, offset) {
 	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset));
 	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH);
 	let value, length = 1;
-	switch (new DataView(typeBuffer).getUint8(offset)) {
+	switch (new Uint8Array(typeBuffer)[offset]) {
 		case t.ByteType._value:
 			value = new t.ByteType;
 			break;
@@ -232,7 +232,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.UnsignedByteType:
 			length = 1;
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
-			value = new DataView(buffer).getUint8(offset);
+			value = new Uint8Array(buffer)[offset];
 			break;
 		case t.UnsignedShortType:
 			length = 2;
@@ -267,7 +267,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.BooleanType:
 			length = 1;
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
-			const readByte = new DataView(buffer).getUint8(offset);
+			const readByte = new Uint8Array(buffer)[offset];
 			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
 			value = !!readByte;
 			break;

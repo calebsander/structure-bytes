@@ -333,7 +333,7 @@ class UnsignedByteType extends UnsignedType {
 		assert.integer(value);
 		assert.between(0, value, 256, 'Value out of range');
 		const byteBuffer = new ArrayBuffer(1);
-		new DataView(byteBuffer).setUint8(0, value);
+		new Uint8Array(byteBuffer)[0] = value;
 		buffer.addAll(byteBuffer);
 	}
 }
