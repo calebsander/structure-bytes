@@ -769,7 +769,6 @@ class StructType extends AbsoluteType {
 		this.fields.sort((a, b) => { //so field order is predictable
 			if (a[NAME] < b[NAME]) return -1;
 			else if (a[NAME] > b[NAME]) return 1;
-			else assert.fail('Should not have any duplicate fields');
 		});
 	}
 	addToBuffer(buffer) {

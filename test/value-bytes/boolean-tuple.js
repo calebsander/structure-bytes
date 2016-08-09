@@ -11,3 +11,7 @@ const VALUE2 = [true, false, true, false, true, false, true, false, false, true,
 let buffer = fullType.valueBuffer(VALUE2);
 assert.equal(buffer, bufferFrom([0b10101010, 0b01010101]));
 assert.equal(r.value({buffer, type: fullType}), VALUE2);
+assert.throws(
+	() => fullType.valueBuffer(new Array(17)),
+	'Length does not match'
+);

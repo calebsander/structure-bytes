@@ -31,6 +31,14 @@ assert.throws(
 	() => assert.equal(new Set([1, 3, 2]), new Set([1, 2, 3])),
 	'Expected Set { 1, 2, 3 } but got Set { 1, 3, 2 }'
 );
+assert.throws(
+	() => assert.equal(bufferFrom([1, 2, 3, 4]), bufferFrom([1, 2, 3])),
+	'Expected ArrayBuffer { byteLength: 3 } but got ArrayBuffer { byteLength: 4 }'
+);
+assert.throws(
+	() => assert.equal(bufferFrom([1, 2, 5]), bufferFrom([1, 2, 3])),
+	'Expected ArrayBuffer { byteLength: 3 } but got ArrayBuffer { byteLength: 3 }'
+);
 class EqualsThrows {
 	equals() {
 		throw new Error('Equals is not implemented');
@@ -39,4 +47,23 @@ class EqualsThrows {
 assert.throws(
 	() => assert.equal(new EqualsThrows, new EqualsThrows),
 	'equals() is not implemented for EqualsThrows {}'
+);
+assert.throws(
+	() => assert.message(null, 'Error occurred'),
+	'Message "No error thrown" does not start with "Error occurred"'
+);
+for (let Type of [Array, Map, Set, ArrayBuffer]) {
+	let value = new Type;
+	assert.throws(
+		() => assert.equal(undefined, value),
+		'Expected ' + require('util').inspect(value) + ' but got undefined'
+	);
+	assert.throws(
+		() => assert.equal(25, value),
+		'Expected ' + require('util').inspect(value) + ' but got 25'
+	);
+}
+assert.throws(
+	() => assert.equal(Buffer.from([1, 0, 3]), Buffer.from([1, 2, 3])),
+	'Expected <Buffer 01 02 03> but got <Buffer 01 00 03>'
 );

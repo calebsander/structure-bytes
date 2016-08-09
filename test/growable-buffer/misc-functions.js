@@ -23,3 +23,11 @@ for (let i = 0; i < 100; i++) {
 	else gb.setAll(i, buffer);
 }
 for (let i = 0; i < gb.length; i++) assert.equal(gb.get(i), 0xbe);
+gb = new GrowableBuffer;
+gb.add(1).add(2).add(3);
+gb.set(2, 6).set(1, 5).set(0, 4);
+assert.equal(gb.toBuffer(), bufferFrom([4, 5, 6]));
+assert.throws(
+	() => gb.set(1, 256),
+	'Not a byte: 256 (256 is not in [0,256))'
+);

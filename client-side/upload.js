@@ -2,7 +2,6 @@
 (() => {
 	require('/client-side/common.js');
 	const assert = require('/lib/assert.js');
-	const GrowableBuffer = require('/lib/growable-buffer.js');
 	window.sb.upload = ({type, value}, options) => {
 		assert.instanceOf(type, window.sb.Type);
 		assert.instanceOf(options, Object);
