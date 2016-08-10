@@ -72,9 +72,13 @@ s.callback(() => {
 		}
 		for (let file of exposeFiles) exposeFile(b, file);
 		b.transform('babelify', {presets: ['es2015']});
-		b.bundle().pipe(fs.createWriteStream(__dirname + outputFile)).on('finish', () => {
+		const chunks = [];
+		b.bundle().on('data', chunk => chunks.push(chunk)).on('end', () => {
 			console.log('Compiling: Uglifying ' + outputFile);
-			const uglified = uglify.minify(__dirname + outputFile).code;
+			const uglified = uglify.minify(Buffer.concat(chunks).toString(), {
+				fromString: true,
+				 compress: {unsafe: true}
+			}).code;
 			fs.writeFile(__dirname + outputFile, uglified, err => {
 				if (err) throw err;
 			});
