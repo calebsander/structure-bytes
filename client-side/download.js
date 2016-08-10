@@ -2,15 +2,15 @@
 (() => {
 	require('/client-side/common.js');
 	const assert = require('/lib/assert.js');
+	const base64 = require('base64-js');
 	const r = require('/read.js');
-	const BASE_64 = 'base64';
 	const typeCache = {};
 	function saveTypeCache() {
 		const composedCache = {};
 		for (let type in typeCache) {
 			composedCache[type] = {
 				sig: typeCache[type].sig,
-				type: typeCache[type].type.toBuffer().toString(BASE_64)
+				type: base64.fromByteArray(new Uint8Array(typeCache[type].type.toBuffer()))
 			};
 		}
 		localStorage.typeCache = JSON.stringify(composedCache);
@@ -21,7 +21,7 @@
 		for (let typeName in composedCache) {
 			typeCache[typeName] = {
 				sig: composedCache[typeName].sig,
-				type: r.type(Buffer.from(composedCache[typeName].type, BASE_64))
+				type: r.type(new Uint8Array(base64.toByteArray(composedCache[typeName].type)).buffer)
 			};
 		}
 	}
