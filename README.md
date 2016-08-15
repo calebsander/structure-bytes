@@ -6,7 +6,8 @@ A NodeJS library for making more efficient data transfers by separating the stru
 [![Coverage Status](https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master)](https://coveralls.io/github/calebsander/structure-bytes?branch=master)
 
 ## Concept
-Most data nowadays is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON or YAML) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. To accomplish this, the project was designed with several principles in mind:
+A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google's [Protocol Buffers](https://developers.google.com/protocol-buffers/), but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:
+
 - Types (user-created formats of data) are created by combining a wide variety of datatypes, both primitive and recursive. This allows for representations which accurately describe types (e.g. distinguishing between structs and mappings of strings to values, and numeric types, unlike JSON). Types are very customizable, so you can build any desired type formats.
 - Types are kept separate from values (instances of a type) because types are designed to be created once and used to store many different values. This allows for communications to cache the type format after the first use and only have to send the values in subsequent requests.
 - Redundancy in data storage is kept to a minimum. For example, in an array of structs, the field names are only specified once in the type spec rather than for each element in the array.
@@ -16,18 +17,22 @@ Most data nowadays is stored in files or transfered over HTTP as either text fil
 - Use when you plan to have many different values for the type (either many different files storing the same sort of information, or many communications of the same sort of information). This will give you the benefit of being able to keep only a single copy of the type spec.
 - Use when there is a lot of repetition in the data. If you don't have any arrays, sets, or maps, you can't really benefit from the cutdown on redundancy.
 
+## Differences from Protocol Buffers
+- Types are generated programmatically rather than by reading `.proto` files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.
+- This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.
+
 ## Data types
 - Primitive types
 	- `Byte` (1-byte signed integer)
 	- `Short` (2-byte signed integer)
 	- `Int` (4-byte signed integer)
 	- `Long` (8-byte signed integer)
-	- (planned) `BigInt` (a signed integer with up to 256 bytes of precision)
+	- `BigInt` (a signed integer with up to 65535 bytes of precision)
 	- `UnsignedByte` (1-byte unsigned integer)
 	- `UnsignedShort` (2-byte unsigned integer)
 	- `UnsignedInt` (4-byte unsigned integer)
 	- `UnsignedLong` (8-byte unsigned integer)
-	- (planned) `BigUnsignedInt` (an unsigned integer with up to 256 bytes of precision)
+	- `BigUnsignedInt` (an unsigned integer with up to 65535 bytes of precision)
 	- `Date` (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)
 	- `Float` (IEEE 32-bit floating-point number)
 	- `Double` (IEEE 64-bit floating-point number)

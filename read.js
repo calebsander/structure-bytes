@@ -21,6 +21,26 @@ function readLengthBuffer(buffer, offset) {
 	}
 	catch (e) { assert.fail(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
+const SINGLE_BYTE_TYPES = [ //types whose type bytes are only 1 byte long (the type byte)
+	t.ByteType,
+	t.ShortType,
+	t.IntType,
+	t.LongType,
+	t.BigIntType,
+	t.UnsignedByteType,
+	t.UnsignedShortType,
+	t.UnsignedIntType,
+	t.UnsignedLongType,
+	t.DateType,
+	t.BigUnsignedIntType,
+	t.FloatType,
+	t.DoubleType,
+	t.BooleanType,
+	t.BooleanArrayType,
+	t.CharType,
+	t.StringType,
+	t.OctetsType
+];
 //Pads a string with preceding 0s so that it has the desired length (for error messages)
 function pad(str, digits) {
 	if (str.length < digits) return '0'.repeat(digits - str.length) + str;
@@ -32,59 +52,15 @@ function consumeType(typeBuffer, offset) {
 	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset));
 	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH); //make sure there is a type byte
 	let value, length = 1;
-	switch (new Uint8Array(typeBuffer)[offset]) {
-		case t.ByteType._value:
-			value = new t.ByteType;
-			break;
-		case t.ShortType._value:
-			value = new t.ShortType;
-			break;
-		case t.IntType._value:
-			value = new t.IntType;
-			break;
-		case t.LongType._value:
-			value = new t.LongType;
-			break;
-		case t.UnsignedByteType._value:
-			value = new t.UnsignedByteType;
-			break;
-		case t.UnsignedShortType._value:
-			value = new t.UnsignedShortType;
-			break;
-		case t.UnsignedIntType._value:
-			value = new t.UnsignedIntType;
-			break;
-		case t.UnsignedLongType._value:
-			value = new t.UnsignedLongType;
-			break;
-		case t.DateType._value:
-			value = new t.DateType;
-			break;
-		case t.FloatType._value:
-			value = new t.FloatType;
-			break;
-		case t.DoubleType._value:
-			value = new t.DoubleType;
-			break;
-		case t.BooleanType._value:
-			value = new t.BooleanType;
-			break;
+	const typeByte = new Uint8Array(typeBuffer)[offset];
+	for (let testType of SINGLE_BYTE_TYPES) {
+		if (typeByte === testType._value) return {value: new testType, length}; //eslint-disable-line new-cap
+	}
+	switch (typeByte) {
 		case t.BooleanTupleType._value:
 			const booleanTupleLength = readLengthBuffer(typeBuffer, offset + length);
 			value = new t.BooleanTupleType(booleanTupleLength.value);
 			length += booleanTupleLength.length;
-			break;
-		case t.BooleanArrayType._value:
-			value = new t.BooleanArrayType;
-			break;
-		case t.CharType._value:
-			value = new t.CharType;
-			break;
-		case t.StringType._value:
-			value = new t.StringType;
-			break;
-		case t.OctetsType._value:
-			value = new t.OctetsType;
 			break;
 		case t.TupleType._value:
 			const tupleType = consumeType(typeBuffer, offset + length);
@@ -237,6 +213,20 @@ function consumeValue({buffer, offset, type}) {
 			const lower = longView.getUint32(offset + 4);
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower));
 			break;
+		case t.BigIntType:
+			length = 2;
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const bigIntView = new DataView(buffer);
+			const bigIntBytes = bigIntView.getUint16(offset);
+			assert.assert(buffer.byteLength >= offset + length + bigIntBytes, NOT_LONG_ENOUGH);
+			if (bigIntBytes) value = String(bigIntView.getInt8(offset + length));
+			else value = '0';
+			for (let byte = 1; byte < bigIntBytes; byte++) {
+				if (byte) value = strint.mul(value, strint.BYTE_SHIFT); //after the first byte, shift everything left one byte before adding
+				value = strint.add(value, String(bigIntView.getUint8(offset + length + byte)));
+			}
+			length += bigIntBytes;
+			break;
 		case t.UnsignedByteType:
 			length = 1;
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
@@ -261,6 +251,19 @@ function consumeValue({buffer, offset, type}) {
 			const unsignedLower = unsignedLongView.getUint32(offset + 4);
 			value = strint.add(strint.mul(String(unsignedUpper), strint.LONG_UPPER_SHIFT), String(unsignedLower));
 			if (type.constructor === t.DateType) value = new Date(Number(value));
+			break;
+		case t.BigUnsignedIntType:
+			length = 2;
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const bigUnsignedView = new DataView(buffer);
+			const bigUnsignedBytes = bigUnsignedView.getUint16(offset);
+			assert.assert(buffer.byteLength >= offset + length + bigUnsignedBytes, NOT_LONG_ENOUGH);
+			value = '0';
+			for (let byte = 0; byte < bigUnsignedBytes; byte++) {
+				if (byte) value = strint.mul(value, strint.BYTE_SHIFT); //after the first byte, shift everything left one byte before adding
+				value = strint.add(value, String(bigUnsignedView.getUint8(offset + length + byte)));
+			}
+			length += bigUnsignedBytes;
 			break;
 		case t.FloatType:
 			length = 4;

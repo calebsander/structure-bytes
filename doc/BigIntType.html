@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DoubleType</title>
+    <title>JSDoc: Class: BigIntType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DoubleType</h1>
+    <h1 class="page-title">Class: BigIntType</h1>
 
     
 
@@ -28,9 +28,11 @@
 
 <header>
     
-        <h2>DoubleType</h2>
+        <h2>BigIntType</h2>
         
-            <div class="class-description">A type storing an 8-byte <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></div>
+            <div class="class-description">A type storing an arbitrary precision signed integer
+(up to 65535 bytes of precision).
+Each written value has its own number of bytes of precision.</div>
         
     
 </header>
@@ -44,7 +46,7 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="DoubleType"><span class="type-signature"></span>new DoubleType<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="BigIntType"><span class="type-signature"></span>new BigIntType<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -91,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line574">line 574</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line328">line 328</a>
     </li></ul></dd>
     
 
@@ -1034,9 +1036,6 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">number</span>
-|
-
 <span class="param-type">string</span>
 
 
@@ -1047,7 +1046,7 @@ for acceptable values.
 
             
 
-            <td class="description last">The value to write</td>
+            <td class="description last">The value to write (a base-10 string representation of an integer)</td>
         </tr>
 
     
@@ -1093,7 +1092,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line584">line 584</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line338">line 338</a>
     </li></ul></dd>
     
 

@@ -169,7 +169,7 @@ class Type {
 	/**
 	 * Returns whether this type object represents the same type as another object
 	 * @param {Type} otherType Another object to compare with
-	 * @return {boolean} {@link true} iff the types have the same constructor and the same field values for fields not starting with {@link 'cached'}
+	 * @return {boolean} {@link true} iff the types have the same constructor and the same field values for fields that don't store cached results
 	 */
 	equals(otherType) {
 		//Other type must be descended from the same class (this check will ensure that otherType is not null or undefined)
@@ -302,7 +302,7 @@ class LongType extends IntegerType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {string} value The value to write
+	 * @param {string} value The value to write (a base-10 string representation of an integer)
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -315,6 +315,47 @@ class LongType extends IntegerType {
 		const dataView = new DataView(byteBuffer);
 		dataView.setInt32(0, Number(upper));
 		dataView.setUint32(4, Number(lower));
+		buffer.addAll(byteBuffer);
+	}
+}
+/**
+ * A type storing an arbitrary precision signed integer
+ * (up to 65535 bytes of precision).
+ * Each written value has its own number of bytes of precision.
+ * @extends Type
+ * @inheritdoc
+ */
+class BigIntType extends IntegerType {
+	static get _value() {
+		return 0x06;
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {string} value The value to write (a base-10 string representation of an integer)
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 */
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		assert.instanceOf(value, String);
+		value = strint.normalize(value); //throws if value is invalid
+		const bytes = [];
+		if (!strint.eq(value, '0')) {
+			while (strint.gt(value, '127') || strint.lt(value, '-128')) { //builds bytes in LE order
+				const quotient = strint.div(value, strint.BYTE_SHIFT, true);
+				const remainder = strint.sub(value, strint.mul(quotient, strint.BYTE_SHIFT));
+				bytes.push(Number(remainder));
+				value = quotient;
+			}
+			bytes.push(Number(value));
+			assert.twoByteUnsignedInteger(bytes.length);
+		}
+		const byteBuffer = new ArrayBuffer(2 + bytes.length);
+		const dataView = new DataView(byteBuffer);
+		dataView.setUint16(0, bytes.length); //use 2 bytes to store the number of bytes in the value
+		let offset = 3;
+		for (let i = bytes.length - 2; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]); //write in reverse order to get BE
+		if (bytes.length) dataView.setInt8(2, bytes[bytes.length - 1]); //highest byte is signed so it must be treated separately
 		buffer.addAll(byteBuffer);
 	}
 }
@@ -427,7 +468,7 @@ class UnsignedLongType extends UnsignedType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {string} value The value to write
+	 * @param {string} value The value to write (a base-10 string representation of an integer)
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
@@ -453,6 +494,45 @@ class DateType extends AbsoluteType {
 	writeValue(buffer, value) {
 		assert.instanceOf(value, Date);
 		writeUnsignedLong(buffer, String(value.getTime()));
+	}
+}
+/**
+ * A type storing an arbitrary precision unsigned integer
+ * (up to 65535 bytes of precision).
+ * Each written value has its own number of bytes of precision.
+ * @extends Type
+ * @inheritdoc
+ */
+class BigUnsignedIntType extends UnsignedType {
+	static get _value() {
+		return 0x16;
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {string} value The value to write (a base-10 string representation of an integer)
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 */
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer);
+		assert.instanceOf(value, String);
+		if (strint.isNegative(value)) assert.fail('Value out of range');
+		const bytes = [];
+		if (!strint.eq(value, '0')) { //if value is 0, avoid adding a 0 byte
+			while (strint.ge(value, strint.BYTE_SHIFT)) { //builds bytes in LE order
+				const [quotient, remainder] = strint.quotientRemainderPositive(value, strint.BYTE_SHIFT);
+				bytes.push(Number(remainder));
+				value = quotient;
+			}
+			bytes.push(Number(value));
+			assert.twoByteUnsignedInteger(bytes.length);
+		}
+		const byteBuffer = new ArrayBuffer(2 + bytes.length);
+		const dataView = new DataView(byteBuffer);
+		dataView.setUint16(0, bytes.length); //use 2 bytes to store the number of bytes in the value
+		let offset = 2;
+		for (let i = bytes.length - 1; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]); //write in reverse order to get BE
+		buffer.addAll(byteBuffer);
 	}
 }
 
@@ -1243,11 +1323,13 @@ module.exports = {
 	ShortType,
 	IntType,
 	LongType,
+	BigIntType,
 	UnsignedByteType,
 	UnsignedShortType,
 	UnsignedIntType,
 	UnsignedLongType,
 	DateType,
+	BigUnsignedIntType,
 	FloatType,
 	DoubleType,
 	BooleanType,
