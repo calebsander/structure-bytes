@@ -10,6 +10,12 @@ const type = new sb.ArrayType(
 		id: new sb.UnsignedShortType
 	})
 );
+const downloadType = new sb.ArrayType(
+	new sb.StructType({
+		name: new sb.StringType,
+		id: new sb.PointerType(new sb.UnsignedShortType)
+	})
+);
 const VALUE = [{name: 'John', id: 2}, {name: 'Jane', id: 10}];
 
 const PORT = 8080;
@@ -28,7 +34,7 @@ http.createServer((req, res) => {
 		});
 	}
 	else if (req.url.startsWith('/downloadtest')) {
-		sb.httpRespond({req, res, type, value: VALUE});
+		sb.httpRespond({req, res, type: downloadType, value: VALUE});
 		console.log('Sent download');
 	}
 	else {

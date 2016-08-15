@@ -116,7 +116,13 @@ function consumeType(typeBuffer, offset) {
 			length++;
 			const values = [];
 			for (let i = 0; i < valueCount; i++) {
-				const value = consumeValue({buffer: typeBuffer, offset: offset + length, type: enumType.value}); //reading values rather than types
+				const valueLocation = offset + length;
+				const value = consumeValue({ //reading values rather than types
+					buffer: typeBuffer,
+					pointerStart: valueLocation,
+					offset: valueLocation,
+					type: enumType.value
+				});
 				length += value.length;
 				values[i] = value.value;
 			}
@@ -184,9 +190,13 @@ function readBooleans({buffer, offset, count}) { //complement to writeBooleans()
 	}
 	return {value, length: byteLength};
 }
-//Reads a value from the specified bytes at the specified offset, given a type
-//Returns the value that was read and the number of bytes consumed (excepting any values being pointed to)
-function consumeValue({buffer, offset, type}) {
+/*
+	Reads a value from the specified bytes at the specified offset, given a type
+	Returns the value that was read and the number of bytes consumed (excepting any values being pointed to)
+	Pointer start refers to the position in the buffer where the root value starts
+	(pointers will be relative to this location)
+*/
+function consumeValue({buffer, pointerStart, offset, type}) {
 	let value, length;
 	switch (type.constructor) {
 		case t.ByteType:
@@ -318,7 +328,7 @@ function consumeValue({buffer, offset, type}) {
 			length = 0;
 			value = new Array(type.length);
 			for (let i = 0; i < type.length; i++) {
-				const tupleElement = consumeValue({buffer, offset: offset + length, type: type.type});
+				const tupleElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type});
 				length += tupleElement.length;
 				value[i] = tupleElement.value;
 			}
@@ -329,7 +339,7 @@ function consumeValue({buffer, offset, type}) {
 			for (let field of type.fields) {
 				const fieldName = field.name;
 				const fieldType = field.type;
-				const readField = consumeValue({buffer, offset: offset + length, type: fieldType});
+				const readField = consumeValue({buffer, pointerStart, offset: offset + length, type: fieldType});
 				value[fieldName] = readField.value;
 				length += readField.length;
 			}
@@ -339,7 +349,7 @@ function consumeValue({buffer, offset, type}) {
 			length = arrayLength.length;
 			value = new Array(arrayLength.value);
 			for (let i = 0; i < value.length; i++) {
-				const arrayElement = consumeValue({buffer, offset: offset + length, type: type.type});
+				const arrayElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type});
 				length += arrayElement.length;
 				value[i] = arrayElement.value;
 			}
@@ -349,7 +359,7 @@ function consumeValue({buffer, offset, type}) {
 			length = setLength.length;
 			value = new Set;
 			for (let i = 0; i < setLength.value; i++) {
-				const setElement = consumeValue({buffer, offset: offset + length, type: type.type});
+				const setElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type});
 				length += setElement.length;
 				value.add(setElement.value);
 			}
@@ -359,9 +369,9 @@ function consumeValue({buffer, offset, type}) {
 			length = mapSize.length;
 			value = new Map;
 			for (let i = 0; i < mapSize.value; i++) {
-				const keyElement = consumeValue({buffer, offset: offset + length, type: type.keyType});
+				const keyElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.keyType});
 				length += keyElement.length;
-				const valueElement = consumeValue({buffer, offset: offset + length, type: type.valueType});
+				const valueElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.valueType});
 				length += valueElement.length;
 				value.set(keyElement.value, valueElement.value);
 			}
@@ -377,7 +387,7 @@ function consumeValue({buffer, offset, type}) {
 			length = 1;
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
 			const typeIndex = new Uint8Array(buffer)[offset];
-			const subValue = consumeValue({buffer, offset: offset + length, type: type.types[typeIndex]});
+			const subValue = consumeValue({buffer, pointerStart, offset: offset + length, type: type.types[typeIndex]});
 			length += subValue.length;
 			value = subValue.value;
 			break;
@@ -387,7 +397,7 @@ function consumeValue({buffer, offset, type}) {
 			const optionalByte = new Uint8Array(buffer)[offset];
 			assert.assert(optionalByte === 0x00 || optionalByte === 0xFF, '0x' + optionalByte.toString(16) + ' is an invalid Optional byte');
 			if (optionalByte) {
-				const subValue = consumeValue({buffer, offset: offset + length, type: type.type});
+				const subValue = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type});
 				length += subValue.length;
 				value = subValue.value;
 			}
@@ -396,7 +406,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.PointerType:
 			const location = readLengthBuffer(buffer, offset);
 			length = location.length;
-			value = consumeValue({buffer, offset: location.value, type: type.type}).value;
+			value = consumeValue({buffer, pointerStart, offset: pointerStart + location.value, type: type.type}).value;
 			break;
 		default:
 			assert.fail('Not a structure type: ' + util.inspect(type));
@@ -408,7 +418,7 @@ function value({buffer, type, offset}) {
 	assert.instanceOf(type, t.Type);
 	if (offset === undefined) offset = 0; //for some reason, isparta doesn't like default parameters inside destructuring
 	assert.instanceOf(offset, Number);
-	const {value} = consumeValue({buffer, offset, type});
+	const {value} = consumeValue({buffer, offset, type, pointerStart: offset});
 	//no length validation because bytes being pointed to don't get counted in the length
 	return value;
 }
