@@ -13,6 +13,7 @@ const uploadDownloadB = browserify();
 uploadDownloadB.add(__dirname + '/client-side/upload-download.js');
 
 let s = new Simultaneity;
+//Replace require('util'), which is only used for util.inspect(), to minimize file size
 for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
 	s.addTask(() => {
 		fs.createReadStream(__dirname + utilFile + '.js')
@@ -23,6 +24,8 @@ for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
 	});
 }
 s.addTask(() => {
+	//Load the upload and download code and append them to each other to make a combined include file
+	//These files are not too big, so it is not terrible to load them into memory
 	let uploadCode, downloadCode;
 	const loadS = new Simultaneity;
 	loadS.addTask(() => {
@@ -62,24 +65,27 @@ const downloadFiles = [
 	'/lib/util-inspect.js'
 ];
 s.callback(() => {
+	//Include the file in the browserify result because it is require()d by other files
 	function exposeFile(b, name, fileName = name) {
 		b.require(__dirname + fileName, {expose: name});
 	}
 	function compile(b, {modifiedFiles, exposeFiles, outputFile}) {
 		console.log('Compiling: Browserifying and babelifying ' + outputFile);
+		//Expose the files with require('util') removed in place of the true file
 		for (let ending in modifiedFiles) {
 			for (let file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js');
 		}
+		//Expose all the unmodified files as normal
 		for (let file of exposeFiles) exposeFile(b, file);
-		b.transform('babelify', {presets: ['es2015']});
+		b.transform('babelify', {presets: ['es2015']}); //babelify so it works in older browsers
 		const chunks = [];
-		b.bundle().on('data', chunk => chunks.push(chunk)).on('end', () => {
+		b.bundle().on('data', chunk => chunks.push(chunk)).on('end', () => { //load output into memory
 			console.log('Compiling: Uglifying ' + outputFile);
-			const uglified = uglify.minify(Buffer.concat(chunks).toString(), {
+			const uglified = uglify.minify(Buffer.concat(chunks).toString(), { //minify the code
 				fromString: true,
-				 compress: {unsafe: true}
+				compress: {unsafe: true}
 			}).code;
-			fs.writeFile(__dirname + outputFile, uglified, err => {
+			fs.writeFile(__dirname + outputFile, uglified, err => { //write out the minified code
 				if (err) throw err;
 			});
 		});

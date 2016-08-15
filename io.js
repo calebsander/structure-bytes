@@ -1,6 +1,9 @@
 //For use with browserify
 if (__dirname === '/') __dirname = '';
 
+//This file contains functions for performing I/O;
+//specifically, reads and writes of types and values and HTTP responses
+
 const assert = require(__dirname + '/lib/assert.js');
 const BufferStream = require(__dirname + '/lib/buffer-stream.js');
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
@@ -123,7 +126,7 @@ const io = module.exports = {
 			let type;
 			try { type = r.type(toArrayBuffer(buffer), false) } //eslint-disable-line semi
 			catch (e) { callback(e, null) } //eslint-disable-line semi
-			if (type) callback(null, type);
+			if (type) callback(null, type); //if error occurred, don't callback with a null type
 		});
 	},
 	/**
@@ -159,7 +162,7 @@ const io = module.exports = {
 			let value;
 			try { value = r.value({buffer: toArrayBuffer(buffer), type}) } //eslint-disable-line semi
 			catch (e) { callback(e, null) } //eslint-disable-line semi
-			if (value) callback(null, value);
+			if (value) callback(null, value); //if error occurred, don't callback with a null value
 		});
 	},
 	/**
@@ -191,13 +194,14 @@ const io = module.exports = {
 		inStream.on('end', () => {
 			const buffer = Buffer.concat(segments);
 			let type;
+			//Using consumeType() in order to get the length of the type (the start of the value)
 			try { type = r._consumeType(toArrayBuffer(buffer), 0) } //eslint-disable-line semi
 			catch (e) { callback(e, null, null) } //eslint-disable-line semi
 			if (type) {
 				let value;
 				try { value = r.value({buffer: toArrayBuffer(buffer), offset: type.length, type: type.value}) } //eslint-disable-line semi
 				catch (e) { callback(e, null, null) } //eslint-disable-line semi
-				if (value) callback(null, type.value, value);
+				if (value) callback(null, type.value, value); //if error occurred, don't callback with null value or type
 			}
 		});
 	},
@@ -224,13 +228,17 @@ const io = module.exports = {
 			res.setHeader('Content-Type', 'application/octet-stream');
 			res.setHeader('Content-Encoding', 'gzip');
 			res.setHeader('sig', type.getSignature());
-			const outStream = zlib.createGzip(); //eslint-disable-line no-undef
-			if (req.headers.sig && req.headers.sig === type.getSignature()) io.writeValue({type, value, outStream}, err => {
-				if (err) callback(err);
-			});
-			else io.writeTypeAndValue({type, value, outStream}, err => {
-				if (err) callback(err);
-			});
+			const outStream = zlib.createGzip(); //pipe into a zip stream to decrease size of response
+			if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
+				io.writeValue({type, value, outStream}, err => {
+					if (err) callback(err);
+				});
+			}
+			else { //otherwise, type and value need to be sent
+				io.writeTypeAndValue({type, value, outStream}, err => {
+					if (err) callback(err);
+				});
+			}
 			outStream.pipe(res).on('finish', () => callback(null));
 		}
 		catch (err) { callback(err) }

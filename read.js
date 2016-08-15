@@ -1,6 +1,8 @@
 //For use with browserify
 if (__dirname === '/') __dirname = '';
 
+//This file contains functions for reading types and values from bytes
+
 const assert = require(__dirname + '/lib/assert.js');
 const bitMath = require(__dirname + '/lib/bit-math.js');
 const bufferString = require(__dirname + '/lib/buffer-string.js');
@@ -9,6 +11,7 @@ const t = require(__dirname + '/structure-types.js');
 const util = require('util');
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
+//Reads a 4-byte length buffer
 function readLengthBuffer(buffer, offset) {
 	try {
 		return {
@@ -18,13 +21,16 @@ function readLengthBuffer(buffer, offset) {
 	}
 	catch (e) { assert.fail(NOT_LONG_ENOUGH) } //eslint-disable-line semi
 }
+//Pads a string with preceding 0s so that it has the desired length (for error messages)
 function pad(str, digits) {
 	if (str.length < digits) return '0'.repeat(digits - str.length) + str;
 	else return str;
 }
+//Reads a type from the specified bytes at the specified offset
+//Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
 	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset));
-	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH);
+	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH); //make sure there is a type byte
 	let value, length = 1;
 	switch (new Uint8Array(typeBuffer)[offset]) {
 		case t.ByteType._value:
@@ -96,7 +102,7 @@ function consumeType(typeBuffer, offset) {
 			const fieldCount = castBuffer[offset + length];
 			length++;
 			const fields = {};
-			for (let i = 0; i < fieldCount; i++) {
+			for (let i = 0; i < fieldCount; i++) { //read field information for each field
 				assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH);
 				const nameLength = castBuffer[offset + length];
 				length++;
@@ -134,7 +140,7 @@ function consumeType(typeBuffer, offset) {
 			length++;
 			const values = [];
 			for (let i = 0; i < valueCount; i++) {
-				const value = consumeValue({buffer: typeBuffer, offset: offset + length, type: enumType.value});
+				const value = consumeValue({buffer: typeBuffer, offset: offset + length, type: enumType.value}); //reading values rather than types
 				length += value.length;
 				values[i] = value.value;
 			}
@@ -183,7 +189,7 @@ function type(typeBuffer, fullBuffer = true) {
 	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer');
 	return value;
 }
-function readBooleans({buffer, offset, count}) {
+function readBooleans({buffer, offset, count}) { //complement to writeBooleans() in structure-types.js
 	const value = new Array(count);
 	const incompleteBytes = bitMath.modEight(value.length);
 	const bytes = bitMath.dividedByEight(value.length);
@@ -202,13 +208,15 @@ function readBooleans({buffer, offset, count}) {
 	}
 	return {value, length: byteLength};
 }
+//Reads a value from the specified bytes at the specified offset, given a type
+//Returns the value that was read and the number of bytes consumed (excepting any values being pointed to)
 function consumeValue({buffer, offset, type}) {
 	let value, length;
 	switch (type.constructor) {
 		case t.ByteType:
 			length = 1;
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
-			value = new Int8Array(buffer)[offset];
+			value = new Int8Array(buffer)[offset]; //endianness doesn't matter because there is only 1 byte
 			break;
 		case t.ShortType:
 			length = 2;
@@ -232,7 +240,7 @@ function consumeValue({buffer, offset, type}) {
 		case t.UnsignedByteType:
 			length = 1;
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
-			value = new Uint8Array(buffer)[offset];
+			value = new Uint8Array(buffer)[offset]; //endianness doesn't matter because there is only 1 byte
 			break;
 		case t.UnsignedShortType:
 			length = 2;
@@ -269,7 +277,7 @@ function consumeValue({buffer, offset, type}) {
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
 			const readByte = new Uint8Array(buffer)[offset];
 			assert.assert((readByte === 0x00 || readByte === 0xFF), '0x' + readByte.toString(16) + ' is an invalid Boolean value');
-			value = !!readByte;
+			value = !!readByte; //convert integer to boolean
 			break;
 		case t.BooleanArrayType:
 			const booleanArrayLength = readLengthBuffer(buffer, offset);
@@ -398,6 +406,7 @@ function value({buffer, type, offset}) {
 	if (offset === undefined) offset = 0; //for some reason, isparta doesn't like default parameters inside destructuring
 	assert.instanceOf(offset, Number);
 	const {value} = consumeValue({buffer, offset, type});
+	//no length validation because bytes being pointed to don't get counted in the length
 	return value;
 }
 
