@@ -218,7 +218,7 @@ const io = module.exports = {
 	 * @param {external:http.ServerResponse} params.res The server response
 	 * @param {Type} params.type The type of the message
 	 * @param {type} params.value The value to send
-	 * @param {errCallback} callback
+	 * @param {errCallback=} callback
 	 */
 	httpRespond({req, res, type, value}, callback) {
 		assert.instanceOf(type, t.Type);

@@ -7,6 +7,8 @@ read.js \
 io.js \
 lib/buffer-stream.js \
 lib/growable-buffer.js \
-index.js
+index.js \
+client-side/upload.js \
+client-side/download.js
 rm -r doc
 mv out doc
