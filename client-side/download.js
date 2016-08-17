@@ -46,8 +46,8 @@
 	 * sb.download('people', {
 	 *   url: '/download-people',
 	 *   type: 'GET',
-	 *   success: function(response, textStatus, jqXHR) {
-	 *     console.log(response); //e.g. [{name: 'John', id: 2}, {name: 'Jane', id: 10}]
+	 *   success: function(value) {
+	 *     console.log(value); //e.g. [{name: 'John', id: 2}, {name: 'Jane', id: 10}]
 	 *   }
 	 * });
 	 */
