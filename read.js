@@ -53,7 +53,7 @@ function consumeType(typeBuffer, offset) {
 	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH); //make sure there is a type byte
 	let value, length = 1;
 	const typeByte = new Uint8Array(typeBuffer)[offset];
-	for (let testType of SINGLE_BYTE_TYPES) {
+	for (const testType of SINGLE_BYTE_TYPES) {
 		if (typeByte === testType._value) return {value: new testType, length}; //eslint-disable-line new-cap
 	}
 	switch (typeByte) {
@@ -336,7 +336,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.StructType:
 			length = 0;
 			value = {};
-			for (let field of type.fields) {
+			for (const field of type.fields) {
 				const fieldName = field.name;
 				const fieldType = field.type;
 				const readField = consumeValue({buffer, pointerStart, offset: offset + length, type: fieldType});

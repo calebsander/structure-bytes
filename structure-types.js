@@ -26,13 +26,13 @@ function lengthBuffer(length) {
 function setPointers(buffer, root) {
 	if (root) { //ensure this only happens once
 		if (buffer.pointers) {
-			for (let [binaryString, insertionIndices] of buffer.pointers) { //find all the locations where pointers must be inserted
+			for (const [binaryString, insertionIndices] of buffer.pointers) { //find all the locations where pointers must be inserted
 				const index = buffer.length; //value is going to be appended to buffer, so it will start at buffer.length
 				buffer.addAll(bufferString.fromBinaryString(binaryString)); //add raw data
 				const indexBuffer = new ArrayBuffer(4);
 				new DataView(indexBuffer).setUint32(0, index);
 				//In each pointer location, set the bytes to be a pointer to the correct location
-				for (let insertionIndex of insertionIndices) buffer.setAll(insertionIndex, indexBuffer);
+				for (const insertionIndex of insertionIndices) buffer.setAll(insertionIndex, indexBuffer);
 			}
 		}
 	}
@@ -179,7 +179,7 @@ class Type {
 		try { assert.equal(otherType.constructor, this.constructor) } //eslint-disable-line semi
 		catch (e) { return false } //eslint-disable-line semi
 		//Each non-cached property should match
-		for (let param in this) {
+		for (const param in this) {
 			if (this.hasOwnProperty(param) && !param.startsWith(CACHED)) {
 				try { assert.equal(otherType[param], this[param]) } //eslint-disable-line semi
 				catch (e) { return false } //eslint-disable-line semi
@@ -811,7 +811,7 @@ class TupleType extends AbsoluteType {
 		if (value.length !== this.length) {
 			assert.fail('Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
 		}
-		for (let instance of value) this.type.writeValue(buffer, instance, false);
+		for (const instance of value) this.type.writeValue(buffer, instance, false);
 		setPointers(buffer, root);
 	}
 }
@@ -845,13 +845,13 @@ class StructType extends AbsoluteType {
 		assert.instanceOf(fields, Object);
 		//Allow only 255 fields
 		let fieldCount = 0;
-		for (let _ in fields) fieldCount++; //eslint-disable-line no-unused-vars
+		for (const _ in fields) fieldCount++; //eslint-disable-line no-unused-vars
 		try { assert.byteUnsignedInteger(fieldCount); }
 		catch (e) { assert.fail(String(fieldCount) + ' fields is too many'); }
 
 		this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
 		let i = 0;
-		for (let fieldName in fields) {
+		for (const fieldName in fields) {
 			//Name must fit in 255 UTF-8 bytes
 			const fieldNameBuffer = bufferString.fromString(fieldName);
 			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength); }
@@ -875,7 +875,7 @@ class StructType extends AbsoluteType {
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.fields.length);
-			for (let field of this.fields) {
+			for (const field of this.fields) {
 				const nameBuffer = field[NAME_BUFFER];
 				buffer.add(nameBuffer.byteLength); //not using null-terminated string because length is only 1 byte
 				buffer.addAll(nameBuffer);
@@ -898,7 +898,7 @@ class StructType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.instanceOf(value, Object);
-		for (let field of this.fields) {
+		for (const field of this.fields) {
 			const fieldValue = value[field[NAME]];
 			if (fieldValue === undefined) assert.fail('Value for field ' + field[NAME] + ' missing');
 			field[TYPE].writeValue(buffer, fieldValue, false);
@@ -940,7 +940,7 @@ class ArrayType extends AbsoluteType {
 		assert.instanceOf(buffer, GrowableBuffer);
 		assert.fourByteUnsignedInteger(value.length);
 		buffer.addAll(lengthBuffer(value.length));
-		for (let instance of value) this.type.writeValue(buffer, instance, false);
+		for (const instance of value) this.type.writeValue(buffer, instance, false);
 		setPointers(buffer, root);
 	}
 	/**
@@ -1042,7 +1042,7 @@ class MapType extends AbsoluteType {
 		assert.instanceOf(value, Map);
 		assert.fourByteUnsignedInteger(value.size);
 		buffer.addAll(lengthBuffer(value.size));
-		for (let [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
+		for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
 			this.keyType.writeValue(buffer, mapKey, false);
 			this.valueType.writeValue(buffer, mapValue, false);
 		}
@@ -1102,7 +1102,7 @@ class EnumType extends Type {
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer);
 			buffer.add(this.valueIndices.size);
-			for (let [valueBuffer, _] of this.valueIndices) buffer.addAll(bufferString.fromBinaryString(valueBuffer)); //eslint-disable-line no-unused-vars
+			for (const [valueBuffer, _] of this.valueIndices) buffer.addAll(bufferString.fromBinaryString(valueBuffer)); //eslint-disable-line no-unused-vars
 		}
 	}
 	/**
@@ -1152,13 +1152,13 @@ class ChoiceType extends Type {
 		assert.instanceOf(types, Array);
 		try { assert.byteUnsignedInteger(types.length); }
 		catch (e) { assert.fail(String(types.length) + ' types is too many'); }
-		for (let type of types) assert.instanceOf(type, Type);
+		for (const type of types) assert.instanceOf(type, Type);
 		this.types = types;
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.types.length);
-			for (let type of this.types) type.addToBuffer(buffer);
+			for (const type of this.types) type.addToBuffer(buffer);
 		}
 	}
 	/**

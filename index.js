@@ -21,8 +21,8 @@
 
 module.exports = {};
 //Copy version string, io functions, and types into package exports
-for (let sbModule of ['config', 'io', 'structure-types']) {
-	sbModule = require(__dirname + '/' + sbModule + '.js');
-	for (let attribute in sbModule) module.exports[attribute] = sbModule[attribute];
+for (const moduleName of ['config', 'io', 'structure-types']) {
+	const sbModule = require(__dirname + '/' + moduleName + '.js');
+	for (const attribute in sbModule) module.exports[attribute] = sbModule[attribute];
 }
-module.exports.r = require(__dirname + '/read.js'); //add .r to read functions because type() and value() would be confusing
+module.exports.r = require(__dirname + '/read.js'); //add r. to read functions because type() and value() would be confusing

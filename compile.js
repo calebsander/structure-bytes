@@ -14,7 +14,7 @@ uploadDownloadB.add(__dirname + '/client-side/upload-download.js');
 
 let s = new Simultaneity;
 //Replace require('util'), which is only used for util.inspect(), to minimize file size
-for (let utilFile of ['/lib/assert', '/structure-types', '/read']) {
+for (const utilFile of ['/lib/assert', '/structure-types', '/read']) {
 	s.addTask(() => {
 		fs.createReadStream(__dirname + utilFile + '.js')
 		.pipe(new ReplaceStream("require('util')", "require('/lib/util-inspect.js')"))
@@ -72,11 +72,11 @@ s.callback(() => {
 	function compile(b, {modifiedFiles, exposeFiles, outputFile}) {
 		console.log('Compiling: Browserifying and babelifying ' + outputFile);
 		//Expose the files with require('util') removed in place of the true file
-		for (let ending in modifiedFiles) {
-			for (let file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js');
+		for (const ending in modifiedFiles) {
+			for (const file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js');
 		}
 		//Expose all the unmodified files as normal
-		for (let file of exposeFiles) exposeFile(b, file);
+		for (const file of exposeFiles) exposeFile(b, file);
 		b.transform('babelify', {presets: ['es2015']}); //babelify so it works in older browsers
 		const chunks = [];
 		b.bundle().on('data', chunk => chunks.push(chunk)).on('end', () => { //load output into memory

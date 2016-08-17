@@ -7,7 +7,7 @@
 	const typeCache = {};
 	function saveTypeCache() {
 		const composedCache = {};
-		for (let type in typeCache) {
+		for (const type in typeCache) {
 			composedCache[type] = {
 				sig: typeCache[type].sig,
 				type: base64.fromByteArray(new Uint8Array(typeCache[type].type.toBuffer()))
@@ -18,7 +18,7 @@
 	if (localStorage.typeCache === undefined) saveTypeCache();
 	else {
 		const composedCache = JSON.parse(localStorage.typeCache);
-		for (let typeName in composedCache) {
+		for (const typeName in composedCache) {
 			typeCache[typeName] = {
 				sig: composedCache[typeName].sig,
 				type: r.type(new Uint8Array(base64.toByteArray(composedCache[typeName].type)).buffer)
@@ -40,7 +40,7 @@
 		function success(value, textStatus, jqXHR) {
 			if (oldSuccess) {
 				if (!(oldSuccess instanceof Array)) oldSuccess = [oldSuccess];
-				for (let success of oldSuccess) success(value, textStatus, jqXHR);
+				for (const success of oldSuccess) success(value, textStatus, jqXHR);
 			}
 		}
 		options.success = (data, textStatus, jqXHR) => {
