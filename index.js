@@ -4,6 +4,11 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer}
  */
 /**
+ * The JavaScript Date class
+ * @external Date
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date}
+ */
+/**
  * The NodeJS HTTP library
  * @external http
  * @see {@link https://nodejs.org/api/http.html}
@@ -21,8 +26,11 @@
 
 module.exports = {};
 //Copy version string, io functions, and types into package exports
-for (const moduleName of ['config', 'io', 'structure-types']) {
+for (const moduleName of ['io', 'structure-types']) {
 	const sbModule = require(__dirname + '/' + moduleName + '.js');
 	for (const attribute in sbModule) module.exports[attribute] = sbModule[attribute];
 }
 module.exports.r = require(__dirname + '/read.js'); //add r. to read functions because type() and value() would be confusing
+delete module.exports.MILLIS_PER_DAY;
+delete module.exports.MILLIS_PER_MINUTE;
+delete module.exports.REPEATED_TYPE;

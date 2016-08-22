@@ -35,8 +35,8 @@
 	 *   }
 	 * });
 	 */
-	window.sb.upload = ({type, value}, options) => {
-		assert.instanceOf(type, sb.Type);
+	sb.upload = ({type, value}, options) => { //eslint-disable-line no-undef
+		assert.instanceOf(type, sb.Type); //eslint-disable-line no-undef
 		assert.instanceOf(options, Object);
 		if (!(options.type === 'POST' || options.method === 'POST')) assert.fail('Must use POST when uploading');
 		options.processData = false;

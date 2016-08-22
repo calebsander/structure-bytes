@@ -51,7 +51,7 @@
 	 *   }
 	 * });
 	 */
-	window.sb.download = (typeName, options) => {
+	sb.download = (typeName, options) => { //eslint-disable-line no-undef
 		assert.instanceOf(typeName, String);
 		assert.instanceOf(options, Object);
 		options.dataType = 'arraybuffer';

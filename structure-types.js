@@ -327,7 +327,7 @@ class LongType extends IntegerType {
  */
 class BigIntType extends IntegerType {
 	static get _value() {
-		return 0x06;
+		return 0x05;
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -385,7 +385,7 @@ class UnsignedByteType extends UnsignedType {
 		const convertedValue = strToNum(value);
 		if (convertedValue !== undefined) value = convertedValue;
 		assert.integer(value);
-		assert.between(0, value, 256, 'Value out of range');
+		assert.between(0, value, 0x100, 'Value out of range');
 		const byteBuffer = new ArrayBuffer(1);
 		new Uint8Array(byteBuffer)[0] = value;
 		buffer.addAll(byteBuffer);
@@ -411,7 +411,7 @@ class UnsignedShortType extends UnsignedType {
 		const convertedValue = strToNum(value);
 		if (convertedValue !== undefined) value = convertedValue;
 		assert.integer(value);
-		assert.between(0, value, 65536, 'Value out of range');
+		assert.between(0, value, 0x10000, 'Value out of range');
 		const byteBuffer = new ArrayBuffer(2);
 		new DataView(byteBuffer).setUint16(0, value);
 		buffer.addAll(byteBuffer);
@@ -437,7 +437,7 @@ class UnsignedIntType extends UnsignedType {
 		const convertedValue = strToNum(value);
 		if (convertedValue !== undefined) value = convertedValue;
 		assert.integer(value);
-		assert.between(0, value, 4294967296, 'Value out of range');
+		assert.between(0, value, 0x100000000, 'Value out of range');
 		const byteBuffer = new ArrayBuffer(4);
 		new DataView(byteBuffer).setUint32(0, value);
 		buffer.addAll(byteBuffer);
@@ -476,27 +476,6 @@ class UnsignedLongType extends UnsignedType {
 	}
 }
 /**
- * A type storing a {@link Date} with millisecond precision.
- * The value is stored as an 8-byte unsigned integer.
- * @extends Type
- * @inheritdoc
- */
-class DateType extends AbsoluteType {
-	static get _value() {
-		return 0x15;
-	}
-	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type
-	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {Date} value The value to write
-	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-	 */
-	writeValue(buffer, value) {
-		assert.instanceOf(value, Date);
-		writeUnsignedLong(buffer, String(value.getTime()));
-	}
-}
-/**
  * A type storing an arbitrary precision unsigned integer
  * (up to 65535 bytes of precision).
  * Each written value has its own number of bytes of precision.
@@ -505,7 +484,7 @@ class DateType extends AbsoluteType {
  */
 class BigUnsignedIntType extends UnsignedType {
 	static get _value() {
-		return 0x16;
+		return 0x15;
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -532,6 +511,87 @@ class BigUnsignedIntType extends UnsignedType {
 		dataView.setUint16(0, bytes.length); //use 2 bytes to store the number of bytes in the value
 		let offset = 2;
 		for (let i = bytes.length - 1; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]); //write in reverse order to get BE
+		buffer.addAll(byteBuffer);
+	}
+}
+
+/**
+ * A type storing some sort of time.
+ * @private
+ */
+class ChronoType extends AbsoluteType {}
+/**
+ * A type storing a [Date]{@link external:Date} with millisecond precision.
+ * The value is stored as an 8-byte unsigned integer.
+ * @extends Type
+ * @inheritdoc
+ */
+class DateType extends ChronoType {
+	static get _value() {
+		return 0x1A;
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {external:Date} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 */
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Date);
+		writeUnsignedLong(buffer, String(value.getTime()));
+	}
+}
+const MILLIS_PER_DAY = 86400000;
+const MILLIS_PER_MINUTE = 60000;
+/**
+ * A type storing a specific day in history.
+ * The value is stored as a 3-byte unsigned integer.
+ * @extends Type
+ * @inheritdoc
+ */
+class DayType extends ChronoType {
+	static get _value() {
+		return 0x1B;
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {external:Date} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 */
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Date);
+		//Instead of taking value.getTime() / MILLIS_PER_DAY (which would act as if the date was measured at UTC),
+		//we round down the date in the current time zone
+		const flooredDate = new Date(value.getFullYear(), value.getMonth(), value.getDate());
+		const day = (flooredDate.getTime() - flooredDate.getTimezoneOffset() * MILLIS_PER_MINUTE) / MILLIS_PER_DAY;
+		const byteBuffer = new ArrayBuffer(3);
+		const dataView = new DataView(byteBuffer);
+		dataView.setUint16(0, day >> 8);
+		dataView.setUint8(2, day & 0xFF);
+		buffer.addAll(byteBuffer);
+	}
+}
+/**
+ * A type storing a specific time of day.
+ * The value is stored as a 4-byte unsigned integer.
+ * @extends Type
+ * @inheritdoc
+ */
+class TimeType extends ChronoType {
+	static get _value() {
+		return 0x1C;
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {external:Date} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 */
+	writeValue(buffer, value) {
+		assert.instanceOf(value, Date);
+		const byteBuffer = new ArrayBuffer(4);
+		new DataView(byteBuffer).setUint32(0, value.getTime() % MILLIS_PER_DAY)
 		buffer.addAll(byteBuffer);
 	}
 }
@@ -1088,9 +1148,7 @@ class EnumType extends Type {
 		const valueIndices = new Map;
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i];
-			const valueBuffer = new GrowableBuffer;
-			type.writeValue(valueBuffer, value, false);
-			const valueString = bufferString.toBinaryString(valueBuffer.toBuffer()); //convert value to bytes and then string for use as a map key
+			const valueString = bufferString.toBinaryString(type.valueBuffer(value)); //convert value to bytes and then string for use as a map key
 			assert.assert(!valueIndices.has(valueString), 'Value is repeated: ' + util.inspect(value));
 			valueIndices.set(valueString, i); //so writing a value has constant-time lookup into the values array
 		}
@@ -1242,8 +1300,10 @@ class OptionalType extends AbsoluteType {
 }
 /**
  * A type storing a value of another type through a pointer.
- * If you expect to have the same value repeated many times,
- * using a pointer will decrease the size of the value {@link Buffer}.
+ * If you expect to have the same large value repeated many times,
+ * using a pointer will decrease the size of the value [ArrayBuffer]{@link external:ArrayBuffer}.
+ * Each time the value is written, it will use 4 bytes to write the pointer,
+ * so you will only save space if the value is longer than 4 bytes and written more than once.
  * @example
  * //If the same people will be used many times
  * let personType = new sb.PointerType(
@@ -1328,8 +1388,10 @@ module.exports = {
 	UnsignedShortType,
 	UnsignedIntType,
 	UnsignedLongType,
-	DateType,
 	BigUnsignedIntType,
+	DateType,
+	DayType,
+	TimeType,
 	FloatType,
 	DoubleType,
 	BooleanType,
@@ -1347,5 +1409,7 @@ module.exports = {
 	ChoiceType,
 	OptionalType,
 	PointerType,
-	REPEATED_TYPE
+	REPEATED_TYPE,
+	MILLIS_PER_DAY,
+	MILLIS_PER_MINUTE
 };

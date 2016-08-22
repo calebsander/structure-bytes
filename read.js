@@ -31,8 +31,10 @@ const SINGLE_BYTE_TYPES = [ //types whose type bytes are only 1 byte long (the t
 	t.UnsignedShortType,
 	t.UnsignedIntType,
 	t.UnsignedLongType,
-	t.DateType,
 	t.BigUnsignedIntType,
+	t.DateType,
+	t.DayType,
+	t.TimeType,
 	t.FloatType,
 	t.DoubleType,
 	t.BooleanType,
@@ -274,6 +276,18 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 				value = strint.add(value, String(bigUnsignedView.getUint8(offset + length + byte)));
 			}
 			length += bigUnsignedBytes;
+			break;
+		case t.DayType:
+			length = 3;
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			const dayView = new DataView(buffer);
+			const day = (dayView.getUint16(offset) << 8) | dayView.getUint8(offset + 2);
+			value = new Date(day * t.MILLIS_PER_DAY + new Date().getTimezoneOffset() * t.MILLIS_PER_MINUTE);
+			break;
+		case t.TimeType:
+			length = 4;
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+			value = new Date(new DataView(buffer).getUint32(offset));
 			break;
 		case t.FloatType:
 			length = 4;

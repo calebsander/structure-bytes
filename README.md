@@ -4,6 +4,8 @@ A NodeJS library for making more efficient data transfers by separating the stru
 [![npm](https://img.shields.io/npm/v/structure-bytes.svg)](https://www.npmjs.com/package/structure-bytes)
 [![Build Status](https://travis-ci.org/calebsander/structure-bytes.svg?branch=master)](https://travis-ci.org/calebsander/structure-bytes)
 [![Coverage Status](https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master)](https://coveralls.io/github/calebsander/structure-bytes?branch=master)
+[![Dependencies](https://david-dm.org/calebsander/structure-bytes/status.svg)](https://david-dm.org/calebsander/structure-bytes)
+[![Dev Dependencies](https://david-dm.org/calebsander/structure-bytes/dev-status.svg)](https://david-dm.org/calebsander/structure-bytes?type=dev)
 
 ## Concept
 A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google's [Protocol Buffers](https://developers.google.com/protocol-buffers/), but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:
@@ -20,6 +22,7 @@ A lot of data, especially data designed to be used in many different languages, 
 ## Differences from Protocol Buffers
 - Types are generated programmatically rather than by reading `.proto` files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.
 - This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.
+- `structure-bytes` provides a larger set of primitive and recursive types.
 
 ## Data types
 - Primitive types
@@ -34,9 +37,10 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `UnsignedLong` (8-byte unsigned integer)
 	- `BigUnsignedInt` (an unsigned integer with up to 65535 bytes of precision)
 	- `Date` (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)
+	- `Day` (3-byte unsigned integer representing a specific day in history)
+	- `Time` (4-byte unsigned integer representing a specific time of day)
 	- `Float` (IEEE 32-bit floating-point number)
 	- `Double` (IEEE 64-bit floating-point number)
-	- (planned) `BigFloat` (16-bit exponent and up to 256 bytes of precision)
 	- `Boolean` (a single true or false value)
 	- `BooleanTuple` (a constant-length array of `Boolean`s)
 	- `BooleanArray` (a variable-length array of `Boolean`s)
