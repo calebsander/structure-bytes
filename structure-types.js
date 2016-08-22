@@ -933,10 +933,10 @@ class StructType extends AbsoluteType {
 			}
 			fieldIndex++
 		}
-		this.fields.sort((a, b) => { //sort by field name so field order is predictable
+		//Sort by field name so field order is predictable
+		this.fields.sort((a, b) => { //eslint-disable-line array-callback-return
 			if (a[NAME] < b[NAME]) return -1
 			else if (a[NAME] > b[NAME]) return 1
-			else return 0
 		})
 	}
 	addToBuffer(buffer) {
