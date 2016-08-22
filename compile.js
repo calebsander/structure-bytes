@@ -77,7 +77,7 @@ s.callback(() => {
 		}
 		//Expose all the unmodified files as normal
 		for (const file of exposeFiles) exposeFile(b, file);
-		b.transform('babelify', {presets: ['es2015']}); //babelify so it works in older browsers
+		b.transform('babelify'); //babelify so it works in older browsers
 		const chunks = [];
 		b.bundle().on('data', chunk => chunks.push(chunk)).on('end', () => { //load output into memory
 			console.log('Compiling: Uglifying ' + outputFile);
