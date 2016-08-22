@@ -1,30 +1,30 @@
 /*eslint-env browser*/
 (() => {
-	require('/client-side/common.js');
-	const assert = require('/lib/assert.js');
-	const base64 = require('base64-js');
-	const r = require('/read.js');
-	const typeCache = {};
+	require('/client-side/common.js')
+	const assert = require('/lib/assert.js')
+	const base64 = require('base64-js')
+	const r = require('/read.js')
+	const typeCache = {}
 	function saveTypeCache() {
-		const composedCache = {};
-		for (const type in typeCache) {
+		const composedCache = {}
+		for (const type in typeCache) { //eslint-disable-line guard-for-in
 			composedCache[type] = {
 				sig: typeCache[type].sig,
 				type: base64.fromByteArray(new Uint8Array(typeCache[type].type.toBuffer()))
-			};
+			}
 		}
-		localStorage.typeCache = JSON.stringify(composedCache);
+		localStorage.typeCache = JSON.stringify(composedCache)
 	}
-	if (localStorage.typeCache === undefined) saveTypeCache();
-	else {
-		const composedCache = JSON.parse(localStorage.typeCache);
-		for (const typeName in composedCache) {
+	if (localStorage.typeCache) {
+		const composedCache = JSON.parse(localStorage.typeCache)
+		for (const typeName in composedCache) { //eslint-disable-line guard-for-in
 			typeCache[typeName] = {
 				sig: composedCache[typeName].sig,
 				type: r.type(new Uint8Array(base64.toByteArray(composedCache[typeName].type)).buffer)
-			};
+			}
 		}
 	}
+	else saveTypeCache()
 	/** @function
 	 * @name download
 	 * @desc <b>(client-side only)</b>
@@ -47,44 +47,44 @@
 	 *   url: '/download-people',
 	 *   type: 'GET',
 	 *   success: function(value) {
-	 *     console.log(value); //e.g. [{name: 'John', id: 2}, {name: 'Jane', id: 10}]
+	 *     console.log(value) //e.g. [{name: 'John', id: 2}, {name: 'Jane', id: 10}]
 	 *   }
-	 * });
+	 * })
 	 */
 	sb.download = (typeName, options) => { //eslint-disable-line no-undef
-		assert.instanceOf(typeName, String);
-		assert.instanceOf(options, Object);
-		options.dataType = 'arraybuffer';
-		let typeInCache;
+		assert.instanceOf(typeName, String)
+		assert.instanceOf(options, Object)
+		options.dataType = 'arraybuffer'
+		let typeInCache
 		if (typeCache[typeName]) {
-			typeInCache = true;
-			if (!options.headers) options.headers = {};
-			options.headers.sig = typeCache[typeName].sig;
+			typeInCache = true
+			if (!options.headers) options.headers = {}
+			options.headers.sig = typeCache[typeName].sig
 		}
-		else typeInCache = false;
-		let oldSuccess = options.success;
+		else typeInCache = false
+		let oldSuccess = options.success
 		function success(value, textStatus, jqXHR) {
 			if (oldSuccess) {
-				if (!(oldSuccess instanceof Array)) oldSuccess = [oldSuccess];
-				for (const success of oldSuccess) success(value, textStatus, jqXHR);
+				if (!(oldSuccess instanceof Array)) oldSuccess = [oldSuccess]
+				for (const success of oldSuccess) success(value, textStatus, jqXHR)
 			}
 		}
 		options.success = (data, textStatus, jqXHR) => {
-			const sig = jqXHR.getResponseHeader('sig');
+			const sig = jqXHR.getResponseHeader('sig')
 			if (typeInCache && typeCache[typeName].sig === sig) {
-				const type = typeCache[typeName].type;
-				const value = r.value({buffer: data, type});
-				success(value, textStatus, jqXHR);
+				const type = typeCache[typeName].type
+				const value = r.value({buffer: data, type})
+				success(value, textStatus, jqXHR)
 			}
 			else {
-				const readType = r._consumeType(data, 0);
-				const value = r.value({buffer: data, offset: readType.length, type: readType.value});
-				const type = readType.value;
-				typeCache[typeName] = {sig, type};
-				saveTypeCache();
-				success(value, textStatus, jqXHR);
+				const readType = r._consumeType(data, 0)
+				const value = r.value({buffer: data, offset: readType.length, type: readType.value})
+				const type = readType.value
+				typeCache[typeName] = {sig, type}
+				saveTypeCache()
+				success(value, textStatus, jqXHR)
 			}
-		};
-		$.ajax(options); //eslint-disable-line no-undef
-	};
-})();
+		}
+		$.ajax(options) //eslint-disable-line no-undef
+	}
+})()

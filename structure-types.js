@@ -1,25 +1,27 @@
+/*eslint-disable valid-jsdoc*/ //since root parameters shouldn't be documented
+
 //For use with browserify
-if (__dirname === '/') __dirname = '';
+if (__dirname === '/') __dirname = ''
 
 //This file contains definitions for all the types
 //and their writing to bytes methods
 
-const assert = require(__dirname + '/lib/assert.js');
-const base64 = require('base64-js');
-const bufferString = require(__dirname + '/lib/buffer-string.js');
-const config = require(__dirname + '/config.js');
-const sha256 = require('sha256');
-const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
-const strint = require(__dirname + '/lib/strint.js');
-const util = require('util');
-const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js');
+const assert = require(__dirname + '/lib/assert.js')
+const base64 = require('base64-js')
+const bufferString = require(__dirname + '/lib/buffer-string.js')
+const config = require(__dirname + '/config.js')
+const sha256 = require('sha256')
+const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
+const strint = require(__dirname + '/lib/strint.js')
+const util = require('util')
+const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js')
 
 //Since most things with length store it in a 32-bit unsigned integer,
 //this utility function makes the creation of that buffer easier
 function lengthBuffer(length) {
-	const buffer = new ArrayBuffer(4);
-	new DataView(buffer).setUint32(0, length);
-	return buffer;
+	const buffer = new ArrayBuffer(4)
+	new DataView(buffer).setUint32(0, length)
+	return buffer
 }
 //After writing all the values, it is necessary to insert all the values of pointer types
 //This function should be called in writeValue() for every type that could have a subtype that is a pointer type
@@ -27,12 +29,12 @@ function setPointers(buffer, root) {
 	if (root) { //ensure this only happens once
 		if (buffer.pointers) {
 			for (const [binaryString, insertionIndices] of buffer.pointers) { //find all the locations where pointers must be inserted
-				const index = buffer.length; //value is going to be appended to buffer, so it will start at buffer.length
-				buffer.addAll(bufferString.fromBinaryString(binaryString)); //add raw data
-				const indexBuffer = new ArrayBuffer(4);
-				new DataView(indexBuffer).setUint32(0, index);
+				const index = buffer.length //value is going to be appended to buffer, so it will start at buffer.length
+				buffer.addAll(bufferString.fromBinaryString(binaryString)) //add raw data
+				const indexBuffer = new ArrayBuffer(4)
+				new DataView(indexBuffer).setUint32(0, index)
 				//In each pointer location, set the bytes to be a pointer to the correct location
-				for (const insertionIndex of insertionIndices) buffer.setAll(insertionIndex, indexBuffer);
+				for (const insertionIndex of insertionIndices) buffer.setAll(insertionIndex, indexBuffer)
 			}
 		}
 	}
@@ -40,9 +42,9 @@ function setPointers(buffer, root) {
 
 //Type byte indicating next 2 bytes are an unsigned short containing the location of the type
 //The unsigned short is a negative offset from this type byte to the true location
-const REPEATED_TYPE = 0xFF;
+const REPEATED_TYPE = 0xFF
 //Stored to avoid constructing the string multiple times
-const CACHED = 'cached';
+const CACHED = 'cached'
 
 /**
  * The superclass of each class representing a possible type.
@@ -56,7 +58,7 @@ class Type {
 	 * @type {number}
 	 */
 	static get _value() {
-		assert.fail('Generic Type has no value byte');
+		assert.fail('Generic Type has no value byte')
 	}
 	/**
 	 * Appends the type information to a {@link GrowableBuffer}.
@@ -68,24 +70,24 @@ class Type {
 	 * @return {boolean} {@link false} if it wrote a pointer to a previous instance, {@link true} if it wrote the type byte. Intended to only be used internally.
 	 */
 	addToBuffer(buffer) {
-		assert.instanceOf(buffer, GrowableBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
-			const location = this.cachedTypeLocations.get(buffer);
+			const location = this.cachedTypeLocations.get(buffer)
 			if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
-				buffer.add(REPEATED_TYPE);
-				const offsetBuffer = new ArrayBuffer(2);
+				buffer.add(REPEATED_TYPE)
+				const offsetBuffer = new ArrayBuffer(2)
 				try { //error will be thrown if offset didn't fit in a 2-byte integer, so fall through to explicitly writing the bytes
-					new DataView(offsetBuffer).setUint16(0, buffer.length - location);
-					buffer.addAll(offsetBuffer);
-					return false;
+					new DataView(offsetBuffer).setUint16(0, buffer.length - location)
+					buffer.addAll(offsetBuffer)
+					return false
 				}
-				catch (e) {} //eslint-disable-line no-empty
+				catch (e) {}
 			}
 		}
-		else this.cachedTypeLocations = new Map;
-		this.cachedTypeLocations.set(buffer, buffer.length); //future uses of this type will be able to point to this position in the buffer
-		buffer.add(this.constructor._value);
-		return true;
+		else this.cachedTypeLocations = new Map
+		this.cachedTypeLocations.set(buffer, buffer.length) //future uses of this type will be able to point to this position in the buffer
+		buffer.add(this.constructor._value)
+		return true
 	}
 	/**
 	 * Gets the type in buffer form, using a cached value if present.
@@ -93,8 +95,8 @@ class Type {
 	 * @return {external:ArrayBuffer} A Buffer containing the type bytes
 	 */
 	toBuffer() {
-		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer();
-		return this.cachedBuffer;
+		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer()
+		return this.cachedBuffer
 	}
 	/**
 	 * Generates the type buffer, recomputed each time
@@ -103,17 +105,17 @@ class Type {
 	 * @return {external:ArrayBuffer} A Buffer containing the type bytes
 	 */
 	_toBuffer() {
-		const buffer = new GrowableBuffer;
-		this.addToBuffer(buffer);
-		return buffer.toBuffer();
+		const buffer = new GrowableBuffer
+		this.addToBuffer(buffer)
+		return buffer.toBuffer()
 	}
 	/**
 	 * Gets an SHA256 hash of the type, using a cached value if present
 	 * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
 	 */
 	getHash() {
-		if (!this.cachedHash) this.cachedHash = this._getHash();
-		return this.cachedHash;
+		if (!this.cachedHash) this.cachedHash = this._getHash()
+		return this.cachedHash
 	}
 	/**
 	 * Gets an SHA256 hash of the type, recomputed each time
@@ -122,7 +124,7 @@ class Type {
 	 * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
 	 */
 	_getHash() {
-		return base64.fromByteArray(sha256(this.toBuffer(), {asBytes: true}));
+		return base64.fromByteArray(sha256(this.toBuffer(), {asBytes: true}))
 	}
 	/**
 	 * Gets a signature string for the type, using a cached value if present.
@@ -130,8 +132,8 @@ class Type {
 	 * @return {string} a signature for the type
 	 */
 	getSignature() {
-		if (!this.cachedSignature) this.cachedSignature = this._getSignature();
-		return this.cachedSignature;
+		if (!this.cachedSignature) this.cachedSignature = this._getSignature()
+		return this.cachedSignature
 	}
 	/**
 	 * Gets a signature string for the type, recomputed each time
@@ -140,31 +142,31 @@ class Type {
 	 * @return {string} a signature for the type
 	 */
 	_getSignature() {
-		return config.VERSION_STRING + this.getHash();
+		return config.VERSION_STRING + this.getHash()
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @abstract
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param value The value to write
+	 * @param {*} value The value to write
 	 * @throws {Error} If called on the {@link Type} class
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) { //eslint-disable-line no-unused-vars
-		assert.fail('Generic Type has no value representation');
+		assert.fail('Generic Type has no value representation')
 	}
 	/**
 	 * Gets a {@link Buffer} containing the value in binary format.
 	 * See this type's {@link writeValue()} documentation
 	 * for acceptable values.
-	 * @param value The value to write
+	 * @param {*} value The value to write
 	 * @return {external:ArrayBuffer} a {@link Buffer} storing the value (assuming the type is known)
 	 * @see Type#writeValue
 	 */
 	valueBuffer(value) {
-		const buffer = new GrowableBuffer;
-		this.writeValue(buffer, value);
-		return buffer.toBuffer();
+		const buffer = new GrowableBuffer
+		this.writeValue(buffer, value)
+		return buffer.toBuffer()
 	}
 	/**
 	 * Returns whether this type object represents the same type as another object
@@ -173,19 +175,19 @@ class Type {
 	 */
 	equals(otherType) {
 		//Other type must be descended from the same class (this check will ensure that otherType is not null or undefined)
-		try { assert.instanceOf(otherType, this.constructor) } //eslint-disable-line semi
-		catch (e) { return false } //eslint-disable-line semi
+		try { assert.instanceOf(otherType, this.constructor) }
+		catch (e) { return false }
 		//Other type must have the same constructor
-		try { assert.equal(otherType.constructor, this.constructor) } //eslint-disable-line semi
-		catch (e) { return false } //eslint-disable-line semi
+		try { assert.equal(otherType.constructor, this.constructor) }
+		catch (e) { return false }
 		//Each non-cached property should match
 		for (const param in this) {
-			if (this.hasOwnProperty(param) && !param.startsWith(CACHED)) {
-				try { assert.equal(otherType[param], this[param]) } //eslint-disable-line semi
-				catch (e) { return false } //eslint-disable-line semi
+			if ({}.hasOwnProperty.call(this, param) && !param.startsWith(CACHED)) {
+				try { assert.equal(otherType[param], this[param]) }
+				catch (e) { return false }
 			}
 		}
-		return true;
+		return true
 	}
 }
 
@@ -199,11 +201,11 @@ class AbsoluteType extends Type {}
 function strToNum(str) {
 	if (str) { //avoid errors with undefined.constructor and null.constructor; also '' is invalid
 		if (str.constructor === String) {
-			const converted = Number(str);
-			if (!isNaN(converted)) return converted;
+			const converted = Number(str)
+			if (!isNaN(converted)) return converted
 		}
 	}
-	return undefined; //returned if conversion failed
+	return //returned if conversion failed
 }
 
 /**
@@ -218,7 +220,7 @@ class IntegerType extends AbsoluteType {}
  */
 class ByteType extends IntegerType {
 	static get _value() {
-		return 0x01;
+		return 0x01
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -227,14 +229,14 @@ class ByteType extends IntegerType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.integer(value);
-		assert.between(-128, value, 128, 'Value out of range');
-		const byteBuffer = new ArrayBuffer(1);
-		new DataView(byteBuffer).setInt8(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		assert.between(-128, value, 128, 'Value out of range')
+		const byteBuffer = new ArrayBuffer(1)
+		new DataView(byteBuffer).setInt8(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -244,7 +246,7 @@ class ByteType extends IntegerType {
  */
 class ShortType extends IntegerType {
 	static get _value() {
-		return 0x02;
+		return 0x02
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -253,14 +255,14 @@ class ShortType extends IntegerType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.integer(value);
-		assert.between(-32768, value, 32768, 'Value out of range');
-		const byteBuffer = new ArrayBuffer(2);
-		new DataView(byteBuffer).setInt16(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		assert.between(-32768, value, 32768, 'Value out of range')
+		const byteBuffer = new ArrayBuffer(2)
+		new DataView(byteBuffer).setInt16(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -270,7 +272,7 @@ class ShortType extends IntegerType {
  */
 class IntType extends IntegerType {
 	static get _value() {
-		return 0x03;
+		return 0x03
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -279,17 +281,18 @@ class IntType extends IntegerType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.integer(value);
-		assert.between(-2147483648, value, 2147483648, 'Value out of range');
-		const byteBuffer = new ArrayBuffer(4);
-		new DataView(byteBuffer).setInt32(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		assert.between(-2147483648, value, 2147483648, 'Value out of range')
+		const byteBuffer = new ArrayBuffer(4)
+		new DataView(byteBuffer).setInt32(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
-const LONG_MAX = '9223372036854775807', LONG_MIN = '-9223372036854775808';
+const LONG_MAX = '9223372036854775807',
+	LONG_MIN = '-9223372036854775808'
 /**
  * A type storing an 8-byte signed integer
  * @extends Type
@@ -297,7 +300,7 @@ const LONG_MAX = '9223372036854775807', LONG_MIN = '-9223372036854775808';
  */
 class LongType extends IntegerType {
 	static get _value() {
-		return 0x04;
+		return 0x04
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -306,16 +309,16 @@ class LongType extends IntegerType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, String);
-		if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) assert.fail('Value out of range');
-		const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true); //get upper signed int
-		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
-		const byteBuffer = new ArrayBuffer(8);
-		const dataView = new DataView(byteBuffer);
-		dataView.setInt32(0, Number(upper));
-		dataView.setUint32(4, Number(lower));
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, String)
+		if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) assert.fail('Value out of range')
+		const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int
+		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
+		const byteBuffer = new ArrayBuffer(8)
+		const dataView = new DataView(byteBuffer)
+		dataView.setInt32(0, Number(upper))
+		dataView.setUint32(4, Number(lower))
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -327,7 +330,7 @@ class LongType extends IntegerType {
  */
 class BigIntType extends IntegerType {
 	static get _value() {
-		return 0x05;
+		return 0x05
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -336,27 +339,27 @@ class BigIntType extends IntegerType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, String);
-		value = strint.normalize(value); //throws if value is invalid
-		const bytes = [];
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, String)
+		value = strint.normalize(value) //throws if value is invalid
+		const bytes = []
 		if (!strint.eq(value, '0')) {
 			while (strint.gt(value, '127') || strint.lt(value, '-128')) { //builds bytes in LE order
-				const quotient = strint.div(value, strint.BYTE_SHIFT, true);
-				const remainder = strint.sub(value, strint.mul(quotient, strint.BYTE_SHIFT));
-				bytes.push(Number(remainder));
-				value = quotient;
+				const quotient = strint.div(value, strint.BYTE_SHIFT, true)
+				const remainder = strint.sub(value, strint.mul(quotient, strint.BYTE_SHIFT))
+				bytes.push(Number(remainder))
+				value = quotient
 			}
-			bytes.push(Number(value));
-			assert.twoByteUnsignedInteger(bytes.length);
+			bytes.push(Number(value))
+			assert.twoByteUnsignedInteger(bytes.length)
 		}
-		const byteBuffer = new ArrayBuffer(2 + bytes.length);
-		const dataView = new DataView(byteBuffer);
-		dataView.setUint16(0, bytes.length); //use 2 bytes to store the number of bytes in the value
-		let offset = 3;
-		for (let i = bytes.length - 2; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]); //write in reverse order to get BE
-		if (bytes.length) dataView.setInt8(2, bytes[bytes.length - 1]); //highest byte is signed so it must be treated separately
-		buffer.addAll(byteBuffer);
+		const byteBuffer = new ArrayBuffer(2 + bytes.length)
+		const dataView = new DataView(byteBuffer)
+		dataView.setUint16(0, bytes.length) //use 2 bytes to store the number of bytes in the value
+		let offset = 3
+		for (let i = bytes.length - 2; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
+		if (bytes.length) dataView.setInt8(2, bytes[bytes.length - 1]) //highest byte is signed so it must be treated separately
+		buffer.addAll(byteBuffer)
 	}
 }
 
@@ -372,7 +375,7 @@ class UnsignedType extends AbsoluteType {}
  */
 class UnsignedByteType extends UnsignedType {
 	static get _value() {
-		return 0x11;
+		return 0x11
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -381,14 +384,14 @@ class UnsignedByteType extends UnsignedType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.integer(value);
-		assert.between(0, value, 0x100, 'Value out of range');
-		const byteBuffer = new ArrayBuffer(1);
-		new Uint8Array(byteBuffer)[0] = value;
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		assert.between(0, value, 0x100, 'Value out of range')
+		const byteBuffer = new ArrayBuffer(1)
+		new Uint8Array(byteBuffer)[0] = value
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -398,7 +401,7 @@ class UnsignedByteType extends UnsignedType {
  */
 class UnsignedShortType extends UnsignedType {
 	static get _value() {
-		return 0x12;
+		return 0x12
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -407,14 +410,14 @@ class UnsignedShortType extends UnsignedType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.integer(value);
-		assert.between(0, value, 0x10000, 'Value out of range');
-		const byteBuffer = new ArrayBuffer(2);
-		new DataView(byteBuffer).setUint16(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		assert.between(0, value, 0x10000, 'Value out of range')
+		const byteBuffer = new ArrayBuffer(2)
+		new DataView(byteBuffer).setUint16(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -424,7 +427,7 @@ class UnsignedShortType extends UnsignedType {
  */
 class UnsignedIntType extends UnsignedType {
 	static get _value() {
-		return 0x13;
+		return 0x13
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -433,28 +436,28 @@ class UnsignedIntType extends UnsignedType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.integer(value);
-		assert.between(0, value, 0x100000000, 'Value out of range');
-		const byteBuffer = new ArrayBuffer(4);
-		new DataView(byteBuffer).setUint32(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		assert.between(0, value, 0x100000000, 'Value out of range')
+		const byteBuffer = new ArrayBuffer(4)
+		new DataView(byteBuffer).setUint32(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
-const UNSIGNED_LONG_MAX = '18446744073709551615';
+const UNSIGNED_LONG_MAX = '18446744073709551615'
 function writeUnsignedLong(buffer, value) { //used for both UnsignedLongType and DateType
-	assert.instanceOf(buffer, GrowableBuffer);
-	assert.instanceOf(value, String);
-	if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')) assert.fail('Value out of range');
-	const upper = strint.div(value, strint.LONG_UPPER_SHIFT); //get upper unsigned int
-	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
-	const byteBuffer = new ArrayBuffer(8);
-	const dataView = new DataView(byteBuffer);
-	dataView.setUint32(0, Number(upper));
-	dataView.setUint32(4, Number(lower));
-	buffer.addAll(byteBuffer);
+	assert.instanceOf(buffer, GrowableBuffer)
+	assert.instanceOf(value, String)
+	if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')) assert.fail('Value out of range')
+	const upper = strint.div(value, strint.LONG_UPPER_SHIFT) //get upper unsigned int
+	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
+	const byteBuffer = new ArrayBuffer(8)
+	const dataView = new DataView(byteBuffer)
+	dataView.setUint32(0, Number(upper))
+	dataView.setUint32(4, Number(lower))
+	buffer.addAll(byteBuffer)
 }
 /**
  * A type storing an 8-byte unsigned integer
@@ -463,7 +466,7 @@ function writeUnsignedLong(buffer, value) { //used for both UnsignedLongType and
  */
 class UnsignedLongType extends UnsignedType {
 	static get _value() {
-		return 0x14;
+		return 0x14
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -472,7 +475,7 @@ class UnsignedLongType extends UnsignedType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		writeUnsignedLong(buffer, value);
+		writeUnsignedLong(buffer, value)
 	}
 }
 /**
@@ -484,7 +487,7 @@ class UnsignedLongType extends UnsignedType {
  */
 class BigUnsignedIntType extends UnsignedType {
 	static get _value() {
-		return 0x15;
+		return 0x15
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -493,25 +496,25 @@ class BigUnsignedIntType extends UnsignedType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, String);
-		if (strint.isNegative(value)) assert.fail('Value out of range');
-		const bytes = [];
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, String)
+		if (strint.isNegative(value)) assert.fail('Value out of range')
+		const bytes = []
 		if (!strint.eq(value, '0')) { //if value is 0, avoid adding a 0 byte
 			while (strint.ge(value, strint.BYTE_SHIFT)) { //builds bytes in LE order
-				const [quotient, remainder] = strint.quotientRemainderPositive(value, strint.BYTE_SHIFT);
-				bytes.push(Number(remainder));
-				value = quotient;
+				const [quotient, remainder] = strint.quotientRemainderPositive(value, strint.BYTE_SHIFT)
+				bytes.push(Number(remainder))
+				value = quotient
 			}
-			bytes.push(Number(value));
-			assert.twoByteUnsignedInteger(bytes.length);
+			bytes.push(Number(value))
+			assert.twoByteUnsignedInteger(bytes.length)
 		}
-		const byteBuffer = new ArrayBuffer(2 + bytes.length);
-		const dataView = new DataView(byteBuffer);
-		dataView.setUint16(0, bytes.length); //use 2 bytes to store the number of bytes in the value
-		let offset = 2;
-		for (let i = bytes.length - 1; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]); //write in reverse order to get BE
-		buffer.addAll(byteBuffer);
+		const byteBuffer = new ArrayBuffer(2 + bytes.length)
+		const dataView = new DataView(byteBuffer)
+		dataView.setUint16(0, bytes.length) //use 2 bytes to store the number of bytes in the value
+		let offset = 2
+		for (let i = bytes.length - 1; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
+		buffer.addAll(byteBuffer)
 	}
 }
 
@@ -528,7 +531,7 @@ class ChronoType extends AbsoluteType {}
  */
 class DateType extends ChronoType {
 	static get _value() {
-		return 0x1A;
+		return 0x1A
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -537,12 +540,12 @@ class DateType extends ChronoType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(value, Date);
-		writeUnsignedLong(buffer, String(value.getTime()));
+		assert.instanceOf(value, Date)
+		writeUnsignedLong(buffer, String(value.getTime()))
 	}
 }
-const MILLIS_PER_DAY = 86400000;
-const MILLIS_PER_MINUTE = 60000;
+const MILLIS_PER_DAY = 86400000,
+	MILLIS_PER_MINUTE = 60000
 /**
  * A type storing a specific day in history.
  * The value is stored as a 3-byte unsigned integer.
@@ -551,7 +554,7 @@ const MILLIS_PER_MINUTE = 60000;
  */
 class DayType extends ChronoType {
 	static get _value() {
-		return 0x1B;
+		return 0x1B
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -560,16 +563,16 @@ class DayType extends ChronoType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(value, Date);
+		assert.instanceOf(value, Date)
 		//Instead of taking value.getTime() / MILLIS_PER_DAY (which would act as if the date was measured at UTC),
 		//we round down the date in the current time zone
-		const flooredDate = new Date(value.getFullYear(), value.getMonth(), value.getDate());
-		const day = (flooredDate.getTime() - flooredDate.getTimezoneOffset() * MILLIS_PER_MINUTE) / MILLIS_PER_DAY;
-		const byteBuffer = new ArrayBuffer(3);
-		const dataView = new DataView(byteBuffer);
-		dataView.setUint16(0, day >> 8);
-		dataView.setUint8(2, day & 0xFF);
-		buffer.addAll(byteBuffer);
+		const flooredDate = new Date(value.getFullYear(), value.getMonth(), value.getDate())
+		const day = (flooredDate.getTime() - flooredDate.getTimezoneOffset() * MILLIS_PER_MINUTE) / MILLIS_PER_DAY
+		const byteBuffer = new ArrayBuffer(3)
+		const dataView = new DataView(byteBuffer)
+		dataView.setUint16(0, day >>> 8)
+		dataView.setUint8(2, day & 0xFF)
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -580,7 +583,7 @@ class DayType extends ChronoType {
  */
 class TimeType extends ChronoType {
 	static get _value() {
-		return 0x1C;
+		return 0x1C
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -589,10 +592,10 @@ class TimeType extends ChronoType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(value, Date);
-		const byteBuffer = new ArrayBuffer(4);
+		assert.instanceOf(value, Date)
+		const byteBuffer = new ArrayBuffer(4)
 		new DataView(byteBuffer).setUint32(0, value.getTime() % MILLIS_PER_DAY)
-		buffer.addAll(byteBuffer);
+		buffer.addAll(byteBuffer)
 	}
 }
 
@@ -608,7 +611,7 @@ class FloatingPointType extends AbsoluteType {}
  */
 class FloatType extends FloatingPointType {
 	static get _value() {
-		return 0x20;
+		return 0x20
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -617,13 +620,13 @@ class FloatType extends FloatingPointType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.instanceOf(value, Number);
-		const byteBuffer = new ArrayBuffer(4);
-		new DataView(byteBuffer).setFloat32(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.instanceOf(value, Number)
+		const byteBuffer = new ArrayBuffer(4)
+		new DataView(byteBuffer).setFloat32(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -633,7 +636,7 @@ class FloatType extends FloatingPointType {
  */
 class DoubleType extends FloatingPointType {
 	static get _value() {
-		return 0x21;
+		return 0x21
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -642,13 +645,13 @@ class DoubleType extends FloatingPointType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const convertedValue = strToNum(value);
-		if (convertedValue !== undefined) value = convertedValue;
-		assert.instanceOf(value, Number);
-		const byteBuffer = new ArrayBuffer(8);
-		new DataView(byteBuffer).setFloat64(0, value);
-		buffer.addAll(byteBuffer);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.instanceOf(value, Number)
+		const byteBuffer = new ArrayBuffer(8)
+		new DataView(byteBuffer).setFloat64(0, value)
+		buffer.addAll(byteBuffer)
 	}
 }
 
@@ -659,7 +662,7 @@ class DoubleType extends FloatingPointType {
  */
 class BooleanType extends AbsoluteType {
 	static get _value() {
-		return 0x30;
+		return 0x30
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -668,32 +671,32 @@ class BooleanType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Boolean);
-		if (value) buffer.add(0xFF); //all bits are set for good measure
-		else buffer.add(0x00);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Boolean)
+		if (value) buffer.add(0xFF) //all bits are set for good measure
+		else buffer.add(0x00)
 	}
 }
 //Writes an array of booleans for BooleanTupleType or BooleanArrayType
 //The boolean at index 8a + b is in the bth MSB (0-indexed) of the ath byte
 function writeBooleans(buffer, booleans) {
-	assert.instanceOf(booleans, Array);
-	const incompleteBytes = modEight(booleans.length); //whether the booleans take up a partial byte
-	const bytes = dividedByEight(booleans.length); //floored, so need to add one if incompleteBytes
-	let length;
-	if (incompleteBytes) length = bytes + 1;
-	else length = bytes;
-	const byteBuffer = new ArrayBuffer(length);
-	const castBuffer = new Uint8Array(byteBuffer);
+	assert.instanceOf(booleans, Array)
+	const incompleteBytes = modEight(booleans.length) //whether the booleans take up a partial byte
+	const bytes = dividedByEight(booleans.length) //floored, so need to add one if incompleteBytes
+	let length
+	if (incompleteBytes) length = bytes + 1
+	else length = bytes
+	const byteBuffer = new ArrayBuffer(length)
+	const castBuffer = new Uint8Array(byteBuffer)
 	for (let i = 0; i < booleans.length; i++) {
-		const boolean = booleans[i];
-		assert.instanceOf(boolean, Boolean);
-		const bit = modEight(~modEight(i)); //7 - (i % 8)
+		const boolean = booleans[i]
+		assert.instanceOf(boolean, Boolean)
+		const bit = modEight(~modEight(i)) //7 - (i % 8)
 		//Set desired bit, leaving the others unchanges
-		if (boolean) castBuffer[dividedByEight(i)] |= 1 << bit;
-		else castBuffer[dividedByEight(i)] &= ~(1 << bit);
+		if (boolean) castBuffer[dividedByEight(i)] |= 1 << bit
+		else castBuffer[dividedByEight(i)] &= ~(1 << bit)
 	}
-	buffer.addAll(byteBuffer);
+	buffer.addAll(byteBuffer)
 }
 /**
  * A type storing a fixed-length array of {@link Boolean} values
@@ -704,18 +707,18 @@ function writeBooleans(buffer, booleans) {
  */
 class BooleanTupleType extends AbsoluteType {
 	static get _value() {
-		return 0x31;
+		return 0x31
 	}
 	/**
 	 * @param {number} length The number of {@link Boolean}s in each value of this type
 	 */
 	constructor(length) {
-		super();
-		assert.fourByteUnsignedInteger(length);
-		this.length = length;
+		super()
+		assert.fourByteUnsignedInteger(length)
+		this.length = length
 	}
 	addToBuffer(buffer) {
-		if (super.addToBuffer(buffer)) buffer.addAll(lengthBuffer(this.length));
+		if (super.addToBuffer(buffer)) buffer.addAll(lengthBuffer(this.length))
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -724,10 +727,10 @@ class BooleanTupleType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Array);
-		if (value.length !== this.length) assert.fail('Length does not match');
-		writeBooleans(buffer, value);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Array)
+		if (value.length !== this.length) assert.fail('Length does not match')
+		writeBooleans(buffer, value)
 	}
 }
 /**
@@ -738,7 +741,7 @@ class BooleanTupleType extends AbsoluteType {
  */
 class BooleanArrayType extends AbsoluteType {
 	static get _value() {
-		return 0x32;
+		return 0x32
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -747,10 +750,10 @@ class BooleanArrayType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(value, Array);
-		assert.fourByteUnsignedInteger(value.length);
-		buffer.addAll(lengthBuffer(value.length));
-		writeBooleans(buffer, value);
+		assert.instanceOf(value, Array)
+		assert.fourByteUnsignedInteger(value.length)
+		buffer.addAll(lengthBuffer(value.length))
+		writeBooleans(buffer, value)
 	}
 }
 
@@ -761,7 +764,7 @@ class BooleanArrayType extends AbsoluteType {
  */
 class CharType extends AbsoluteType {
 	static get _value() {
-		return 0x40;
+		return 0x40
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -770,10 +773,10 @@ class CharType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, String);
-		assert.assert(value.length === 1, 'String must contain only 1 character');
-		buffer.addAll(bufferString.fromString(value));
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, String)
+		assert.assert(value.length === 1, 'String must contain only 1 character')
+		buffer.addAll(bufferString.fromString(value))
 	}
 }
 /**
@@ -783,7 +786,7 @@ class CharType extends AbsoluteType {
  */
 class StringType extends AbsoluteType {
 	static get _value() {
-		return 0x41;
+		return 0x41
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -792,11 +795,11 @@ class StringType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, String);
-		const valueBuffer = bufferString.fromString(value);
-		buffer.addAll(valueBuffer);
-		buffer.add(0); //add a null byte to make clear where the end is
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, String)
+		const valueBuffer = bufferString.fromString(value)
+		buffer.addAll(valueBuffer)
+		buffer.add(0) //add a null byte to make clear where the end is
 	}
 }
 /**
@@ -808,7 +811,7 @@ class StringType extends AbsoluteType {
  */
 class OctetsType extends AbsoluteType {
 	static get _value() {
-		return 0x42;
+		return 0x42
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -817,11 +820,11 @@ class OctetsType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, ArrayBuffer);
-		assert.fourByteUnsignedInteger(value.byteLength);
-		buffer.addAll(lengthBuffer(value.byteLength));
-		buffer.addAll(value);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, ArrayBuffer)
+		assert.fourByteUnsignedInteger(value.byteLength)
+		buffer.addAll(lengthBuffer(value.byteLength))
+		buffer.addAll(value)
 	}
 }
 
@@ -830,13 +833,13 @@ class OctetsType extends AbsoluteType {
  * The length must fit in a 4-byte unsigned integer.
  * @example
  * //For storing 5 4-byte unsigned integers
- * let type = new sb.TupleType({type: new sb.UnsignedIntType, length: 5});
+ * let type = new sb.TupleType({type: new sb.UnsignedIntType, length: 5})
  * @extends Type
  * @inheritdoc
  */
 class TupleType extends AbsoluteType {
 	static get _value() {
-		return 0x50;
+		return 0x50
 	}
 	/**
 	 * @param {{type, length}} params
@@ -845,16 +848,16 @@ class TupleType extends AbsoluteType {
 	 * Must fit in a 4-byte unsigned integer.
 	 */
 	constructor({type, length}) {
-		super();
-		assert.instanceOf(type, Type);
-		assert.fourByteUnsignedInteger(length);
-		this.type = type;
-		this.length = length;
+		super()
+		assert.instanceOf(type, Type)
+		assert.fourByteUnsignedInteger(length)
+		this.type = type
+		this.length = length
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			this.type.addToBuffer(buffer);
-			buffer.addAll(lengthBuffer(this.length));
+			this.type.addToBuffer(buffer)
+			buffer.addAll(lengthBuffer(this.length))
 		}
 	}
 	/**
@@ -863,22 +866,22 @@ class TupleType extends AbsoluteType {
 	 * @param {type[]} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
-	 * type.writeValue(buffer, [10, 5, 101, 43, 889]);
+	 * type.writeValue(buffer, [10, 5, 101, 43, 889])
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Array);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Array)
 		if (value.length !== this.length) {
-			assert.fail('Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
+			assert.fail('Length does not match: expected ' + String(this.length) + ' but got ' + value.length)
 		}
-		for (const instance of value) this.type.writeValue(buffer, instance, false);
-		setPointers(buffer, root);
+		for (const instance of value) this.type.writeValue(buffer, instance, false)
+		setPointers(buffer, root)
 	}
 }
 //Stored in constants so that misspelling will result in an Error rather than undefined
-const NAME = 'name';
-const TYPE = 'type';
-const NAME_BUFFER = 'buffer';
+const NAME = 'name',
+	TYPE = 'type',
+	NAME_BUFFER = 'buffer'
 /**
  * A type storing up to 255 named fields
  * @example
@@ -887,13 +890,13 @@ const NAME_BUFFER = 'buffer';
  *   name: new sb.StringType,
  *   age: new sb.UnsignedByteType,
  *   drowsiness: new sb.DoubleType
- * });
+ * })
  * @extends Type
  * @inheritdoc
  */
 class StructType extends AbsoluteType {
 	static get _value() {
-		return 0x51;
+		return 0x51
 	}
 	/**
 	 * @param {Object.<string, Type>} fields A mapping of field names to their types.
@@ -901,45 +904,49 @@ class StructType extends AbsoluteType {
 	 * Each field name must be at most 255 bytes long in UTF-8.
 	 */
 	constructor(fields) {
-		super();
-		assert.instanceOf(fields, Object);
+		super()
+		assert.instanceOf(fields, Object)
 		//Allow only 255 fields
-		let fieldCount = 0;
-		for (const _ in fields) fieldCount++; //eslint-disable-line no-unused-vars
-		try { assert.byteUnsignedInteger(fieldCount); }
-		catch (e) { assert.fail(String(fieldCount) + ' fields is too many'); }
-
-		this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
-		let i = 0;
+		let fieldCount = 0
 		for (const fieldName in fields) {
+			if ({}.hasOwnProperty.call(fields, fieldName)) fieldCount++
+		}
+		try { assert.byteUnsignedInteger(fieldCount) }
+		catch (e) { assert.fail(String(fieldCount) + ' fields is too many') }
+
+		this.fields = new Array(fieldCount) //really a set, but we want ordering to be fixed so that type bytes are consistent
+		let fieldIndex = 0
+		for (const fieldName in fields) {
+			if (!{}.hasOwnProperty.call(fields, fieldName)) continue
 			//Name must fit in 255 UTF-8 bytes
-			const fieldNameBuffer = bufferString.fromString(fieldName);
-			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength); }
-			catch (e) { assert.fail('Field name ' + fieldName + ' is too long'); }
+			const fieldNameBuffer = bufferString.fromString(fieldName)
+			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength) }
+			catch (e) { assert.fail('Field name ' + fieldName + ' is too long') }
 			//Type must be a Type
-			const fieldType = fields[fieldName];
-			try { assert.instanceOf(fieldType, Type); }
-			catch (e) { assert.fail(String(fieldType) + ' is not a valid field type'); }
-			const resultField = {};
-			resultField[NAME] = fieldName;
-			resultField[TYPE] = fieldType;
-			resultField[NAME_BUFFER] = fieldNameBuffer; //cache the written name for use in addToBuffer()
-			this.fields[i] = resultField;
-			i++;
+			const fieldType = fields[fieldName]
+			try { assert.instanceOf(fieldType, Type) }
+			catch (e) { assert.fail(String(fieldType) + ' is not a valid field type') }
+			this.fields[fieldIndex] = {
+				[NAME]: fieldName,
+				[TYPE]: fieldType,
+				[NAME_BUFFER]: fieldNameBuffer
+			}
+			fieldIndex++
 		}
 		this.fields.sort((a, b) => { //sort by field name so field order is predictable
-			if (a[NAME] < b[NAME]) return -1;
-			else if (a[NAME] > b[NAME]) return 1;
-		});
+			if (a[NAME] < b[NAME]) return -1
+			else if (a[NAME] > b[NAME]) return 1
+			else return 0
+		})
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			buffer.add(this.fields.length);
+			buffer.add(this.fields.length)
 			for (const field of this.fields) {
-				const nameBuffer = field[NAME_BUFFER];
-				buffer.add(nameBuffer.byteLength); //not using null-terminated string because length is only 1 byte
-				buffer.addAll(nameBuffer);
-				field[TYPE].addToBuffer(buffer);
+				const nameBuffer = field[NAME_BUFFER]
+				buffer.add(nameBuffer.byteLength) //not using null-terminated string because length is only 1 byte
+				buffer.addAll(nameBuffer)
+				field[TYPE].addToBuffer(buffer)
 			}
 		}
 	}
@@ -953,17 +960,17 @@ class StructType extends AbsoluteType {
 	 *   name: 'Papa',
 	 *   age: 67,
 	 *   drowsiness: 0.2
-	 * });
+	 * })
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Object);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Object)
 		for (const field of this.fields) {
-			const fieldValue = value[field[NAME]];
-			if (fieldValue === undefined) assert.fail('Value for field ' + field[NAME] + ' missing');
-			field[TYPE].writeValue(buffer, fieldValue, false);
+			const fieldValue = value[field[NAME]]
+			if (fieldValue === undefined) assert.fail('Value for field ' + field[NAME] + ' missing')
+			field[TYPE].writeValue(buffer, fieldValue, false)
 		}
-		setPointers(buffer, root);
+		setPointers(buffer, root)
 	}
 }
 /**
@@ -971,37 +978,41 @@ class StructType extends AbsoluteType {
  * The length of any value must fit in a 4-byte unsigned integer.
  * @example
  * //For storing some number of people in order
- * let personType = new sb.StructType({...});
- * let type = new sb.ArrayType(personType);
+ * let personType = new sb.StructType({...})
+ * let type = new sb.ArrayType(personType)
  * @extends Type
  * @inheritdoc
  */
 class ArrayType extends AbsoluteType {
 	static get _value() {
-		return 0x52;
+		return 0x52
 	}
 	/**
 	 * @param {Type} type The type of each element in the array
 	 */
 	constructor(type) {
-		super();
-		assert.instanceOf(type, Type);
-		this.type = type;
+		super()
+		assert.instanceOf(type, Type)
+		this.type = type
 	}
 	addToBuffer(buffer) {
-		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer)
 	}
 	/**
-	 * Writes any iterable value to the buffer;
-	 * used by ArrayType and SetType
+	 * Writes any iterable value to the buffer.
+	 * Used by ArrayType and SetType.
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {type[]} value The value to write. Length of the array must fit in a 4-byte unsigned integer.
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @private
 	*/
 	_writeValue(buffer, value, root) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.fourByteUnsignedInteger(value.length);
-		buffer.addAll(lengthBuffer(value.length));
-		for (const instance of value) this.type.writeValue(buffer, instance, false);
-		setPointers(buffer, root);
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.fourByteUnsignedInteger(value.length)
+		buffer.addAll(lengthBuffer(value.length))
+		for (const instance of value) this.type.writeValue(buffer, instance, false)
+		setPointers(buffer, root)
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -1009,11 +1020,11 @@ class ArrayType extends AbsoluteType {
 	 * @param {type[]} value The value to write. Length of the array must fit in a 4-byte unsigned integer.
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
-	 * type.writeValue(buffer, [person1, person2, person3]);
+	 * type.writeValue(buffer, [person1, person2, person3])
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(value, Array);
-		this._writeValue(buffer, value, root);
+		assert.instanceOf(value, Array)
+		this._writeValue(buffer, value, root)
 	}
 }
 /**
@@ -1022,20 +1033,14 @@ class ArrayType extends AbsoluteType {
  * Works much like {@link ArrayType} except all values are {@link Set}s.
  * @example
  * //For storing some number of people
- * let personType = new sb.StructType({...});
- * let type = new sb.SetType(personType);
+ * let personType = new sb.StructType({...})
+ * let type = new sb.SetType(personType)
  * @extends ArrayType
  * @inheritdoc
  */
 class SetType extends ArrayType {
 	static get _value() {
-		return 0x53;
-	}
-	/**
-	 * @param {Type} type The type of each element in the set
-	 */
-	constructor(type) {
-		super(type);
+		return 0x53
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -1043,12 +1048,12 @@ class SetType extends ArrayType {
 	 * @param {Set.<type>} value The value to write. Size of the set must fit in a 4-byte unsigned integer.
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
-	 * type.writeValue(buffer, new Set().add(person1).add(person2).add(person3));
+	 * type.writeValue(buffer, new Set().add(person1).add(person2).add(person3))
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(value, Set);
-		value.length = value.size;
-		this._writeValue(buffer, value, root);
+		assert.instanceOf(value, Set)
+		value.length = value.size
+		this._writeValue(buffer, value, root)
 	}
 }
 /**
@@ -1056,33 +1061,33 @@ class SetType extends ArrayType {
  * The size of any map must fit in a 4-byte unsigned integer.
  * @example
  * //For storing friendships (a mapping of people to their set of friends)
- * let personType = new sb.StructType({...});
+ * let personType = new sb.StructType({...})
  * let type = new sb.MapType(
  *   personType,
  *   new sb.SetType(personType)
- * );
+ * )
  * @extends Type
  * @inheritdoc
  */
 class MapType extends AbsoluteType {
 	static get _value() {
-		return 0x54;
+		return 0x54
 	}
 	/**
 	 * @param {Type} keyType The type of each key in the map
 	 * @param {Type} valueType The type of each value in the map
 	 */
 	constructor(keyType, valueType) {
-		super();
-		assert.instanceOf(keyType, Type);
-		assert.instanceOf(valueType, Type);
-		this.keyType = keyType;
-		this.valueType = valueType;
+		super()
+		assert.instanceOf(keyType, Type)
+		assert.instanceOf(valueType, Type)
+		this.keyType = keyType
+		this.valueType = valueType
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			this.keyType.addToBuffer(buffer);
-			this.valueType.addToBuffer(buffer);
+			this.keyType.addToBuffer(buffer)
+			this.valueType.addToBuffer(buffer)
 		}
 	}
 	/**
@@ -1091,22 +1096,22 @@ class MapType extends AbsoluteType {
 	 * @param {Map.<keyType, valueType>} value The value to write. Size of the map must fit in a 4-byte unsigned integer.
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
-	 * let friendMap = new Map;
-	 * friendMap.set(person1, new Set().add(person2).add(person3));
-	 * friendMap.set(person2, new Set([person1]));
-	 * friendMap.set(person3, new Set([person1]));
-	 * type.writeValue(buffer, friendMap);
+	 * let friendMap = new Map
+	 * friendMap.set(person1, new Set().add(person2).add(person3))
+	 * friendMap.set(person2, new Set([person1]))
+	 * friendMap.set(person3, new Set([person1]))
+	 * type.writeValue(buffer, friendMap)
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		assert.instanceOf(value, Map);
-		assert.fourByteUnsignedInteger(value.size);
-		buffer.addAll(lengthBuffer(value.size));
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Map)
+		assert.fourByteUnsignedInteger(value.size)
+		buffer.addAll(lengthBuffer(value.size))
 		for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
-			this.keyType.writeValue(buffer, mapKey, false);
-			this.valueType.writeValue(buffer, mapValue, false);
+			this.keyType.writeValue(buffer, mapKey, false)
+			this.valueType.writeValue(buffer, mapValue, false)
 		}
-		setPointers(buffer, root);
+		setPointers(buffer, root)
 	}
 }
 /**
@@ -1114,21 +1119,21 @@ class MapType extends AbsoluteType {
  * There can be at most 255 possible values.
  * @example
  * //Storing different species' characteristics
- * const HUMAN = {heightFt: 6, speedMph: 28};
- * const CHEETAH = {heightFt: 3, speedMph: 70};
+ * const HUMAN = {heightFt: 6, speedMph: 28}
+ * const CHEETAH = {heightFt: 3, speedMph: 70}
  * let type = new sb.EnumType({
  *   type: new sb.StructType({
  *     heightFt: new sb.FloatType,
  *     speedMph: new sb.UnsignedByteType
  *   }),
  *   values: [HUMAN, CHEETAH]
- * });
+ * })
  * @extends Type
  * @inheritdoc
  */
 class EnumType extends Type {
 	static get _value() {
-		return 0x55;
+		return 0x55
 	}
 	/**
 	 * @param {{type, value}} params
@@ -1138,29 +1143,29 @@ class EnumType extends Type {
 	 * @throws {Error} If any value is invalid for {@link type}
 	 */
 	constructor({type, values}) {
-		super();
-		assert.instanceOf(type, AbsoluteType); //pointer types don't make sense because each value should be distinct
-		assert.instanceOf(values, Array);
+		super()
+		assert.instanceOf(type, AbsoluteType) //pointer types don't make sense because each value should be distinct
+		assert.instanceOf(values, Array)
 		//At most 255 values allowed
-		try { assert.byteUnsignedInteger(values.length); }
-		catch (e) { assert.fail(String(values.length) + ' values is too many'); }
+		try { assert.byteUnsignedInteger(values.length) }
+		catch (e) { assert.fail(String(values.length) + ' values is too many') }
 
-		const valueIndices = new Map;
+		const valueIndices = new Map
 		for (let i = 0; i < values.length; i++) {
-			const value = values[i];
-			const valueString = bufferString.toBinaryString(type.valueBuffer(value)); //convert value to bytes and then string for use as a map key
-			assert.assert(!valueIndices.has(valueString), 'Value is repeated: ' + util.inspect(value));
-			valueIndices.set(valueString, i); //so writing a value has constant-time lookup into the values array
+			const value = values[i]
+			const valueString = bufferString.toBinaryString(type.valueBuffer(value)) //convert value to bytes and then string for use as a map key
+			assert.assert(!valueIndices.has(valueString), 'Value is repeated: ' + util.inspect(value))
+			valueIndices.set(valueString, i) //so writing a value has constant-time lookup into the values array
 		}
-		this.type = type;
-		this.values = values; //used when reading to get constant-time lookup of value index into value
-		this.valueIndices = valueIndices;
+		this.type = type
+		this.values = values //used when reading to get constant-time lookup of value index into value
+		this.valueIndices = valueIndices
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			this.type.addToBuffer(buffer);
-			buffer.add(this.valueIndices.size);
-			for (const [valueBuffer, _] of this.valueIndices) buffer.addAll(bufferString.fromBinaryString(valueBuffer)); //eslint-disable-line no-unused-vars
+			this.type.addToBuffer(buffer)
+			buffer.add(this.valueIndices.size)
+			for (const [valueBuffer, _] of this.valueIndices) buffer.addAll(bufferString.fromBinaryString(valueBuffer)) //eslint-disable-line no-unused-vars
 		}
 	}
 	/**
@@ -1169,16 +1174,16 @@ class EnumType extends Type {
 	 * @param {type} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
-	 * type.writeValue(buffer, CHEETAH);
+	 * type.writeValue(buffer, CHEETAH)
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		const valueBuffer = new GrowableBuffer;
-		this.type.writeValue(valueBuffer, value, false);
-		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()));
-		assert.assert(index !== undefined, 'Not a valid enum value: ' + util.inspect(value));
-		buffer.add(index); //write the index to the requested value in the values array
-		setPointers(buffer, root);
+		assert.instanceOf(buffer, GrowableBuffer)
+		const valueBuffer = new GrowableBuffer
+		this.type.writeValue(valueBuffer, value, false)
+		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()))
+		assert.assert(index !== undefined, 'Not a valid enum value: ' + util.inspect(value))
+		buffer.add(index) //write the index to the requested value in the values array
+		setPointers(buffer, root)
 	}
 }
 /**
@@ -1190,13 +1195,13 @@ class EnumType extends Type {
  * let type = new sb.ChoiceType([
  *   new sb.UnsignedByteType,
  *   new sb.UnsignedLongType
- * ]);
+ * ])
  * @extends Type
  * @inheritdoc
  */
 class ChoiceType extends Type {
 	static get _value() {
-		return 0x56;
+		return 0x56
 	}
 	/**
 	 * @param {Type[]} types The list of possible types.
@@ -1206,72 +1211,72 @@ class ChoiceType extends Type {
 	 * so place higher priority types earlier.
 	 */
 	constructor(types) {
-		super();
-		assert.instanceOf(types, Array);
-		try { assert.byteUnsignedInteger(types.length); }
-		catch (e) { assert.fail(String(types.length) + ' types is too many'); }
-		for (const type of types) assert.instanceOf(type, Type);
-		this.types = types;
+		super()
+		assert.instanceOf(types, Array)
+		try { assert.byteUnsignedInteger(types.length) }
+		catch (e) { assert.fail(String(types.length) + ' types is too many') }
+		for (const type of types) assert.instanceOf(type, Type)
+		this.types = types
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			buffer.add(this.types.length);
-			for (const type of this.types) type.addToBuffer(buffer);
+			buffer.add(this.types.length)
+			for (const type of this.types) type.addToBuffer(buffer)
 		}
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param value The value to write
+	 * @param {*} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
-	 * type.writeValue(buffer, 10); //writes as an unsigned byte
-	 * type.writeValue(buffer, 1000); //writes as an unsigned long
+	 * type.writeValue(buffer, 10) //writes as an unsigned byte
+	 * type.writeValue(buffer, 1000) //writes as an unsigned long
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		let success = false;
+		assert.instanceOf(buffer, GrowableBuffer)
+		let success = false
 		//Try to write value using each type in order until no error is thrown
 		for (let i = 0; i < this.types.length; i++) {
-			const type = this.types[i];
-			const valueBuffer = new GrowableBuffer;
-			try { type.writeValue(valueBuffer, value, false) } //eslint-disable-line semi
-			catch (e) { continue } //eslint-disable-line semi
-			buffer.add(i);
-			buffer.addAll(valueBuffer.toBuffer());
-			success = true;
-			break;
+			const type = this.types[i]
+			const valueBuffer = new GrowableBuffer
+			try { type.writeValue(valueBuffer, value, false) }
+			catch (e) { continue }
+			buffer.add(i)
+			buffer.addAll(valueBuffer.toBuffer())
+			success = true
+			break
 		}
-		if (!success) assert.fail('No types matched: ' + util.inspect(value));
-		setPointers(buffer, root);
+		if (!success) assert.fail('No types matched: ' + util.inspect(value))
+		setPointers(buffer, root)
 	}
 }
 /**
  * A type storing a value of another type or {@link null}
  * @example
  * //If you have a job slot that may or may not be filled
- * let personType = new sb.StructType({...});
+ * let personType = new sb.StructType({...})
  * let type = new sb.StructType({
  *   title: new sb.StringType,
  *   employee: new sb.OptionalType(personType)
- * });
+ * })
  * @extends Type
  * @inheritdoc
  */
 class OptionalType extends AbsoluteType {
 	static get _value() {
-		return 0x60;
+		return 0x60
 	}
 	/**
 	 * @param {Type} type The type of any non-{@link null} value
 	 */
 	constructor(type) {
-		super();
-		assert.instanceOf(type, Type);
-		this.type = type;
+		super()
+		assert.instanceOf(type, Type)
+		this.type = type
 	}
 	addToBuffer(buffer) {
-		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer)
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -1282,20 +1287,20 @@ class OptionalType extends AbsoluteType {
 	 * type.writeValue(buffer, {
 	 *   title: 'Manager',
 	 *   employee: person1
-	 * });
+	 * })
 	 * type.writeValue(buffer, {
 	 *   title: 'Assistant Librarian',
 	 *   employee: null
-	 * });
+	 * })
 	 */
 	writeValue(buffer, value, root = true) {
-		assert.instanceOf(buffer, GrowableBuffer);
-		if (value === null) buffer.add(0x00);
+		assert.instanceOf(buffer, GrowableBuffer)
+		if (value === null) buffer.add(0x00)
 		else {
-			buffer.add(0xFF);
-			this.type.writeValue(buffer, value, false);
+			buffer.add(0xFF)
+			this.type.writeValue(buffer, value, false)
 		}
-		setPointers(buffer, root);
+		setPointers(buffer, root)
 	}
 }
 /**
@@ -1312,29 +1317,29 @@ class OptionalType extends AbsoluteType {
  *     id: new sb.UnsignedShortType,
  *     name: new sb.StringType
  *   })
- * );
+ * )
  * let tribeType = new sb.StructType({
  *   leader: personType,
  *   members: new sb.SetType(personType),
  *   money: new sb.MapType(personType, new sb.FloatType)
- * });
+ * })
  * @extends Type
  * @inheritdoc
  */
 class PointerType extends Type {
 	static get _value() {
-		return 0x70;
+		return 0x70
 	}
 	/**
 	 * @param {Type} type The type of any value
 	 */
 	constructor(type) {
-		super();
-		assert.instanceOf(type, AbsoluteType);
-		this.type = type;
+		super()
+		assert.instanceOf(type, AbsoluteType)
+		this.type = type
 	}
 	addToBuffer(buffer) {
-		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer);
+		if (super.addToBuffer(buffer)) this.type.addToBuffer(buffer)
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -1351,7 +1356,7 @@ class PointerType extends Type {
 	 *   dob: new Date(1437592284194),
 	 *   id: 17,
 	 *   name: 'Garfield'
-	 * };
+	 * }
 	 * let value = {
 	 *   leader: {
 	 *     dob: new Date(1437592284192),
@@ -1360,20 +1365,20 @@ class PointerType extends Type {
 	 *   },
 	 *   members: new Set().add(louis).add(garfield),
 	 *   money: new Map().set(louis, 23.05).set(garfield, -10.07)
-	 * };
-	 * tribeType.writeValue(buffer, value);
+	 * }
+	 * tribeType.writeValue(buffer, value)
 	 */
 	writeValue(buffer, value, root = true) {
-		if (!buffer.pointers) buffer.pointers = new Map; //initialize pointers map if it doesn't exist
-		const valueBuffer = new GrowableBuffer;
-		this.type.writeValue(valueBuffer, value, false);
-		const valueString = bufferString.toBinaryString(valueBuffer.toBuffer()); //have to convert the buffer to a string because equivalent buffers are not ===
-		const currentIndex = buffer.length;
-		const pointerLocations = buffer.pointers.get(valueString);
-		if (pointerLocations) pointerLocations.add(currentIndex);
-		else buffer.pointers.set(valueString, new Set([currentIndex])); //buffer.pointers maps values to the set of indices that need to point to the value
-		buffer.addAll(new ArrayBuffer(4)); //placeholder for pointer
-		setPointers(buffer, root);
+		if (!buffer.pointers) buffer.pointers = new Map //initialize pointers map if it doesn't exist
+		const valueBuffer = new GrowableBuffer
+		this.type.writeValue(valueBuffer, value, false)
+		const valueString = bufferString.toBinaryString(valueBuffer.toBuffer()) //have to convert the buffer to a string because equivalent buffers are not ===
+		const currentIndex = buffer.length
+		const pointerLocations = buffer.pointers.get(valueString)
+		if (pointerLocations) pointerLocations.add(currentIndex)
+		else buffer.pointers.set(valueString, new Set([currentIndex])) //buffer.pointers maps values to the set of indices that need to point to the value
+		buffer.addAll(new ArrayBuffer(4)) //placeholder for pointer
+		setPointers(buffer, root)
 	}
 }
 
@@ -1412,4 +1417,4 @@ module.exports = {
 	REPEATED_TYPE,
 	MILLIS_PER_DAY,
 	MILLIS_PER_MINUTE
-};
+}

@@ -59,7 +59,7 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `Pointer<Type>` (allows multiple long instances of `Type` with the same bytes to be stored only once)
 
 ## Documentation
-The `doc` folder is hosted at https://calebsander.github.io/structure-bytes/doc/.
+The `docs` folder is hosted at https://calebsander.github.io/structure-bytes.
 
 ## Examples
 ### Type creation

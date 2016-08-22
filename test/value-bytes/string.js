@@ -1,6 +1,6 @@
 /*eslint-disable no-undef*/
-let type = new t.StringType;
-let gb = new GrowableBuffer;
+let type = new t.StringType
+let gb = new GrowableBuffer
 for (let [invalidValue, message] of [
 	[undefined, 'undefined is not an instance of String'],
 	[null, 'null is not an instance of String'],
@@ -11,9 +11,9 @@ for (let [invalidValue, message] of [
 	assert.throws(
 		() => type.writeValue(gb, invalidValue),
 		message
-	);
+	)
 }
-const STRING = 'abç';
-type.writeValue(gb, STRING);
-assert.equal(gb.toBuffer(), bufferFrom([0x61, 0x62, 0xc3, 0xa7, 0]));
-assert.equal(r.value({buffer: gb.toBuffer(), type}), STRING);
+const STRING = 'abç'
+type.writeValue(gb, STRING)
+assert.equal(gb.toBuffer(), bufferFrom([0x61, 0x62, 0xc3, 0xa7, 0]))
+assert.equal(r.value({buffer: gb.toBuffer(), type}), STRING)

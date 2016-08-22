@@ -2,8 +2,8 @@
 let type = new t.TupleType({
 	type: new t.StringType,
 	length: 5
-});
-let gb = new GrowableBuffer;
+})
+let gb = new GrowableBuffer
 for (let [invalidValue, message] of [
 	[undefined, 'undefined is not an instance of Array'],
 	[null, 'null is not an instance of Array'],
@@ -17,16 +17,16 @@ for (let [invalidValue, message] of [
 	assert.throws(
 		() => type.writeValue(gb, invalidValue),
 		message
-	);
+	)
 }
-gb = new GrowableBuffer;
+gb = new GrowableBuffer
 const VALUE = [
 	'',
 	'a',
 	'ab',
 	'abc',
 	'abcd'
-];
-type.writeValue(gb, VALUE);
-assert.equal(gb.toBuffer(), bufferFrom([0, 0x61, 0, 0x61, 0x62, 0, 0x61, 0x62, 0x63, 0, 0x61, 0x62, 0x63, 0x64, 0]));
-assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE);
+]
+type.writeValue(gb, VALUE)
+assert.equal(gb.toBuffer(), bufferFrom([0, 0x61, 0, 0x61, 0x62, 0, 0x61, 0x62, 0x63, 0, 0x61, 0x62, 0x63, 0x64, 0]))
+assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)

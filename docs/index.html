@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>structure-bytes</h1><p>A NodeJS library for making more efficient data transfers by separating the structure from the values and efficiently storing each as byte arrays.</p>
+<p><a href="https://www.npmjs.com/package/structure-bytes"><img src="https://img.shields.io/npm/v/structure-bytes.svg" alt="npm"></a>
+<a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/calebsander/structure-bytes?branch=master"><img src="https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master" alt="Coverage Status"></a>
+<a href="https://david-dm.org/calebsander/structure-bytes"><img src="https://david-dm.org/calebsander/structure-bytes/status.svg" alt="Dependencies"></a>
+<a href="https://david-dm.org/calebsander/structure-bytes?type=dev"><img src="https://david-dm.org/calebsander/structure-bytes/dev-status.svg" alt="Dev Dependencies"></a></p>
+<h2>Concept</h2><p>A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google's <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>, but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:</p>
+<ul>
+<li>Types (user-created formats of data) are created by combining a wide variety of datatypes, both primitive and recursive. This allows for representations which accurately describe types (e.g. distinguishing between structs and mappings of strings to values, and numeric types, unlike JSON). Types are very customizable, so you can build any desired type formats.</li>
+<li>Types are kept separate from values (instances of a type) because types are designed to be created once and used to store many different values. This allows for communications to cache the type format after the first use and only have to send the values in subsequent requests.</li>
+<li>Redundancy in data storage is kept to a minimum. For example, in an array of structs, the field names are only specified once in the type spec rather than for each element in the array.</li>
+</ul>
+<h2>Use cases</h2><ul>
+<li>Use when the structure of the data is complicated. For example, if you are just sending text to be interpreted as text, that can be done easily in almost any environment.</li>
+<li>Use when you plan to have many different values for the type (either many different files storing the same sort of information, or many communications of the same sort of information). This will give you the benefit of being able to keep only a single copy of the type spec.</li>
+<li>Use when there is a lot of repetition in the data. If you don't have any arrays, sets, or maps, you can't really benefit from the cutdown on redundancy.</li>
+</ul>
+<h2>Differences from Protocol Buffers</h2><ul>
+<li>Types are generated programmatically rather than by reading <code>.proto</code> files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.</li>
+<li>This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.</li>
+<li><code>structure-bytes</code> provides a larger set of primitive and recursive types.</li>
+</ul>
+<h2>Data types</h2><ul>
+<li>Primitive types<ul>
+<li><code>Byte</code> (1-byte signed integer)</li>
+<li><code>Short</code> (2-byte signed integer)</li>
+<li><code>Int</code> (4-byte signed integer)</li>
+<li><code>Long</code> (8-byte signed integer)</li>
+<li><code>BigInt</code> (a signed integer with up to 65535 bytes of precision)</li>
+<li><code>UnsignedByte</code> (1-byte unsigned integer)</li>
+<li><code>UnsignedShort</code> (2-byte unsigned integer)</li>
+<li><code>UnsignedInt</code> (4-byte unsigned integer)</li>
+<li><code>UnsignedLong</code> (8-byte unsigned integer)</li>
+<li><code>BigUnsignedInt</code> (an unsigned integer with up to 65535 bytes of precision)</li>
+<li><code>Date</code> (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)</li>
+<li><code>Day</code> (3-byte unsigned integer representing a specific day in history)</li>
+<li><code>Time</code> (4-byte unsigned integer representing a specific time of day)</li>
+<li><code>Float</code> (IEEE 32-bit floating-point number)</li>
+<li><code>Double</code> (IEEE 64-bit floating-point number)</li>
+<li><code>Boolean</code> (a single true or false value)</li>
+<li><code>BooleanTuple</code> (a constant-length array of <code>Boolean</code>s)</li>
+<li><code>BooleanArray</code> (a variable-length array of <code>Boolean</code>s)</li>
+<li><code>Char</code> (a single UTF-8 character)</li>
+<li><code>String</code> (an array of UTF-8 characters that also stores its total byte length)</li>
+<li><code>Octets</code> (a <code>Buffer</code> (raw binary data))</li>
+</ul>
+</li>
+<li>Recursive types<ul>
+<li><code>Tuple&lt;Type&gt;</code> (a constant-length array of <code>Type</code>s)</li>
+<li><code>Struct</code> (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)</li>
+<li><code>Array&lt;Type&gt;</code> (a variable-length array of <code>Type</code>s)</li>
+<li><code>Set&lt;Type&gt;</code> (like an <code>Array</code>, except creates a set when read)</li>
+<li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
+<li><code>Enum&lt;Type&gt;</code> (a fixed set of up to 255 <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
+<li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
+<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or an instance of <code>Type</code>)</li>
+<li><code>Pointer&lt;Type&gt;</code> (allows multiple long instances of <code>Type</code> with the same bytes to be stored only once)</li>
+</ul>
+</li>
+</ul>
+<h2>Documentation</h2><p>The <code>docs</code> folder is hosted at https://calebsander.github.io/structure-bytes.</p>
+<h2>Examples</h2><h3>Type creation</h3><pre class="prettyprint source lang-javascript"><code>const sb = require('structure-bytes');
+
+const personType = new sb.StructType({
+    dob: new sb.DateType,
+    id: new sb.UnsignedShortType,
+    name: new sb.StringType
+});
+const tribeType = new sb.StructType({
+    leader: personType,
+    members: new sb.SetType(personType),
+    money: new sb.MapType(personType, new sb.FloatType)
+});</code></pre><h3>Converting types and values to <code>Buffer</code>s</h3><pre class="prettyprint source lang-javascript"><code>const sb = require('structure-bytes');
+
+const personType = new sb.StructType({
+    dob: new sb.DateType,
+    id: new sb.UnsignedShortType,
+    name: new sb.StringType
+});
+const tribeType = new sb.StructType({
+    leader: personType,
+    members: new sb.SetType(personType),
+    money: new sb.MapType(personType, new sb.FloatType)
+});
+let typeBuffer = tribeType.toBuffer(); //ArrayBuffer { byteLength: 49 }
+console.log(Buffer.from(typeBuffer));
+//&lt;Buffer 51 03 06 6c 65 61 64 65 72 51 03 03 64 6f 62 15 02 69 64 12 04 6e 61 6d 65 41 07 6d 65 6d 62 65 72 73 53 ff 00 1b 05 6d 6f 6e 65 79 54 ff 00 25 20>
+
+let louis = {
+    dob: new Date(1437592284193),
+    id: 9,
+    name: 'Louis'
+},
+garfield = {
+    dob: new Date(1437592284194),
+    id: 17,
+    name: 'Garfield'
+};
+let value = {
+    leader: {
+        dob: new Date(1437592284192),
+        id: 10,
+        name: 'Joe'
+    },
+    members: new Set().add(louis).add(garfield),
+    money: new Map().set(louis, 23.05).set(garfield, -10.07)
+};
+let valueBuffer = tribeType.valueBuffer(value); //ArrayBuffer { byteLength: 100 }
+console.log(Buffer.from(valueBuffer));
+//&lt;Buffer 00 00 01 4e b7 2d 6c 20 00 0a 4a 6f 65 00 00 00 00 02 00 00 01 4e b7 2d 6c 21 00 09 4c 6f 75 69 73 00 00 00 01 4e b7 2d 6c 22 00 11 47 61 72 66 69 65 ... ></code></pre><h3>Reading from type and value <code>Buffer</code>s</h3><pre class="prettyprint source lang-javascript"><code>const sb = require('structure-bytes');
+
+//Buffer obtained somehow
+let tribeBuffer = new Uint8Array([0x51, 0x03, 0x06, 0x6c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x51, 0x03, 0x03, 0x64, 0x6f, 0x62, 0x15, 0x02, 0x69, 0x64, 0x12, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x41, 0x07, 0x6d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x73, 0x53, 0xff, 0x00, 0x1b, 0x05, 0x6d, 0x6f, 0x6e, 0x65, 0x79, 0x54, 0xff, 0x00, 0x25, 0x20]);
+let type = sb.r.type(tribeBuffer.buffer);
+console.log(type);
+/*
+StructType {
+  fields:
+   [ { name: 'leader', type: [Object] },
+     { name: 'members', type: [Object] },
+     { name: 'money', type: [Object] } ] }
+*/
+
+//Buffer obtained somehow
+let valueBuffer = new Uint8Array([0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x20, 0x00, 0x0a, 0x4a, 0x6f, 0x65, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x21, 0x00, 0x09, 0x4c, 0x6f, 0x75, 0x69, 0x73, 0x00, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x22, 0x00, 0x11, 0x47, 0x61, 0x72, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x21, 0x00, 0x09, 0x4c, 0x6f, 0x75, 0x69, 0x73, 0x00, 0x41, 0xb8, 0x66, 0x66, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x22, 0x00, 0x11, 0x47, 0x61, 0x72, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x00, 0xc1, 0x21, 0x1e, 0xb8]);
+console.log(sb.r.value({type, buffer: valueBuffer.buffer}));
+/*
+{ leader: { dob: 2015-07-22T19:11:24.192Z, id: 10, name: 'Joe' },
+  members:
+   Set {
+     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' },
+     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } },
+  money:
+   Map {
+     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' } => 23.05,
+     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } => -10.07 } }
+*/</code></pre><h3>File I/O</h3><pre class="prettyprint source lang-javascript"><code>const fs = require('fs');
+const sb = require('structure-bytes');
+
+let type = new sb.EnumType({
+    type: new sb.StringType,
+    values: [
+        'ON_TIME',
+        'LATE',
+        'CANCELLED',
+        'UNKNOWN'
+    ]
+});
+sb.writeType({
+    type,
+    outStream: fs.createWriteStream('./type')
+}, err => {
+    sb.readType(fs.createReadStream('./type'), (err, readType) => {
+        console.log(readType);
+        /*
+        EnumType {
+            type: StringType {},
+            values: [ 'ON_TIME', 'LATE', 'CANCELLED', 'UNKNOWN' ] }
+        */
+    });
+});
+let value = 'CANCELLED';
+sb.writeValue({
+    type,
+    value,
+    outStream: fs.createWriteStream('./value')
+}, err => {
+    sb.readValue({
+        type,
+        inStream: fs.createReadStream('./value')
+    }, (err, value) => {
+        console.log(value); //'CANCELLED'
+    });
+});
+sb.writeTypeAndValue({
+    type,
+    value,
+    outStream: fs.createWriteStream('./type-value')
+}, err => {
+    sb.readTypeAndValue(fs.createReadStream('./type-value'), (err, type, value) => {
+        console.log(value); //'CANCELLED'
+    });
+});</code></pre><h3>HTTP GET value</h3><p>Server-side:</p>
+<pre class="prettyprint source lang-javascript"><code>const http = require('http');
+const sb = require('structure-bytes');
+
+let type = new sb.DateType();
+http.createServer((req, res) => {
+    sb.httpRespond({req, res, type, value: new Date}, err => {
+        console.log('Responded');
+    });
+}).listen(80);</code></pre><p>Client-side:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src = '/structure-bytes/compiled/jquery.js'>&lt;/script>
+&lt;script src = '/structure-bytes/compiled/download.js'>&lt;/script>
+&lt;script>
+    //'date' specifies the name of the type being transferred so it can be cached
+    sb.download('date', {
+        url: '/date',
+        success: function(value) {
+            console.log(value.getFullYear()); //2016
+        }
+    });
+&lt;/script></code></pre><h3>HTTP POST value</h3><p>Server-side:</p>
+<pre class="prettyprint source lang-javascript"><code>const http = require('http');
+const sb = require('structure-bytes');
+
+let type = new sb.DateType();
+http.createServer((req, res) => {
+    sb.readValue({type: new sb.UnsignedIntType, inStream: req}, (err, value) => {
+        res.end(String(value));
+    });
+}).listen(80);</code></pre><p>Client-side:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src = '/structure-bytes/compiled/jquery.js'>&lt;/script>
+&lt;script src = '/structure-bytes/compiled/upload.js'>&lt;/script>
+&lt;button>Click me&lt;/button>
+&lt;script>
+    var clickCount = 0;
+    $('button').click(function() {
+        clickCount++;
+        sb.upload({
+            type: new sb.UnsignedIntType,
+            value: clickCount
+        }, {
+            url: '/click',
+            type: 'POST',
+            dataType: 'text',
+            success: function(response) {
+                alert(response); //alerts '1', '2', etc.
+            }
+        });
+    });
+&lt;/script></code></pre><h2>Versioning</h2><p>Versions will be of the form <code>x.y.z</code>.
+<code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>.
+<code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases.
+<code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
+<h2>Testing</h2><p>To test the NodeJS code, run <code>npm test</code>.
+To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page. <code>Upload</code> and <code>Download</code> should each alert <code>Success</code>, while <code>Upload &amp; Download</code> should alert <code>Upload: Success</code> and <code>Download: Success</code>.</p>
+<p><em>Caleb Sander, 2016</em></p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

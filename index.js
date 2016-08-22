@@ -24,13 +24,12 @@
  * @see {@link https://nodejs.org/api/http.html#http_class_http_serverresponse}
  */
 
-module.exports = {};
 //Copy version string, io functions, and types into package exports
 for (const moduleName of ['io', 'structure-types']) {
-	const sbModule = require(__dirname + '/' + moduleName + '.js');
-	for (const attribute in sbModule) module.exports[attribute] = sbModule[attribute];
+	const sbModule = require(__dirname + '/' + moduleName + '.js')
+	for (const attribute in sbModule) exports[attribute] = sbModule[attribute] //eslint-disable-line guard-for-in
 }
-module.exports.r = require(__dirname + '/read.js'); //add r. to read functions because type() and value() would be confusing
-delete module.exports.MILLIS_PER_DAY;
-delete module.exports.MILLIS_PER_MINUTE;
-delete module.exports.REPEATED_TYPE;
+exports.r = require(__dirname + '/read.js') //add r. to read functions because type() and value() would be confusing
+delete exports.MILLIS_PER_DAY
+delete exports.MILLIS_PER_MINUTE
+delete exports.REPEATED_TYPE

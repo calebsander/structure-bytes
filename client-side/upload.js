@@ -1,7 +1,7 @@
 /*eslint-env browser*/
 (() => {
-	require('/client-side/common.js');
-	const assert = require('/lib/assert.js');
+	require('/client-side/common.js')
+	const assert = require('/lib/assert.js')
 	/** @function
 	 * @name upload
 	 * @desc <b>(client-side only)</b>
@@ -22,7 +22,7 @@
 	 *     name: new sb.StringType,
 	 *     id: new sb.UnsignedShortType
 	 *   })
-	 * );
+	 * )
 	 * sb.upload({type: type, value: [
 	 *   {name: 'John', id: 2},
 	 *   {name: 'Jane', id: 10}
@@ -31,16 +31,16 @@
 	 *   type: 'POST',
 	 *   dataType: 'text',
 	 *   success: function(response) {
-	 *     alert(response);
+	 *     alert(response)
 	 *   }
-	 * });
+	 * })
 	 */
 	sb.upload = ({type, value}, options) => { //eslint-disable-line no-undef
-		assert.instanceOf(type, sb.Type); //eslint-disable-line no-undef
-		assert.instanceOf(options, Object);
-		if (!(options.type === 'POST' || options.method === 'POST')) assert.fail('Must use POST when uploading');
-		options.processData = false;
-		options.data = type.valueBuffer(value);
-		$.ajax(options); //eslint-disable-line no-undef
-	};
-})();
+		assert.instanceOf(type, sb.Type) //eslint-disable-line no-undef
+		assert.instanceOf(options, Object)
+		if (!(options.type === 'POST' || options.method === 'POST')) assert.fail('Must use POST when uploading')
+		options.processData = false
+		options.data = type.valueBuffer(value)
+		$.ajax(options) //eslint-disable-line no-undef
+	}
+})()

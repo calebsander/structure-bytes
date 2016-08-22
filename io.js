@@ -1,19 +1,19 @@
 //For use with browserify
-if (__dirname === '/') __dirname = '';
+if (__dirname === '/') __dirname = ''
 
 //This file contains functions for performing I/O;
 //specifically, reads and writes of types and values and HTTP responses
 
-const assert = require(__dirname + '/lib/assert.js');
-const BufferStream = require(__dirname + '/lib/buffer-stream.js');
-const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js');
-const r = require(__dirname + '/read.js');
-const stream = require('stream');
-const t = require(__dirname + '/structure-types.js');
-const zlib = require('zlib');
+const assert = require(__dirname + '/lib/assert.js')
+const BufferStream = require(__dirname + '/lib/buffer-stream.js')
+const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
+const r = require(__dirname + '/read.js')
+const stream = require('stream')
+const t = require(__dirname + '/structure-types.js')
+const zlib = require('zlib')
 
 function toArrayBuffer(buffer) {
-	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
 }
 
 const io = module.exports = {
@@ -32,17 +32,18 @@ const io = module.exports = {
 	 * @param {Type} params.type The type to write
 	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
+	 * @return {stream.Writable} {@link params.outStream}
 	 */
 	writeType({type, outStream}, callback) {
-		assert.instanceOf(type, t.Type);
-		assert.instanceOf(outStream, [stream.Writable, stream.Duplex]);
-		if (callback === undefined) callback = () => {};
-		assert.instanceOf(callback, Function);
-		const typeStream = new BufferStream(type.toBuffer());
+		assert.instanceOf(type, t.Type)
+		assert.instanceOf(outStream, [stream.Writable, stream.Duplex])
+		if (callback === undefined) callback = () => {}
+		assert.instanceOf(callback, Function)
+		const typeStream = new BufferStream(type.toBuffer())
 		return typeStream.pipe(outStream).on('error', function(err) {
-			this.end();
-			callback(err);
-		}).on('finish', () => callback(null));
+			this.end()
+			callback(err)
+		}).on('finish', () => callback(null))
 	},
 	/** @function
 	 * @name writeValue
@@ -55,18 +56,19 @@ const io = module.exports = {
 	 * @param {type} params.value The value to write
 	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
+	 * @return {stream.Writable} {@link params.outStream}
 	 */
 	writeValue({type, value, outStream}, callback) {
-		assert.instanceOf(type, t.Type);
-		assert.instanceOf(outStream, [stream.Writable, stream.Duplex]);
-		if (callback === undefined) callback = () => {};
-		assert.instanceOf(callback, Function);
-		const valueBuffer = new GrowableBuffer;
-		type.writeValue(valueBuffer, value);
+		assert.instanceOf(type, t.Type)
+		assert.instanceOf(outStream, [stream.Writable, stream.Duplex])
+		if (callback === undefined) callback = () => {}
+		assert.instanceOf(callback, Function)
+		const valueBuffer = new GrowableBuffer
+		type.writeValue(valueBuffer, value)
 		return new BufferStream(valueBuffer).pipe(outStream).on('error', function(err) {
-			this.end();
-			callback(err);
-		}).on('finish', () => callback(null));
+			this.end()
+			callback(err)
+		}).on('finish', () => callback(null))
 	},
 	/** @function
 	 * @name writeTypeAndValue
@@ -81,20 +83,21 @@ const io = module.exports = {
 	 * @param {type} params.value The value to write
 	 * @param {stream.Writable} params.outStream The stream to write to
 	 * @param {errCallback=} callback
+	 * @return {stream.Writable} {@link params.outStream}
 	 */
 	writeTypeAndValue({type, value, outStream}, callback) {
-		assert.instanceOf(type, t.Type);
-		assert.instanceOf(outStream, [stream.Writable, stream.Duplex]);
-		if (callback === undefined) callback = () => {};
-		assert.instanceOf(callback, Function);
-		const typeStream = new BufferStream(type.toBuffer());
+		assert.instanceOf(type, t.Type)
+		assert.instanceOf(outStream, [stream.Writable, stream.Duplex])
+		if (callback === undefined) callback = () => {}
+		assert.instanceOf(callback, Function)
+		const typeStream = new BufferStream(type.toBuffer())
 		typeStream.pipe(outStream, {end: false}).on('error', function() {
-			this.end();
-		});
+			this.end()
+		})
 		typeStream.on('bs-written', () => { //can't listen for finish because it isn't called on a pipe without an end
-			io.writeValue({type, value, outStream}, callback);
-		});
-		return outStream;
+			io.writeValue({type, value, outStream}, callback)
+		})
+		return outStream
 	},
 	/**
 	 * A callback that receives an error object, if any was thrown,
@@ -113,21 +116,21 @@ const io = module.exports = {
 	 * @param {typeCallback} callback
 	 */
 	readType(inStream, callback) {
-		assert.instanceOf(inStream, stream.Readable);
-		assert.instanceOf(callback, Function);
-		const segments = [];
-		inStream.on('data', chunk => segments.push(chunk));
+		assert.instanceOf(inStream, stream.Readable)
+		assert.instanceOf(callback, Function)
+		const segments = []
+		inStream.on('data', chunk => segments.push(chunk))
 		inStream.on('error', function(err) {
-			this.destroy();
-			callback(err, null);
-		});
+			this.destroy()
+			callback(err, null)
+		})
 		inStream.on('end', () => {
-			const buffer = Buffer.concat(segments);
-			let type;
-			try { type = r.type(toArrayBuffer(buffer), false) } //eslint-disable-line semi
-			catch (e) { callback(e, null) } //eslint-disable-line semi
-			if (type) callback(null, type); //if error occurred, don't callback with a null type
-		});
+			const buffer = Buffer.concat(segments)
+			let type
+			try { type = r.type(toArrayBuffer(buffer), false) }
+			catch (e) { return callback(e, null) }
+			callback(null, type) //if error occurred, don't callback with a null type
+		})
 	},
 	/**
 	 * A callback that receives an error object, if any was thrown,
@@ -149,21 +152,21 @@ const io = module.exports = {
 	 * @param {valueCallback} callback
 	 */
 	readValue({type, inStream}, callback) {
-		assert.instanceOf(inStream, stream.Readable);
-		assert.instanceOf(callback, Function);
-		const segments = [];
-		inStream.on('data', chunk => segments.push(chunk));
+		assert.instanceOf(inStream, stream.Readable)
+		assert.instanceOf(callback, Function)
+		const segments = []
+		inStream.on('data', chunk => segments.push(chunk))
 		inStream.on('error', function(err) {
-			this.destroy();
-			callback(err, null);
-		});
+			this.destroy()
+			callback(err, null)
+		})
 		inStream.on('end', () => {
-			const buffer = Buffer.concat(segments);
-			let value;
-			try { value = r.value({buffer: toArrayBuffer(buffer), type}) } //eslint-disable-line semi
-			catch (e) { callback(e, null) } //eslint-disable-line semi
-			if (value) callback(null, value); //if error occurred, don't callback with a null value
-		});
+			const buffer = Buffer.concat(segments)
+			let value
+			try { value = r.value({buffer: toArrayBuffer(buffer), type}) }
+			catch (e) { return callback(e, null) }
+			callback(null, value) //if error occurred, don't callback with a null value
+		})
 	},
 	/**
 	 * A callback that receives an error object, if any was thrown,
@@ -183,27 +186,25 @@ const io = module.exports = {
 	 * @param {typeAndValueCallback} callback
 	 */
 	readTypeAndValue(inStream, callback) {
-		assert.instanceOf(inStream, stream.Readable);
-		assert.instanceOf(callback, Function);
-		const segments = [];
-		inStream.on('data', chunk => segments.push(chunk));
+		assert.instanceOf(inStream, stream.Readable)
+		assert.instanceOf(callback, Function)
+		const segments = []
+		inStream.on('data', chunk => segments.push(chunk))
 		inStream.on('error', function(err) {
-			this.destroy();
-			callback(err, null, null);
-		});
+			this.destroy()
+			callback(err, null, null)
+		})
 		inStream.on('end', () => {
-			const buffer = Buffer.concat(segments);
-			let type;
+			const buffer = Buffer.concat(segments)
+			let type
 			//Using consumeType() in order to get the length of the type (the start of the value)
-			try { type = r._consumeType(toArrayBuffer(buffer), 0) } //eslint-disable-line semi
-			catch (e) { callback(e, null, null) } //eslint-disable-line semi
-			if (type) {
-				let value;
-				try { value = r.value({buffer: toArrayBuffer(buffer), offset: type.length, type: type.value}) } //eslint-disable-line semi
-				catch (e) { callback(e, null, null) } //eslint-disable-line semi
-				if (value) callback(null, type.value, value); //if error occurred, don't callback with null value or type
-			}
-		});
+			try { type = r._consumeType(toArrayBuffer(buffer), 0) }
+			catch (e) { return callback(e, null, null) }
+			let value
+			try { value = r.value({buffer: toArrayBuffer(buffer), offset: type.length, type: type.value}) }
+			catch (e) { return callback(e, null, null) }
+			callback(null, type.value, value) //if error occurred, don't callback with null value or type
+		})
 	},
 	/** @function
 	 * @name httpRespond
@@ -221,26 +222,26 @@ const io = module.exports = {
 	 * @param {errCallback=} callback
 	 */
 	httpRespond({req, res, type, value}, callback) {
-		assert.instanceOf(type, t.Type);
-		if (callback === undefined) callback = () => {};
-		assert.instanceOf(callback, Function);
+		assert.instanceOf(type, t.Type)
+		if (callback === undefined) callback = () => {}
+		assert.instanceOf(callback, Function)
 		try {
-			res.setHeader('Content-Type', 'application/octet-stream');
-			res.setHeader('Content-Encoding', 'gzip');
-			res.setHeader('sig', type.getSignature());
-			const outStream = zlib.createGzip(); //pipe into a zip stream to decrease size of response
+			res.setHeader('Content-Type', 'application/octet-stream')
+			res.setHeader('Content-Encoding', 'gzip')
+			res.setHeader('sig', type.getSignature())
+			const outStream = zlib.createGzip() //pipe into a zip stream to decrease size of response
 			if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
 				io.writeValue({type, value, outStream}, err => {
-					if (err) callback(err);
-				});
+					if (err) callback(err)
+				})
 			}
 			else { //otherwise, type and value need to be sent
 				io.writeTypeAndValue({type, value, outStream}, err => {
-					if (err) callback(err);
-				});
+					if (err) callback(err)
+				})
 			}
-			outStream.pipe(res).on('finish', () => callback(null));
+			outStream.pipe(res).on('finish', () => callback(null))
 		}
 		catch (err) { callback(err) }
 	}
-};
+}

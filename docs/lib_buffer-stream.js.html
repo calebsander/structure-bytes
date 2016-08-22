@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/buffer-stream.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/buffer-stream.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const assert = require(__dirname + '/assert.js')
+const GrowableBuffer = require(__dirname + '/growable-buffer.js')
+const stream = require('stream')
+
+/**
+ * A class for creating a readable stream
+ * out of an [ArrayBuffer]{@link external:ArrayBuffer}
+ * or a {@link GrowableBuffer}.
+ * When dealing with very large buffers,
+ * this allows chunks to be sent as they are requested
+ * rather than stuffing the whole buffer into the stream at once.
+ * The stream is intended mainly to be piped
+ * into write streams.
+ */
+class BufferStream extends stream.Readable {
+	/**
+	 * @param {external:ArrayBuffer|GrowableBuffer} buffer
+	 * The buffer whose data to use.
+	 * If a {@link GrowableBuffer} is used, only the
+	 * occupied portion will be written by the stream.
+	 * Future additions to the {@link GrowableBuffer}
+	 * will not be written.
+	 * If bytes inside the [ArrayBuffer]{@link external:ArrayBuffer}
+	 * or occupied portion are changed, behavior is undefined.
+	 */
+	constructor(buffer) {
+		super()
+		if (buffer &amp;&amp; buffer.constructor === ArrayBuffer) {
+			this.buffer = buffer
+			this.end = buffer.byteLength
+		}
+		else if (buffer &amp;&amp; buffer.constructor === GrowableBuffer) {
+			this.buffer = buffer.rawBuffer
+			this.end = buffer.length //end earlier than the end of the raw buffer
+		}
+		else assert.fail('Expected ArrayBuffer or GrowableBuffer, got ' + (buffer ? buffer.constructor.name : String(buffer))) //buffer should always have a constructor if it is neither undefined nor null
+		this.offset = 0
+	}
+	_read(size) {
+		if (this.offset &lt; this.end) {
+			this.push(Buffer.from(this.buffer.slice(this.offset, Math.min(this.offset + size, this.end)))) //slice behaves nicely when going past the end of the buffer
+			this.offset += size
+		}
+		else {
+			this.push(null)
+			this.emit('bs-written')
+		}
+	}
+}
+
+module.exports = BufferStream</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

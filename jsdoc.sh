@@ -10,5 +10,5 @@ lib/growable-buffer.js \
 index.js \
 client-side/upload.js \
 client-side/download.js
-rm -r doc
-mv out doc
+rm -r docs
+mv out docs
