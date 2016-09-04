@@ -13,6 +13,7 @@ for (let i = 0; i < buffer.length; i++) {
 	)
 }
 
+//Test invalid field request
 assert.throws(
 	() => {
 		let struct = {}
@@ -35,3 +36,23 @@ assert.throws(
 	}),
 	date.toString() + ' is not a valid field type'
 )
+
+//Test hasOwnProperty()
+function TestClass() {
+	this.one = new t.StringType
+	this.two = new t.CharType
+}
+TestClass.prototype.abc = function() {
+	return 23
+}
+let testObject = new TestClass
+let foundKey = false
+for (const key in testObject) {
+	if (key === 'abc') {
+		foundKey = true
+		break
+	}
+}
+assert.assert(foundKey, 'Expected "abc" to be a key in testObject')
+let testStruct = new t.StructType(testObject)
+assert.equal(testStruct.fields.length, 2)
