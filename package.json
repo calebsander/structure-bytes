@@ -4,6 +4,7 @@
 	"description": "Efficiently stores data of any shape by separating it into structure and value",
 	"main": "index.js",
 	"dependencies": {
+		"accepts": "1.3.x",
 		"base64-js": "1.1.x",
 		"sha256": "0.2.x"
 	},

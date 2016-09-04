@@ -17,3 +17,7 @@ class A {
 	constructor() { this.one = '1' }
 }
 assert.equal(util.inspect(new A), 'A {"one":"1"}')
+let [B] = [function() { //without array destructuring, B.name is defined
+	this.one = 2
+}]
+assert.equal(util.inspect(new B), '{"one":2}')
