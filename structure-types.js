@@ -525,7 +525,7 @@ class BigUnsignedIntType extends UnsignedType {
 class ChronoType extends AbsoluteType {}
 /**
  * A type storing a [Date]{@link external:Date} with millisecond precision.
- * The value is stored as an 8-byte unsigned integer.
+ * The value is stored as an 8-byte signed integer.
  * @extends Type
  * @inheritdoc
  */
@@ -548,7 +548,7 @@ const MILLIS_PER_DAY = 86400000,
 	MILLIS_PER_MINUTE = 60000
 /**
  * A type storing a specific day in history.
- * The value is stored as a 3-byte unsigned integer.
+ * The value is stored as a 3-byte signed integer.
  * @extends Type
  * @inheritdoc
  */

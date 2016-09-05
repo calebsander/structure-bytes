@@ -1,7 +1,7 @@
 # structure-bytes
-A NodeJS library for making more efficient data transfers by separating the structure from the values and efficiently storing each as byte arrays.
+A Node.js library for more efficient data transfers by separating the structure from the values and efficiently storing each as binary data.
 
-[![npm](https://img.shields.io/npm/v/structure-bytes.svg)](https://www.npmjs.com/package/structure-bytes)
+[![npm Version](https://img.shields.io/npm/v/structure-bytes.svg)](https://www.npmjs.com/package/structure-bytes)
 [![Build Status](https://travis-ci.org/calebsander/structure-bytes.svg?branch=master)](https://travis-ci.org/calebsander/structure-bytes)
 [![Coverage Status](https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master)](https://coveralls.io/github/calebsander/structure-bytes?branch=master)
 [![Dependencies](https://david-dm.org/calebsander/structure-bytes/status.svg)](https://david-dm.org/calebsander/structure-bytes)
