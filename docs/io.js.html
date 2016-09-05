@@ -32,9 +32,11 @@ if (__dirname === '/') __dirname = ''
 //This file contains functions for performing I/O;
 //specifically, reads and writes of types and values and HTTP responses
 
+const accepts = require('accepts')
 const assert = require(__dirname + '/lib/assert.js')
 const BufferStream = require(__dirname + '/lib/buffer-stream.js')
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
+const http = require('http')
 const r = require(__dirname + '/read.js')
 const stream = require('stream')
 const t = require(__dirname + '/structure-types.js')
@@ -43,6 +45,7 @@ const zlib = require('zlib')
 function toArrayBuffer(buffer) {
 	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
 }
+const WRITABLE_STREAMS = [stream.Writable, stream.Duplex, http.ServerResponse]
 
 const io = module.exports = {
 	/**
@@ -64,7 +67,7 @@ const io = module.exports = {
 	 */
 	writeType({type, outStream}, callback) {
 		assert.instanceOf(type, t.Type)
-		assert.instanceOf(outStream, [stream.Writable, stream.Duplex])
+		assert.instanceOf(outStream, WRITABLE_STREAMS)
 		if (callback === undefined) callback = () => {}
 		assert.instanceOf(callback, Function)
 		const typeStream = new BufferStream(type.toBuffer())
@@ -88,7 +91,7 @@ const io = module.exports = {
 	 */
 	writeValue({type, value, outStream}, callback) {
 		assert.instanceOf(type, t.Type)
-		assert.instanceOf(outStream, [stream.Writable, stream.Duplex])
+		assert.instanceOf(outStream, WRITABLE_STREAMS)
 		if (callback === undefined) callback = () => {}
 		assert.instanceOf(callback, Function)
 		const valueBuffer = new GrowableBuffer
@@ -115,7 +118,7 @@ const io = module.exports = {
 	 */
 	writeTypeAndValue({type, value, outStream}, callback) {
 		assert.instanceOf(type, t.Type)
-		assert.instanceOf(outStream, [stream.Writable, stream.Duplex])
+		assert.instanceOf(outStream, WRITABLE_STREAMS)
 		if (callback === undefined) callback = () => {}
 		assert.instanceOf(callback, Function)
 		const typeStream = new BufferStream(type.toBuffer())
@@ -250,25 +253,32 @@ const io = module.exports = {
 	 * @param {errCallback=} callback
 	 */
 	httpRespond({req, res, type, value}, callback) {
+		function writeEndCallback(acceptsGzip) {
+			return err => {
+				if (err) callback(err)
+				if (!acceptsGzip) callback(null)
+			}
+		}
 		assert.instanceOf(type, t.Type)
 		if (callback === undefined) callback = () => {}
 		assert.instanceOf(callback, Function)
+		assert.instanceOf(req, http.IncomingMessage)
+		assert.instanceOf(res, http.ServerResponse)
 		try {
 			res.setHeader('Content-Type', 'application/octet-stream')
-			res.setHeader('Content-Encoding', 'gzip')
 			res.setHeader('sig', type.getSignature())
-			const outStream = zlib.createGzip() //pipe into a zip stream to decrease size of response
+			const acceptsGzip = accepts(req).encoding(['gzip'])
+			let outStream
+			if (acceptsGzip) {
+				res.setHeader('Content-Encoding', 'gzip')
+				outStream = zlib.createGzip() //pipe into a zip stream to decrease size of response
+			}
+			else outStream = res
 			if (req.headers.sig &amp;&amp; req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
-				io.writeValue({type, value, outStream}, err => {
-					if (err) callback(err)
-				})
+				io.writeValue({type, value, outStream}, writeEndCallback(acceptsGzip))
 			}
-			else { //otherwise, type and value need to be sent
-				io.writeTypeAndValue({type, value, outStream}, err => {
-					if (err) callback(err)
-				})
-			}
-			outStream.pipe(res).on('finish', () => callback(null))
+			else io.writeTypeAndValue({type, value, outStream}, writeEndCallback(acceptsGzip)) //otherwise, type and value need to be sent
+			if (acceptsGzip) outStream.pipe(res).on('finish', () => callback(null)) //don't pipe until writing begins
 		}
 		catch (err) { callback(err) }
 	}

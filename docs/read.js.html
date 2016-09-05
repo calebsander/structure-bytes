@@ -124,13 +124,15 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 			value = dataView.getInt32(offset)
 			break
 		}
-		case t.LongType: {
+		case t.LongType:
+		case t.DateType: {
 			length = 8
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
 			const dataView = new DataView(buffer)
 			const upper = dataView.getInt32(offset)
 			const lower = dataView.getUint32(offset + 4)
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower))
+			if (type.constructor === t.DateType) value = new Date(Number(value))
 			break
 		}
 		case t.BigIntType: {
@@ -166,15 +168,13 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 			value = new DataView(buffer).getUint32(offset)
 			break
 		}
-		case t.UnsignedLongType:
-		case t.DateType: {
+		case t.UnsignedLongType: {
 			length = 8
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
 			const dataView = new DataView(buffer)
 			const upper = dataView.getUint32(offset)
 			const lower = dataView.getUint32(offset + 4)
 			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower))
-			if (type.constructor === t.DateType) value = new Date(Number(value))
 			break
 		}
 		case t.BigUnsignedIntType: {
@@ -195,8 +195,9 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 			length = 3
 			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
 			const dataView = new DataView(buffer)
-			const day = (dataView.getUint16(offset) &lt;&lt; 8) | dataView.getUint8(offset + 2)
-			value = new Date(day * t.MILLIS_PER_DAY + new Date().getTimezoneOffset() * t.MILLIS_PER_MINUTE)
+			const day = (dataView.getInt16(offset) &lt;&lt; 8) | dataView.getUint8(offset + 2)
+			const utcDate = day * t.MILLIS_PER_DAY
+			value = new Date(utcDate + new Date(utcDate).getTimezoneOffset() * t.MILLIS_PER_MINUTE)
 			break
 		}
 		case t.TimeType: {
