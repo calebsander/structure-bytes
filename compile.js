@@ -1,9 +1,9 @@
 /*eslint-disable no-console*/
 const browserify = require('browserify')
+const closure = require('google-closure-compiler-js').compile
 const fs = require('fs')
 const ReplaceStream = require(__dirname + '/lib/replace-stream.js')
 const Simultaneity = require(__dirname + '/lib/simultaneity.js')
-const uglify = require('uglify-js')
 
 const uploadB = browserify()
 uploadB.add(__dirname + '/client-side/upload.js')
@@ -70,22 +70,22 @@ s.callback(() => {
 		b.require(__dirname + fileName, {expose: name})
 	}
 	function compile(b, {modifiedFiles, exposeFiles, outputFile}) {
-		console.log('Compiling: Browserifying and babelifying ' + outputFile)
+		console.log('Compiling: Browserifying ' + outputFile)
 		//Expose the files with require('util') removed in place of the true file
 		for (const ending in modifiedFiles) { //eslint-disable-line guard-for-in
 			for (const file of modifiedFiles[ending]) exposeFile(b, file + '.js', file + '-' + ending + '.js')
 		}
 		//Expose all the unmodified files as normal
 		for (const file of exposeFiles) exposeFile(b, file)
-		b.transform('babelify') //babelify so it works in older browsers
 		const chunks = []
 		b.bundle().on('data', chunk => chunks.push(chunk)).on('end', () => { //load output into memory
-			console.log('Compiling: Uglifying ' + outputFile)
-			const uglified = uglify.minify(Buffer.concat(chunks).toString(), { //minify the code
-				fromString: true,
-				compress: {unsafe: true}
-			}).code
-			fs.writeFile(__dirname + outputFile, uglified, err => { //write out the minified code
+			console.log('Compiling: Minifying ' + outputFile)
+			const minified = closure({
+				assumeFunctionWrapper: true,
+				jsCode: [{src: Buffer.concat(chunks).toString()}],
+				rewritePolyfills: true
+			}).compiledCode
+			fs.writeFile(__dirname + outputFile, '!function(){' + minified + '}()', err => { //write out the minified code
 				if (err) throw err
 			})
 		})
