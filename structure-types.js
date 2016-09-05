@@ -293,6 +293,18 @@ class IntType extends IntegerType {
 }
 const LONG_MAX = '9223372036854775807',
 	LONG_MIN = '-9223372036854775808'
+function writeLong(buffer, value) {
+	assert.instanceOf(buffer, GrowableBuffer)
+	assert.instanceOf(value, String)
+	if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) assert.fail('Value out of range')
+	const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int
+	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
+	const byteBuffer = new ArrayBuffer(8)
+	const dataView = new DataView(byteBuffer)
+	dataView.setInt32(0, Number(upper))
+	dataView.setUint32(4, Number(lower))
+	buffer.addAll(byteBuffer)
+}
 /**
  * A type storing an 8-byte signed integer
  * @extends Type
@@ -309,16 +321,7 @@ class LongType extends IntegerType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		assert.instanceOf(buffer, GrowableBuffer)
-		assert.instanceOf(value, String)
-		if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) assert.fail('Value out of range')
-		const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int
-		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
-		const byteBuffer = new ArrayBuffer(8)
-		const dataView = new DataView(byteBuffer)
-		dataView.setInt32(0, Number(upper))
-		dataView.setUint32(4, Number(lower))
-		buffer.addAll(byteBuffer)
+		writeLong(buffer, value)
 	}
 }
 /**
@@ -447,18 +450,6 @@ class UnsignedIntType extends UnsignedType {
 	}
 }
 const UNSIGNED_LONG_MAX = '18446744073709551615'
-function writeUnsignedLong(buffer, value) { //used for both UnsignedLongType and DateType
-	assert.instanceOf(buffer, GrowableBuffer)
-	assert.instanceOf(value, String)
-	if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')) assert.fail('Value out of range')
-	const upper = strint.div(value, strint.LONG_UPPER_SHIFT) //get upper unsigned int
-	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
-	const byteBuffer = new ArrayBuffer(8)
-	const dataView = new DataView(byteBuffer)
-	dataView.setUint32(0, Number(upper))
-	dataView.setUint32(4, Number(lower))
-	buffer.addAll(byteBuffer)
-}
 /**
  * A type storing an 8-byte unsigned integer
  * @extends Type
@@ -475,7 +466,16 @@ class UnsignedLongType extends UnsignedType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 */
 	writeValue(buffer, value) {
-		writeUnsignedLong(buffer, value)
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, String)
+		if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')) assert.fail('Value out of range')
+		const upper = strint.div(value, strint.LONG_UPPER_SHIFT) //get upper unsigned int
+		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
+		const byteBuffer = new ArrayBuffer(8)
+		const dataView = new DataView(byteBuffer)
+		dataView.setUint32(0, Number(upper))
+		dataView.setUint32(4, Number(lower))
+		buffer.addAll(byteBuffer)
 	}
 }
 /**
@@ -541,7 +541,7 @@ class DateType extends ChronoType {
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(value, Date)
-		writeUnsignedLong(buffer, String(value.getTime()))
+		writeLong(buffer, String(value.getTime()))
 	}
 }
 const MILLIS_PER_DAY = 86400000,
@@ -570,7 +570,7 @@ class DayType extends ChronoType {
 		const day = (flooredDate.getTime() - flooredDate.getTimezoneOffset() * MILLIS_PER_MINUTE) / MILLIS_PER_DAY
 		const byteBuffer = new ArrayBuffer(3)
 		const dataView = new DataView(byteBuffer)
-		dataView.setUint16(0, day >>> 8)
+		dataView.setInt16(0, day >> 8)
 		dataView.setUint8(2, day & 0xFF)
 		buffer.addAll(byteBuffer)
 	}
