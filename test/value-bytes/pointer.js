@@ -45,3 +45,20 @@ let map = new Map().set('abc', -126).set('def', -126)
 type.writeValue(gb, map)
 assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 24, 0, 0, 0, 25, 0, 0, 0, 24, 0x61, 0x62, 0x63, 0, -126 + 256, 0x64, 0x65, 0x66, 0]))
 assert.equal(r.value({buffer: gb.toBuffer(), type}), map)
+
+//Note that reading a value being pointed to twice can result in different values
+const threeDVectorType = new t.PointerType(
+	new t.TupleType({
+		type: new t.FloatType,
+		length: 3
+	})
+)
+const duplicateType = new t.StructType({
+	a: threeDVectorType,
+	b: threeDVectorType
+})
+const vector = [2, 0, 1]
+let valueBuffer = duplicateType.valueBuffer({a: vector, b: vector})
+assert.equal(valueBuffer, bufferFrom([0, 0, 0, 8, 0, 0, 0, 8, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3f, 0x80, 0x00, 0x00]))
+let valueReadBack = r.value({buffer: valueBuffer, type: duplicateType})
+assert.assert(valueReadBack.a !== valueReadBack.b)
