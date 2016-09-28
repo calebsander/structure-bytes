@@ -468,10 +468,9 @@ function type(typeBuffer, fullBuffer = true) {
 	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value
 }
-function value({buffer, type, offset}) {
+function value({buffer, type, offset = 0}) {
 	assert.instanceOf(buffer, ArrayBuffer)
 	assert.instanceOf(type, t.Type)
-	if (offset === undefined) offset = 0 //for some reason, isparta doesn't like default parameters inside destructuring
 	assert.instanceOf(offset, Number)
 	const {value} = consumeValue({buffer, offset, type, pointerStart: offset})
 	//no length validation because bytes being pointed to don't get counted in the length
