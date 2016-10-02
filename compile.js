@@ -62,7 +62,8 @@ const downloadFiles = [
 	'/lib/buffer-string.js',
 	'/lib/growable-buffer.js',
 	'/lib/strint.js',
-	'/lib/util-inspect.js'
+	'/lib/util-inspect.js',
+	'/recursive-registry.js'
 ]
 s.callback(() => {
 	//Include the file in the browserify result because it is require()d by other files
@@ -102,7 +103,8 @@ s.callback(() => {
 			'/lib/buffer-string.js',
 			'/lib/growable-buffer.js',
 			'/lib/strint.js',
-			'/lib/util-inspect.js'
+			'/lib/util-inspect.js',
+			'/recursive-registry.js'
 		],
 		outputFile: '/compiled/upload.js'
 	})

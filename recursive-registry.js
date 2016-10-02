@@ -1,3 +1,6 @@
+//For use with browserify
+if (__dirname === '/') __dirname = ''
+
 const assert = require(__dirname + '/lib/assert.js')
 const t = require(__dirname + '/structure-types.js')
 
