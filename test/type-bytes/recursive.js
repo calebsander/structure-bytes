@@ -1,32 +1,30 @@
 /*eslint-disable no-undef*/
 const nodeType = new t.RecursiveType('graph-node')
 rec.registerType({
-	type: new t.SetType(nodeType),
+	type: new t.StructType({
+		links: new t.SetType(nodeType),
+		value: new t.UnsignedIntType
+	}),
 	name: 'graph-node'
 })
 const graphType = new t.SetType(
 	new t.RecursiveType('graph-node')
 )
-const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0, 0x53, 0x57, 0, 0])
+const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
 assert.equal(graphType.toBuffer(), GRAPH_BUFFER)
 const readGraphType = r.type(graphType.toBuffer())
 const graphNodeName = readGraphType.type.name
 assert.equal(readGraphType, new t.SetType(
 	new t.RecursiveType(graphNodeName)
 ))
-assert.equal(rec.getType(graphNodeName), new t.SetType(
-	new t.RecursiveType(graphNodeName)
-))
+assert.equal(rec.getType(graphNodeName), new t.StructType({
+	links: new t.SetType(
+		new t.RecursiveType(graphNodeName)
+	),
+	value: new t.UnsignedIntType
+}))
 const reusedGraphType = new t.SetType(nodeType)
 assert.equal(reusedGraphType.toBuffer(), GRAPH_BUFFER)
-const readReusedGraphType = r.type(reusedGraphType.toBuffer())
-const reusedGraphNodeName = readReusedGraphType.type.name
-assert.equal(readReusedGraphType, new t.SetType(
-	new t.RecursiveType(reusedGraphNodeName)
-))
-assert.equal(rec.getType(reusedGraphNodeName), new t.SetType(
-	new t.RecursiveType(reusedGraphNodeName)
-))
 //Ensure that REPEATED_TYPE links don't go outside of recursive type
 const type = new t.ArrayType(
 	new t.RecursiveType('type')
@@ -46,7 +44,7 @@ rec.registerType({
 	}),
 	name: 'tree-node'
 })
-assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 0, 1, 0x53, 0x57, 0, 1]))
+assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 0, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
 const readTreeType = r.type(binaryTreeType.toBuffer())
 assert.instanceOf(readTreeType, t.RecursiveType)
 const readTreeName = readTreeType.name
@@ -63,6 +61,8 @@ assert.throws(
 	() => new t.RecursiveType('abc').toBuffer(),
 	'"abc" is not a registered type'
 )
+assert.throws(() => r.type(bufferFrom([0x57, 0])), 'Buffer is not long enough')
+assert.throws(() => r.type(bufferFrom([0x57, 0, 0])), 'Buffer is not long enough')
 assert.throws(() => rec.registerType(), "Cannot match against 'undefined' or 'null'.")
 assert.throws(() => rec.registerType({name: 'some-type'}), 'undefined is not an instance of Type')
 assert.throws(() => rec.registerType({name: 23, type: new t.ByteType}), '23 is not an instance of String')

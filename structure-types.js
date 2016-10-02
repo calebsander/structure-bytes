@@ -13,6 +13,9 @@ const config = require(__dirname + '/config.js')
 const sha256 = require('sha256')
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
 let recursiveRegistry
+function loadRecursiveRegistry() {
+	if (recursiveRegistry === undefined) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
+}
 const strint = require(__dirname + '/lib/strint.js')
 const util = require('util')
 const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js')
@@ -1266,9 +1269,9 @@ class RecursiveType extends AbsoluteType {
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
 			let recursiveID
-			if (buffer.recursiveIDs === undefined) buffer.recursiveIDs = new Map
-			else recursiveID = buffer.recursiveIDs.get(this.name)
-			let firstOccurence = recursiveID === undefined
+			if (buffer.recursiveIDs) recursiveID = buffer.recursiveIDs.get(this.name)
+			else buffer.recursiveIDs = new Map
+			const firstOccurence = recursiveID === undefined
 			if (firstOccurence) {
 				recursiveID = buffer.recursiveIDs.size
 				assert.twoByteUnsignedInteger(recursiveID)
@@ -1279,11 +1282,35 @@ class RecursiveType extends AbsoluteType {
 			buffer.addAll(idBuffer)
 			if (firstOccurence) {
 				buffer.recursiveNesting = (buffer.recursiveNesting || 0) + 1
-				if (recursiveRegistry === undefined) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
+				loadRecursiveRegistry()
 				recursiveRegistry.getType(this.name).addToBuffer(buffer)
 				buffer.recursiveNesting--
 			}
 		}
+	}
+	writeValue(buffer, value, root = true) {
+		assert.instanceOf(buffer, GrowableBuffer)
+		let writeValue = true
+		if (buffer.recursiveLocations) {
+			const targetLocation = buffer.recursiveLocations.get(value)
+			if (targetLocation !== undefined) {
+				writeValue = false
+				buffer.add(0x00)
+				const offset = buffer.length - targetLocation
+				assert.fourByteUnsignedInteger(offset)
+				const offsetBuffer = new ArrayBuffer(4)
+				new DataView(offsetBuffer).setUint32(0, offset)
+				buffer.addAll(offsetBuffer)
+			}
+		}
+		else buffer.recursiveLocations = new Map
+		if (writeValue) {
+			buffer.add(0xFF)
+			buffer.recursiveLocations.set(value, buffer.length)
+			loadRecursiveRegistry()
+			recursiveRegistry.getType(this.name).writeValue(buffer, value, false)
+		}
+		setPointers(buffer, root)
 	}
 }
 /**
