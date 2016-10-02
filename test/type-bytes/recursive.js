@@ -7,7 +7,8 @@ rec.registerType({
 const graphType = new t.SetType(
 	new t.RecursiveType('graph-node')
 )
-assert.equal(graphType.toBuffer(), bufferFrom([0x53, 0x57, 0, 0, 0x53, 0x57, 0, 0]))
+const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0, 0x53, 0x57, 0, 0])
+assert.equal(graphType.toBuffer(), GRAPH_BUFFER)
 const readGraphType = r.type(graphType.toBuffer())
 const graphNodeName = readGraphType.type.name
 assert.equal(readGraphType, new t.SetType(
@@ -17,7 +18,7 @@ assert.equal(rec.getType(graphNodeName), new t.SetType(
 	new t.RecursiveType(graphNodeName)
 ))
 const reusedGraphType = new t.SetType(nodeType)
-assert.equal(reusedGraphType.toBuffer(), bufferFrom([0x53, 0x57, 0, 0, 0x53, 0xff, 0, 5]))
+assert.equal(reusedGraphType.toBuffer(), GRAPH_BUFFER)
 const readReusedGraphType = r.type(reusedGraphType.toBuffer())
 const reusedGraphNodeName = readReusedGraphType.type.name
 assert.equal(readReusedGraphType, new t.SetType(
@@ -26,9 +27,18 @@ assert.equal(readReusedGraphType, new t.SetType(
 assert.equal(rec.getType(reusedGraphNodeName), new t.SetType(
 	new t.RecursiveType(reusedGraphNodeName)
 ))
+//Ensure that REPEATED_TYPE links don't go outside of recursive type
+const type = new t.ArrayType(
+	new t.RecursiveType('type')
+)
+rec.registerType({
+	type,
+	name: 'type'
+})
+assert.equal(type.toBuffer(), bufferFrom([0x52, 0x57, 0, 0, 0x52, 0x57, 0, 0])) //the important piece is that the child array type declaration doesn't point to the root one
 //Test multiple recursive types in same buffer
 const binaryTreeType = new t.RecursiveType('tree-node')
-rec.registerType({ //verify that this paradigm works! - the idea is that we are writing the recursive type first and then anything inside must reference it, and not a parent of it
+rec.registerType({
 	type: new t.StructType({
 		left: binaryTreeType,
 		value: nodeType,
@@ -36,7 +46,7 @@ rec.registerType({ //verify that this paradigm works! - the idea is that we are 
 	}),
 	name: 'tree-node'
 })
-assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0xff, 0, 11, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0xff, 0, 20, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 0, 1, 0x53, 0xff, 0, 5]))
+assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 0, 1, 0x53, 0x57, 0, 1]))
 const readTreeType = r.type(binaryTreeType.toBuffer())
 assert.instanceOf(readTreeType, t.RecursiveType)
 const readTreeName = readTreeType.name

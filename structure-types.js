@@ -73,16 +73,18 @@ class Type {
 	addToBuffer(buffer) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
-			const location = this.cachedTypeLocations.get(buffer)
-			if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
-				buffer.add(REPEATED_TYPE)
-				const offsetBuffer = new ArrayBuffer(2)
-				try { //error will be thrown if offset didn't fit in a 2-byte integer, so fall through to explicitly writing the bytes
-					new DataView(offsetBuffer).setUint16(0, buffer.length - location)
-					buffer.addAll(offsetBuffer)
-					return false
+			if (!buffer.recursiveNesting) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
+				const location = this.cachedTypeLocations.get(buffer)
+				if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
+					buffer.add(REPEATED_TYPE)
+					const offsetBuffer = new ArrayBuffer(2)
+					try { //error will be thrown if offset didn't fit in a 2-byte integer, so fall through to explicitly writing the bytes
+						new DataView(offsetBuffer).setUint16(0, buffer.length - location)
+						buffer.addAll(offsetBuffer)
+						return false
+					}
+					catch (e) {}
 				}
-				catch (e) {}
 			}
 		}
 		else this.cachedTypeLocations = new Map
@@ -1266,19 +1268,20 @@ class RecursiveType extends AbsoluteType {
 			let recursiveID
 			if (buffer.recursiveIDs === undefined) buffer.recursiveIDs = new Map
 			else recursiveID = buffer.recursiveIDs.get(this.name)
-			if (recursiveID === undefined) {
+			let firstOccurence = recursiveID === undefined
+			if (firstOccurence) {
 				recursiveID = buffer.recursiveIDs.size
 				assert.twoByteUnsignedInteger(recursiveID)
 				buffer.recursiveIDs.set(this.name, recursiveID)
 			}
-			if (buffer.writtenRecursives === undefined) buffer.writtenRecursives = new Set
 			const idBuffer = new ArrayBuffer(2)
 			new DataView(idBuffer).setUint16(0, recursiveID)
 			buffer.addAll(idBuffer)
-			if (!buffer.writtenRecursives.has(this.name)) {
-				buffer.writtenRecursives.add(this.name)
+			if (firstOccurence) {
+				buffer.recursiveNesting = (buffer.recursiveNesting || 0) + 1
 				if (recursiveRegistry === undefined) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
 				recursiveRegistry.getType(this.name).addToBuffer(buffer)
+				buffer.recursiveNesting--
 			}
 		}
 	}
