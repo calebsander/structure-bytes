@@ -383,7 +383,10 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 	}
 	return {value, length}
 }
-const RECURSIVE_NAME_LENGTH = 16 //number of random characters in synthetic recursive type names
+//Number of random characters in synthetic recursive type names
+const RECURSIVE_NAME_LENGTH = 16
+//Map of type buffers to maps of ids synthetic recursive type names
+const recursiveNames = new WeakMap
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
@@ -494,14 +497,18 @@ function consumeType(typeBuffer, offset) {
 			assert.assert(typeBuffer.byteLength >= offset + length + 2, NOT_LONG_ENOUGH)
 			const id = new DataView(typeBuffer).getUint16(offset + length)
 			length += 2
-			if (typeBuffer.recursiveNames === undefined) typeBuffer.recursiveNames = new Map //necessary in case not invoked from type()
-			let recursiveName = typeBuffer.recursiveNames.get(id)
-			if (recursiveName === undefined) { //if we have never read to type yet, the type def must lie here
+			let bufferRecursiveNames = recursiveNames.get(typeBuffer)
+			if (!bufferRecursiveNames) {
+				bufferRecursiveNames = new Map
+				recursiveNames.set(typeBuffer, bufferRecursiveNames)
+			}
+			let recursiveName = bufferRecursiveNames.get(id)
+			if (!recursiveName) { //if we have never read to type yet, the type def must lie here
 				recursiveName = 'read-type'
 				for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) {
 					recursiveName += Math.floor(Math.random() * 16).toString(16)
 				}
-				typeBuffer.recursiveNames.set(id, recursiveName)
+				bufferRecursiveNames.set(id, recursiveName)
 				const type = consumeType(typeBuffer, offset + length)
 				length += type.length
 				recursiveRegistry.registerType({
@@ -542,8 +549,7 @@ function consumeType(typeBuffer, offset) {
 }
 function type(typeBuffer, fullBuffer = true) {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
-	//Reset the map of numerical IDs to synthetic names in case the buffer was already read from
-	typeBuffer.recursiveNames = new Map
+	recursiveNames.set(typeBuffer, new Map) //reset the map of numerical IDs to synthetic names in case the buffer was already read from
 	const {value, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value

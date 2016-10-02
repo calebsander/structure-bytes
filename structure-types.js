@@ -14,7 +14,7 @@ const sha256 = require('sha256')
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
 let recursiveRegistry
 function loadRecursiveRegistry() {
-	if (recursiveRegistry === undefined) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
+	if (!recursiveRegistry) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
 }
 const strint = require(__dirname + '/lib/strint.js')
 const util = require('util')
@@ -1283,7 +1283,7 @@ class RecursiveType extends AbsoluteType {
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
 			let bufferRecursiveIDs = recursiveIDs.get(buffer)
-			if (bufferRecursiveIDs === undefined) {
+			if (!bufferRecursiveIDs) {
 				bufferRecursiveIDs = new Map
 				recursiveIDs.set(buffer, bufferRecursiveIDs)
 			}
@@ -1453,7 +1453,7 @@ class PointerType extends Type {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		let bufferPointers = pointers.get(buffer)
-		if (bufferPointers === undefined) {
+		if (!bufferPointers) {
 			bufferPointers = new Map //initialize pointers map if it doesn't exist
 			pointers.set(buffer, bufferPointers)
 		}
