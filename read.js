@@ -6,6 +6,7 @@ if (__dirname === '/') __dirname = ''
 const assert = require(__dirname + '/lib/assert.js')
 const bitMath = require(__dirname + '/lib/bit-math.js')
 const bufferString = require(__dirname + '/lib/buffer-string.js')
+const recursiveRegistry = require(__dirname + '/recursive-registry.js')
 const strint = require(__dirname + '/lib/strint.js')
 const t = require(__dirname + '/structure-types.js')
 const util = require('util')
@@ -331,6 +332,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 	}
 	return {value, length}
 }
+const RECURSIVE_NAME_LENGTH = 16 //number of random characters in synthetic recursive type names
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
@@ -437,6 +439,31 @@ function consumeType(typeBuffer, offset) {
 			value = new t.ChoiceType(types)
 			break
 		}
+		case t.RecursiveType._value: {
+			assert.assert(typeBuffer.byteLength >= offset + length + 2, NOT_LONG_ENOUGH)
+			const id = new DataView(typeBuffer).getUint16(offset + length)
+			length += 2
+			if (typeBuffer.recursiveNames === undefined) typeBuffer.recursiveNames = new Map //necessary in case not invoked from type()
+			let recursiveName = typeBuffer.recursiveNames.get(id)
+			if (recursiveName === undefined) { //if we have never read to type yet, the type def must lie here
+				recursiveName = 'read-type'
+				for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) {
+					recursiveName += Math.floor(Math.random() * 16).toString(16)
+				}
+				typeBuffer.recursiveNames.set(id, recursiveName)
+				const type = consumeType(typeBuffer, offset + length)
+				length += type.length
+				recursiveRegistry.registerType({
+					type: type.value,
+					name: recursiveName
+				})
+			}
+			/*If we have already read the type, then we are either reading a recursive type without the type def
+			  or we are reading a repeated type (in which case we don't have to care about the length of the read)
+			  so we can safely reuse old value*/
+			value = new t.RecursiveType(recursiveName)
+			break
+		}
 		case t.OptionalType._value: {
 			const type = consumeType(typeBuffer, offset + length)
 			length += type.length
@@ -464,6 +491,8 @@ function consumeType(typeBuffer, offset) {
 }
 function type(typeBuffer, fullBuffer = true) {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
+	//Reset the map of numerical IDs to synthetic names in case the buffer was already read from
+	typeBuffer.recursiveNames = new Map
 	const {value, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value

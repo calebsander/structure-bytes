@@ -8,7 +8,6 @@ module.exports = {
 		assert.instanceOf(name, String)
 		assert.assert(!registeredTypes.has(name), '"' + name + '" is already a registered type')
 		registeredTypes.set(name, type)
-		return type
 	},
 	getType(name) {
 		assert.instanceOf(name, String)
