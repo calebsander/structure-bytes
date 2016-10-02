@@ -25,7 +25,7 @@
  */
 
 //Copy version string, io functions, and types into package exports
-for (const moduleName of ['io', 'structure-types']) {
+for (const moduleName of ['io', 'recursive-registry', 'structure-types']) {
 	const sbModule = require(__dirname + '/' + moduleName + '.js')
 	for (const attribute in sbModule) exports[attribute] = sbModule[attribute] //eslint-disable-line guard-for-in
 }

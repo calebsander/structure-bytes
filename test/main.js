@@ -11,6 +11,7 @@ const bufferString = require(__dirname + '/../lib/buffer-string.js')
 const GrowableBuffer = require(__dirname + '/../lib/growable-buffer.js')
 const io = index
 const r = index.r
+const rec = index
 const ReplaceStream = require(__dirname + '/../lib/replace-stream.js')
 const Simultaneity = require(__dirname + '/../lib/simultaneity.js')
 const t = index

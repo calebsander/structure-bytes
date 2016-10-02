@@ -12,6 +12,7 @@ const bufferString = require(__dirname + '/lib/buffer-string.js')
 const config = require(__dirname + '/config.js')
 const sha256 = require('sha256')
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
+let recursiveRegistry
 const strint = require(__dirname + '/lib/strint.js')
 const util = require('util')
 const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js')
@@ -1251,6 +1252,37 @@ class ChoiceType extends Type {
 		setPointers(buffer, root)
 	}
 }
+class RecursiveType extends AbsoluteType {
+	static get _value() {
+		return 0x57
+	}
+	constructor(name) {
+		super()
+		assert.instanceOf(name, String)
+		this.name = name
+	}
+	addToBuffer(buffer) {
+		if (super.addToBuffer(buffer)) {
+			let recursiveID
+			if (buffer.recursiveIDs === undefined) buffer.recursiveIDs = new Map
+			else recursiveID = buffer.recursiveIDs.get(this.name)
+			if (recursiveID === undefined) {
+				recursiveID = buffer.recursiveIDs.size
+				assert.twoByteUnsignedInteger(recursiveID)
+				buffer.recursiveIDs.set(this.name, recursiveID)
+			}
+			if (buffer.writtenRecursives === undefined) buffer.writtenRecursives = new Set
+			const idBuffer = new ArrayBuffer(2)
+			new DataView(idBuffer).setUint16(0, recursiveID)
+			buffer.addAll(idBuffer)
+			if (!buffer.writtenRecursives.has(this.name)) {
+				buffer.writtenRecursives.add(this.name)
+				if (recursiveRegistry === undefined) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
+				recursiveRegistry.getType(this.name).addToBuffer(buffer)
+			}
+		}
+	}
+}
 /**
  * A type storing a value of another type or {@link null}
  * @example
@@ -1412,6 +1444,7 @@ module.exports = {
 	MapType,
 	EnumType,
 	ChoiceType,
+	RecursiveType,
 	OptionalType,
 	PointerType,
 	REPEATED_TYPE,
