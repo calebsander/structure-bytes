@@ -1015,8 +1015,9 @@ class ArrayType extends AbsoluteType {
 	*/
 	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		assert.fourByteUnsignedInteger(value.length)
-		buffer.addAll(lengthBuffer(value.length))
+		const length = value.length || value.size
+		assert.fourByteUnsignedInteger(length)
+		buffer.addAll(lengthBuffer(length))
 		for (const instance of value) this.type.writeValue(buffer, instance, false)
 		setPointers(buffer, root)
 	}
@@ -1058,7 +1059,6 @@ class SetType extends ArrayType {
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Set)
-		value.length = value.size
 		this._writeValue(buffer, value, root)
 	}
 }
@@ -1266,6 +1266,10 @@ class RecursiveType extends AbsoluteType {
 		assert.instanceOf(name, String)
 		this.name = name
 	}
+	get type() {
+		loadRecursiveRegistry()
+		return recursiveRegistry.getType(this.name)
+	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
 			let recursiveID
@@ -1282,8 +1286,7 @@ class RecursiveType extends AbsoluteType {
 			buffer.addAll(idBuffer)
 			if (firstOccurence) {
 				buffer.recursiveNesting = (buffer.recursiveNesting || 0) + 1
-				loadRecursiveRegistry()
-				recursiveRegistry.getType(this.name).addToBuffer(buffer)
+				this.type.addToBuffer(buffer)
 				buffer.recursiveNesting--
 			}
 		}
@@ -1307,8 +1310,7 @@ class RecursiveType extends AbsoluteType {
 		if (writeValue) {
 			buffer.add(0xFF)
 			buffer.recursiveLocations.set(value, buffer.length)
-			loadRecursiveRegistry()
-			recursiveRegistry.getType(this.name).writeValue(buffer, value, false)
+			this.type.writeValue(buffer, value, false)
 		}
 		setPointers(buffer, root)
 	}

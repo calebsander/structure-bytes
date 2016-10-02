@@ -22,7 +22,8 @@ function readLengthBuffer(buffer, offset) {
 	}
 	catch (e) { assert.fail(NOT_LONG_ENOUGH) }
 }
-const SINGLE_BYTE_TYPES = [ //types whose type bytes are only 1 byte long (the type byte)
+//Types whose type bytes are only 1 byte long (the type byte)
+const SINGLE_BYTE_TYPES = [
 	t.ByteType,
 	t.ShortType,
 	t.IntType,
@@ -49,9 +50,36 @@ function pad(str, digits) {
 	if (str.length < digits) return '0'.repeat(digits - str.length) + str
 	else return str
 }
+//Returns an object to which keys are added when reading an instance of the specified type
+//This allows the reference to the read value to be used before it is populated
+function makeBaseValue(type, count) {
+	switch (type.constructor) {
+		case t.ArrayType:
+		case t.BooleanArrayType: {
+			if (count === undefined) return []
+			else return new Array(count)
+		}
+		case t.BooleanTupleType:
+		case t.TupleType: {
+			return new Array(type.length)
+		}
+		case t.MapType: {
+			return new Map
+		}
+		case t.SetType: {
+			return new Set
+		}
+		case t.StructType: {
+			return {}
+		}
+		default: {
+			throw new Error('Invalid type for base value: ' + util.inspect(type))
+		}
+	}
+}
 //Counterpart for writeBooleans() in structure-types.js
-function readBooleans({buffer, offset, count}) {
-	const value = new Array(count)
+function readBooleans({buffer, offset, count, baseValue}) {
+	const value = baseValue || new Array(count)
 	const incompleteBytes = bitMath.modEight(value.length)
 	const bytes = bitMath.dividedByEight(value.length)
 	let byteLength
@@ -75,7 +103,9 @@ function readBooleans({buffer, offset, count}) {
 	Pointer start refers to the position in the buffer where the root value starts
 	(pointers will be relative to this location)
 */
-function consumeValue({buffer, pointerStart, offset, type}) {
+//Map of value buffers to maps of indices to read values for recursive types
+const readRecursives = new WeakMap
+function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 	let value, length
 	switch (type.constructor) {
 		case t.ByteType: {
@@ -193,7 +223,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.BooleanType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const readByte = new Uint8Array(buffer)[offset]
 			assert.assert(readByte === 0x00 || readByte === 0xFF, '0x' + readByte.toString(16) + ' is an invalid Boolean value')
 			value = !!readByte //convert integer to boolean
@@ -202,13 +232,13 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.BooleanArrayType: {
 			const arrayLength = readLengthBuffer(buffer, offset)
 			length = arrayLength.length
-			const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value})
+			const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value, baseValue})
 			length += booleans.length
 			;({value} = booleans)
 			break
 		}
 		case t.BooleanTupleType: {
-			({value, length} = readBooleans({buffer, offset, count: type.length}))
+			({value, length} = readBooleans({buffer, offset, count: type.length, baseValue}))
 			break
 		}
 		case t.CharType: {
@@ -238,7 +268,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.TupleType: {
 			length = 0
-			value = new Array(type.length)
+			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i < type.length; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
@@ -248,7 +278,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.StructType: {
 			length = 0
-			value = {}
+			value = baseValue || makeBaseValue(type)
 			for (const field of type.fields) {
 				const readField = consumeValue({buffer, pointerStart, offset: offset + length, type: field.type})
 				value[field.name] = readField.value
@@ -259,7 +289,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.ArrayType: {
 			const arrayLength = readLengthBuffer(buffer, offset)
 			length = arrayLength.length
-			value = new Array(arrayLength.value)
+			value = baseValue || makeBaseValue(type, arrayLength.value)
 			for (let i = 0; i < value.length; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
@@ -270,7 +300,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.SetType: {
 			const size = readLengthBuffer(buffer, offset)
 			length = size.length
-			value = new Set
+			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i < size.value; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
@@ -281,7 +311,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.MapType: {
 			const size = readLengthBuffer(buffer, offset)
 			length = size.length
-			value = new Map
+			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i < size.value; i++) {
 				const keyElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.keyType})
 				length += keyElement.length
@@ -293,7 +323,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.EnumType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const valueIndex = new Uint8Array(buffer)[offset]
 			value = type.values[valueIndex]
 			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid')
@@ -301,16 +331,37 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.ChoiceType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const typeIndex = new Uint8Array(buffer)[offset]
 			const subValue = consumeValue({buffer, pointerStart, offset: offset + length, type: type.types[typeIndex]})
 			length += subValue.length
 			value = subValue.value
 			break
 		}
+		case t.RecursiveType: {
+			length = 1
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+			const readValueByte = new Uint8Array(buffer)[offset]
+			assert.assert(readValueByte === 0x00 || readValueByte === 0xFF, '0x' + readValueByte.toString(16) + ' is an invalid Recursive byte')
+			if (readValueByte) {
+				const subType = type.type
+				value = makeBaseValue(subType)
+				if (!readRecursives.has(buffer)) readRecursives.set(buffer, new Map)
+				readRecursives.get(buffer).set(offset + length, value)
+				length += consumeValue({buffer, pointerStart, offset: offset + length, type: subType, baseValue: value}).length
+			}
+			else {
+				const indexOffset = readLengthBuffer(buffer, offset + length)
+				const target = offset + length - indexOffset.value
+				value = readRecursives.get(buffer).get(target)
+				assert.assert(value !== undefined, 'Cannot find target at ' + String(target))
+				length += indexOffset.length
+			}
+			break
+		}
 		case t.OptionalType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const optionalByte = new Uint8Array(buffer)[offset]
 			assert.assert(optionalByte === 0x00 || optionalByte === 0xFF, '0x' + optionalByte.toString(16) + ' is an invalid Optional byte')
 			if (optionalByte) {

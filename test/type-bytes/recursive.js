@@ -64,7 +64,16 @@ assert.throws(
 assert.throws(() => r.type(bufferFrom([0x57, 0])), 'Buffer is not long enough')
 assert.throws(() => r.type(bufferFrom([0x57, 0, 0])), 'Buffer is not long enough')
 assert.throws(() => rec.registerType(), "Cannot match against 'undefined' or 'null'.")
-assert.throws(() => rec.registerType({name: 'some-type'}), 'undefined is not an instance of Type')
-assert.throws(() => rec.registerType({name: 23, type: new t.ByteType}), '23 is not an instance of String')
-assert.throws(() => rec.registerType({name: 'some-type', type: 23}), '23 is not an instance of Type')
-assert.throws(() => rec.registerType({name: 'tree-node', type: new t.UnsignedIntType}), '"tree-node" is already a registered type')
+assert.throws(() => rec.registerType({name: 'some-type'}), 'undefined is not an instance of ArrayType or BooleanArrayType or BooleanTupleType or MapType or SetType or StructType or TupleType')
+assert.throws(
+	() => rec.registerType({name: 'another-type', type: new t.OptionalType(
+		new t.StructType({
+			a: new t.StringType,
+			b: new t.StringType
+		})
+	)}),
+	'OptionalType { type: StructType { fields: [ [Object], [Object] ] } } is not an instance of ArrayType or BooleanArrayType or BooleanTupleType or MapType or SetType or StructType or TupleType'
+)
+assert.throws(() => rec.registerType({name: 23, type: new t.StructType({})}), '23 is not an instance of String')
+assert.throws(() => rec.registerType({name: 'some-type', type: 23}), '23 is not an instance of ArrayType or BooleanArrayType or BooleanTupleType or MapType or SetType or StructType or TupleType')
+assert.throws(() => rec.registerType({name: 'tree-node', type: new t.StructType({})}), '"tree-node" is already a registered type')
