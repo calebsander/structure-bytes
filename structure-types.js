@@ -20,6 +20,15 @@ const strint = require(__dirname + '/lib/strint.js')
 const util = require('util')
 const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js')
 
+//Map of write buffers to maps of names to ids
+const recursiveIDs = new WeakMap
+//Map of write buffers to the current number of levels deep in recursive types they are
+const recursiveNesting = new WeakMap
+//Map of write buffers to maps of objects to their first written locations in the buffer
+const recursiveLocations = new WeakMap
+//Map of write buffers to maps of binary strings to sets of indices where pointers to the binary data must be written
+const pointers = new WeakMap
+
 //Since most things with length store it in a 32-bit unsigned integer,
 //this utility function makes the creation of that buffer easier
 function lengthBuffer(length) {
@@ -31,8 +40,9 @@ function lengthBuffer(length) {
 //This function should be called in writeValue() for every type that could have a subtype that is a pointer type
 function setPointers(buffer, root) {
 	if (root) { //ensure this only happens once
-		if (buffer.pointers) {
-			for (const [binaryString, insertionIndices] of buffer.pointers) { //find all the locations where pointers must be inserted
+		const bufferPointers = pointers.get(buffer)
+		if (bufferPointers) {
+			for (const [binaryString, insertionIndices] of bufferPointers) { //find all the locations where pointers must be inserted
 				const index = buffer.length //value is going to be appended to buffer, so it will start at buffer.length
 				buffer.addAll(bufferString.fromBinaryString(binaryString)) //add raw data
 				const indexBuffer = new ArrayBuffer(4)
@@ -76,7 +86,7 @@ class Type {
 	addToBuffer(buffer) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
-			if (!buffer.recursiveNesting) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
+			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
 				const location = this.cachedTypeLocations.get(buffer)
 				if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
 					buffer.add(REPEATED_TYPE)
@@ -1272,30 +1282,35 @@ class RecursiveType extends AbsoluteType {
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			let recursiveID
-			if (buffer.recursiveIDs) recursiveID = buffer.recursiveIDs.get(this.name)
-			else buffer.recursiveIDs = new Map
+			let bufferRecursiveIDs = recursiveIDs.get(buffer)
+			if (bufferRecursiveIDs === undefined) {
+				bufferRecursiveIDs = new Map
+				recursiveIDs.set(buffer, bufferRecursiveIDs)
+			}
+			let recursiveID = bufferRecursiveIDs.get(this.name)
 			const firstOccurence = recursiveID === undefined
 			if (firstOccurence) {
-				recursiveID = buffer.recursiveIDs.size
+				recursiveID = bufferRecursiveIDs.size
 				assert.twoByteUnsignedInteger(recursiveID)
-				buffer.recursiveIDs.set(this.name, recursiveID)
+				bufferRecursiveIDs.set(this.name, recursiveID)
 			}
 			const idBuffer = new ArrayBuffer(2)
 			new DataView(idBuffer).setUint16(0, recursiveID)
 			buffer.addAll(idBuffer)
 			if (firstOccurence) {
-				buffer.recursiveNesting = (buffer.recursiveNesting || 0) + 1
+				const bufferRecursiveNesting = recursiveNesting.get(buffer) || 0
+				recursiveNesting.set(buffer, bufferRecursiveNesting + 1)
 				this.type.addToBuffer(buffer)
-				buffer.recursiveNesting--
+				recursiveNesting.set(buffer, bufferRecursiveNesting)
 			}
 		}
 	}
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		let writeValue = true
-		if (buffer.recursiveLocations) {
-			const targetLocation = buffer.recursiveLocations.get(value)
+		let bufferRecursiveLocations = recursiveLocations.get(buffer)
+		if (bufferRecursiveLocations) {
+			const targetLocation = bufferRecursiveLocations.get(value)
 			if (targetLocation !== undefined) {
 				writeValue = false
 				buffer.add(0x00)
@@ -1306,10 +1321,13 @@ class RecursiveType extends AbsoluteType {
 				buffer.addAll(offsetBuffer)
 			}
 		}
-		else buffer.recursiveLocations = new Map
+		else {
+			bufferRecursiveLocations = new Map
+			recursiveLocations.set(buffer, bufferRecursiveLocations)
+		}
 		if (writeValue) {
 			buffer.add(0xFF)
-			buffer.recursiveLocations.set(value, buffer.length)
+			bufferRecursiveLocations.set(value, buffer.length)
 			this.type.writeValue(buffer, value, false)
 		}
 		setPointers(buffer, root)
@@ -1433,14 +1451,19 @@ class PointerType extends Type {
 	 * tribeType.writeValue(buffer, value)
 	 */
 	writeValue(buffer, value, root = true) {
-		if (!buffer.pointers) buffer.pointers = new Map //initialize pointers map if it doesn't exist
+		assert.instanceOf(buffer, GrowableBuffer)
+		let bufferPointers = pointers.get(buffer)
+		if (bufferPointers === undefined) {
+			bufferPointers = new Map //initialize pointers map if it doesn't exist
+			pointers.set(buffer, bufferPointers)
+		}
 		const valueBuffer = new GrowableBuffer
 		this.type.writeValue(valueBuffer, value, false)
 		const valueString = bufferString.toBinaryString(valueBuffer.toBuffer()) //have to convert the buffer to a string because equivalent buffers are not ===
 		const currentIndex = buffer.length
-		const pointerLocations = buffer.pointers.get(valueString)
+		const pointerLocations = bufferPointers.get(valueString)
 		if (pointerLocations) pointerLocations.add(currentIndex)
-		else buffer.pointers.set(valueString, new Set([currentIndex])) //buffer.pointers maps values to the set of indices that need to point to the value
+		else bufferPointers.set(valueString, new Set([currentIndex])) //bufferPointers maps values to the set of indices that need to point to the value
 		buffer.addAll(new ArrayBuffer(4)) //placeholder for pointer
 		setPointers(buffer, root)
 	}
