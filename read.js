@@ -496,19 +496,17 @@ function consumeType(typeBuffer, offset) {
 			const id = new DataView(typeBuffer).getUint16(offset + length)
 			length += 2
 			let bufferRecursiveNames = recursiveNames.get(typeBuffer)
-			if (!bufferRecursiveNames) {
-				bufferRecursiveNames = new Map
-				recursiveNames.set(typeBuffer, bufferRecursiveNames)
-			}
-			let recursiveName = bufferRecursiveNames.get(id)
+			let recursiveName
+			if (bufferRecursiveNames) recursiveName = bufferRecursiveNames.get(id) //see whether this type was previously read
+			else recursiveNames.set(typeBuffer, new Map)
 			if (!recursiveName) { //if we have never read to type yet, the type def must lie here
 				do {
 					recursiveName = 'read-type'
-					for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) {
+					for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) { //add some hex chars
 						recursiveName += Math.floor(Math.random() * 16).toString(16)
 					}
-				} while (recursiveRegistry.isRegistered(recursiveName))
-				bufferRecursiveNames.set(id, recursiveName)
+				} while (recursiveRegistry.isRegistered(recursiveName)) //make sure name doesn't conflict
+				bufferRecursiveNames.set(id, recursiveName) //register type before reading type definition so it can refer to this recursive type
 				const type = consumeType(typeBuffer, offset + length)
 				length += type.length
 				recursiveRegistry.registerType({

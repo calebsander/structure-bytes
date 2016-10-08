@@ -13,8 +13,8 @@ const config = require(__dirname + '/config.js')
 const sha256 = require('sha256')
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
 let recursiveRegistry
-function loadRecursiveRegistry() {
-	if (!recursiveRegistry) recursiveRegistry = require(__dirname + '/recursive-registry.js') //lazy require to avoid mutual dependence
+function loadRecursiveRegistry() { //lazy require to avoid mutual dependence
+	if (!recursiveRegistry) recursiveRegistry = require(__dirname + '/recursive-registry.js')
 }
 const strint = require(__dirname + '/lib/strint.js')
 const util = require('util')
@@ -1285,21 +1285,21 @@ class RecursiveType extends AbsoluteType {
 			let bufferRecursiveIDs = recursiveIDs.get(buffer)
 			if (!bufferRecursiveIDs) {
 				bufferRecursiveIDs = new Map
-				recursiveIDs.set(buffer, bufferRecursiveIDs)
+				recursiveIDs.set(buffer, bufferRecursiveIDs) //look for existing translation into recursive ID
 			}
 			let recursiveID = bufferRecursiveIDs.get(this.name)
 			const firstOccurence = recursiveID === undefined
 			if (firstOccurence) {
-				recursiveID = bufferRecursiveIDs.size
+				recursiveID = bufferRecursiveIDs.size //use the next number as the ID
 				assert.twoByteUnsignedInteger(recursiveID)
 				bufferRecursiveIDs.set(this.name, recursiveID)
 			}
 			const idBuffer = new ArrayBuffer(2)
 			new DataView(idBuffer).setUint16(0, recursiveID)
 			buffer.addAll(idBuffer)
-			if (firstOccurence) {
+			if (firstOccurence) { //if type has already been defined, don't redefine it
 				const bufferRecursiveNesting = recursiveNesting.get(buffer) || 0
-				recursiveNesting.set(buffer, bufferRecursiveNesting + 1)
+				recursiveNesting.set(buffer, bufferRecursiveNesting + 1) //keep track of how far we are inside writing recursive types (see how this is used in super.addToBuffer())
 				this.type.addToBuffer(buffer)
 				recursiveNesting.set(buffer, bufferRecursiveNesting)
 			}
@@ -1311,10 +1311,10 @@ class RecursiveType extends AbsoluteType {
 		let bufferRecursiveLocations = recursiveLocations.get(buffer)
 		if (bufferRecursiveLocations) {
 			const targetLocation = bufferRecursiveLocations.get(value)
-			if (targetLocation !== undefined) {
+			if (targetLocation !== undefined) { //value has already been written to the buffer
 				writeValue = false
 				buffer.add(0x00)
-				const offset = buffer.length - targetLocation
+				const offset = buffer.length - targetLocation //calculate offset to previous location
 				assert.fourByteUnsignedInteger(offset)
 				const offsetBuffer = new ArrayBuffer(4)
 				new DataView(offsetBuffer).setUint32(0, offset)
@@ -1325,8 +1325,9 @@ class RecursiveType extends AbsoluteType {
 			bufferRecursiveLocations = new Map
 			recursiveLocations.set(buffer, bufferRecursiveLocations)
 		}
-		if (writeValue) {
+		if (writeValue) { //value has not yet been written to the buffer
 			buffer.add(0xFF)
+			//Keep track of the location before writing the data so that this location can be referenced by sub-values
 			bufferRecursiveLocations.set(value, buffer.length)
 			this.type.writeValue(buffer, value, false)
 		}

@@ -4,10 +4,11 @@ if (__dirname === '/') __dirname = ''
 const assert = require(__dirname + '/lib/assert.js')
 const t = require(__dirname + '/structure-types.js')
 
+//A map of names of recursive types to their types
 const registeredTypes = new Map
 module.exports = {
 	registerType({type, name}) {
-		assert.instanceOf(type, [
+		assert.instanceOf(type, [ //these are the only types capable of being recursive and having a known base value, e.g. [] or new Map
 			t.ArrayType,
 			t.MapType,
 			t.SetType,
