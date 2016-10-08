@@ -54,12 +54,10 @@ function pad(str, digits) {
 //This allows the reference to the read value to be used before it is populated
 function makeBaseValue(type, count) {
 	switch (type.constructor) {
-		case t.ArrayType:
-		case t.BooleanArrayType: {
+		case t.ArrayType: {
 			if (count === undefined) return []
 			else return new Array(count)
 		}
-		case t.BooleanTupleType:
 		case t.TupleType: {
 			return new Array(type.length)
 		}

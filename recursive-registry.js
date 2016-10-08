@@ -9,8 +9,6 @@ module.exports = {
 	registerType({type, name}) {
 		assert.instanceOf(type, [
 			t.ArrayType,
-			t.BooleanArrayType,
-			t.BooleanTupleType,
 			t.MapType,
 			t.SetType,
 			t.StructType,
