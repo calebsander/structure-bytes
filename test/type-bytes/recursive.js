@@ -1,4 +1,6 @@
 /*eslint-disable no-undef*/
+const crypto = require('crypto')
+
 const nodeType = new t.RecursiveType('graph-node')
 rec.registerType({
 	type: new t.StructType({
@@ -77,3 +79,11 @@ assert.throws(
 assert.throws(() => rec.registerType({name: 23, type: new t.StructType({})}), '23 is not an instance of String')
 assert.throws(() => rec.registerType({name: 'some-type', type: 23}), '23 is not an instance of ArrayType or MapType or SetType or StructType or TupleType')
 assert.throws(() => rec.registerType({name: 'tree-node', type: new t.StructType({})}), '"tree-node" is already a registered type')
+
+const randomString = crypto.randomBytes(1000).toString('binary')
+assert.equal(rec.isRegistered(randomString), false)
+rec.registerType({
+	type: new t.StructType({}),
+	name: randomString
+})
+assert.equal(rec.isRegistered(randomString), true)

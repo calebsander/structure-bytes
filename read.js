@@ -502,10 +502,12 @@ function consumeType(typeBuffer, offset) {
 			}
 			let recursiveName = bufferRecursiveNames.get(id)
 			if (!recursiveName) { //if we have never read to type yet, the type def must lie here
-				recursiveName = 'read-type'
-				for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) {
-					recursiveName += Math.floor(Math.random() * 16).toString(16)
-				}
+				do {
+					recursiveName = 'read-type'
+					for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) {
+						recursiveName += Math.floor(Math.random() * 16).toString(16)
+					}
+				} while (recursiveRegistry.isRegistered(recursiveName))
 				bufferRecursiveNames.set(id, recursiveName)
 				const type = consumeType(typeBuffer, offset + length)
 				length += type.length

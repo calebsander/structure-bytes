@@ -23,5 +23,8 @@ module.exports = {
 		const type = registeredTypes.get(name)
 		assert.assert(type !== undefined, '"' + name + '" is not a registered type')
 		return type
+	},
+	isRegistered(name) {
+		return registeredTypes.has(name)
 	}
 }
