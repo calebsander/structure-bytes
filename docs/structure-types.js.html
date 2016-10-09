@@ -1362,32 +1362,32 @@ class RecursiveType extends AbsoluteType {
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {*} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-   * @example
-   * treeType.writeValue(buffer, {
-   *   left: {
-   *     left: {
-   *       left: null,
-   *       value: 1,
-   *       right: null
-   *     },
-   *     value: 2,
-   *     right: {
-   *       left: null,
-   *       value: 3,
-   *       right: null
-   *     }
-   *   },
-   *   value: 4,
-   *   right: {
-   *     left: null,
-   *     value: 5,
-   *     right: {
-   *       left: null,
-   *       value: 6,
-   *       right: null
-   *     }
-   *   }
-   * })
+	 * @example
+	 * treeType.writeValue(buffer, {
+	 *   left: {
+	 *     left: {
+	 *       left: null,
+	 *       value: 1,
+	 *       right: null
+	 *     },
+	 *     value: 2,
+	 *     right: {
+	 *       left: null,
+	 *       value: 3,
+	 *       right: null
+	 *     }
+	 *   },
+	 *   value: 4,
+	 *   right: {
+	 *     left: null,
+	 *     value: 5,
+	 *     right: {
+	 *       left: null,
+	 *       value: 6,
+	 *       right: null
+	 *     }
+	 *   }
+	 * })
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
