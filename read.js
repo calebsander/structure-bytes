@@ -498,7 +498,10 @@ function consumeType(typeBuffer, offset) {
 			let bufferRecursiveNames = recursiveNames.get(typeBuffer)
 			let recursiveName
 			if (bufferRecursiveNames) recursiveName = bufferRecursiveNames.get(id) //see whether this type was previously read
-			else recursiveNames.set(typeBuffer, new Map)
+			else {
+				bufferRecursiveNames = new Map
+				recursiveNames.set(typeBuffer, bufferRecursiveNames)
+			}
 			if (!recursiveName) { //if we have never read to type yet, the type def must lie here
 				do {
 					recursiveName = 'read-type'
@@ -547,7 +550,6 @@ function consumeType(typeBuffer, offset) {
 }
 function type(typeBuffer, fullBuffer = true) {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
-	recursiveNames.set(typeBuffer, new Map) //reset the map of numerical IDs to synthetic names in case the buffer was already read from
 	const {value, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value
