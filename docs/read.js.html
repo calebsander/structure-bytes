@@ -34,6 +34,7 @@ if (__dirname === '/') __dirname = ''
 const assert = require(__dirname + '/lib/assert.js')
 const bitMath = require(__dirname + '/lib/bit-math.js')
 const bufferString = require(__dirname + '/lib/buffer-string.js')
+const recursiveRegistry = require(__dirname + '/recursive-registry.js')
 const strint = require(__dirname + '/lib/strint.js')
 const t = require(__dirname + '/structure-types.js')
 const util = require('util')
@@ -49,7 +50,8 @@ function readLengthBuffer(buffer, offset) {
 	}
 	catch (e) { assert.fail(NOT_LONG_ENOUGH) }
 }
-const SINGLE_BYTE_TYPES = [ //types whose type bytes are only 1 byte long (the type byte)
+//Types whose type bytes are only 1 byte long (the type byte)
+const SINGLE_BYTE_TYPES = [
 	t.ByteType,
 	t.ShortType,
 	t.IntType,
@@ -76,9 +78,34 @@ function pad(str, digits) {
 	if (str.length &lt; digits) return '0'.repeat(digits - str.length) + str
 	else return str
 }
+//Returns an object to which keys are added when reading an instance of the specified type
+//This allows the reference to the read value to be used before it is populated
+function makeBaseValue(type, count) {
+	switch (type.constructor) {
+		case t.ArrayType: {
+			if (count === undefined) return []
+			else return new Array(count)
+		}
+		case t.TupleType: {
+			return new Array(type.length)
+		}
+		case t.MapType: {
+			return new Map
+		}
+		case t.SetType: {
+			return new Set
+		}
+		case t.StructType: {
+			return {}
+		}
+		default: {
+			throw new Error('Invalid type for base value: ' + util.inspect(type))
+		}
+	}
+}
 //Counterpart for writeBooleans() in structure-types.js
-function readBooleans({buffer, offset, count}) {
-	const value = new Array(count)
+function readBooleans({buffer, offset, count, baseValue}) {
+	const value = baseValue || new Array(count)
 	const incompleteBytes = bitMath.modEight(value.length)
 	const bytes = bitMath.dividedByEight(value.length)
 	let byteLength
@@ -102,7 +129,9 @@ function readBooleans({buffer, offset, count}) {
 	Pointer start refers to the position in the buffer where the root value starts
 	(pointers will be relative to this location)
 */
-function consumeValue({buffer, pointerStart, offset, type}) {
+//Map of value buffers to maps of indices to read values for recursive types
+const readRecursives = new WeakMap
+function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 	let value, length
 	switch (type.constructor) {
 		case t.ByteType: {
@@ -220,7 +249,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.BooleanType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const readByte = new Uint8Array(buffer)[offset]
 			assert.assert(readByte === 0x00 || readByte === 0xFF, '0x' + readByte.toString(16) + ' is an invalid Boolean value')
 			value = !!readByte //convert integer to boolean
@@ -229,13 +258,13 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.BooleanArrayType: {
 			const arrayLength = readLengthBuffer(buffer, offset)
 			length = arrayLength.length
-			const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value})
+			const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value, baseValue})
 			length += booleans.length
 			;({value} = booleans)
 			break
 		}
 		case t.BooleanTupleType: {
-			({value, length} = readBooleans({buffer, offset, count: type.length}))
+			({value, length} = readBooleans({buffer, offset, count: type.length, baseValue}))
 			break
 		}
 		case t.CharType: {
@@ -265,7 +294,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.TupleType: {
 			length = 0
-			value = new Array(type.length)
+			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i &lt; type.length; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
@@ -275,7 +304,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.StructType: {
 			length = 0
-			value = {}
+			value = baseValue || makeBaseValue(type)
 			for (const field of type.fields) {
 				const readField = consumeValue({buffer, pointerStart, offset: offset + length, type: field.type})
 				value[field.name] = readField.value
@@ -286,7 +315,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.ArrayType: {
 			const arrayLength = readLengthBuffer(buffer, offset)
 			length = arrayLength.length
-			value = new Array(arrayLength.value)
+			value = baseValue || makeBaseValue(type, arrayLength.value)
 			for (let i = 0; i &lt; value.length; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
@@ -297,7 +326,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.SetType: {
 			const size = readLengthBuffer(buffer, offset)
 			length = size.length
-			value = new Set
+			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i &lt; size.value; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
@@ -308,7 +337,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		case t.MapType: {
 			const size = readLengthBuffer(buffer, offset)
 			length = size.length
-			value = new Map
+			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i &lt; size.value; i++) {
 				const keyElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.keyType})
 				length += keyElement.length
@@ -320,7 +349,7 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.EnumType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const valueIndex = new Uint8Array(buffer)[offset]
 			value = type.values[valueIndex]
 			if (value === undefined) assert.fail('Index ' + String(valueIndex) + ' is invalid')
@@ -328,16 +357,37 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 		}
 		case t.ChoiceType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const typeIndex = new Uint8Array(buffer)[offset]
 			const subValue = consumeValue({buffer, pointerStart, offset: offset + length, type: type.types[typeIndex]})
 			length += subValue.length
 			value = subValue.value
 			break
 		}
+		case t.RecursiveType: {
+			length = 1
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+			const readValueByte = new Uint8Array(buffer)[offset]
+			assert.assert(readValueByte === 0x00 || readValueByte === 0xFF, '0x' + readValueByte.toString(16) + ' is an invalid Recursive byte')
+			if (readValueByte) {
+				const subType = type.type
+				value = makeBaseValue(subType)
+				if (!readRecursives.has(buffer)) readRecursives.set(buffer, new Map)
+				readRecursives.get(buffer).set(offset + length, value)
+				length += consumeValue({buffer, pointerStart, offset: offset + length, type: subType, baseValue: value}).length
+			}
+			else {
+				const indexOffset = readLengthBuffer(buffer, offset + length)
+				const target = offset + length - indexOffset.value
+				value = readRecursives.get(buffer).get(target)
+				assert.assert(value !== undefined, 'Cannot find target at ' + String(target))
+				length += indexOffset.length
+			}
+			break
+		}
 		case t.OptionalType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const optionalByte = new Uint8Array(buffer)[offset]
 			assert.assert(optionalByte === 0x00 || optionalByte === 0xFF, '0x' + optionalByte.toString(16) + ' is an invalid Optional byte')
 			if (optionalByte) {
@@ -359,6 +409,10 @@ function consumeValue({buffer, pointerStart, offset, type}) {
 	}
 	return {value, length}
 }
+//Number of random characters in synthetic recursive type names
+const RECURSIVE_NAME_LENGTH = 16
+//Map of type buffers to maps of ids synthetic recursive type names
+const recursiveNames = new WeakMap
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
@@ -465,6 +519,35 @@ function consumeType(typeBuffer, offset) {
 			value = new t.ChoiceType(types)
 			break
 		}
+		case t.RecursiveType._value: {
+			assert.assert(typeBuffer.byteLength >= offset + length + 2, NOT_LONG_ENOUGH)
+			const id = new DataView(typeBuffer).getUint16(offset + length)
+			length += 2
+			let bufferRecursiveNames = recursiveNames.get(typeBuffer)
+			let recursiveName
+			if (bufferRecursiveNames) recursiveName = bufferRecursiveNames.get(id) //see whether this type was previously read
+			else recursiveNames.set(typeBuffer, new Map)
+			if (!recursiveName) { //if we have never read to type yet, the type def must lie here
+				do {
+					recursiveName = 'read-type'
+					for (let charCount = 0; charCount &lt; RECURSIVE_NAME_LENGTH; charCount++) { //add some hex chars
+						recursiveName += Math.floor(Math.random() * 16).toString(16)
+					}
+				} while (recursiveRegistry.isRegistered(recursiveName)) //make sure name doesn't conflict
+				bufferRecursiveNames.set(id, recursiveName) //register type before reading type definition so it can refer to this recursive type
+				const type = consumeType(typeBuffer, offset + length)
+				length += type.length
+				recursiveRegistry.registerType({
+					type: type.value,
+					name: recursiveName
+				})
+			}
+			/*If we have already read the type, then we are either reading a recursive type without the type def
+			  or we are reading a repeated type (in which case we don't have to care about the length of the read)
+			  so we can safely reuse old value*/
+			value = new t.RecursiveType(recursiveName)
+			break
+		}
 		case t.OptionalType._value: {
 			const type = consumeType(typeBuffer, offset + length)
 			length += type.length
@@ -492,14 +575,14 @@ function consumeType(typeBuffer, offset) {
 }
 function type(typeBuffer, fullBuffer = true) {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
+	recursiveNames.set(typeBuffer, new Map) //reset the map of numerical IDs to synthetic names in case the buffer was already read from
 	const {value, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert.assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value
 }
-function value({buffer, type, offset}) {
+function value({buffer, type, offset = 0}) {
 	assert.instanceOf(buffer, ArrayBuffer)
 	assert.instanceOf(type, t.Type)
-	if (offset === undefined) offset = 0 //for some reason, isparta doesn't like default parameters inside destructuring
 	assert.instanceOf(offset, Number)
 	const {value} = consumeValue({buffer, offset, type, pointerStart: offset})
 	//no length validation because bytes being pointed to don't get counted in the length
@@ -546,13 +629,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="RecursiveType.html">RecursiveType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#getType">getType</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#isRegistered">isRegistered</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#registerType">registerType</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
 </footer>
 
 <script> prettyPrint(); </script>

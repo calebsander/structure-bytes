@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: client-side/upload.js</title>
+    <title>JSDoc: Source: recursive-registry.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: client-side/upload.js</h1>
+    <h1 class="page-title">Source: recursive-registry.js</h1>
 
     
 
@@ -26,52 +26,62 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/*eslint-env browser*/
-(() => {
-	require('/client-side/common.js')
-	const assert = require('/lib/assert.js')
+            <pre class="prettyprint source linenums"><code>//For use with browserify
+if (__dirname === '/') __dirname = ''
+
+const assert = require(__dirname + '/lib/assert.js')
+const t = require(__dirname + '/structure-types.js')
+
+//A map of names of recursive types to their types
+const registeredTypes = new Map
+module.exports = {
 	/** @function
-	 * @name upload
-	 * @desc &lt;b>(client-side only)&lt;/b>
-	 * Uploads a value in an AJAX request.
-	 * The type used to write the value must be specified.
-	 * To use, include {@link compiled/upload.js} or {@link compiled/upload-download.js}.
-	 * @param {{type, value}} params
-	 * @param {Type} params.type The type used to write the value.
-	 * Only the value is actually sent in the request.
-	 * @param {type} params.value The value to upload
-	 * @param {Object} options [jQuery AJAX options]{@link https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings}.
-	 * These options should specify what URL to use, what to do on success, etc.
-	 * {@link options.type} or {@link options.method} must be set to {@link POST}.
-	 * {@link options.data} and {@link options.processData} will be overwritten.
-	 * @example
-	 * var type = new sb.ArrayType(
-	 *   new sb.StructType({
-	 *     name: new sb.StringType,
-	 *     id: new sb.UnsignedShortType
-	 *   })
-	 * )
-	 * sb.upload({type: type, value: [
-	 *   {name: 'John', id: 2},
-	 *   {name: 'Jane', id: 10}
-	 * ]}, {
-	 *   url: '/upload-people',
-	 *   type: 'POST',
-	 *   dataType: 'text',
-	 *   success: function(response) {
-	 *     alert(response)
-	 *   }
-	 * })
+	 * @name registerType
+	 * @desc Registers a type under a name so
+	 * the name can be used in a {@link RecursiveType}
+	 * @throws {Error} If a type is already registered under the name
+	 * @param {{type, name}} params
+	 * @param {Type} params.type The type to register
+	 * @param {string} params.name The name to associate it with
+	*/
+	registerType({type, name}) {
+		assert.instanceOf(type, [ //these are the only types capable of being recursive and having a known base value, e.g. [] or new Map
+			t.ArrayType,
+			t.MapType,
+			t.SetType,
+			t.StructType,
+			t.TupleType
+		])
+		assert.instanceOf(name, String)
+		assert.assert(!registeredTypes.has(name), '"' + name + '" is already a registered type')
+		registeredTypes.set(name, type)
+	},
+	/** @function
+	 * @name getType
+	 * @desc Gets the recursive type
+	 * registered under the specified name
+	 * @throws {Error} If no type is registered with that name
+	 * @param {string} name The name of the registered type
+	 * @return {Type} The registered type
 	 */
-	sb.upload = ({type, value}, options) => { //eslint-disable-line no-undef
-		assert.instanceOf(type, sb.Type) //eslint-disable-line no-undef
-		assert.instanceOf(options, Object)
-		if (!(options.type === 'POST' || options.method === 'POST')) assert.fail('Must use POST when uploading')
-		options.processData = false
-		options.data = type.valueBuffer(value)
-		$.ajax(options) //eslint-disable-line no-undef
+	getType(name) {
+		assert.instanceOf(name, String)
+		const type = registeredTypes.get(name)
+		assert.assert(type !== undefined, '"' + name + '" is not a registered type')
+		return type
+	},
+	/** @function
+	 * @name isRegistered
+	 * @desc Returns whether the specified name
+	 * already has a recursive type registered with it
+	 * @param {string} name The name to check
+	 * @return {boolean} Whether the name has been mapped to a type
+	 * @see registerType
+	 */
+	isRegistered(name) {
+		return registeredTypes.has(name)
 	}
-})()</code></pre>
+}</code></pre>
         </article>
     </section>
 

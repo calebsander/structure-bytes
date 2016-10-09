@@ -4,6 +4,7 @@ jsdoc --verbose -c js-conf.json \
 README.md \
 structure-types.js \
 read.js \
+recursive-registry.js \
 io.js \
 lib/buffer-stream.js \
 lib/growable-buffer.js \
