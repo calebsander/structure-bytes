@@ -98,6 +98,7 @@
 <li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
 <li><code>Enum&lt;Type&gt;</code> (a fixed set of up to 255 <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
 <li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
+<li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
 <li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or an instance of <code>Type</code>)</li>
 <li><code>Pointer&lt;Type&gt;</code> (allows multiple long instances of <code>Type</code> with the same bytes to be stored only once)</li>
 </ul>

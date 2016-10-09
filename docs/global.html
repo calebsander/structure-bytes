@@ -379,7 +379,7 @@ registered under the specified name
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="recursive-registry.js.html">recursive-registry.js</a>, <a href="recursive-registry.js.html#line31">line 31</a>
+        <a href="recursive-registry.js.html">recursive-registry.js</a>, <a href="recursive-registry.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -859,7 +859,7 @@ already has a recursive type registered with it
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="recursive-registry.js.html">recursive-registry.js</a>, <a href="recursive-registry.js.html#line45">line 45</a>
+        <a href="recursive-registry.js.html">recursive-registry.js</a>, <a href="recursive-registry.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -1471,7 +1471,12 @@ Calls <code>callback</code> with the value when done.
 
 <div class="description">
     Registers a type under a name so
-the name can be used in a <a href="RecursiveType.html"><code>RecursiveType</code></a>
+the name can be used in a <a href="RecursiveType.html"><code>RecursiveType</code></a>.
+The type must be either an <a href="ArrayType.html"><code>ArrayType</code></a>,
+<a href="MapType.html"><code>MapType</code></a>, <a href="SetType.html"><code>SetType</code></a>, <a href="StructType.html"><code>StructType</code></a>,
+or <a href="TupleType.html"><code>TupleType</code></a> due to implementation limitations.
+If you need to use a different type, wrap it
+in a single-field <a href="StructType.html"><code>StructType</code></a>.
 </div>
 
 
