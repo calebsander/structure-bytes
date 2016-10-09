@@ -55,8 +55,7 @@ function pad(str, digits) {
 function makeBaseValue(type, count) {
 	switch (type.constructor) {
 		case t.ArrayType: {
-			if (count === undefined) return []
-			else return new Array(count)
+			return new Array(count)
 		}
 		case t.TupleType: {
 			return new Array(type.length)
@@ -70,6 +69,7 @@ function makeBaseValue(type, count) {
 		case t.StructType: {
 			return {}
 		}
+		/*istanbul ignore next*/
 		default: {
 			throw new Error('Invalid type for base value: ' + util.inspect(type))
 		}
