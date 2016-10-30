@@ -44,9 +44,7 @@ class TestClass {
 		this.two = new t.CharType
 	}
 }
-TestClass.prototype.abc = () => {
-	return 23
-}
+TestClass.prototype.abc = () => 23
 let testObject = new TestClass
 let foundKey = false
 for (const key in testObject) {

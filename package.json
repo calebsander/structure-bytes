@@ -1,6 +1,6 @@
 {
 	"name": "structure-bytes",
-	"version": "2.18.9",
+	"version": "2.19.9",
 	"description": "A library for more efficient data transfers by separating the structure from the values and efficiently storing each as binary data",
 	"main": "index.js",
 	"dependencies": {
