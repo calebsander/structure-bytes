@@ -38,11 +38,13 @@ assert.throws(
 )
 
 //Test hasOwnProperty()
-function TestClass() {
-	this.one = new t.StringType
-	this.two = new t.CharType
+class TestClass {
+	constructor() {
+		this.one = new t.StringType
+		this.two = new t.CharType
+	}
 }
-TestClass.prototype.abc = function() {
+TestClass.prototype.abc = () => {
 	return 23
 }
 let testObject = new TestClass
