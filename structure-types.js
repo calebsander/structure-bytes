@@ -1025,7 +1025,8 @@ class ArrayType extends AbsoluteType {
 	*/
 	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		const length = value.length || value.size
+		let length = value.length
+		if (length === undefined) length = value.size
 		assert.fourByteUnsignedInteger(length)
 		buffer.addAll(lengthBuffer(length))
 		for (const instance of value) this.type.writeValue(buffer, instance, false)

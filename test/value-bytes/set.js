@@ -21,6 +21,7 @@ for (let [invalidValue, message] of [
 gb = new GrowableBuffer
 type.writeValue(gb, new Set)
 assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 0]))
+assert.equal(r.value({buffer: gb.toBuffer(), type}), new Set)
 gb = new GrowableBuffer
 const VALUE = new Set().add({a: 2, b: 'c'}).add({a: 420, b: '-'})
 type.writeValue(gb, VALUE)

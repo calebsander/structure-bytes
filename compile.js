@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*eslint-disable no-console*/
 const browserify = require('browserify')
 const closure = require('google-closure-compiler-js').compile
