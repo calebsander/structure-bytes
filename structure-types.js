@@ -1268,6 +1268,42 @@ class ChoiceType extends AbsoluteType {
 		setPointers(buffer, root)
 	}
 }
+class NamedChoiceType extends AbsoluteType {
+	static get _value() {
+		return 0x58
+	}
+	constructor(constructorTypes) {
+		super()
+		assert.instanceOf(constructorTypes, Map)
+		try { assert.byteUnsignedInteger(constructorTypes.size) }
+		catch (e) { assert.fail(String(constructorTypes.size) + ' types is too many') }
+		this.constructorTypes = new Map
+		const usedNames = new Set
+		for (const [constructor, type] of constructorTypes) {
+			assert.instanceOf(constructor, Function)
+			const name = constructor.name
+			assert.assert(name, 'Function "' + String(name) + '" does not have a name')
+			assert.assert(!usedNames.has(name), 'Function name "' + name + '" is repeated')
+			usedNames.add(name)
+			//Name must fit in 255 UTF-8 bytes
+			const typeNameBuffer = bufferString.fromString(name)
+			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
+			catch (e) { assert.fail('Function name "' + name + '" is too long') }
+			assert.instanceOf(type, StructType)
+			this.constructorTypes.set(constructor, {nameBuffer: typeNameBuffer, type})
+		}
+	}
+	addToBuffer(buffer) {
+		if (super.addToBuffer(buffer)) {
+			buffer.add(this.constructorTypes.size)
+			for (const [_, {nameBuffer, type}] of this.constructorTypes) { //eslint-disable-line no-unused-vars
+				buffer.add(nameBuffer.byteLength)
+				buffer.addAll(nameBuffer)
+				type.addToBuffer(buffer)
+			}
+		}
+	}
+}
 /**
  * A type that can refer recursively to itself.
  * This is not a type in its own right, but allows you
@@ -1557,6 +1593,7 @@ module.exports = {
 	MapType,
 	EnumType,
 	ChoiceType,
+	NamedChoiceType,
 	RecursiveType,
 	OptionalType,
 	PointerType,
