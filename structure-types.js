@@ -983,7 +983,7 @@ class StructType extends AbsoluteType {
 		assert.instanceOf(value, Object)
 		for (const field of this.fields) {
 			const fieldValue = value[field[NAME]]
-			if (fieldValue === undefined) assert.fail('Value for field ' + field[NAME] + ' missing')
+			if (fieldValue === undefined) assert.fail('Value for field "' + field[NAME] + '" missing')
 			field[TYPE].writeValue(buffer, fieldValue, false)
 		}
 		setPointers(buffer, root)
@@ -1277,7 +1277,8 @@ class NamedChoiceType extends AbsoluteType {
 		assert.instanceOf(constructorTypes, Map)
 		try { assert.byteUnsignedInteger(constructorTypes.size) }
 		catch (e) { assert.fail(String(constructorTypes.size) + ' types is too many') }
-		this.constructorTypes = new Map
+		this.constructorIndices = new Map
+		this.constructorTypes = new Array(constructorTypes.size)
 		const usedNames = new Set
 		for (const [constructor, type] of constructorTypes) {
 			assert.instanceOf(constructor, Function)
@@ -1290,18 +1291,30 @@ class NamedChoiceType extends AbsoluteType {
 			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
 			catch (e) { assert.fail('Function name "' + name + '" is too long') }
 			assert.instanceOf(type, StructType)
-			this.constructorTypes.set(constructor, {nameBuffer: typeNameBuffer, type})
+			const constructorIndex = this.constructorIndices.size
+			this.constructorIndices.set(constructor, constructorIndex)
+			this.constructorTypes[constructorIndex] = {nameBuffer: typeNameBuffer, type}
 		}
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
-			buffer.add(this.constructorTypes.size)
-			for (const [_, {nameBuffer, type}] of this.constructorTypes) { //eslint-disable-line no-unused-vars
+			buffer.add(this.constructorTypes.length)
+			for (const {nameBuffer, type} of this.constructorTypes) { //eslint-disable-line no-unused-vars
 				buffer.add(nameBuffer.byteLength)
 				buffer.addAll(nameBuffer)
 				type.addToBuffer(buffer)
 			}
 		}
+	}
+	writeValue(buffer, value, root = true) {
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Object)
+		const writeIndex = this.constructorIndices.get(value.constructor)
+		if (writeIndex === undefined) assert.fail('No types matched: ' + util.inspect(value))
+		buffer.add(writeIndex)
+		const {type} = this.constructorTypes[writeIndex]
+		type.writeValue(buffer, value, false)
+		setPointers(buffer, root)
 	}
 }
 /**

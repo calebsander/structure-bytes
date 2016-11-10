@@ -7,7 +7,7 @@ let type = new t.StructType({
 let gb = new GrowableBuffer
 assert.throws(
 	() => type.writeValue(gb, {b: [true]}),
-	'Value for field i missing'
+	'Value for field "i" missing'
 )
 const VALUE = {
 	b: [true, false, true],

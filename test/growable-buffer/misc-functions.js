@@ -31,3 +31,15 @@ assert.throws(
 	() => gb.set(1, 256),
 	'Not a byte: 256 (256 is not in [0,256))'
 )
+assert.throws(
+	() => gb.add(undefined),
+	'undefined is not an instance of Number'
+)
+assert.throws(
+	() => gb.add(0x100),
+	'Not a byte: 256 (256 is not in [0,256))'
+)
+assert.throws(
+	() => gb.add(1.2),
+	'1.2 is not an integer'
+)
