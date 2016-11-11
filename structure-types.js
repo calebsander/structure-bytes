@@ -1309,7 +1309,13 @@ class NamedChoiceType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Object)
-		const writeIndex = this.constructorIndices.get(value.constructor)
+		let writeIndex
+		for (const [constructor, index] of this.constructorIndices) {
+			if (value instanceof constructor) {
+				writeIndex = index
+				break
+			}
+		}
 		if (writeIndex === undefined) assert.fail('No types matched: ' + util.inspect(value))
 		buffer.add(writeIndex)
 		const {type} = this.constructorTypes[writeIndex]
