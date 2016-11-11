@@ -6,7 +6,6 @@ let type = new t.OptionalType(
 )
 let gb = new GrowableBuffer
 for (let [invalidValue, message] of [
-	[undefined, 'undefined is not an instance of Array'],
 	[2, '2 is not an instance of Array'],
 	[[-1], 'Value out of range (-1 is not in [0,256))'],
 	['abc', "'abc' is not an instance of Array"]
@@ -16,10 +15,10 @@ for (let [invalidValue, message] of [
 		message
 	)
 }
-gb = new GrowableBuffer
-type.writeValue(gb, null)
-assert.equal(gb.toBuffer(), bufferFrom([0x00]))
-assert.equal(r.value({buffer: gb.toBuffer(), type}), null)
+assert.equal(type.valueBuffer(null), bufferFrom([0]))
+assert.equal(r.value({buffer: type.valueBuffer(null), type}), null)
+assert.equal(type.valueBuffer(undefined), bufferFrom([0]))
+assert.equal(r.value({buffer: type.valueBuffer(undefined), type}), null)
 gb = new GrowableBuffer
 const VALUE = [1, 10, 100]
 type.writeValue(gb, VALUE)

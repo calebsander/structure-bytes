@@ -1447,7 +1447,9 @@ class RecursiveType extends AbsoluteType {
 	}
 }
 /**
- * A type storing a value of another type or {@link null}
+ * A type storing a value of another type or {@link null} or {@link undefined}.
+ * {@link null} and {@link undefined} are treated identically,
+ * and reading either value will result in {@link null}.
  * @example
  * //If you have a job slot that may or may not be filled
  * let personType = new sb.StructType({...})
@@ -1476,7 +1478,7 @@ class OptionalType extends AbsoluteType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {null|type} value The value to write
+	 * @param {null|undefined|type} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * type.writeValue(buffer, {
@@ -1490,7 +1492,7 @@ class OptionalType extends AbsoluteType {
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		if (value === null) buffer.add(0x00)
+		if (value === null || value === undefined) buffer.add(0x00)
 		else {
 			buffer.add(0xFF)
 			this.type.writeValue(buffer, value, false)
