@@ -59,6 +59,7 @@ const downloadFiles = [
 	'/client-side/binary-ajax.js',
 	'/client-side/common.js',
 	'/config.js',
+	'/constructor-registry.js',
 	'/lib/bit-math.js',
 	'/lib/buffer-string.js',
 	'/lib/growable-buffer.js',

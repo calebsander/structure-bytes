@@ -1277,7 +1277,7 @@ class NamedChoiceType extends AbsoluteType {
 		assert.instanceOf(constructorTypes, Map)
 		try { assert.byteUnsignedInteger(constructorTypes.size) }
 		catch (e) { assert.fail(String(constructorTypes.size) + ' types is too many') }
-		this.constructorIndices = new Map
+		this.indexConstructors = new Map
 		this.constructorTypes = new Array(constructorTypes.size)
 		const usedNames = new Set
 		for (const [constructor, type] of constructorTypes) {
@@ -1291,8 +1291,8 @@ class NamedChoiceType extends AbsoluteType {
 			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
 			catch (e) { assert.fail('Function name "' + name + '" is too long') }
 			assert.instanceOf(type, StructType)
-			const constructorIndex = this.constructorIndices.size
-			this.constructorIndices.set(constructor, constructorIndex)
+			const constructorIndex = this.indexConstructors.size
+			this.indexConstructors.set(constructorIndex, constructor)
 			this.constructorTypes[constructorIndex] = {nameBuffer: typeNameBuffer, type}
 		}
 	}
@@ -1310,7 +1310,7 @@ class NamedChoiceType extends AbsoluteType {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Object)
 		let writeIndex
-		for (const [constructor, index] of this.constructorIndices) {
+		for (const [index, constructor] of this.indexConstructors) {
 			if (value instanceof constructor) {
 				writeIndex = index
 				break

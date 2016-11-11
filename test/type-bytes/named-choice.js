@@ -25,8 +25,9 @@ assert.equal(type.toBuffer(), bufferFrom([
 			3, 0x55, 0x50, 0x43,
 				0x51, 1, 6, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x14
 ]))
+assert.equal(r.type(type.toBuffer()), type)
 
-assert.throws(() => new t.NamedChoiceType(), 'undefined is not an instance of Map')
+assert.throws(() => new t.NamedChoiceType, 'undefined is not an instance of Map')
 assert.throws(() => new t.NamedChoiceType(new Map().set(1, 2)), '1 is not an instance of Function')
 const tooManyConstructors = {}
 for (let i = 1; i <= 256; i++) tooManyConstructors['a'.repeat(i)] = function() {}
@@ -38,26 +39,20 @@ assert.throws(() => { //eslint-disable-line arrow-body-style
 		.set(() => {}, new t.StructType({}))
 	)
 }, 'Function "" does not have a name')
-let a = {
-	func() {}
-}
-let b = {
-	func() {}
-}
+let a = {func() {}}
+let b = {func() {}}
 assert.throws(() => { //eslint-disable-line arrow-body-style
 	return new t.NamedChoiceType(new Map()
 		.set(a.func, new t.StructType({}))
 		.set(b.func, new t.StructType({}))
 	)
 }, 'Function name "func" is repeated')
-let c = {
-	['c'.repeat(256)]() {}
-}
+const longConstructorName = 'c'.repeat(256)
 assert.throws(() => { //eslint-disable-line arrow-body-style
 	return new t.NamedChoiceType(new Map()
-		.set(c[Object.keys(c)[0]], new t.StructType({}))
+		.set(constructorRegistry.get(longConstructorName), new t.StructType({}))
 	)
-}, 'Function name "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" is too long')
+}, 'Function name "' + longConstructorName + '" is too long')
 assert.throws(() => { //eslint-disable-line arrow-body-style
 	return new t.NamedChoiceType(new Map()
 		.set(a.func, new t.UnsignedIntType)

@@ -6,6 +6,7 @@ if (__dirname === '/') __dirname = ''
 const assert = require(__dirname + '/lib/assert.js')
 const bitMath = require(__dirname + '/lib/bit-math.js')
 const bufferString = require(__dirname + '/lib/buffer-string.js')
+const constructorRegistry = require(__dirname + '/constructor-registry.js')
 const recursiveRegistry = require(__dirname + '/recursive-registry.js')
 const strint = require(__dirname + '/lib/strint.js')
 const t = require(__dirname + '/structure-types.js')
@@ -333,7 +334,24 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			const typeIndex = new Uint8Array(buffer)[offset]
 			const subValue = consumeValue({buffer, pointerStart, offset: offset + length, type: type.types[typeIndex]})
 			length += subValue.length
-			value = subValue.value
+			;({value} = subValue)
+			break
+		}
+		case t.NamedChoiceType: {
+			length = 1
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+			const typeIndex = new Uint8Array(buffer)[offset]
+			const constructorName = type.indexConstructors.get(typeIndex).name
+			const constructor = constructorRegistry.get(constructorName)
+			const subValue = consumeValue({
+				buffer,
+				pointerStart,
+				offset: offset + length,
+				type: type.constructorTypes[typeIndex].type,
+				baseValue: new constructor
+			})
+			length += subValue.length
+			;({value} = subValue)
 			break
 		}
 		case t.RecursiveType: {
@@ -424,10 +442,12 @@ function consumeType(typeBuffer, offset) {
 				assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
 				const nameLength = castBuffer[offset + length]
 				length++
-				assert.assert(typeBuffer.byteLength >= offset + length + nameLength, NOT_LONG_ENOUGH)
-				const name = bufferString.toString(castBuffer.subarray(offset + length, offset + length + nameLength))
+				const nameStart = offset + length
+				const nameEnd = nameStart + nameLength
+				assert.assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
+				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
 				length += nameLength
-				const type = consumeType(typeBuffer, offset + length)
+				const type = consumeType(typeBuffer, nameEnd)
 				fields[name] = type.value
 				length += type.length
 			}
@@ -489,6 +509,28 @@ function consumeType(typeBuffer, offset) {
 				length += type.length
 			}
 			value = new t.ChoiceType(types)
+			break
+		}
+		case t.NamedChoiceType._value: {
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			const castBuffer = new Uint8Array(typeBuffer)
+			const typeCount = castBuffer[offset + length]
+			length++
+			const constructorTypes = new Map
+			for (let i = 0; i < typeCount; i++) {
+				assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+				const nameLength = castBuffer[offset + length]
+				length++
+				const nameStart = offset + length
+				const nameEnd = nameStart + nameLength
+				assert.assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
+				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
+				length += nameLength
+				const type = consumeType(typeBuffer, nameEnd)
+				constructorTypes.set(constructorRegistry.get(name), type.value)
+				length += type.length
+			}
+			value = new t.NamedChoiceType(constructorTypes)
 			break
 		}
 		case t.RecursiveType._value: {

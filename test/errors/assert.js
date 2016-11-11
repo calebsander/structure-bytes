@@ -39,6 +39,13 @@ assert.throws(
 	() => assert.equal(bufferFrom([1, 2, 5]), bufferFrom([1, 2, 3])),
 	'Expected ArrayBuffer { byteLength: 3 } but got ArrayBuffer { byteLength: 3 }'
 )
+let a = {func() {}},
+	b = {func() {}}
+assert.throws(
+	() => assert.assert(a.func === b.func, 'Unequal'),
+	'Unequal'
+)
+assert.equal(a.func, b.func)
 class EqualsThrows {
 	equals() {
 		throw new Error('Equals is not implemented')
@@ -66,4 +73,12 @@ for (let Type of [Array, Map, Set, ArrayBuffer]) {
 assert.throws(
 	() => assert.equal(Buffer.from([1, 0, 3]), Buffer.from([1, 2, 3])),
 	'Expected <Buffer 01 02 03> but got <Buffer 01 00 03>'
+)
+assert.throws(
+	() => assert.equal(Buffer.from([1, 2]), Buffer.from([1, 2, 3])),
+	'Expected <Buffer 01 02 03> but got <Buffer 01 02>'
+)
+assert.throws(
+	() => assert.equal(Buffer.from([1, 2, 3, 4]), Buffer.from([1, 2, 3])),
+	'Expected <Buffer 01 02 03> but got <Buffer 01 02 03 04>'
 )
