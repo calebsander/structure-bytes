@@ -78,7 +78,7 @@ class Type {
 	 * Appends the type information to a {@link GrowableBuffer}.
 	 * All types start with the byte specified by {@link Type._value}.
 	 * For the most primitive types, this implementation is sufficient.
-	 * Recursive types should override this method,
+	 * More complex types should override this method,
 	 * invoking [super.addToBuffer()]{@link Type#addToBuffer} and then adding their own data if it returns true.
 	 * @param {GrowableBuffer} buffer The buffer to append to
 	 * @return {boolean} {@link false} if it wrote a pointer to a previous instance, {@link true} if it wrote the type byte. Intended to only be used internally.
@@ -1268,10 +1268,54 @@ class ChoiceType extends AbsoluteType {
 		setPointers(buffer, root)
 	}
 }
+/**
+ * A type storing a value of one of several fixed classes.
+ * Each class is associated with a {@link StructType}
+ * used to write values of instances of the class.
+ * Unlike {@link ChoiceType}, read values specify the type
+ * used to write them.
+ * The list of possible types must contain at most 255 types.
+ * {@link NamedChoiceType} is similar to {@link ChoiceType} in most respects.
+ * @example
+ * //Storing various barcode types
+ * class QRCode {
+ *   constructor(text) {
+ *     this.text = text
+ *   }
+ * }
+ * class UPC {
+ *   constructor(number) {
+ *     this.number = number
+ *   }
+ * }
+ * let barcodeType = new sb.NamedChoiceType(new Map()
+ *   .set(QRCode, new sb.StructType({
+ *     text: new sb.StringType
+ *   }))
+ *   .set(UPC, new sb.StructType({
+ *     number: new sb.UnsignedLongType
+ *   }))
+ * )
+ * @extends Type
+ * @inheritdoc
+ */
 class NamedChoiceType extends AbsoluteType {
 	static get _value() {
 		return 0x58
 	}
+	/**
+	 * @param {Map.<constructor, Type>} types The mapping
+	 * of constructors to associated types.
+	 * Cannot contain more than 255 types.
+	 * Values will be written using the type
+	 * associated with the first constructor in the map
+	 * of which they are an instance,
+	 * so place higher priority types earlier.
+	 * For example, if you wanted to be able to write
+	 * the values of instances of a subclass and a superclass,
+	 * put the subclass first so that all its fields
+	 * are written, not just those inherited from the superclass.
+	 */
 	constructor(constructorTypes) {
 		super()
 		assert.instanceOf(constructorTypes, Map)
@@ -1306,6 +1350,21 @@ class NamedChoiceType extends AbsoluteType {
 			}
 		}
 	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * The constructor name will be transfered to the read value.
+	 * So, if you write using the type associated with {@link QRCode},
+	 * the read value's constructor will also be named {@link "QRCode"}.
+	 * If, however, you write an instance of a subclass of {@link QRCode},
+	 * it will write as {@link QRCode} and the read value's constructor
+	 * will be named {@link "QRCode"}.
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {*} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, new QRCode('abc')) //writes as QRCode
+	 * type.writeValue(buffer, new UPC('0123')) //writes as UPC
+	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Object)
@@ -1488,6 +1547,9 @@ class OptionalType extends AbsoluteType {
 	 * type.writeValue(buffer, {
 	 *   title: 'Assistant Librarian',
 	 *   employee: null
+	 * })
+	 * type.writeValue(buffer, {
+	 *   title: 'Assistant Librarian'
 	 * })
 	 */
 	writeValue(buffer, value, root = true) {

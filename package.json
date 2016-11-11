@@ -15,7 +15,7 @@
 		"browserify": "13.1.x",
 		"coveralls": "2.11.x",
 		"google-closure-compiler-js": "20161024.0.0",
-		"nyc": "8.3.x"
+		"nyc": "8.4.x"
 	},
 	"directories": {
 		"test": "test"

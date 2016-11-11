@@ -106,7 +106,7 @@ class Type {
 	 * Appends the type information to a {@link GrowableBuffer}.
 	 * All types start with the byte specified by {@link Type._value}.
 	 * For the most primitive types, this implementation is sufficient.
-	 * Recursive types should override this method,
+	 * More complex types should override this method,
 	 * invoking [super.addToBuffer()]{@link Type#addToBuffer} and then adding their own data if it returns true.
 	 * @param {GrowableBuffer} buffer The buffer to append to
 	 * @return {boolean} {@link false} if it wrote a pointer to a previous instance, {@link true} if it wrote the type byte. Intended to only be used internally.
@@ -1011,7 +1011,7 @@ class StructType extends AbsoluteType {
 		assert.instanceOf(value, Object)
 		for (const field of this.fields) {
 			const fieldValue = value[field[NAME]]
-			if (fieldValue === undefined) assert.fail('Value for field ' + field[NAME] + ' missing')
+			if (fieldValue === undefined) assert.fail('Value for field "' + field[NAME] + '" missing')
 			field[TYPE].writeValue(buffer, fieldValue, false)
 		}
 		setPointers(buffer, root)
@@ -1053,7 +1053,8 @@ class ArrayType extends AbsoluteType {
 	*/
 	_writeValue(buffer, value, root) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		const length = value.length || value.size
+		let length = value.length
+		if (length === undefined) length = value.size
 		assert.fourByteUnsignedInteger(length)
 		buffer.addAll(lengthBuffer(length))
 		for (const instance of value) this.type.writeValue(buffer, instance, false)
@@ -1296,6 +1297,120 @@ class ChoiceType extends AbsoluteType {
 	}
 }
 /**
+ * A type storing a value of one of several fixed classes.
+ * Each class is associated with a {@link StructType}
+ * used to write values of instances of the class.
+ * Unlike {@link ChoiceType}, read values specify the type
+ * used to write them.
+ * The list of possible types must contain at most 255 types.
+ * {@link NamedChoiceType} is similar to {@link ChoiceType} in most respects.
+ * @example
+ * //Storing various barcode types
+ * class QRCode {
+ *   constructor(text) {
+ *     this.text = text
+ *   }
+ * }
+ * class UPC {
+ *   constructor(number) {
+ *     this.number = number
+ *   }
+ * }
+ * let barcodeType = new sb.NamedChoiceType(new Map()
+ *   .set(QRCode, new sb.StructType({
+ *     text: new sb.StringType
+ *   }))
+ *   .set(UPC, new sb.StructType({
+ *     number: new sb.UnsignedLongType
+ *   }))
+ * )
+ * @extends Type
+ * @inheritdoc
+ */
+class NamedChoiceType extends AbsoluteType {
+	static get _value() {
+		return 0x58
+	}
+	/**
+	 * @param {Map.&lt;constructor, Type>} types The mapping
+	 * of constructors to associated types.
+	 * Cannot contain more than 255 types.
+	 * Values will be written using the type
+	 * associated with the first constructor in the map
+	 * of which they are an instance,
+	 * so place higher priority types earlier.
+	 * For example, if you wanted to be able to write
+	 * the values of instances of a subclass and a superclass,
+	 * put the subclass first so that all its fields
+	 * are written, not just those inherited from the superclass.
+	 */
+	constructor(constructorTypes) {
+		super()
+		assert.instanceOf(constructorTypes, Map)
+		try { assert.byteUnsignedInteger(constructorTypes.size) }
+		catch (e) { assert.fail(String(constructorTypes.size) + ' types is too many') }
+		this.indexConstructors = new Map
+		this.constructorTypes = new Array(constructorTypes.size)
+		const usedNames = new Set
+		for (const [constructor, type] of constructorTypes) {
+			assert.instanceOf(constructor, Function)
+			const name = constructor.name
+			assert.assert(name, 'Function "' + String(name) + '" does not have a name')
+			assert.assert(!usedNames.has(name), 'Function name "' + name + '" is repeated')
+			usedNames.add(name)
+			//Name must fit in 255 UTF-8 bytes
+			const typeNameBuffer = bufferString.fromString(name)
+			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
+			catch (e) { assert.fail('Function name "' + name + '" is too long') }
+			assert.instanceOf(type, StructType)
+			const constructorIndex = this.indexConstructors.size
+			this.indexConstructors.set(constructorIndex, constructor)
+			this.constructorTypes[constructorIndex] = {nameBuffer: typeNameBuffer, type}
+		}
+	}
+	addToBuffer(buffer) {
+		if (super.addToBuffer(buffer)) {
+			buffer.add(this.constructorTypes.length)
+			for (const {nameBuffer, type} of this.constructorTypes) { //eslint-disable-line no-unused-vars
+				buffer.add(nameBuffer.byteLength)
+				buffer.addAll(nameBuffer)
+				type.addToBuffer(buffer)
+			}
+		}
+	}
+	/**
+	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
+	 * The constructor name will be transfered to the read value.
+	 * So, if you write using the type associated with {@link QRCode},
+	 * the read value's constructor will also be named {@link "QRCode"}.
+	 * If, however, you write an instance of a subclass of {@link QRCode},
+	 * it will write as {@link QRCode} and the read value's constructor
+	 * will be named {@link "QRCode"}.
+	 * @param {GrowableBuffer} buffer The buffer to which to append
+	 * @param {*} value The value to write
+	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+	 * @example
+	 * type.writeValue(buffer, new QRCode('abc')) //writes as QRCode
+	 * type.writeValue(buffer, new UPC('0123')) //writes as UPC
+	 */
+	writeValue(buffer, value, root = true) {
+		assert.instanceOf(buffer, GrowableBuffer)
+		assert.instanceOf(value, Object)
+		let writeIndex
+		for (const [index, constructor] of this.indexConstructors) {
+			if (value instanceof constructor) {
+				writeIndex = index
+				break
+			}
+		}
+		if (writeIndex === undefined) assert.fail('No types matched: ' + util.inspect(value))
+		buffer.add(writeIndex)
+		const {type} = this.constructorTypes[writeIndex]
+		type.writeValue(buffer, value, false)
+		setPointers(buffer, root)
+	}
+}
+/**
  * A type that can refer recursively to itself.
  * This is not a type in its own right, but allows you
  * to have some other type use itself in its definition.
@@ -1419,7 +1534,9 @@ class RecursiveType extends AbsoluteType {
 	}
 }
 /**
- * A type storing a value of another type or {@link null}
+ * A type storing a value of another type or {@link null} or {@link undefined}.
+ * {@link null} and {@link undefined} are treated identically,
+ * and reading either value will result in {@link null}.
  * @example
  * //If you have a job slot that may or may not be filled
  * let personType = new sb.StructType({...})
@@ -1448,7 +1565,7 @@ class OptionalType extends AbsoluteType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {null|type} value The value to write
+	 * @param {null|undefined|type} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * type.writeValue(buffer, {
@@ -1459,10 +1576,13 @@ class OptionalType extends AbsoluteType {
 	 *   title: 'Assistant Librarian',
 	 *   employee: null
 	 * })
+	 * type.writeValue(buffer, {
+	 *   title: 'Assistant Librarian'
+	 * })
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		if (value === null) buffer.add(0x00)
+		if (value === null || value === undefined) buffer.add(0x00)
 		else {
 			buffer.add(0xFF)
 			this.type.writeValue(buffer, value, false)
@@ -1584,6 +1704,7 @@ module.exports = {
 	MapType,
 	EnumType,
 	ChoiceType,
+	NamedChoiceType,
 	RecursiveType,
 	OptionalType,
 	PointerType,
@@ -1600,13 +1721,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="RecursiveType.html">RecursiveType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#getType">getType</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#isRegistered">isRegistered</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#registerType">registerType</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="NamedChoiceType.html">NamedChoiceType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="RecursiveType.html">RecursiveType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#getType">getType</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#isRegistered">isRegistered</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#registerType">registerType</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 </footer>
 
 <script> prettyPrint(); </script>

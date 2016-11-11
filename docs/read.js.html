@@ -34,6 +34,7 @@ if (__dirname === '/') __dirname = ''
 const assert = require(__dirname + '/lib/assert.js')
 const bitMath = require(__dirname + '/lib/bit-math.js')
 const bufferString = require(__dirname + '/lib/buffer-string.js')
+const constructorRegistry = require(__dirname + '/constructor-registry.js')
 const recursiveRegistry = require(__dirname + '/recursive-registry.js')
 const strint = require(__dirname + '/lib/strint.js')
 const t = require(__dirname + '/structure-types.js')
@@ -361,7 +362,24 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			const typeIndex = new Uint8Array(buffer)[offset]
 			const subValue = consumeValue({buffer, pointerStart, offset: offset + length, type: type.types[typeIndex]})
 			length += subValue.length
-			value = subValue.value
+			;({value} = subValue)
+			break
+		}
+		case t.NamedChoiceType: {
+			length = 1
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+			const typeIndex = new Uint8Array(buffer)[offset]
+			const constructorName = type.indexConstructors.get(typeIndex).name
+			const constructor = constructorRegistry.get(constructorName)
+			const subValue = consumeValue({
+				buffer,
+				pointerStart,
+				offset: offset + length,
+				type: type.constructorTypes[typeIndex].type,
+				baseValue: new constructor
+			})
+			length += subValue.length
+			;({value} = subValue)
 			break
 		}
 		case t.RecursiveType: {
@@ -452,10 +470,12 @@ function consumeType(typeBuffer, offset) {
 				assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
 				const nameLength = castBuffer[offset + length]
 				length++
-				assert.assert(typeBuffer.byteLength >= offset + length + nameLength, NOT_LONG_ENOUGH)
-				const name = bufferString.toString(castBuffer.subarray(offset + length, offset + length + nameLength))
+				const nameStart = offset + length
+				const nameEnd = nameStart + nameLength
+				assert.assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
+				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
 				length += nameLength
-				const type = consumeType(typeBuffer, offset + length)
+				const type = consumeType(typeBuffer, nameEnd)
 				fields[name] = type.value
 				length += type.length
 			}
@@ -517,6 +537,28 @@ function consumeType(typeBuffer, offset) {
 				length += type.length
 			}
 			value = new t.ChoiceType(types)
+			break
+		}
+		case t.NamedChoiceType._value: {
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			const castBuffer = new Uint8Array(typeBuffer)
+			const typeCount = castBuffer[offset + length]
+			length++
+			const constructorTypes = new Map
+			for (let i = 0; i &lt; typeCount; i++) {
+				assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+				const nameLength = castBuffer[offset + length]
+				length++
+				const nameStart = offset + length
+				const nameEnd = nameStart + nameLength
+				assert.assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
+				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
+				length += nameLength
+				const type = consumeType(typeBuffer, nameEnd)
+				constructorTypes.set(constructorRegistry.get(name), type.value)
+				length += type.length
+			}
+			value = new t.NamedChoiceType(constructorTypes)
 			break
 		}
 		case t.RecursiveType._value: {
@@ -631,13 +673,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="RecursiveType.html">RecursiveType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#getType">getType</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#isRegistered">isRegistered</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#registerType">registerType</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="NamedChoiceType.html">NamedChoiceType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="RecursiveType.html">RecursiveType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#getType">getType</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#isRegistered">isRegistered</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#registerType">registerType</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
 </footer>
 
 <script> prettyPrint(); </script>

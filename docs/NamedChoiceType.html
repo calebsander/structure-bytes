@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: OptionalType</title>
+    <title>JSDoc: Class: NamedChoiceType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: OptionalType</h1>
+    <h1 class="page-title">Class: NamedChoiceType</h1>
 
     
 
@@ -28,11 +28,15 @@
 
 <header>
     
-        <h2>OptionalType</h2>
+        <h2>NamedChoiceType</h2>
         
-            <div class="class-description">A type storing a value of another type or <code>null</code> or <code>undefined</code>.
-<code>null</code> and <code>undefined</code> are treated identically,
-and reading either value will result in <code>null</code>.</div>
+            <div class="class-description">A type storing a value of one of several fixed classes.
+Each class is associated with a <a href="StructType.html"><code>StructType</code></a>
+used to write values of instances of the class.
+Unlike <a href="ChoiceType.html"><code>ChoiceType</code></a>, read values specify the type
+used to write them.
+The list of possible types must contain at most 255 types.
+<a href="NamedChoiceType.html"><code>NamedChoiceType</code></a> is similar to <a href="ChoiceType.html"><code>ChoiceType</code></a> in most respects.</div>
         
     
 </header>
@@ -46,7 +50,7 @@ and reading either value will result in <code>null</code>.</div>
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="OptionalType"><span class="type-signature"></span>new OptionalType<span class="signature">(type)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="NamedChoiceType"><span class="type-signature"></span>new NamedChoiceType<span class="signature">(types)</span><span class="type-signature"></span></h4>
 
     
 
@@ -85,13 +89,13 @@ and reading either value will result in <code>null</code>.</div>
 
         <tr>
             
-                <td class="name"><code>type</code></td>
+                <td class="name"><code>types</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="Type.html">Type</a></span>
+<span class="param-type">Map.&lt;constructor, <a href="Type.html">Type</a>></span>
 
 
             
@@ -101,7 +105,17 @@ and reading either value will result in <code>null</code>.</div>
 
             
 
-            <td class="description last">The type of any non-<code>null</code> value</td>
+            <td class="description last">The mapping
+of constructors to associated types.
+Cannot contain more than 255 types.
+Values will be written using the type
+associated with the first constructor in the map
+of which they are an instance,
+so place higher priority types earlier.
+For example, if you wanted to be able to write
+the values of instances of a subclass and a superclass,
+put the subclass first so that all its fields
+are written, not just those inherited from the superclass.</td>
         </tr>
 
     
@@ -142,7 +156,7 @@ and reading either value will result in <code>null</code>.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1522">line 1522</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1302">line 1302</a>
     </li></ul></dd>
     
 
@@ -169,12 +183,25 @@ and reading either value will result in <code>null</code>.</div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>//If you have a job slot that may or may not be filled
-let personType = new sb.StructType({...})
-let type = new sb.StructType({
-  title: new sb.StringType,
-  employee: new sb.OptionalType(personType)
-})</code></pre>
+    <pre class="prettyprint"><code>//Storing various barcode types
+class QRCode {
+  constructor(text) {
+    this.text = text
+  }
+}
+class UPC {
+  constructor(number) {
+    this.number = number
+  }
+}
+let barcodeType = new sb.NamedChoiceType(new Map()
+  .set(QRCode, new sb.StructType({
+    text: new sb.StringType
+  }))
+  .set(UPC, new sb.StructType({
+    number: new sb.UnsignedLongType
+  }))
+)</code></pre>
 
 
 
@@ -1035,7 +1062,13 @@ for acceptable values.
 
 
 <div class="description">
-    Appends value bytes to a <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a> according to the type
+    Appends value bytes to a <a href="GrowableBuffer.html"><code>GrowableBuffer</code></a> according to the type.
+The constructor name will be transfered to the read value.
+So, if you write using the type associated with <code>QRCode</code>,
+the read value's constructor will also be named <code>"QRCode"</code>.
+If, however, you write an instance of a subclass of <code>QRCode</code>,
+it will write as <code>QRCode</code> and the read value's constructor
+will be named <code>"QRCode"</code>.
 </div>
 
 
@@ -1100,13 +1133,7 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">null</span>
-|
-
-<span class="param-type">undefined</span>
-|
-
-<span class="param-type">type</span>
+<span class="param-type">*</span>
 
 
             
@@ -1162,7 +1189,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1555">line 1555</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1368">line 1368</a>
     </li></ul></dd>
     
 
@@ -1218,17 +1245,8 @@ for acceptable values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>type.writeValue(buffer, {
-  title: 'Manager',
-  employee: person1
-})
-type.writeValue(buffer, {
-  title: 'Assistant Librarian',
-  employee: null
-})
-type.writeValue(buffer, {
-  title: 'Assistant Librarian'
-})</code></pre>
+    <pre class="prettyprint"><code>type.writeValue(buffer, new QRCode('abc')) //writes as QRCode
+type.writeValue(buffer, new UPC('0123')) //writes as UPC</code></pre>
 
 
 
