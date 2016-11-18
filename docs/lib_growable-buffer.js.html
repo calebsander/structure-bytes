@@ -162,6 +162,7 @@ class GrowableBuffer {
 	 * @return {GrowableBuffer} {@link this}
 	 */
 	addAll(buffer) {
+		assert.instanceOf(buffer, ArrayBuffer)
 		const oldSize = this.size
 		const newSize = this.size + buffer.byteLength
 		this.grow(newSize)

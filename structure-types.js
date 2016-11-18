@@ -983,8 +983,13 @@ class StructType extends AbsoluteType {
 		assert.instanceOf(value, Object)
 		for (const field of this.fields) {
 			const fieldValue = value[field[NAME]]
-			if (fieldValue === undefined) assert.fail('Value for field "' + field[NAME] + '" missing')
-			field[TYPE].writeValue(buffer, fieldValue, false)
+			try { field[TYPE].writeValue(buffer, fieldValue, false) }
+			catch (writeError) {
+				//Reporting that field is missing is more useful than, for example,
+				//Saying "undefined is not an instance of Number"
+				if (fieldValue === undefined) assert.fail('Value for field "' + field[NAME] + '" missing')
+				throw writeError //throw original error if field is defined, but just invalid
+			}
 		}
 		setPointers(buffer, root)
 	}
