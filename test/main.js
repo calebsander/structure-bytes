@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-vars, no-console*/
+#!/usr/bin/env node
+/*eslint-disable no-unused-vars, no-console*/
 //For this file
 const fs = require('fs')
-const path = require('path')
 
 //For tests
 const index = require(__dirname + '/../index.js')
@@ -14,7 +14,7 @@ const io = index
 const {r} = index
 const rec = index
 const ReplaceStream = require(__dirname + '/../lib/replace-stream.js')
-const Simultaneity = require(__dirname + '/../lib/simultaneity.js')
+const Simultaneity = require('simultaneity')
 const t = index
 const util = require(__dirname + '/../lib/util-inspect.js')
 function bufferFrom(bytes) {

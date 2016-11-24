@@ -4,7 +4,7 @@ const browserify = require('browserify')
 const closure = require('google-closure-compiler-js').compile
 const fs = require('fs')
 const ReplaceStream = require(__dirname + '/lib/replace-stream.js')
-const Simultaneity = require(__dirname + '/lib/simultaneity.js')
+const Simultaneity = require('simultaneity')
 
 const uploadB = browserify()
 uploadB.add(__dirname + '/client-side/upload.js')
