@@ -6,8 +6,7 @@
 	"dependencies": {
 		"accepts": "1.3.x",
 		"base64-js": "1.2.x",
-		"sha256": "0.2.x",
-		"simultaneity": "1.0.x"
+		"sha256": "0.2.x"
 	},
 	"devDependencies": {
 		"babel-cli": "6.18.x",
@@ -16,7 +15,8 @@
 		"browserify": "13.1.x",
 		"coveralls": "2.11.x",
 		"google-closure-compiler-js": "20161024.0.0",
-		"nyc": "10.0.x"
+		"nyc": "10.0.x",
+		"simultaneity": "1.0.x"
 	},
 	"directories": {
 		"test": "test"
