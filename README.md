@@ -46,7 +46,7 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `BooleanArray` (a variable-length array of `Boolean`s)
 	- `Char` (a single UTF-8 character)
 	- `String` (an array of UTF-8 characters that also stores its total byte length)
-	- `Octets` (a `Buffer` (raw binary data))
+	- `Octets` (an `ArrayBuffer` (raw binary data))
 - Recursive types
 	- `Tuple<Type>` (a constant-length array of `Type`s)
 	- `Struct` (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)
@@ -264,6 +264,184 @@ Client-side:
 	});
 </script>
 ````
+
+## Binary formats
+In the following definitions, `uint8_t` means an 8-bit unsigned integer, `uint16_t` means a 16-bit unsigned integer, and `uint32_t` means a 32-bit unsigned integer.
+All numbers are stored in big-endian format.
+### Type
+
+The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the specific instance of the type, if necesary.
+For example, `new sb.UnsignedIntType` translates into `[0x13]`, and `new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})` translates into:
+````javascript
+[
+	0x51 /*StructType*/,
+		2 /*2 fields*/,
+			3 /*3 characters in first field's name*/, 0x61 /*a*/, 0x62 /*b*/, 0x63 /*c*/, 0x01 /*ByteType*/,
+			3 /*3 characters in second field's name*/, 0x64 /*d*/, 0x65 /*e*/, 0x66 /*f*/, 0x41 /*StringType*/
+]
+````
+If the type has already been written to the buffer, it is also valid to serialize the type as:
+
+- `0xFF`
+- `offset` ([position of first byte of `offset` in buffer] - [position of type in buffer]) - `uint16_t`
+
+For example:
+````javascript
+const someType = new sb.TupleType({
+	type: new sb.FloatType,
+	length: 3
+})
+const type = new sb.StructType({
+	one: someType,
+	two: someType
+})
+/*type translates into
+[
+	0x51 /*StructType*/,
+		2 /*2 fields*/,
+			3 /*3 characters in first field's name*/, 0x6f /*o*/, 0x6e /*n*/, 0x65 /*e*/,
+				0x50 /*TupleType*/,
+					0x20 /*FloatType*/,
+					0, 0, 0, 3 /*3 floats in the tuple*/,
+			3 /*3 characters in second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/,
+				0xff, /*type is defined previously*/
+					0, 11 /*type is defined 11 bytes before the 0 on this line*/
+]
+*/
+````
+In the following definitions, `type` means the binary type format.
+
+- `ByteType`: identifier `0x01`
+- `ShortType`: identifier `0x02`
+- `IntType`: identifier `0x03`
+- `LongType`: identifier `0x04`
+- `BigIntType`: identifier `0x05`
+- `UnsignedByteType`: identifier `0x11`
+- `UnsignedShortType`: identifier `0x12`
+- `UnsignedIntType`: identifier `0x13`
+- `UnsignedLongType`: identifier `0x14`
+- `BigUnsignedIntType`: identifier `0x15`
+- `DateType`: identifier `0x1A`
+- `DayType`: identifier `0x1B`
+- `TimeType`: identifier `0x1C`
+- `FloatType`: identifier `0x20`
+- `DoubleType`: identifier `0x21`
+- `BooleanType`: identifier `0x30`
+- `BooleanTupleType`: identifier `0x31`, payload:
+	- `length` - `uint32_t`
+- `BooleanArrayType`: identifier `0x32`
+- `CharType`: identifier `0x40`
+- `StringType`: identifier `0x41`
+- `OctetsType`: identifier `0x42`
+- `TupleType`: identifier `0x50`, payload:
+	- `elementType` - `type`
+	- `length` - `uint32_t`
+- `StructType`: identifier `0x51`, payload:
+	- `fieldCount` - `uint8_t`
+	- `fieldCount` instances of `field`:
+		- `nameLength` - `uint8_t`
+		- `name` - a UTF-8 string containing `nameLength` bytes
+		- `fieldType` - `type`
+- `ArrayType`: identifier `0x52`, payload:
+	- `elementType` - `type`
+- `SetType`: identifier `0x53`, payload identical to `ArrayType`:
+	- `elementType` - `type`
+- `MapType`: identifier `0x54`, payload:
+	- `keyType` - `type`
+	- `valueType` - `type`
+- `EnumType`: identifier `0x55`, payload:
+	- `valueType` - `type`
+	- `valueCount` - `uint8_t`
+	- `valueCount` instances of `value`:
+		- `value` - a value that conforms to `valueType`
+- `ChoiceType`: identifier `0x56`, payload:
+	- `typeCount` - `uint8_t`
+	- `typeCount` instances of `possibleType`:
+		- `possibleType` - `type`
+- `NamedChoiceType`: identifier `0x58`, payload:
+	- `typeCount` - `uint8_t`
+	- `typeCount` instances of `possibleType`:
+		- `typeNameLength` - `uint8_t`
+		- `typeName` - a UTF-8 string containing `typeNameLength` bytes
+		- `typeType` - `type`
+- `RecursiveType`: identifier `0x57`, payload:
+	- `recursiveID` (an identifier unique to this recursive type in this type buffer) - `uint16_t`
+	- If this is the first instance of this recursive type in this buffer:
+		- `recursiveType` (the type definition of this type) - `type`
+- `OptionalType`: identifier `0x60`, payload:
+	- `typeIfNonNull` - `type`
+- `PointerType`: identifier `0x70`, payload:
+	- `targetType` - `type`
+
+### Value
+
+- `ByteType`: 1-byte integer
+- `ShortType`: 2-byte integer
+- `IntType`: 4-byte integer
+- `LongType`: 8-byte integer
+- `BigIntType`:
+	- `byteCount` - `uint16_t`
+	- `number` - `byteCount`-byte integer
+- `UnsignedByteType`: 1-byte unsigned integer
+- `UnsignedShortType`: 2-byte unsigned integer
+- `UnsignedIntType`: 4-byte unsigned integer
+- `UnsignedLongType`: 8-byte unsigned integer
+- `BigUnsignedIntType`:
+	- `byteCount` - `uint16_t`
+	- `number` - `byteCount`-byte unsigned integer
+- `DateType`: 8-byte unsigned integer storing milliseconds in [Unix time](https://en.wikipedia.org/wiki/Unix_time)
+- `DayType`: 3-byte unsigned integer storing days since the [Unix time](https://en.wikipedia.org/wiki/Unix_time) epoch
+- `TimeType`: 4-byte unsigned integer storing milliseconds since the start of the day
+- `FloatType`: single precision (4-byte) [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point)
+- `DoubleType`: double precision (8-byte) [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point)
+- `BooleanType`: 1-byte value, either `0x00` for `false` or `0xFF` for `true`
+- `BooleanTupleType`: `ceil(length / 8)` bytes, where the `n`th boolean is stored at the `(n % 8)`th MSB (`0`-indexed) of the `floor(n / 8)`th byte (`0`-indexed)
+- `BooleanArrayType`:
+	- `length` - `uint32_t`
+	- `booleans` - `ceil(length / 8)` bytes, where the `n`th boolean is stored at the `(n % 8)`th MSB (`0`-indexed) of the `floor(n / 8)`th byte (`0`-indexed)
+- `CharType`: UTF-8 codepoint (somewhere between 1 and 4 bytes long)
+- `StringType`:
+	- `string` - a UTF-8 string of any length not containing `'\0'`
+	- `0x00` to mark the end of the string
+- `OctetsType`:
+	- `length` - `uint32_t`
+	- `octets` - `length` bytes
+- `TupleType`:
+	- `length` values serialized by `elementType`
+- `StructType`:
+	- For each field in order of declaration in the type format:
+		- The field's value serialized by `fieldType`
+- `ArrayType`:
+	- `length` - `uint32_t`
+	- `length` values serialized by `elementType`
+- `SetType`:
+	- `size` - `uint32_t`
+	- `size` values serialized by `elementType`
+- `MapType`:
+	- `size` - `uint32_t`
+	- `size` instances of `keyValuePair`:
+		- `key` - value serialized by `keyType`
+		- `value` - value serialized by `valueType`
+- `EnumType`:
+	- `index` of value in values array - `uint8_t`
+- `ChoiceType`:
+	- `index` of type in possible types array - `uint8_t`
+	- `value` - value serialized by specified type
+- `NamedChoiceType`:
+	- `index` of type in possible types array - `uint8_t`
+	- `value` - value serialized by specified type
+- `RecursiveType`:
+	- `valueNotYetWrittenInBuffer` - byte containing either `0x00` or `0xFF`
+	- If `valueNotYetWrittenInBuffer`
+		- `value` - value serialized by `recursiveType`
+	- Else
+		- `offset` ([position of first byte of `offset` in buffer] - [position of `value` in buffer]) - `uint32_t`
+- `OptionalType`:
+	- `valueIsNonNull` - byte containing either `0x00` or `0xFF`
+	- If `valueIsNonNull`
+		- `value` - value serialized by `typeIfNonNull`
+- `PointerType`:
+	- `index` of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - `uint32_t`
 
 ## Versioning
 Versions will be of the form `x.y.z`.
