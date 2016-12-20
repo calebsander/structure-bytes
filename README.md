@@ -295,7 +295,7 @@ const type = new sb.StructType({
 	one: someType,
 	two: someType
 })
-/*type translates into
+//type translates into
 [
 	0x51 /*StructType*/,
 		2 /*2 fields*/,
@@ -307,7 +307,6 @@ const type = new sb.StructType({
 				0xff, /*type is defined previously*/
 					0, 11 /*type is defined 11 bytes before the 0 on this line*/
 ]
-*/
 ````
 In the following definitions, `type` means the binary type format.
 
@@ -432,13 +431,13 @@ In the following definitions, `type` means the binary type format.
 	- `value` - value serialized by specified type
 - `RecursiveType`:
 	- `valueNotYetWrittenInBuffer` - byte containing either `0x00` or `0xFF`
-	- If `valueNotYetWrittenInBuffer`
+	- If `valueNotYetWrittenInBuffer`:
 		- `value` - value serialized by `recursiveType`
-	- Else
+	- Else:
 		- `offset` ([position of first byte of `offset` in buffer] - [position of `value` in buffer]) - `uint32_t`
 - `OptionalType`:
 	- `valueIsNonNull` - byte containing either `0x00` or `0xFF`
-	- If `valueIsNonNull`
+	- If `valueIsNonNull`:
 		- `value` - value serialized by `typeIfNonNull`
 - `PointerType`:
 	- `index` of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - `uint32_t`
@@ -450,7 +449,7 @@ Versions will be of the form `x.y.z`.
 `z` is the version of the type and value specification, which is independent of the API version. It should match the version set in `config.js`.
 
 ## Testing
-To test the NodeJS code, run `npm test`.
+To test the Node.js code, run `npm test`.
 To test the HTTP transaction code, run `node client-test/server.js` and open `localhost:8080` in your browser. Open each link in a new page. `Upload` and `Download` should each alert `Success`, while `Upload & Download` should alert `Upload: Success` and `Download: Success`.
 
 _Caleb Sander, 2016_
