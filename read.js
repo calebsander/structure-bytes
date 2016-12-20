@@ -407,34 +407,36 @@ const recursiveNames = new WeakMap
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
 	assert.assert(offset >= 0, 'Offset is negative: ' + String(offset))
+	const castBuffer = new Uint8Array(typeBuffer)
 	assert.assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH) //make sure there is a type byte
+	const typeByte = castBuffer[offset]
 	let value,
 		length = 1
-	const typeByte = new Uint8Array(typeBuffer)[offset]
 	for (const testType of SINGLE_BYTE_TYPES) {
 		if (typeByte === testType._value) return {value: new testType, length} //eslint-disable-line new-cap
 	}
 	switch (typeByte) {
 		case t.BooleanTupleType._value: {
-			const tupleLength = readLengthBuffer(typeBuffer, offset + length)
-			value = new t.BooleanTupleType(tupleLength.value)
-			length += tupleLength.length
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			const tupleLength = castBuffer[offset + length]
+			length++
+			value = new t.BooleanTupleType(tupleLength)
 			break
 		}
 		case t.TupleType._value: {
 			const type = consumeType(typeBuffer, offset + length)
 			length += type.length
-			const tupleLength = readLengthBuffer(typeBuffer, offset + length)
-			length += tupleLength.length
+			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			const tupleLength = castBuffer[offset + length]
+			length++
 			value = new t.TupleType({
 				type: type.value,
-				length: tupleLength.value
+				length: tupleLength
 			})
 			break
 		}
 		case t.StructType._value: {
 			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
-			const castBuffer = new Uint8Array(typeBuffer)
 			const fieldCount = castBuffer[offset + length]
 			length++
 			const fields = {}
@@ -513,7 +515,6 @@ function consumeType(typeBuffer, offset) {
 		}
 		case t.NamedChoiceType._value: {
 			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
-			const castBuffer = new Uint8Array(typeBuffer)
 			const typeCount = castBuffer[offset + length]
 			length++
 			const constructorTypes = new Map

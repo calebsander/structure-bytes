@@ -1,6 +1,6 @@
 /*eslint-disable no-undef*/
 assert.throws(
-	() => r.type(bufferFrom([t.BooleanTupleType._value, 0, 0, 1])),
+	() => r.type(bufferFrom([t.TupleType._value, t.ByteType._value])),
 	'Buffer is not long enough'
 )
 assert.throws(

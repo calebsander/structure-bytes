@@ -87,7 +87,7 @@
 <li><code>BooleanArray</code> (a variable-length array of <code>Boolean</code>s)</li>
 <li><code>Char</code> (a single UTF-8 character)</li>
 <li><code>String</code> (an array of UTF-8 characters that also stores its total byte length)</li>
-<li><code>Octets</code> (a <code>Buffer</code> (raw binary data))</li>
+<li><code>Octets</code> (an <code>ArrayBuffer</code> (raw binary data))</li>
 </ul>
 </li>
 <li>Recursive types<ul>
@@ -98,6 +98,7 @@
 <li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
 <li><code>Enum&lt;Type&gt;</code> (a fixed set of up to 255 <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
 <li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
+<li><code>NamedChoice</code> (a fixed set of up to 255 named types that values can take on, each associated with a constructor)</li>
 <li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
 <li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or an instance of <code>Type</code>)</li>
 <li><code>Pointer&lt;Type&gt;</code> (allows multiple long instances of <code>Type</code> with the same bytes to be stored only once)</li>
@@ -275,11 +276,254 @@ http.createServer((req, res) => {
             }
         });
     });
-&lt;/script></code></pre><h2>Versioning</h2><p>Versions will be of the form <code>x.y.z</code>.
+&lt;/script></code></pre><h2>Binary formats</h2><p>In the following definitions, <code>uint8_t</code> means an 8-bit unsigned integer, <code>uint16_t</code> means a 16-bit unsigned integer, and <code>uint32_t</code> means a 32-bit unsigned integer.
+All numbers are stored in big-endian format.</p>
+<h3>Type</h3><p>The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the specific instance of the type, if necesary.
+For example, <code>new sb.UnsignedIntType</code> translates into <code>[0x13]</code>, and <code>new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})</code> translates into:</p>
+<pre class="prettyprint source lang-javascript"><code>[
+    0x51 /*StructType*/,
+        2 /*2 fields*/,
+            3 /*3 characters in first field's name*/, 0x61 /*a*/, 0x62 /*b*/, 0x63 /*c*/, 0x01 /*ByteType*/,
+            3 /*3 characters in second field's name*/, 0x64 /*d*/, 0x65 /*e*/, 0x66 /*f*/, 0x41 /*StringType*/
+]</code></pre><p>If the type has already been written to the buffer, it is also valid to serialize the type as:</p>
+<ul>
+<li><code>0xFF</code></li>
+<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of type in buffer]) - <code>uint16_t</code></li>
+</ul>
+<p>For example:</p>
+<pre class="prettyprint source lang-javascript"><code>const someType = new sb.TupleType({
+    type: new sb.FloatType,
+    length: 3
+})
+const type = new sb.StructType({
+    one: someType,
+    two: someType
+})
+//type translates into
+[
+    0x51 /*StructType*/,
+        2 /*2 fields*/,
+            3 /*3 characters in first field's name*/, 0x6f /*o*/, 0x6e /*n*/, 0x65 /*e*/,
+                0x50 /*TupleType*/,
+                    0x20 /*FloatType*/,
+                    3 /*3 floats in the tuple*/,
+            3 /*3 characters in second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/,
+                0xff, /*type is defined previously*/
+                    0, 11 /*type is defined 11 bytes before the 0 on this line*/
+]</code></pre><p>In the following definitions, <code>type</code> means the binary type format.</p>
+<ul>
+<li><code>ByteType</code>: identifier <code>0x01</code></li>
+<li><code>ShortType</code>: identifier <code>0x02</code></li>
+<li><code>IntType</code>: identifier <code>0x03</code></li>
+<li><code>LongType</code>: identifier <code>0x04</code></li>
+<li><code>BigIntType</code>: identifier <code>0x05</code></li>
+<li><code>UnsignedByteType</code>: identifier <code>0x11</code></li>
+<li><code>UnsignedShortType</code>: identifier <code>0x12</code></li>
+<li><code>UnsignedIntType</code>: identifier <code>0x13</code></li>
+<li><code>UnsignedLongType</code>: identifier <code>0x14</code></li>
+<li><code>BigUnsignedIntType</code>: identifier <code>0x15</code></li>
+<li><code>DateType</code>: identifier <code>0x1A</code></li>
+<li><code>DayType</code>: identifier <code>0x1B</code></li>
+<li><code>TimeType</code>: identifier <code>0x1C</code></li>
+<li><code>FloatType</code>: identifier <code>0x20</code></li>
+<li><code>DoubleType</code>: identifier <code>0x21</code></li>
+<li><code>BooleanType</code>: identifier <code>0x30</code></li>
+<li><code>BooleanTupleType</code>: identifier <code>0x31</code>, payload:<ul>
+<li><code>length</code> - <code>uint8_t</code></li>
+</ul>
+</li>
+<li><code>BooleanArrayType</code>: identifier <code>0x32</code></li>
+<li><code>CharType</code>: identifier <code>0x40</code></li>
+<li><code>StringType</code>: identifier <code>0x41</code></li>
+<li><code>OctetsType</code>: identifier <code>0x42</code></li>
+<li><code>TupleType</code>: identifier <code>0x50</code>, payload:<ul>
+<li><code>elementType</code> - <code>type</code></li>
+<li><code>length</code> - <code>uint8_t</code></li>
+</ul>
+</li>
+<li><code>StructType</code>: identifier <code>0x51</code>, payload:<ul>
+<li><code>fieldCount</code> - <code>uint8_t</code></li>
+<li><code>fieldCount</code> instances of <code>field</code>:<ul>
+<li><code>nameLength</code> - <code>uint8_t</code></li>
+<li><code>name</code> - a UTF-8 string containing <code>nameLength</code> bytes</li>
+<li><code>fieldType</code> - <code>type</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ArrayType</code>: identifier <code>0x52</code>, payload:<ul>
+<li><code>elementType</code> - <code>type</code></li>
+</ul>
+</li>
+<li><code>SetType</code>: identifier <code>0x53</code>, payload identical to <code>ArrayType</code>:<ul>
+<li><code>elementType</code> - <code>type</code></li>
+</ul>
+</li>
+<li><code>MapType</code>: identifier <code>0x54</code>, payload:<ul>
+<li><code>keyType</code> - <code>type</code></li>
+<li><code>valueType</code> - <code>type</code></li>
+</ul>
+</li>
+<li><code>EnumType</code>: identifier <code>0x55</code>, payload:<ul>
+<li><code>valueType</code> - <code>type</code></li>
+<li><code>valueCount</code> - <code>uint8_t</code></li>
+<li><code>valueCount</code> instances of <code>value</code>:<ul>
+<li><code>value</code> - a value that conforms to <code>valueType</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ChoiceType</code>: identifier <code>0x56</code>, payload:<ul>
+<li><code>typeCount</code> - <code>uint8_t</code></li>
+<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
+<li><code>possibleType</code> - <code>type</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>NamedChoiceType</code>: identifier <code>0x58</code>, payload:<ul>
+<li><code>typeCount</code> - <code>uint8_t</code></li>
+<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
+<li><code>typeNameLength</code> - <code>uint8_t</code></li>
+<li><code>typeName</code> - a UTF-8 string containing <code>typeNameLength</code> bytes</li>
+<li><code>typeType</code> - <code>type</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>RecursiveType</code>: identifier <code>0x57</code>, payload:<ul>
+<li><code>recursiveID</code> (an identifier unique to this recursive type in this type buffer) - <code>uint16_t</code></li>
+<li>If this is the first instance of this recursive type in this buffer:<ul>
+<li><code>recursiveType</code> (the type definition of this type) - <code>type</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>OptionalType</code>: identifier <code>0x60</code>, payload:<ul>
+<li><code>typeIfNonNull</code> - <code>type</code></li>
+</ul>
+</li>
+<li><code>PointerType</code>: identifier <code>0x70</code>, payload:<ul>
+<li><code>targetType</code> - <code>type</code></li>
+</ul>
+</li>
+</ul>
+<h3>Value</h3><ul>
+<li><code>ByteType</code>: 1-byte integer</li>
+<li><code>ShortType</code>: 2-byte integer</li>
+<li><code>IntType</code>: 4-byte integer</li>
+<li><code>LongType</code>: 8-byte integer</li>
+<li><code>BigIntType</code>:<ul>
+<li><code>byteCount</code> - <code>uint16_t</code></li>
+<li><code>number</code> - <code>byteCount</code>-byte integer</li>
+</ul>
+</li>
+<li><code>UnsignedByteType</code>: 1-byte unsigned integer</li>
+<li><code>UnsignedShortType</code>: 2-byte unsigned integer</li>
+<li><code>UnsignedIntType</code>: 4-byte unsigned integer</li>
+<li><code>UnsignedLongType</code>: 8-byte unsigned integer</li>
+<li><code>BigUnsignedIntType</code>:<ul>
+<li><code>byteCount</code> - <code>uint16_t</code></li>
+<li><code>number</code> - <code>byteCount</code>-byte unsigned integer</li>
+</ul>
+</li>
+<li><code>DateType</code>: 8-byte unsigned integer storing milliseconds in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a></li>
+<li><code>DayType</code>: 3-byte unsigned integer storing days since the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a> epoch</li>
+<li><code>TimeType</code>: 4-byte unsigned integer storing milliseconds since the start of the day</li>
+<li><code>FloatType</code>: single precision (4-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
+<li><code>DoubleType</code>: double precision (8-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
+<li><code>BooleanType</code>: 1-byte value, either <code>0x00</code> for <code>false</code> or <code>0xFF</code> for <code>true</code></li>
+<li><code>BooleanTupleType</code>: <code>ceil(length / 8)</code> bytes, where the <code>n</code>th boolean is stored at the <code>(n % 8)</code>th MSB (<code>0</code>-indexed) of the <code>floor(n / 8)</code>th byte (<code>0</code>-indexed)</li>
+<li><code>BooleanArrayType</code>:<ul>
+<li><code>length</code> - <code>uint32_t</code></li>
+<li><code>booleans</code> - <code>ceil(length / 8)</code> bytes, where the <code>n</code>th boolean is stored at the <code>(n % 8)</code>th MSB (<code>0</code>-indexed) of the <code>floor(n / 8)</code>th byte (<code>0</code>-indexed)</li>
+</ul>
+</li>
+<li><code>CharType</code>: UTF-8 codepoint (somewhere between 1 and 4 bytes long)</li>
+<li><code>StringType</code>:<ul>
+<li><code>string</code> - a UTF-8 string of any length not containing <code>'\0'</code></li>
+<li><code>0x00</code> to mark the end of the string</li>
+</ul>
+</li>
+<li><code>OctetsType</code>:<ul>
+<li><code>length</code> - <code>uint32_t</code></li>
+<li><code>octets</code> - <code>length</code> bytes</li>
+</ul>
+</li>
+<li><code>TupleType</code>:<ul>
+<li><code>length</code> values serialized by <code>elementType</code></li>
+</ul>
+</li>
+<li><code>StructType</code>:<ul>
+<li>For each field in order of declaration in the type format:<ul>
+<li>The field's value serialized by <code>fieldType</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ArrayType</code>:<ul>
+<li><code>length</code> - <code>uint32_t</code></li>
+<li><code>length</code> values serialized by <code>elementType</code></li>
+</ul>
+</li>
+<li><code>SetType</code>:<ul>
+<li><code>size</code> - <code>uint32_t</code></li>
+<li><code>size</code> values serialized by <code>elementType</code></li>
+</ul>
+</li>
+<li><code>MapType</code>:<ul>
+<li><code>size</code> - <code>uint32_t</code></li>
+<li><code>size</code> instances of <code>keyValuePair</code>:<ul>
+<li><code>key</code> - value serialized by <code>keyType</code></li>
+<li><code>value</code> - value serialized by <code>valueType</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>EnumType</code>:<ul>
+<li><code>index</code> of value in values array - <code>uint8_t</code></li>
+</ul>
+</li>
+<li><code>ChoiceType</code>:<ul>
+<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
+<li><code>value</code> - value serialized by specified type</li>
+</ul>
+</li>
+<li><code>NamedChoiceType</code>:<ul>
+<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
+<li><code>value</code> - value serialized by specified type</li>
+</ul>
+</li>
+<li><code>RecursiveType</code>:<ul>
+<li><code>valueNotYetWrittenInBuffer</code> - byte containing either <code>0x00</code> or <code>0xFF</code></li>
+<li>If <code>valueNotYetWrittenInBuffer</code>:<ul>
+<li><code>value</code> - value serialized by <code>recursiveType</code></li>
+</ul>
+</li>
+<li>Else:<ul>
+<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of <code>value</code> in buffer]) - <code>uint32_t</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>OptionalType</code>:<ul>
+<li><code>valueIsNonNull</code> - byte containing either <code>0x00</code> or <code>0xFF</code></li>
+<li>If <code>valueIsNonNull</code>:<ul>
+<li><code>value</code> - value serialized by <code>typeIfNonNull</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PointerType</code>:<ul>
+<li><code>index</code> of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - <code>uint32_t</code></li>
+</ul>
+</li>
+</ul>
+<h2>Versioning</h2><p>Versions will be of the form <code>x.y.z</code>.
 <code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>.
 <code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases.
 <code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
-<h2>Testing</h2><p>To test the NodeJS code, run <code>npm test</code>.
+<h2>Testing</h2><p>To test the Node.js code, run <code>npm test</code>.
 To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page. <code>Upload</code> and <code>Download</code> should each alert <code>Success</code>, while <code>Upload &amp; Download</code> should alert <code>Upload: Success</code> and <code>Download: Success</code>.</p>
 <p><em>Caleb Sander, 2016</em></p></article>
     </section>

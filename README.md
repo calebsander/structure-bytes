@@ -302,7 +302,7 @@ const type = new sb.StructType({
 			3 /*3 characters in first field's name*/, 0x6f /*o*/, 0x6e /*n*/, 0x65 /*e*/,
 				0x50 /*TupleType*/,
 					0x20 /*FloatType*/,
-					0, 0, 0, 3 /*3 floats in the tuple*/,
+					3 /*3 floats in the tuple*/,
 			3 /*3 characters in second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/,
 				0xff, /*type is defined previously*/
 					0, 11 /*type is defined 11 bytes before the 0 on this line*/
@@ -327,14 +327,14 @@ In the following definitions, `type` means the binary type format.
 - `DoubleType`: identifier `0x21`
 - `BooleanType`: identifier `0x30`
 - `BooleanTupleType`: identifier `0x31`, payload:
-	- `length` - `uint32_t`
+	- `length` - `uint8_t`
 - `BooleanArrayType`: identifier `0x32`
 - `CharType`: identifier `0x40`
 - `StringType`: identifier `0x41`
 - `OctetsType`: identifier `0x42`
 - `TupleType`: identifier `0x50`, payload:
 	- `elementType` - `type`
-	- `length` - `uint32_t`
+	- `length` - `uint8_t`
 - `StructType`: identifier `0x51`, payload:
 	- `fieldCount` - `uint8_t`
 	- `fieldCount` instances of `field`:

@@ -715,7 +715,8 @@ function writeBooleans(buffer, booleans) {
 	buffer.addAll(byteBuffer)
 }
 /**
- * A type storing a fixed-length array of {@link Boolean} values
+ * A type storing a fixed-length array of {@link Boolean} values.
+ * The length must be less than 256.
  * @see BooleanType
  * @see TupleType
  * @extends Type
@@ -726,15 +727,16 @@ class BooleanTupleType extends AbsoluteType {
 		return 0x31
 	}
 	/**
-	 * @param {number} length The number of {@link Boolean}s in each value of this type
+	 * @param {number} length The number of {@link Boolean}s in each value of this type.
+	 * Must fit in a 1-byte unsigned integer.
 	 */
 	constructor(length) {
 		super()
-		assert.fourByteUnsignedInteger(length)
+		assert.byteUnsignedInteger(length)
 		this.length = length
 	}
 	addToBuffer(buffer) {
-		if (super.addToBuffer(buffer)) buffer.addAll(lengthBuffer(this.length))
+		if (super.addToBuffer(buffer)) buffer.add(this.length)
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
@@ -846,7 +848,7 @@ class OctetsType extends AbsoluteType {
 
 /**
  * A type storing a fixed-length array of values of the same type.
- * The length must fit in a 4-byte unsigned integer.
+ * The length must be less than 256.
  * @example
  * //For storing 5 4-byte unsigned integers
  * let type = new sb.TupleType({type: new sb.UnsignedIntType, length: 5})
@@ -860,20 +862,20 @@ class TupleType extends AbsoluteType {
 	/**
 	 * @param {{type, length}} params
 	 * @param {Type} params.type The type of each element in the tuple
-	 * @param {number} params.length The number of elements in the tuple
-	 * Must fit in a 4-byte unsigned integer.
+	 * @param {number} params.length The number of elements in the tuple.
+	 * Must fit in a 1-byte unsigned integer.
 	 */
 	constructor({type, length}) {
 		super()
 		assert.instanceOf(type, Type)
-		assert.fourByteUnsignedInteger(length)
+		assert.byteUnsignedInteger(length)
 		this.type = type
 		this.length = length
 	}
 	addToBuffer(buffer) {
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
-			buffer.addAll(lengthBuffer(this.length))
+			buffer.add(this.length)
 		}
 	}
 	/**

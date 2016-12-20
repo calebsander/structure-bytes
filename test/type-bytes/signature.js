@@ -1,5 +1,5 @@
 /*eslint-disable no-undef*/
-assert.equal(new t.ByteType().getSignature(), 'AAk=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=')
+assert.equal(new t.ByteType().getSignature(), 'AAo=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=')
 let type = new t.StructType({
 	bcd: new t.PointerType(
 		new t.OptionalType(
@@ -17,4 +17,4 @@ let type = new t.StructType({
 		)
 	)
 })
-assert.equal(type.getSignature(), 'AAk=URZ81sn26XuBj9ckIE65/aNkAylI8xHXWB+8V34RJBs=')
+assert.equal(type.getSignature(), 'AAo=YwJi4ZvHdopqQNW0lf2i8zQ37DEDMWmT9gFoqInimHw=')
