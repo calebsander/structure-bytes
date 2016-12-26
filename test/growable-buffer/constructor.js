@@ -1,9 +1,9 @@
 /*eslint-disable no-undef*/
-let a = new GrowableBuffer
-assert.equal(a.buffer.byteLength, 10)
-a = new GrowableBuffer(100)
-assert.equal(a.buffer.byteLength, 100)
-for (let [invalidSize, message] of [
+const gb = new GrowableBuffer
+assert.equal(gb.buffer.byteLength, 10)
+const gb2 = new GrowableBuffer(100)
+assert.equal(gb2.buffer.byteLength, 100)
+for (const [invalidSize, message] of [
 	[-1, '-1 is not a valid buffer length'],
 	[Number.MAX_SAFE_INTEGER + 1, '9007199254740992 is not a valid buffer length'],
 	[null, 'null is not a valid buffer length'],

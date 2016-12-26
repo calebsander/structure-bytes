@@ -1,8 +1,8 @@
 /*eslint-disable no-undef*/
-let type = new t.BooleanTupleType(12)
-let buffer = type.toBuffer()
+const type = new t.BooleanTupleType(12)
+const buffer = type.toBuffer()
 assert.equal(buffer, bufferFrom([0x31, 12]))
-let readType = r.type(buffer)
+const readType = r.type(buffer)
 assert.equal(readType, type)
 assert.throws(
 	() => new t.BooleanTupleType(256),

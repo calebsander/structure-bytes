@@ -1,25 +1,27 @@
 /*eslint-disable no-undef*/
-let type = new t.OptionalType(
+const type = new t.OptionalType(
 	new t.ArrayType(
 		new t.UnsignedByteType
 	)
 )
-let gb = new GrowableBuffer
-for (let [invalidValue, message] of [
+for (const [invalidValue, message] of [
 	[2, '2 is not an instance of Array'],
 	[[-1], 'Value out of range (-1 is not in [0,256))'],
 	['abc', "'abc' is not an instance of Array"]
 ]) {
 	assert.throws(
-		() => type.writeValue(gb, invalidValue),
+		() => type.valueBuffer(invalidValue),
 		message
 	)
 }
+
 assert.equal(type.valueBuffer(null), bufferFrom([0]))
 assert.equal(r.value({buffer: type.valueBuffer(null), type}), null)
+
 assert.equal(type.valueBuffer(undefined), bufferFrom([0]))
 assert.equal(r.value({buffer: type.valueBuffer(undefined), type}), null)
-gb = new GrowableBuffer
+
+const gb = new GrowableBuffer
 const VALUE = [1, 10, 100]
 type.writeValue(gb, VALUE)
 assert.equal(gb.toBuffer(), bufferFrom([0xFF, 0, 0, 0, 3, 1, 10, 100]))

@@ -1,10 +1,12 @@
 /*eslint-disable no-undef*/
-let type = new t.ByteType
-let gb = new GrowableBuffer
+const type = new t.ByteType
+const gb = new GrowableBuffer
 type.writeValue(gb, -128)
 assert.equal(gb.toBuffer(), bufferFrom([-128 + 0x100]))
 assert.equal(r.value({buffer: gb.toBuffer(), type}), -128)
+
 assert.equal(type.valueBuffer('1'), bufferFrom([1]))
+
 assert.throws(
 	() => type.writeValue(gb, true),
 	'true is not an instance of Number'

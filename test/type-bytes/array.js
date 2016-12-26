@@ -1,5 +1,5 @@
 /*eslint-disable no-undef*/
-let array = new t.ArrayType(
+const array = new t.ArrayType(
 	new t.UnsignedIntType
 )
 assert.equal(array.toBuffer(), bufferFrom([0x52, 0x13]))

@@ -16,7 +16,7 @@ uploadDownloadB.add(__dirname + '/client-side/upload-download.js')
 const s = new Simultaneity
 //Replace require('util'), which is only used for util.inspect(), to minimize file size
 for (const utilFile of ['/lib/assert', '/structure-types', '/read']) {
-	s.addTask(() => {
+	s.addTask(s => {
 		fs.createReadStream(__dirname + utilFile + '.js')
 		.pipe(new ReplaceStream("require('util')", "require('/lib/util-inspect.js')"))
 		.pipe(fs.createWriteStream(__dirname + utilFile + '-noutil.js')).on('finish', () => {
@@ -24,35 +24,35 @@ for (const utilFile of ['/lib/assert', '/structure-types', '/read']) {
 		})
 	})
 }
-s.addTask(() => {
+s.addTask(s => {
 	//Load the upload and download code and append them to each other to make a combined include file
 	//These files are not too big, so it is not terrible to load them into memory
 	let uploadCode, downloadCode
-	const loadS = new Simultaneity
-	loadS.addTask(() => {
-		fs.readFile(__dirname + '/client-side/upload.js', (err, data) => {
-			if (err) throw err
-			uploadCode = data
-			loadS.taskFinished()
-		})
-	})
-	loadS.addTask(() => {
-		fs.readFile(__dirname + '/client-side/download.js', (err, data) => {
-			if (err) throw err
-			downloadCode = data
-			loadS.taskFinished()
-		})
-	})
-	loadS.callback(() => {
-		fs.writeFile(
-			__dirname + '/client-side/upload-download.js',
-			Buffer.concat([uploadCode, Buffer.from(';'), downloadCode]),
-			err => {
+	new Simultaneity()
+		.addTask(s => {
+			fs.readFile(__dirname + '/client-side/upload.js', (err, data) => {
 				if (err) throw err
+				uploadCode = data
 				s.taskFinished()
-			}
-		)
-	})
+			})
+		})
+		.addTask(s => {
+			fs.readFile(__dirname + '/client-side/download.js', (err, data) => {
+				if (err) throw err
+				downloadCode = data
+				s.taskFinished()
+			})
+		})
+		.callback(() => {
+			fs.writeFile(
+				__dirname + '/client-side/upload-download.js',
+				Buffer.concat([uploadCode, Buffer.from(';'), downloadCode]),
+				err => {
+					if (err) throw err
+					s.taskFinished()
+				}
+			)
+		})
 })
 console.log('Compiling: Replacing large dependencies')
 const downloadFiles = [

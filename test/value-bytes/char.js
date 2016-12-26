@@ -1,7 +1,7 @@
 /*eslint-disable no-undef*/
-let type = new t.CharType
-let gb = new GrowableBuffer
-for (let [invalidValue, message] of [
+const type = new t.CharType
+const gb = new GrowableBuffer
+for (const [invalidValue, message] of [
 	[undefined, 'undefined is not an instance of String'],
 	[2, '2 is not an instance of String'],
 	['', 'String must contain only 1 character'],

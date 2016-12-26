@@ -39,7 +39,7 @@ assert.throws(
 	() => assert.equal(bufferFrom([1, 2, 5]), bufferFrom([1, 2, 3])),
 	'Expected ArrayBuffer { byteLength: 3 } but got ArrayBuffer { byteLength: 3 }'
 )
-let a = {func() {}},
+const a = {func() {}},
 	b = {func() {}}
 assert.throws(
 	() => assert.assert(a.func === b.func, 'Unequal'),
@@ -59,8 +59,8 @@ assert.throws(
 	() => assert.message(null, 'Error occurred'),
 	'Message "No error thrown" does not start with "Error occurred"'
 )
-for (let Type of [Array, Map, Set, ArrayBuffer]) {
-	let value = new Type
+for (const type of [Array, Map, Set, ArrayBuffer]) {
+	const value = new type //eslint-disable-line new-cap
 	assert.throws(
 		() => assert.equal(undefined, value),
 		'Expected ' + require('util').inspect(value) + ' but got undefined'

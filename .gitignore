@@ -1,6 +1,3 @@
 node_modules
-type-value-out
-type-out
-value-out
 **/*-noutil.js
 client-side/upload-download.js

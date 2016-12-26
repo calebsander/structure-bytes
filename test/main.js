@@ -40,7 +40,7 @@ fs.readdir(__dirname, (err, testSuites) => {
 	const testsS = new Simultaneity
 	let passed = 0
 	let total = 0
-	function testFile(dir, test) {
+	function testFile(dir, test, s) {
 		const file = dir + '/' + test
 		fs.readFile(file, (err, data) => {
 			if (err) throw err
@@ -56,17 +56,17 @@ fs.readdir(__dirname, (err, testSuites) => {
 				console.error('Error in test file ' + file)
 				console.error(e)
 			}
-			testsS.taskFinished()
+			s.taskFinished()
 		})
 	}
 	for (const testSuite of testSuites) {
-		suitesS.addTask(() => {
+		suitesS.addTask(s => {
 			const dir = __dirname + '/' + testSuite
 			fs.readdir(dir, (err, tests) => {
 				if (!err) {
-					for (const test of tests) testsS.addTask(() => testFile(dir, test))
+					for (const test of tests) testsS.addTask(s => testFile(dir, test, s))
 				}
-				suitesS.taskFinished()
+				s.taskFinished()
 			})
 		})
 	}

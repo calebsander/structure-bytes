@@ -1,5 +1,5 @@
 /*eslint-disable no-undef*/
-let map = new t.MapType(
+const map = new t.MapType(
 	new t.StringType,
 	new t.StructType({
 		a: new t.ArrayType(new t.UnsignedByteType),

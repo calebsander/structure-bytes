@@ -9,7 +9,7 @@ class UPC {
 		this.number = number
 	}
 }
-let type = new t.NamedChoiceType(new Map()
+const type = new t.NamedChoiceType(new Map()
 	.set(QRCode, new t.StructType({
 		text: new t.StringType
 	}))
@@ -39,8 +39,8 @@ assert.throws(() => { //eslint-disable-line arrow-body-style
 		.set(() => {}, new t.StructType({}))
 	)
 }, 'Function "" does not have a name')
-let a = {func() {}}
-let b = {func() {}}
+const a = {func() {}}
+const b = {func() {}}
 assert.throws(() => { //eslint-disable-line arrow-body-style
 	return new t.NamedChoiceType(new Map()
 		.set(a.func, new t.StructType({}))

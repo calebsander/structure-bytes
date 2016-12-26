@@ -1,16 +1,16 @@
 /*eslint-disable no-undef*/
 const REPEATED_TYPE = 0xff
-let personType = new t.StructType({
+const personType = new t.StructType({
 	dob: new t.DateType,
 	id: new t.UnsignedShortType,
 	name: new t.StringType
 })
-let tribeType = new t.StructType({
+const tribeType = new t.StructType({
 	leader: personType,
 	members: new t.SetType(personType),
 	money: new t.MapType(personType, new t.FloatType)
 })
-let buffer = tribeType.toBuffer()
+const buffer = tribeType.toBuffer()
 assert.equal(buffer,
 	concat([
 		bufferFrom([0x51, 3, 6, 0x6c, 0x65, 0x61, 0x64, 0x65, 0x72]),
@@ -20,7 +20,7 @@ assert.equal(buffer,
 	])
 )
 assert.equal(r.type(buffer), tribeType)
-let personCube = new t.ArrayType(
+const personCube = new t.ArrayType(
 	new t.ArrayType(
 		new t.ArrayType(
 			new t.ChoiceType([

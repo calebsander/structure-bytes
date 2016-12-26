@@ -3,11 +3,11 @@ const http = require('http')
 const zlib = require('zlib')
 
 const port = 8080
-let type = new t.DateType
+const type = new t.DateType
 
-let responseValue = new Date
-let server = http.createServer((req, res) => {
-	let throwError = req.url === '/error'
+const responseValue = new Date
+const server = http.createServer((req, res) => {
+	const throwError = req.url === '/error'
 	if (throwError) res.end()
 	io.httpRespond({req, res, type, value: responseValue}, err => {
 		if (throwError) assert.message(err, "Can't set headers after they are sent.")
@@ -18,62 +18,63 @@ let server = http.createServer((req, res) => {
 })
 server.listen(port)
 
-let requestOptions = {
+const requestOptions = {
 	hostname: 'localhost',
 	port,
 	path: '/',
 	method: 'GET'
 }
-let s = new Simultaneity
-s.addTask(() => {
-	http.get(requestOptions, res => {
-		assert.equal(res.headers.sig, type.getSignature())
-		io.readTypeAndValue(res, (err, type, value) => {
-			if (err) throw err
-			assert.equal(type, new t.DateType)
-			assert.equal(value.getTime(), responseValue.getTime())
-			s.taskFinished()
+new Simultaneity()
+	.addTask(s => {
+		http.get(requestOptions, res => {
+			assert.equal(res.headers.sig, type.getSignature())
+			io.readTypeAndValue(res, (err, type, value) => {
+				if (err) throw err
+				assert.equal(type, new t.DateType)
+				assert.equal(value.getTime(), responseValue.getTime())
+				s.taskFinished()
+			})
 		})
 	})
-})
-s.addTask(() => {
-	http.get(Object.assign({}, requestOptions, {headers: {'Accept-Encoding': '*'}}), res => {
-		assert.equal(res.headers.sig, type.getSignature())
-		io.readTypeAndValue(res.pipe(zlib.createGunzip()), (err, type, value) => {
-			if (err) throw err
-			assert.equal(type, new t.DateType)
-			assert.equal(value.getTime(), responseValue.getTime())
-			s.taskFinished()
+	.addTask(s => {
+		http.get(Object.assign({}, requestOptions, {headers: {'Accept-Encoding': '*'}}), res => {
+			assert.equal(res.headers.sig, type.getSignature())
+			io.readTypeAndValue(res.pipe(zlib.createGunzip()), (err, type, value) => {
+				if (err) throw err
+				assert.equal(type, new t.DateType)
+				assert.equal(value.getTime(), responseValue.getTime())
+				s.taskFinished()
+			})
 		})
 	})
-})
-s.addTask(() => {
-	http.get(Object.assign({}, requestOptions, {headers: {'Accept-Encoding': 'gzip;q=0.00', sig: type.getSignature()}}), res => {
-		io.readValue({type, inStream: res}, (err, value) => {
-			if (err) throw err
-			assert.equal(value.getTime(), responseValue.getTime())
-			s.taskFinished()
+	.addTask(s => {
+		http.get(Object.assign({}, requestOptions, {headers: {'Accept-Encoding': 'gzip;q=0.00', sig: type.getSignature()}}), res => {
+			io.readValue({type, inStream: res}, (err, value) => {
+				if (err) throw err
+				assert.equal(value.getTime(), responseValue.getTime())
+				s.taskFinished()
+			})
 		})
 	})
-})
-s.addTask(() => {
-	http.get(Object.assign({}, requestOptions, {headers: {'Accept-Encoding': 'compress, gzip', sig: type.getSignature()}}), res => {
-		io.readValue({type, inStream: res.pipe(zlib.createGunzip())}, (err, value) => {
-			if (err) throw err
-			assert.equal(value.getTime(), responseValue.getTime())
-			s.taskFinished()
+	.addTask(s => {
+		http.get(Object.assign({}, requestOptions, {headers: {'Accept-Encoding': 'compress, gzip', sig: type.getSignature()}}), res => {
+			io.readValue({type, inStream: res.pipe(zlib.createGunzip())}, (err, value) => {
+				if (err) throw err
+				assert.equal(value.getTime(), responseValue.getTime())
+				s.taskFinished()
+			})
 		})
 	})
-})
-s.addTask(() => {
-	requestOptions.path = '/error'
-	http.get(requestOptions, res => {
-		let chunks = []
-		res.on('data', chunk => chunks.push(chunk))
-		res.on('end', () => {
-			assert.equal(Buffer.concat(chunks), Buffer.from([]))
-			s.taskFinished()
+	.addTask(s => {
+		requestOptions.path = '/error'
+		http.get(requestOptions, res => {
+			const chunks = []
+			res
+				.on('data', chunk => chunks.push(chunk))
+				.on('end', () => {
+					assert.equal(Buffer.concat(chunks), Buffer.from([]))
+					s.taskFinished()
+				})
 		})
 	})
-})
-s.callback(() => server.close())
+	.callback(() => server.close())

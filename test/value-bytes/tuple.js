@@ -1,10 +1,9 @@
 /*eslint-disable no-undef*/
-let type = new t.TupleType({
+const type = new t.TupleType({
 	type: new t.StringType,
 	length: 5
 })
-let gb = new GrowableBuffer
-for (let [invalidValue, message] of [
+for (const [invalidValue, message] of [
 	[undefined, 'undefined is not an instance of Array'],
 	[null, 'null is not an instance of Array'],
 	['abcde', "'abcde' is not an instance of Array"],
@@ -15,11 +14,11 @@ for (let [invalidValue, message] of [
 	[['a', 'b', 'c', 'd', 'e', 'f'], 'Length does not match: expected 5 but got 6']
 ]) {
 	assert.throws(
-		() => type.writeValue(gb, invalidValue),
+		() => type.valueBuffer(invalidValue),
 		message
 	)
 }
-gb = new GrowableBuffer
+const gb = new GrowableBuffer
 const VALUE = [
 	'',
 	'a',

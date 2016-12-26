@@ -1,12 +1,12 @@
 /*eslint-disable no-undef*/
-let type = new t.SetType(
+const type = new t.SetType(
 	new t.StructType({
 		a: new t.UnsignedShortType,
 		b: new t.CharType
 	})
 )
-let gb = new GrowableBuffer
-for (let [invalidValue, message] of [
+const gb = new GrowableBuffer
+for (const [invalidValue, message] of [
 	[undefined, 'undefined is not an instance of Set'],
 	[[2, true], '[ 2, true ] is not an instance of Set'],
 	['abc', "'abc' is not an instance of Set"],
@@ -18,12 +18,14 @@ for (let [invalidValue, message] of [
 		message
 	)
 }
-gb = new GrowableBuffer
-type.writeValue(gb, new Set)
-assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 0]))
-assert.equal(r.value({buffer: gb.toBuffer(), type}), new Set)
-gb = new GrowableBuffer
+
+const gb2 = new GrowableBuffer
+type.writeValue(gb2, new Set)
+assert.equal(gb2.toBuffer(), bufferFrom([0, 0, 0, 0]))
+assert.equal(r.value({buffer: gb2.toBuffer(), type}), new Set)
+
+const gb3 = new GrowableBuffer
 const VALUE = new Set().add({a: 2, b: 'c'}).add({a: 420, b: '-'})
-type.writeValue(gb, VALUE)
-assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]))
-assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)
+type.writeValue(gb3, VALUE)
+assert.equal(gb3.toBuffer(), bufferFrom([0, 0, 0, 2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]))
+assert.equal(r.value({buffer: gb3.toBuffer(), type}), VALUE)

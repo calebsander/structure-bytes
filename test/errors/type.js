@@ -3,7 +3,7 @@ assert.throws(
 	() => t.Type._value,
 	'Generic Type has no value byte'
 )
-let type = new t.Type
+const type = new t.Type
 assert.throws(
 	() => type.valueBuffer(23),
 	'Generic Type has no value representation'

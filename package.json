@@ -16,7 +16,7 @@
 		"coveralls": "2.11.x",
 		"google-closure-compiler-js": "20161201.0.0",
 		"nyc": "10.0.x",
-		"simultaneity": "1.0.x"
+		"simultaneity": "1.1.x"
 	},
 	"directories": {
 		"test": "test"
