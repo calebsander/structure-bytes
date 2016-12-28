@@ -1,5 +1,9 @@
 /*eslint-disable no-undef*/
 assert.throws(
+	() => r.value({type: new t.OctetsType, buffer: bufferFrom([0, 0, 1])}),
+	'Buffer is not long enough'
+)
+assert.throws(
 	() => r.type(bufferFrom([t.TupleType._value, t.ByteType._value])),
 	'Buffer is not long enough'
 )
