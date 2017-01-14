@@ -1028,7 +1028,7 @@ class ArrayType extends AbsoluteType {
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @private
 	*/
-	_writeValue(buffer, {value, length}, root) {
+	_writeValue({buffer, value, length, root}) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		buffer.addAll(flexInt.makeValueBuffer(length))
 		for (const instance of value) this.type.writeValue(buffer, instance, false)
@@ -1044,7 +1044,7 @@ class ArrayType extends AbsoluteType {
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Array)
-		this._writeValue(buffer, {value, length: value.length}, root)
+		this._writeValue({buffer, value, length: value.length, root})
 	}
 }
 /**
@@ -1071,7 +1071,7 @@ class SetType extends ArrayType {
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Set)
-		this._writeValue(buffer, {value, length: value.size}, root)
+		this._writeValue({buffer, value, length: value.size, root})
 	}
 }
 /**
