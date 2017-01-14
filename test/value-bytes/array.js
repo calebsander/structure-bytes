@@ -23,10 +23,10 @@ const VALUE = [
 	{a: 23, b: 'Ȁ'}
 ]
 type.writeValue(gb, VALUE)
-assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
+assert.equal(gb.toBuffer(), bufferFrom([2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
 assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)
 
 const EMPTY_VALUE = []
 const emptyBuffer = type.valueBuffer(EMPTY_VALUE)
-assert.equal(emptyBuffer, bufferFrom([0, 0, 0, 0]))
+assert.equal(emptyBuffer, bufferFrom([0]))
 assert.equal(r.value({buffer: emptyBuffer, type}), EMPTY_VALUE)

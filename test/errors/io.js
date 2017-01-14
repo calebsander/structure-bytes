@@ -13,7 +13,7 @@ const s = new Simultaneity()
 		const type = new t.ArrayType(new t.UnsignedShortType)
 		const typeValueBuffer = concat([
 			type.toBuffer(),
-			bufferFrom([0, 0, 0, 1])
+			bufferFrom([1])
 		])
 		io.readTypeAndValue(new BufferStream(typeValueBuffer), (err, type, value) => {
 			assert.message(err, 'Buffer is not long enough')

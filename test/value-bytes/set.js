@@ -21,11 +21,14 @@ for (const [invalidValue, message] of [
 
 const gb2 = new GrowableBuffer
 type.writeValue(gb2, new Set)
-assert.equal(gb2.toBuffer(), bufferFrom([0, 0, 0, 0]))
+assert.equal(gb2.toBuffer(), bufferFrom([0]))
 assert.equal(r.value({buffer: gb2.toBuffer(), type}), new Set)
 
 const gb3 = new GrowableBuffer
-const VALUE = new Set().add({a: 2, b: 'c'}).add({a: 420, b: '-'})
+const VALUE = new Set([
+	{a: 2, b: 'c'},
+	{a: 420, b: '-'}
+])
 type.writeValue(gb3, VALUE)
-assert.equal(gb3.toBuffer(), bufferFrom([0, 0, 0, 2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]))
+assert.equal(gb3.toBuffer(), bufferFrom([2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]))
 assert.equal(r.value({buffer: gb3.toBuffer(), type}), VALUE)

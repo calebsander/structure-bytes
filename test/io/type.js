@@ -1,4 +1,4 @@
-/*eslint-disable no-undef*/
+/*eslint-disable no-undef, indent*/
 const fs = require('fs')
 const OUT_FILE = 'type-out'
 
@@ -18,7 +18,15 @@ new Simultaneity()
 			if (err) throw err
 			fs.readFile(OUT_FILE, (err, data) => {
 				if (err) throw err
-				assert.equal(data, Buffer.from([0x52, 0x51, 2, 3, 0x61, 0x62, 0x63, 0x41, 3, 0x64, 0x65, 0x66, 0x52, 0x02]))
+				assert.equal(data, Buffer.from([
+					0x52,
+						0x51, 2,
+							3, 0x61, 0x62, 0x63,
+								0x41,
+							3, 0x64, 0x65, 0x66,
+								0x52,
+									0x02
+				]))
 				fs.unlink(OUT_FILE, err => {
 					if (err) throw err
 					s.taskFinished()

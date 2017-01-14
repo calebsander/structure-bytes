@@ -14,15 +14,14 @@ const t = require(__dirname + '/structure-types.js')
 const util = require('util')
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough'
-//Reads a 4-byte length buffer
-function readLengthBuffer(buffer, offset) {
-	try {
-		return {
-			value: new DataView(buffer).getUint32(offset),
-			length: 4
-		}
+function readFlexInt(buffer, offset) {
+	assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+	const length = flexInt.getByteCount(new Uint8Array(buffer)[offset])
+	assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+	return {
+		value: flexInt.readValueBuffer(buffer.slice(offset, offset + length)),
+		length
 	}
-	catch (e) { assert.fail(NOT_LONG_ENOUGH) }
 }
 //Types whose type bytes are only 1 byte long (the type byte)
 const SINGLE_BYTE_TYPES = new Set([
@@ -78,9 +77,7 @@ function makeBaseValue(type, count) {
 			return {}
 		}
 		/*istanbul ignore next*/
-		default: {
-			throw new Error('Invalid type for base value: ' + util.inspect(type))
-		}
+		default: assert.fail('Invalid type for base value: ' + util.inspect(type))
 	}
 }
 //Counterpart for writeBooleans() in structure-types.js
@@ -145,11 +142,11 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.BigIntType: {
-			length = 2
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			const dataView = new DataView(buffer)
-			const bytes = dataView.getUint16(offset)
+			const lengthInt = readFlexInt(buffer, offset)
+			const bytes = lengthInt.value
+			;({length} = lengthInt)
 			assert.assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
+			const dataView = new DataView(buffer)
 			if (bytes) value = String(dataView.getInt8(offset + length))
 			else value = '0'
 			for (let byte = 1; byte < bytes; byte++) {
@@ -187,11 +184,11 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.BigUnsignedIntType: {
-			length = 2
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			const dataView = new DataView(buffer)
-			const bytes = dataView.getUint16(offset)
+			const lengthInt = readFlexInt(buffer, offset)
+			const bytes = lengthInt.value
+			;({length} = lengthInt)
 			assert.assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
+			const dataView = new DataView(buffer)
 			value = '0'
 			for (let byte = 0; byte < bytes; byte++) {
 				if (byte) value = strint.mul(value, strint.BYTE_SHIFT) //after the first byte, shift everything left one byte before adding
@@ -201,12 +198,7 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.FlexUnsignedIntType: {
-			length = 1
-			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
-			const bytes = flexInt.getByteCount(new Uint8Array(buffer)[offset])
-			assert.assert(buffer.byteLength >= offset + bytes, NOT_LONG_ENOUGH)
-			value = flexInt.readValueBuffer(buffer.slice(offset, offset + bytes))
-			length += bytes
+			({value, length} = readFlexInt(buffer, offset))
 			break
 		}
 		case t.DayType: {
@@ -241,12 +233,12 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const readByte = new Uint8Array(buffer)[offset]
 			assert.assert(readByte === 0x00 || readByte === 0xFF, '0x' + readByte.toString(16) + ' is an invalid Boolean value')
-			value = !!readByte //convert integer to boolean
+			value = Boolean(readByte)
 			break
 		}
 		case t.BooleanArrayType: {
-			const arrayLength = readLengthBuffer(buffer, offset)
-			length = arrayLength.length
+			const arrayLength = readFlexInt(buffer, offset)
+			;({length} = arrayLength)
 			const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value, baseValue})
 			length += booleans.length
 			;({value} = booleans)
@@ -273,7 +265,7 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.OctetsType: {
-			const octetsLength = readLengthBuffer(buffer, offset)
+			const octetsLength = readFlexInt(buffer, offset)
 			;({length} = octetsLength)
 			const finalLength = length + octetsLength.value
 			assert.assert(buffer.byteLength >= offset + finalLength, NOT_LONG_ENOUGH)
@@ -302,10 +294,11 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.ArrayType: {
-			const arrayLength = readLengthBuffer(buffer, offset)
-			length = arrayLength.length
-			value = baseValue || makeBaseValue(type, arrayLength.value)
-			for (let i = 0; i < value.length; i++) {
+			const arrayLengthInt = readFlexInt(buffer, offset)
+			const arrayLength = arrayLengthInt.value
+			;({length} = arrayLengthInt)
+			value = baseValue || makeBaseValue(type, arrayLength)
+			for (let i = 0; i < arrayLength; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
 				length += element.length
 				value[i] = element.value
@@ -313,8 +306,8 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.SetType: {
-			const size = readLengthBuffer(buffer, offset)
-			length = size.length
+			const size = readFlexInt(buffer, offset)
+			;({length} = size)
 			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i < size.value; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: type.type})
@@ -324,8 +317,8 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.MapType: {
-			const size = readLengthBuffer(buffer, offset)
-			length = size.length
+			const size = readFlexInt(buffer, offset)
+			;({length} = size)
 			value = baseValue || makeBaseValue(type)
 			for (let i = 0; i < size.value; i++) {
 				const keyElement = consumeValue({buffer, pointerStart, offset: offset + length, type: type.keyType})
@@ -383,7 +376,7 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 				length += consumeValue({buffer, pointerStart, offset: offset + length, type: subType, baseValue: value}).length
 			}
 			else {
-				const indexOffset = readLengthBuffer(buffer, offset + length)
+				const indexOffset = readFlexInt(buffer, offset + length)
 				const target = offset + length - indexOffset.value
 				value = readRecursives.get(buffer).get(target)
 				assert.assert(value !== undefined, 'Cannot find target at ' + String(target))
@@ -405,9 +398,10 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 			break
 		}
 		case t.PointerType: {
-			const location = readLengthBuffer(buffer, offset)
-			length = location.length
-			value = consumeValue({buffer, pointerStart, offset: pointerStart + location.value, type: type.type}).value
+			length = 4
+			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			const location = new DataView(buffer).getUint32(offset)
+			value = consumeValue({buffer, pointerStart, offset: pointerStart + location, type: type.type}).value
 			break
 		}
 		default:
@@ -550,9 +544,9 @@ function consumeType(typeBuffer, offset) {
 			break
 		}
 		case t.RecursiveType._value: {
-			assert.assert(typeBuffer.byteLength >= offset + length + 2, NOT_LONG_ENOUGH)
-			const id = new DataView(typeBuffer).getUint16(offset + length)
-			length += 2
+			const idInt = readFlexInt(typeBuffer, offset + length)
+			const id = idInt.value
+			length += idInt.length
 			let bufferRecursiveNames = recursiveNames.get(typeBuffer)
 			let recursiveName
 			if (bufferRecursiveNames) recursiveName = bufferRecursiveNames.get(id) //see whether this type was previously read
@@ -594,11 +588,9 @@ function consumeType(typeBuffer, offset) {
 			break
 		}
 		case t.REPEATED_TYPE: {
-			const newLength = length + 2
-			assert.assert(typeBuffer.byteLength >= offset + newLength, NOT_LONG_ENOUGH)
-			const locationOffset = new DataView(typeBuffer).getUint16(offset + length)
-			;({value} = consumeType(typeBuffer, offset + length - locationOffset))
-			length = newLength
+			const locationOffset = readFlexInt(typeBuffer, offset + length)
+			;({value} = consumeType(typeBuffer, offset + length - locationOffset.value))
+			length += locationOffset.length
 			break
 		}
 		default:

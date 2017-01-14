@@ -24,5 +24,5 @@ assert.equal(r.value({buffer: type.valueBuffer(undefined), type}), null)
 const gb = new GrowableBuffer
 const VALUE = [1, 10, 100]
 type.writeValue(gb, VALUE)
-assert.equal(gb.toBuffer(), bufferFrom([0xFF, 0, 0, 0, 3, 1, 10, 100]))
+assert.equal(gb.toBuffer(), bufferFrom([0xFF, 3, 1, 10, 100]))
 assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)

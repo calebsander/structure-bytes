@@ -30,13 +30,6 @@ const recursiveLocations = new WeakMap
 //Map of write buffers to maps of binary strings to sets of indices where pointers to the binary data must be written
 const pointers = new WeakMap
 
-//Since most things with length store it in a 32-bit unsigned integer,
-//this utility function makes the creation of that buffer easier
-function lengthBuffer(length) {
-	const buffer = new ArrayBuffer(4)
-	new DataView(buffer).setUint32(0, length)
-	return buffer
-}
 //After writing all the values, it is necessary to insert all the values of pointer types
 //This function should be called in writeValue() for every type that could have a subtype that is a pointer type
 function setPointers(buffer, root) {
@@ -91,13 +84,8 @@ class Type {
 				const location = this.cachedTypeLocations.get(buffer)
 				if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
 					buffer.add(REPEATED_TYPE)
-					const offsetBuffer = new ArrayBuffer(2)
-					try { //error will be thrown if offset didn't fit in a 2-byte integer, so fall through to explicitly writing the bytes
-						new DataView(offsetBuffer).setUint16(0, buffer.length - location)
-						buffer.addAll(offsetBuffer)
-						return false
-					}
-					catch (e) {}
+					buffer.addAll(flexInt.makeValueBuffer(buffer.length - location))
+					return false
 				}
 			}
 		}
@@ -313,7 +301,7 @@ const LONG_MAX = '9223372036854775807',
 function writeLong(buffer, value) {
 	assert.instanceOf(buffer, GrowableBuffer)
 	assert.instanceOf(value, String)
-	if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) assert.fail('Value out of range')
+	assert.assert(!(strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)), 'Value out of range')
 	const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int
 	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
 	const byteBuffer = new ArrayBuffer(8)
@@ -342,8 +330,7 @@ class LongType extends IntegerType {
 	}
 }
 /**
- * A type storing an arbitrary precision signed integer
- * (up to 65535 bytes of precision).
+ * A type storing an arbitrary precision signed integer.
  * Each written value has its own number of bytes of precision.
  * @extends Type
  * @inheritdoc
@@ -371,14 +358,13 @@ class BigIntType extends IntegerType {
 				value = quotient
 			}
 			bytes.push(Number(value))
-			assert.twoByteUnsignedInteger(bytes.length)
 		}
-		const byteBuffer = new ArrayBuffer(2 + bytes.length)
+		buffer.addAll(flexInt.makeValueBuffer(bytes.length))
+		const byteBuffer = new ArrayBuffer(bytes.length)
 		const dataView = new DataView(byteBuffer)
-		dataView.setUint16(0, bytes.length) //use 2 bytes to store the number of bytes in the value
-		let offset = 3
-		for (let i = bytes.length - 2; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
-		if (bytes.length) dataView.setInt8(2, bytes[bytes.length - 1]) //highest byte is signed so it must be treated separately
+		let offset = 1
+		for (let i = bytes.length - 2; i >= 0; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
+		if (bytes.length) dataView.setInt8(0, bytes[bytes.length - 1]) //highest byte is signed so it must be treated separately
 		buffer.addAll(byteBuffer)
 	}
 }
@@ -485,7 +471,7 @@ class UnsignedLongType extends UnsignedType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, String)
-		if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')) assert.fail('Value out of range')
+		assert.assert(!(strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')), 'Value out of range')
 		const upper = strint.div(value, strint.LONG_UPPER_SHIFT) //get upper unsigned int
 		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
 		const byteBuffer = new ArrayBuffer(8)
@@ -515,7 +501,7 @@ class BigUnsignedIntType extends UnsignedType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, String)
-		if (strint.isNegative(value)) assert.fail('Value out of range')
+		assert.assert(!strint.isNegative(value), 'Value out of range')
 		const bytes = []
 		if (!strint.eq(value, '0')) { //if value is 0, avoid adding a 0 byte
 			while (strint.ge(value, strint.BYTE_SHIFT)) { //builds bytes in LE order
@@ -524,13 +510,12 @@ class BigUnsignedIntType extends UnsignedType {
 				value = quotient
 			}
 			bytes.push(Number(value))
-			assert.twoByteUnsignedInteger(bytes.length)
 		}
-		const byteBuffer = new ArrayBuffer(2 + bytes.length)
+		buffer.addAll(flexInt.makeValueBuffer(bytes.length))
+		const byteBuffer = new ArrayBuffer(bytes.length)
 		const dataView = new DataView(byteBuffer)
-		dataView.setUint16(0, bytes.length) //use 2 bytes to store the number of bytes in the value
-		let offset = 2
-		for (let i = bytes.length - 1; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
+		let offset = 0
+		for (let i = bytes.length - 1; i >= 0; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
 		buffer.addAll(byteBuffer)
 	}
 }
@@ -760,7 +745,10 @@ class BooleanTupleType extends AbsoluteType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Array)
-		if (value.length !== this.length) assert.fail('Length does not match')
+		assert.assert(
+			value.length === this.length,
+			'Length does not match: expected ' + String(this.length) + ' but got ' + value.length
+		)
 		writeBooleans(buffer, value)
 	}
 }
@@ -782,8 +770,7 @@ class BooleanArrayType extends AbsoluteType {
 	 */
 	writeValue(buffer, value) {
 		assert.instanceOf(value, Array)
-		assert.fourByteUnsignedInteger(value.length)
-		buffer.addAll(lengthBuffer(value.length))
+		buffer.addAll(flexInt.makeValueBuffer(value.length))
 		writeBooleans(buffer, value)
 	}
 }
@@ -830,13 +817,12 @@ class StringType extends AbsoluteType {
 		assert.instanceOf(value, String)
 		const valueBuffer = bufferString.fromString(value)
 		buffer.addAll(valueBuffer)
-		buffer.add(0) //add a null byte to make clear where the end is
+		buffer.add(0) //add a null byte to indicate end
 	}
 }
 /**
  * A type storing an array of bytes.
  * This is intended for data, e.g. a hash, that doesn't fit any other category.
- * The number of bytes must fit in a 4-byte unsigned integer.
  * @extends Type
  * @inheritdoc
  */
@@ -853,8 +839,7 @@ class OctetsType extends AbsoluteType {
 	writeValue(buffer, value) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, ArrayBuffer)
-		assert.fourByteUnsignedInteger(value.byteLength)
-		buffer.addAll(lengthBuffer(value.byteLength))
+		buffer.addAll(flexInt.makeValueBuffer(value.byteLength))
 		buffer.addAll(value)
 	}
 }
@@ -902,9 +887,10 @@ class TupleType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Array)
-		if (value.length !== this.length) {
-			assert.fail('Length does not match: expected ' + String(this.length) + ' but got ' + value.length)
-		}
+		assert.assert(
+			value.length === this.length,
+			'Length does not match: expected ' + String(this.length) + ' but got ' + value.length
+		)
 		for (const instance of value) this.type.writeValue(buffer, instance, false)
 		setPointers(buffer, root)
 	}
@@ -1002,7 +988,7 @@ class StructType extends AbsoluteType {
 			catch (writeError) {
 				//Reporting that field is missing is more useful than, for example,
 				//Saying "undefined is not an instance of Number"
-				if (fieldValue === undefined) assert.fail('Value for field "' + field[NAME] + '" missing')
+				assert.assert(fieldValue !== undefined, 'Value for field "' + field[NAME] + '" missing')
 				throw writeError //throw original error if field is defined, but just invalid
 			}
 		}
@@ -1010,8 +996,7 @@ class StructType extends AbsoluteType {
 	}
 }
 /**
- * A type storing a variable-length array of values of the same type.
- * The length of any value must fit in a 4-byte unsigned integer.
+ * A type storing a variable-length array of values of the same type
  * @example
  * //For storing some number of people in order
  * let personType = new sb.StructType({...})
@@ -1039,35 +1024,31 @@ class ArrayType extends AbsoluteType {
 	 * Used by ArrayType and SetType.
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {type[]} value The value to write. Length of the array must fit in a 4-byte unsigned integer.
+	 * @param {type[]} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @private
 	*/
-	_writeValue(buffer, value, root) {
+	_writeValue(buffer, {value, length}, root) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		let length = value.length
-		if (length === undefined) length = value.size
-		assert.fourByteUnsignedInteger(length)
-		buffer.addAll(lengthBuffer(length))
+		buffer.addAll(flexInt.makeValueBuffer(length))
 		for (const instance of value) this.type.writeValue(buffer, instance, false)
 		setPointers(buffer, root)
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {type[]} value The value to write. Length of the array must fit in a 4-byte unsigned integer.
+	 * @param {type[]} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * type.writeValue(buffer, [person1, person2, person3])
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Array)
-		this._writeValue(buffer, value, root)
+		this._writeValue(buffer, {value, length: value.length}, root)
 	}
 }
 /**
- * A type storing a variable-size set of values of the same type.
- * The size of any value must fit in a 4-byte unsigned integer.
+ * A type storing a variable-size set of values of the same type
  * Works much like {@link ArrayType} except all values are {@link Set}s.
  * @example
  * //For storing some number of people
@@ -1083,19 +1064,18 @@ class SetType extends ArrayType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {Set.<type>} value The value to write. Size of the set must fit in a 4-byte unsigned integer.
+	 * @param {Set.<type>} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * type.writeValue(buffer, new Set().add(person1).add(person2).add(person3))
 	 */
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(value, Set)
-		this._writeValue(buffer, value, root)
+		this._writeValue(buffer, {value, length: value.size}, root)
 	}
 }
 /**
- * A type storing a variable-size mapping of keys of one type to values of another.
- * The size of any map must fit in a 4-byte unsigned integer.
+ * A type storing a variable-size mapping of keys of one type to values of another
  * @example
  * //For storing friendships (a mapping of people to their set of friends)
  * let personType = new sb.StructType({...})
@@ -1130,11 +1110,11 @@ class MapType extends AbsoluteType {
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
 	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {Map.<keyType, valueType>} value The value to write. Size of the map must fit in a 4-byte unsigned integer.
+	 * @param {Map.<keyType, valueType>} value The value to write
 	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
 	 * @example
 	 * let friendMap = new Map
-	 * friendMap.set(person1, new Set().add(person2).add(person3))
+	 * friendMap.set(person1, new Set([person2, person3]))
 	 * friendMap.set(person2, new Set([person1]))
 	 * friendMap.set(person3, new Set([person1]))
 	 * type.writeValue(buffer, friendMap)
@@ -1142,8 +1122,7 @@ class MapType extends AbsoluteType {
 	writeValue(buffer, value, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Map)
-		assert.fourByteUnsignedInteger(value.size)
-		buffer.addAll(lengthBuffer(value.size))
+		buffer.addAll(flexInt.makeValueBuffer(value.size))
 		for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
 			this.keyType.writeValue(buffer, mapKey, false)
 			this.valueType.writeValue(buffer, mapValue, false)
@@ -1284,7 +1263,7 @@ class ChoiceType extends AbsoluteType {
 			success = true
 			break
 		}
-		if (!success) assert.fail('No types matched: ' + util.inspect(value))
+		assert.assert(success, 'No types matched: ' + util.inspect(value))
 		setPointers(buffer, root)
 	}
 }
@@ -1395,7 +1374,7 @@ class NamedChoiceType extends AbsoluteType {
 				break
 			}
 		}
-		if (writeIndex === undefined) assert.fail('No types matched: ' + util.inspect(value))
+		assert.assert(writeIndex !== undefined, 'No types matched: ' + util.inspect(value))
 		buffer.add(writeIndex)
 		const {type} = this.constructorTypes[writeIndex]
 		type.writeValue(buffer, value, false)
@@ -1450,12 +1429,9 @@ class RecursiveType extends AbsoluteType {
 			const firstOccurence = recursiveID === undefined
 			if (firstOccurence) {
 				recursiveID = bufferRecursiveIDs.size //use the next number as the ID
-				assert.twoByteUnsignedInteger(recursiveID)
 				bufferRecursiveIDs.set(this.name, recursiveID)
 			}
-			const idBuffer = new ArrayBuffer(2)
-			new DataView(idBuffer).setUint16(0, recursiveID)
-			buffer.addAll(idBuffer)
+			buffer.addAll(flexInt.makeValueBuffer(recursiveID))
 			if (firstOccurence) { //if type has already been defined, don't redefine it
 				const bufferRecursiveNesting = recursiveNesting.get(buffer) || 0
 				recursiveNesting.set(buffer, bufferRecursiveNesting + 1) //keep track of how far we are inside writing recursive types (see how this is used in super.addToBuffer())
@@ -1506,10 +1482,7 @@ class RecursiveType extends AbsoluteType {
 				writeValue = false
 				buffer.add(0x00)
 				const offset = buffer.length - targetLocation //calculate offset to previous location
-				assert.fourByteUnsignedInteger(offset)
-				const offsetBuffer = new ArrayBuffer(4)
-				new DataView(offsetBuffer).setUint32(0, offset)
-				buffer.addAll(offsetBuffer)
+				buffer.addAll(flexInt.makeValueBuffer(offset))
 			}
 		}
 		else {

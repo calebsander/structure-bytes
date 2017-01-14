@@ -14,7 +14,7 @@ const VALUE = {
 	b: [100, 101, 102, 103, 104]
 }
 type.writeValue(gb, VALUE)
-assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0, 5, 100, 101, 102, 103, 104]))
+assert.equal(gb.toBuffer(), bufferFrom([0, 0, 0, 8, 0, 0, 0, 8, 5, 100, 101, 102, 103, 104]))
 assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)
 
 const type2 = new t.PointerType(new t.LongType)
@@ -47,7 +47,7 @@ const type5 = new t.MapType(
 const gb5 = new GrowableBuffer
 const map = new Map().set('abc', -126).set('def', -126)
 type5.writeValue(gb5, map)
-assert.equal(gb5.toBuffer(), bufferFrom([0, 0, 0, 2, 0, 0, 0, 20, 0, 0, 0, 24, 0, 0, 0, 25, 0, 0, 0, 24, 0x61, 0x62, 0x63, 0, -126 + 256, 0x64, 0x65, 0x66, 0]))
+assert.equal(gb5.toBuffer(), bufferFrom([2, 0, 0, 0, 17, 0, 0, 0, 21, 0, 0, 0, 22, 0, 0, 0, 21, 0x61, 0x62, 0x63, 0, -126 + 256, 0x64, 0x65, 0x66, 0]))
 assert.equal(r.value({buffer: gb5.toBuffer(), type: type5}), map)
 
 //Note that reading a value being pointed to twice can result in different values

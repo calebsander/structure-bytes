@@ -12,9 +12,9 @@ rec.registerType({
 const graphType = new t.SetType(
 	new t.RecursiveType('graph-node')
 )
-const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
+const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
 assert.equal(graphType.toBuffer(), GRAPH_BUFFER)
-const readGraphType = r.type(graphType.toBuffer())
+const readGraphType = r.type(GRAPH_BUFFER)
 const graphNodeName = readGraphType.type.name
 assert.equal(readGraphType, new t.SetType(
 	new t.RecursiveType(graphNodeName)
@@ -35,7 +35,7 @@ rec.registerType({
 	type,
 	name: 'type'
 })
-assert.equal(type.toBuffer(), bufferFrom([0x52, 0x57, 0, 0, 0x52, 0x57, 0, 0])) //the important piece is that the child array type declaration doesn't point to the root one
+assert.equal(type.toBuffer(), bufferFrom([0x52, 0x57, 0, 0x52, 0x57, 0])) //the important piece is that the child array type declaration doesn't point to the root one
 //Test multiple recursive types in same buffer
 const binaryTreeType = new t.RecursiveType('tree-node')
 rec.registerType({
@@ -46,7 +46,7 @@ rec.registerType({
 	}),
 	name: 'tree-node'
 })
-assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 0, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
+assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
 const readTreeType = r.type(binaryTreeType.toBuffer())
 assert.instanceOf(readTreeType, t.RecursiveType)
 const readTreeName = readTreeType.name
@@ -63,8 +63,8 @@ assert.throws(
 	() => new t.RecursiveType('abc').toBuffer(),
 	'"abc" is not a registered type'
 )
+assert.throws(() => r.type(bufferFrom([0x57])), 'Buffer is not long enough')
 assert.throws(() => r.type(bufferFrom([0x57, 0])), 'Buffer is not long enough')
-assert.throws(() => r.type(bufferFrom([0x57, 0, 0])), 'Buffer is not long enough')
 assert.throws(() => rec.registerType(), "Cannot match against 'undefined' or 'null'.")
 assert.throws(() => rec.registerType({name: 'some-type'}), 'undefined is not an instance of ArrayType or MapType or SetType or StructType or TupleType')
 assert.throws(
