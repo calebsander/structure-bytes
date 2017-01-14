@@ -10,6 +10,7 @@ const assert = require(__dirname + '/lib/assert.js')
 const base64 = require('base64-js')
 const bufferString = require(__dirname + '/lib/buffer-string.js')
 const config = require(__dirname + '/config.js')
+const flexInt = require(__dirname + '/lib/flex-int.js')
 const sha256 = require('sha256')
 const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
 let recursiveRegistry
@@ -531,6 +532,18 @@ class BigUnsignedIntType extends UnsignedType {
 		let offset = 2
 		for (let i = bytes.length - 1; i > -1; i--, offset++) dataView.setUint8(offset, bytes[i]) //write in reverse order to get BE
 		buffer.addAll(byteBuffer)
+	}
+}
+class FlexUnsignedIntType extends UnsignedType {
+	static get _value() {
+		return 0x17
+	}
+	writeValue(buffer, value) {
+		assert.instanceOf(buffer, GrowableBuffer)
+		const convertedValue = strToNum(value)
+		if (convertedValue !== undefined) value = convertedValue
+		assert.integer(value)
+		buffer.addAll(flexInt.makeValueBuffer(value))
 	}
 }
 
@@ -1665,6 +1678,7 @@ module.exports = {
 	UnsignedIntType,
 	UnsignedLongType,
 	BigUnsignedIntType,
+	FlexUnsignedIntType,
 	DateType,
 	DayType,
 	TimeType,

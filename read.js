@@ -7,6 +7,7 @@ const assert = require(__dirname + '/lib/assert.js')
 const bitMath = require(__dirname + '/lib/bit-math.js')
 const bufferString = require(__dirname + '/lib/buffer-string.js')
 const constructorRegistry = require(__dirname + '/constructor-registry.js')
+const flexInt = require(__dirname + '/lib/flex-int.js')
 const recursiveRegistry = require(__dirname + '/recursive-registry.js')
 const strint = require(__dirname + '/lib/strint.js')
 const t = require(__dirname + '/structure-types.js')
@@ -24,7 +25,7 @@ function readLengthBuffer(buffer, offset) {
 	catch (e) { assert.fail(NOT_LONG_ENOUGH) }
 }
 //Types whose type bytes are only 1 byte long (the type byte)
-const SINGLE_BYTE_TYPES = [
+const SINGLE_BYTE_TYPES = new Set([
 	t.ByteType,
 	t.ShortType,
 	t.IntType,
@@ -35,6 +36,7 @@ const SINGLE_BYTE_TYPES = [
 	t.UnsignedIntType,
 	t.UnsignedLongType,
 	t.BigUnsignedIntType,
+	t.FlexUnsignedIntType,
 	t.DateType,
 	t.DayType,
 	t.TimeType,
@@ -45,7 +47,12 @@ const SINGLE_BYTE_TYPES = [
 	t.CharType,
 	t.StringType,
 	t.OctetsType
-]
+])
+//Mapping of type bytes to the corresponding types
+const SINGLE_BYTE_TYPE_BYTES = new Map
+for (const singleByteType of SINGLE_BYTE_TYPES) {
+	SINGLE_BYTE_TYPE_BYTES.set(singleByteType._value, singleByteType)
+}
 //Pads a string with preceding 0s so that it has the desired length (for error messages)
 function pad(str, digits) {
 	if (str.length < digits) return '0'.repeat(digits - str.length) + str
@@ -154,7 +161,7 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 		}
 		case t.UnsignedByteType: {
 			length = 1
-			assert.assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			value = new Uint8Array(buffer)[offset] //endianness doesn't matter because there is only 1 byte
 			break
 		}
@@ -190,6 +197,15 @@ function consumeValue({buffer, pointerStart, offset, type, baseValue}) {
 				if (byte) value = strint.mul(value, strint.BYTE_SHIFT) //after the first byte, shift everything left one byte before adding
 				value = strint.add(value, String(dataView.getUint8(offset + length + byte)))
 			}
+			length += bytes
+			break
+		}
+		case t.FlexUnsignedIntType: {
+			length = 1
+			assert.assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+			const bytes = flexInt.getByteCount(new Uint8Array(buffer)[offset])
+			assert.assert(buffer.byteLength >= offset + bytes, NOT_LONG_ENOUGH)
+			value = flexInt.readValueBuffer(buffer.slice(offset, offset + bytes))
 			length += bytes
 			break
 		}
@@ -412,9 +428,8 @@ function consumeType(typeBuffer, offset) {
 	const typeByte = castBuffer[offset]
 	let value,
 		length = 1
-	for (const testType of SINGLE_BYTE_TYPES) {
-		if (typeByte === testType._value) return {value: new testType, length} //eslint-disable-line new-cap
-	}
+	const singleByteType = SINGLE_BYTE_TYPE_BYTES.get(typeByte)
+	if (singleByteType !== undefined) return {value: new singleByteType, length} //eslint-disable-line new-cap
 	switch (typeByte) {
 		case t.BooleanTupleType._value: {
 			assert.assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
