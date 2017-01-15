@@ -30,12 +30,13 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `Short` (2-byte signed integer)
 	- `Int` (4-byte signed integer)
 	- `Long` (8-byte signed integer)
-	- `BigInt` (a signed integer with up to 65535 bytes of precision)
+	- `BigInt` (a signed integer with arbitrary precision)
 	- `UnsignedByte` (1-byte unsigned integer)
 	- `UnsignedShort` (2-byte unsigned integer)
 	- `UnsignedInt` (4-byte unsigned integer)
 	- `UnsignedLong` (8-byte unsigned integer)
-	- `BigUnsignedInt` (an unsigned integer with up to 65535 bytes of precision)
+	- `BigUnsignedInt` (an unsigned integer with arbitrary precision)
+	- `FlexUnsignedInt` (an unsigned integer below `2^53` with a variable-length representation)
 	- `Date` (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)
 	- `Day` (3-byte unsigned integer representing a specific day in history)
 	- `Time` (4-byte unsigned integer representing a specific time of day)
@@ -266,7 +267,12 @@ Client-side:
 ````
 
 ## Binary formats
-In the following definitions, `uint8_t` means an 8-bit unsigned integer, `uint16_t` means a 16-bit unsigned integer, and `uint32_t` means a 32-bit unsigned integer.
+In the following definitions, `uint8_t` means an 8-bit unsigned integer. `flexInt` means a variable-length unsigned integer with the following format, where `X` represents either `0` or `1`:
+- `[0b0XXXXXXX]` stores values from `0` to `2^7 - 1` in their unsigned 7-bit integer representations
+- `[0b10XXXXXX, 0bXXXXXXXX]` stores values from `2^7` to `2^7 + 2^14 - 1`, where a value `x` is encoded into the unsigned 14-bit representation of `x - 2^7`
+- `[0b110XXXXX, 0bXXXXXXXX, 0bXXXXXXXX]` stores values from `2^7 + 2^14` to `2^7 + 2^14 + 2^21 - 1`, where a value `x` is encoded into the unsigned 14-bit representation of `x - (2^7 + 2^14)`
+- and so on, up to 8-byte representations
+
 All numbers are stored in big-endian format.
 ### Type
 
@@ -283,7 +289,7 @@ For example, `new sb.UnsignedIntType` translates into `[0x13]`, and `new sb.Stru
 If the type has already been written to the buffer, it is also valid to serialize the type as:
 
 - `0xFF`
-- `offset` ([position of first byte of `offset` in buffer] - [position of type in buffer]) - `uint16_t`
+- `offset` ([position of first byte of `offset` in buffer] - [position of type in buffer]) - `flexInt`
 
 For example:
 ````javascript
@@ -364,7 +370,7 @@ In the following definitions, `type` means the binary type format.
 		- `typeName` - a UTF-8 string containing `typeNameLength` bytes
 		- `typeType` - `type`
 - `RecursiveType`: identifier `0x57`, payload:
-	- `recursiveID` (an identifier unique to this recursive type in this type buffer) - `uint16_t`
+	- `recursiveID` (an identifier unique to this recursive type in this type buffer) - `flexInt`
 	- If this is the first instance of this recursive type in this buffer:
 		- `recursiveType` (the type definition of this type) - `type`
 - `OptionalType`: identifier `0x60`, payload:
@@ -379,14 +385,14 @@ In the following definitions, `type` means the binary type format.
 - `IntType`: 4-byte integer
 - `LongType`: 8-byte integer
 - `BigIntType`:
-	- `byteCount` - `uint16_t`
+	- `byteCount` - `flexInt`
 	- `number` - `byteCount`-byte integer
 - `UnsignedByteType`: 1-byte unsigned integer
 - `UnsignedShortType`: 2-byte unsigned integer
 - `UnsignedIntType`: 4-byte unsigned integer
 - `UnsignedLongType`: 8-byte unsigned integer
 - `BigUnsignedIntType`:
-	- `byteCount` - `uint16_t`
+	- `byteCount` - `flexInt`
 	- `number` - `byteCount`-byte unsigned integer
 - `DateType`: 8-byte unsigned integer storing milliseconds in [Unix time](https://en.wikipedia.org/wiki/Unix_time)
 - `DayType`: 3-byte unsigned integer storing days since the [Unix time](https://en.wikipedia.org/wiki/Unix_time) epoch
@@ -396,14 +402,14 @@ In the following definitions, `type` means the binary type format.
 - `BooleanType`: 1-byte value, either `0x00` for `false` or `0xFF` for `true`
 - `BooleanTupleType`: `ceil(length / 8)` bytes, where the `n`th boolean is stored at the `(n % 8)`th MSB (`0`-indexed) of the `floor(n / 8)`th byte (`0`-indexed)
 - `BooleanArrayType`:
-	- `length` - `uint32_t`
+	- `length` - `flexInt`
 	- `booleans` - `ceil(length / 8)` bytes, where the `n`th boolean is stored at the `(n % 8)`th MSB (`0`-indexed) of the `floor(n / 8)`th byte (`0`-indexed)
 - `CharType`: UTF-8 codepoint (somewhere between 1 and 4 bytes long)
 - `StringType`:
 	- `string` - a UTF-8 string of any length not containing `'\0'`
 	- `0x00` to mark the end of the string
 - `OctetsType`:
-	- `length` - `uint32_t`
+	- `length` - `flexInt`
 	- `octets` - `length` bytes
 - `TupleType`:
 	- `length` values serialized by `elementType`
@@ -411,13 +417,13 @@ In the following definitions, `type` means the binary type format.
 	- For each field in order of declaration in the type format:
 		- The field's value serialized by `fieldType`
 - `ArrayType`:
-	- `length` - `uint32_t`
+	- `length` - `flexInt`
 	- `length` values serialized by `elementType`
 - `SetType`:
-	- `size` - `uint32_t`
+	- `size` - `flexInt`
 	- `size` values serialized by `elementType`
 - `MapType`:
-	- `size` - `uint32_t`
+	- `size` - `flexInt`
 	- `size` instances of `keyValuePair`:
 		- `key` - value serialized by `keyType`
 		- `value` - value serialized by `valueType`
@@ -434,13 +440,13 @@ In the following definitions, `type` means the binary type format.
 	- If `valueNotYetWrittenInBuffer`:
 		- `value` - value serialized by `recursiveType`
 	- Else:
-		- `offset` ([position of first byte of `offset` in buffer] - [position of `value` in buffer]) - `uint32_t`
+		- `offset` ([position of first byte of `offset` in buffer] - [position of `value` in buffer]) - `flexInt`
 - `OptionalType`:
 	- `valueIsNonNull` - byte containing either `0x00` or `0xFF`
 	- If `valueIsNonNull`:
 		- `value` - value serialized by `typeIfNonNull`
 - `PointerType`:
-	- `index` of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - `uint32_t`
+	- `index` of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - 32-bit unsigned integer
 
 ## Versioning
 Versions will be of the form `x.y.z`.
