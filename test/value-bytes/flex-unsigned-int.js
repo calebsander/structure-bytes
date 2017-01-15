@@ -26,7 +26,38 @@ for (let value = TWO_7 + TWO_14; value < 50000; value++) {
 	]))
 	assert.equal(r.value({type, buffer: valueBuffer}), value)
 }
-assert.equal(type.valueBuffer('123'), bufferFrom([123]))
+
+//For some reason, makeMaxBuffer does not get defined if this is not in a separate block
+{ //eslint-disable-line no-lone-blocks
+	function makeMinBuffer(bytes) {
+		const fullBytes = new Array(bytes - 1)
+		fullBytes.fill(0b00000000)
+		return bufferFrom(
+			[parseInt('1'.repeat(bytes - 1) + '0'.repeat(9 - bytes), 2)]
+			.concat(fullBytes)
+		)
+	}
+	function makeMaxBuffer(bytes) {
+		const fullBytes = new Array(bytes - 1)
+		fullBytes.fill(0b11111111)
+		return bufferFrom(
+			[parseInt('1'.repeat(bytes - 1) + '0' + '1'.repeat(8 - bytes), 2)]
+			.concat(fullBytes)
+		)
+	}
+	assert.equal(type.valueBuffer(2113663), makeMaxBuffer(3))
+	assert.equal(type.valueBuffer(2113664), makeMinBuffer(4))
+	assert.equal(type.valueBuffer(270549119), makeMaxBuffer(4))
+	assert.equal(type.valueBuffer(270549120), makeMinBuffer(5))
+	assert.equal(type.valueBuffer(34630287487), makeMaxBuffer(5))
+	assert.equal(type.valueBuffer(34630287488), makeMinBuffer(6))
+	assert.equal(type.valueBuffer(4432676798591), makeMaxBuffer(6))
+	assert.equal(type.valueBuffer(4432676798592), makeMinBuffer(7))
+	assert.equal(type.valueBuffer(567382630219903), makeMaxBuffer(7))
+	assert.equal(type.valueBuffer(567382630219904), makeMinBuffer(8))
+	assert.equal(type.valueBuffer(Number.MAX_SAFE_INTEGER), bufferFrom([0b11111110, 0b00011101, 0b11111011, 0b11110111, 0b11101111, 0b11011111, 0b10111111, 0b01111111]))
+	assert.equal(type.valueBuffer('123'), bufferFrom([123]))
+}
 
 assert.throws(
 	() => type.valueBuffer(true),

@@ -55,18 +55,19 @@ s.addTask(s => {
 		})
 })
 console.log('Compiling: Replacing large dependencies')
-const downloadFiles = [
+const uploadFiles = [
 	'/client-side/binary-ajax.js',
 	'/client-side/common.js',
 	'/config.js',
-	'/constructor-registry.js',
 	'/lib/bit-math.js',
 	'/lib/buffer-string.js',
+	'/lib/flex-int.js',
 	'/lib/growable-buffer.js',
 	'/lib/strint.js',
 	'/lib/util-inspect.js',
 	'/recursive-registry.js'
 ]
+const downloadFiles = uploadFiles.concat(['/constructor-registry.js'])
 s.callback(() => {
 	//Include the file in the browserify result because it is require()d by other files
 	function exposeFile(b, name, fileName = name) {
@@ -97,17 +98,7 @@ s.callback(() => {
 		modifiedFiles: {
 			noutil: ['/lib/assert', '/structure-types']
 		},
-		exposeFiles: [
-			'/client-side/binary-ajax.js',
-			'/client-side/common.js',
-			'/config.js',
-			'/lib/bit-math.js',
-			'/lib/buffer-string.js',
-			'/lib/growable-buffer.js',
-			'/lib/strint.js',
-			'/lib/util-inspect.js',
-			'/recursive-registry.js'
-		],
+		exposeFiles: uploadFiles,
 		outputFile: '/compiled/upload.js'
 	})
 	compile(downloadB, {

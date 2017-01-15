@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: PointerType</title>
+    <title>JSDoc: Class: FlexUnsignedIntType</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: PointerType</h1>
+    <h1 class="page-title">Class: FlexUnsignedIntType</h1>
 
     
 
@@ -28,13 +28,31 @@
 
 <header>
     
-        <h2>PointerType</h2>
+        <h2>FlexUnsignedIntType</h2>
         
-            <div class="class-description">A type storing a value of another type through a pointer.
-If you expect to have the same large value repeated many times,
-using a pointer will decrease the size of the value <a href="external-ArrayBuffer.html"><code>ArrayBuffer</code></a>.
-Each time the value is written, it will use 4 bytes to write the pointer,
-so you will only save space if the value is longer than 4 bytes and written more than once.</div>
+            <div class="class-description">A type storing any unsigned integer
+that can be represented precisely in a double
+(from 0 to 9007199254740991 (2^53 - 1)).
+Rather than having a fixed-length value representation,
+more bytes are needed to represent larger values.
+This is inspired by the UTF-8 format:
+large values can be stored, but since most values
+are small, fewer bytes are used in the typical case.<br>
+<br>
+The number of bytes required for numbers are as follows:
+<table>
+  <thead><tr><th>Number range</th><th>Bytes</th></tr></thead>
+  <tbody>
+    <tr><td>0 to 127</td><td>1</td></tr>
+    <tr><td>128 to 16511</td><td>2</td></tr>
+    <tr><td>16512 to 2113663</td><td>3</td></tr>
+    <tr><td>2113664 to 270549119</td><td>4</td></tr>
+    <tr><td>270549120 to 34630287487</td><td>5</td></tr>
+    <tr><td>34630287488 to 4432676798591</td><td>6</td></tr>
+    <tr><td>4432676798592 to 567382630219903</td><td>7</td></tr>
+    <tr><td>567382630219904 to 9007199254740991</td><td>8</td></tr>
+  </tbody>
+</table></div>
         
     
 </header>
@@ -48,7 +66,7 @@ so you will only save space if the value is longer than 4 bytes and written more
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="PointerType"><span class="type-signature"></span>new PointerType<span class="signature">(type)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="FlexUnsignedIntType"><span class="type-signature"></span>new FlexUnsignedIntType<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -60,55 +78,6 @@ so you will only save space if the value is longer than 4 bytes and written more
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Type.html">Type</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The type of any value</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -144,7 +113,7 @@ so you will only save space if the value is longer than 4 bytes and written more
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1617">line 1617</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line548">line 548</a>
     </li></ul></dd>
     
 
@@ -167,23 +136,6 @@ so you will only save space if the value is longer than 4 bytes and written more
 
 
 
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>//If the same people will be used many times
-let personType = new sb.PointerType(
-  new sb.StructType({
-    dob: new sb.DateType,
-    id: new sb.UnsignedShortType,
-    name: new sb.StringType
-  })
-)
-let tribeType = new sb.StructType({
-  leader: personType,
-  members: new sb.SetType(personType),
-  money: new sb.MapType(personType, new sb.FloatType)
-})</code></pre>
 
 
 
@@ -303,12 +255,12 @@ invoking <a href="Type.html#addToBuffer"><code>super.addToBuffer()</code></a> an
     
 
     
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
         <a href="Type.html#addToBuffer">Type#addToBuffer</a>
     </li></ul></dd>
+    
+
     
 
     
@@ -1109,7 +1061,10 @@ for acceptable values.
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
 
 
             
@@ -1119,7 +1074,7 @@ for acceptable values.
 
             
 
-            <td class="description last">The value to write</td>
+            <td class="description last">The value to write (between 0 and 9007199254740991)</td>
         </tr>
 
     
@@ -1165,7 +1120,7 @@ for acceptable values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line1659">line 1659</a>
+        <a href="structure-types.js.html">structure-types.js</a>, <a href="structure-types.js.html#line558">line 558</a>
     </li></ul></dd>
     
 
@@ -1217,30 +1172,6 @@ for acceptable values.
     
 
 
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>let louis = {
-  dob: new Date(1437592284193),
-  id: 9,
-  name: 'Louis'
-},
-garfield = {
-  dob: new Date(1437592284194),
-  id: 17,
-  name: 'Garfield'
-}
-let value = {
-  leader: {
-    dob: new Date(1437592284192),
-    id: 10,
-    name: 'Joe'
-  },
-  members: new Set().add(louis).add(garfield),
-  money: new Map().set(louis, 23.05).set(garfield, -10.07)
-}
-tribeType.writeValue(buffer, value)</code></pre>
 
 
 
