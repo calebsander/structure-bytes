@@ -56,6 +56,7 @@ for (let value = TWO_7 + TWO_14; value < 50000; value++) {
 	assert.equal(type.valueBuffer(567382630219903), makeMaxBuffer(7))
 	assert.equal(type.valueBuffer(567382630219904), makeMinBuffer(8))
 	assert.equal(type.valueBuffer(Number.MAX_SAFE_INTEGER), bufferFrom([0b11111110, 0b00011101, 0b11111011, 0b11110111, 0b11101111, 0b11011111, 0b10111111, 0b01111111]))
+	assert.equal(r.value({type, buffer: type.valueBuffer(Number.MAX_SAFE_INTEGER)}), Number.MAX_SAFE_INTEGER)
 	assert.equal(type.valueBuffer('123'), bufferFrom([123]))
 }
 
