@@ -311,7 +311,7 @@ const type = new sb.StructType({
 					3 /*3 floats in the tuple*/,
 			3 /*3 characters in second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/,
 				0xff, /*type is defined previously*/
-					0, 11 /*type is defined 11 bytes before the 0 on this line*/
+					8 /*type is defined 8 bytes before this byte*/
 ]
 ````
 In the following definitions, `type` means the binary type format.
@@ -326,6 +326,7 @@ In the following definitions, `type` means the binary type format.
 - `UnsignedIntType`: identifier `0x13`
 - `UnsignedLongType`: identifier `0x14`
 - `BigUnsignedIntType`: identifier `0x15`
+- `FlexUnsignedIntType`: identifier `0x17`
 - `DateType`: identifier `0x1A`
 - `DayType`: identifier `0x1B`
 - `TimeType`: identifier `0x1C`
@@ -394,6 +395,7 @@ In the following definitions, `type` means the binary type format.
 - `BigUnsignedIntType`:
 	- `byteCount` - `flexInt`
 	- `number` - `byteCount`-byte unsigned integer
+- `FlexUnsignedIntType`: `flexInt`
 - `DateType`: 8-byte unsigned integer storing milliseconds in [Unix time](https://en.wikipedia.org/wiki/Unix_time)
 - `DayType`: 3-byte unsigned integer storing days since the [Unix time](https://en.wikipedia.org/wiki/Unix_time) epoch
 - `TimeType`: 4-byte unsigned integer storing milliseconds since the start of the day

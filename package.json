@@ -14,8 +14,8 @@
 		"babel-preset-es2015": "6.18.x",
 		"browserify": "13.3.x",
 		"coveralls": "2.11.x",
-		"google-closure-compiler-js": "20161201.0.0",
-		"nyc": "10.0.x",
+		"google-closure-compiler-js": "20161201.0.1",
+		"nyc": "10.1.x",
 		"simultaneity": "1.1.x"
 	},
 	"directories": {
