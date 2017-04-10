@@ -1,8 +1,5 @@
-//For use with browserify
-if (__dirname === '/') __dirname = ''
-
-const assert = require(__dirname + '/lib/assert.js')
-const t = require(__dirname + '/structure-types.js')
+const assert = require('./lib/assert')
+const t = require('./structure-types')
 
 //A map of names of recursive types to their types
 const registeredTypes = new Map

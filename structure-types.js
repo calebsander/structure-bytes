@@ -1,25 +1,22 @@
 /*eslint-disable valid-jsdoc*/ //since root parameters shouldn't be documented
 
-//For use with browserify
-if (__dirname === '/') __dirname = ''
-
 //This file contains definitions for all the types
 //and their writing to bytes methods
 
-const assert = require(__dirname + '/lib/assert.js')
+const assert = require('./lib/assert')
 const base64 = require('base64-js')
-const bufferString = require(__dirname + '/lib/buffer-string.js')
-const config = require(__dirname + '/config.js')
-const flexInt = require(__dirname + '/lib/flex-int.js')
+const bufferString = require('./lib/buffer-string')
+const config = require('./config')
+const flexInt = require('./lib/flex-int')
 const sha256 = require('sha256')
-const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
+const GrowableBuffer = require('./lib/growable-buffer')
 let recursiveRegistry
 function loadRecursiveRegistry() { //lazy require to avoid mutual dependence
-	if (!recursiveRegistry) recursiveRegistry = require(__dirname + '/recursive-registry.js')
+	if (!recursiveRegistry) recursiveRegistry = require('./recursive-registry')
 }
-const strint = require(__dirname + '/lib/strint.js')
+const strint = require('./lib/strint')
 const util = require('util')
-const {dividedByEight, modEight} = require(__dirname + '/lib/bit-math.js')
+const {dividedByEight, modEight} = require('./lib/bit-math')
 
 //Map of write buffers to maps of names to ids
 const recursiveIDs = new WeakMap

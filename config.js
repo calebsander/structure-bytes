@@ -1,6 +1,3 @@
-//For use with browserify
-if (__dirname === '/') __dirname = ''
-
 const base64 = require('base64-js')
 
 const VERSION = 11

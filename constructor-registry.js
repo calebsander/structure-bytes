@@ -1,6 +1,3 @@
-//For use with browserify
-if (__dirname === '/') __dirname = ''
-
 const registeredConstructors = new Map
 module.exports = {
 	/** @function

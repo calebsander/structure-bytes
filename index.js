@@ -26,10 +26,10 @@
 
 //Copy version string, io functions, and types into package exports
 for (const moduleName of ['io', 'recursive-registry', 'structure-types']) {
-	const sbModule = require(__dirname + '/' + moduleName + '.js')
+	const sbModule = require('./' + moduleName)
 	for (const attribute in sbModule) exports[attribute] = sbModule[attribute] //eslint-disable-line guard-for-in
 }
-exports.r = require(__dirname + '/read.js') //add r. to read functions because type() and value() would be confusing
+exports.r = require('./read') //add r. to read functions because type() and value() would be confusing
 delete exports.MILLIS_PER_DAY
 delete exports.MILLIS_PER_MINUTE
 delete exports.REPEATED_TYPE

@@ -1,17 +1,14 @@
-//For use with browserify
-if (__dirname === '/') __dirname = ''
-
 //This file contains functions for performing I/O;
 //specifically, reads and writes of types and values and HTTP responses
 
 const accepts = require('accepts')
-const assert = require(__dirname + '/lib/assert.js')
-const BufferStream = require(__dirname + '/lib/buffer-stream.js')
-const GrowableBuffer = require(__dirname + '/lib/growable-buffer.js')
+const assert = require('./lib/assert')
+const BufferStream = require('./lib/buffer-stream')
+const GrowableBuffer = require('./lib/growable-buffer')
 const http = require('http')
-const r = require(__dirname + '/read.js')
+const r = require('./read')
 const stream = require('stream')
-const t = require(__dirname + '/structure-types.js')
+const t = require('./structure-types')
 const zlib = require('zlib')
 
 function toArrayBuffer(buffer) {

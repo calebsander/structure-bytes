@@ -3,7 +3,7 @@
 const browserify = require('browserify')
 const closure = require('google-closure-compiler-js').compile
 const fs = require('fs')
-const ReplaceStream = require(__dirname + '/lib/replace-stream.js')
+const ReplaceStream = require('./lib/replace-stream')
 const Simultaneity = require('simultaneity')
 
 const uploadB = browserify()

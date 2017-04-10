@@ -1,16 +1,13 @@
-//For use with browserify
-if (__dirname === '/') __dirname = ''
-
 //This file contains functions for reading types and values from bytes
 
-const assert = require(__dirname + '/lib/assert.js')
-const bitMath = require(__dirname + '/lib/bit-math.js')
-const bufferString = require(__dirname + '/lib/buffer-string.js')
-const constructorRegistry = require(__dirname + '/constructor-registry.js')
-const flexInt = require(__dirname + '/lib/flex-int.js')
-const recursiveRegistry = require(__dirname + '/recursive-registry.js')
-const strint = require(__dirname + '/lib/strint.js')
-const t = require(__dirname + '/structure-types.js')
+const assert = require('./lib/assert')
+const bitMath = require('./lib/bit-math')
+const bufferString = require('./lib/buffer-string')
+const constructorRegistry = require('./constructor-registry')
+const flexInt = require('./lib/flex-int')
+const recursiveRegistry = require('./recursive-registry')
+const strint = require('./lib/strint')
+const t = require('./structure-types')
 const util = require('util')
 
 const NOT_LONG_ENOUGH = 'Buffer is not long enough'
