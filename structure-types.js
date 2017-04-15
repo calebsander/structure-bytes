@@ -148,7 +148,6 @@ class Type {
 	}
 	/**
 	 * Appends value bytes to a {@link GrowableBuffer} according to the type
-	 * @abstract
 	 * @param {GrowableBuffer} buffer The buffer to which to append
 	 * @param {*} value The value to write
 	 * @throws {Error} If called on the {@link Type} class

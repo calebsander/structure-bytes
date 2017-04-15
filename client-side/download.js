@@ -1,9 +1,9 @@
 /*eslint-env browser*/
 (() => {
-	require('/client-side/common.js')
-	const assert = require('/lib/assert.js')
+	require('./common')
+	const assert = require('../lib/assert')
 	const base64 = require('base64-js')
-	const r = require('/read.js')
+	const r = require('../read')
 	const typeCache = {}
 	function saveTypeCache() {
 		const composedCache = {}

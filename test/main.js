@@ -4,19 +4,19 @@
 const fs = require('fs')
 
 //For tests
-const index = require(__dirname + '/../index.js')
-const assert = require(__dirname + '/../lib/assert.js')
-const BufferStream = require(__dirname + '/../lib/buffer-stream.js')
-const constructorRegistry = require(__dirname + '/../constructor-registry.js')
-const bufferString = require(__dirname + '/../lib/buffer-string.js')
-const GrowableBuffer = require(__dirname + '/../lib/growable-buffer.js')
+const index = require('../index')
+const assert = require('../lib/assert')
+const BufferStream = require('../lib/buffer-stream')
+const constructorRegistry = require('../constructor-registry')
+const bufferString = require('../lib/buffer-string')
+const GrowableBuffer = require('../lib/growable-buffer')
 const io = index
 const {r} = index
 const rec = index
-const ReplaceStream = require(__dirname + '/../lib/replace-stream.js')
+const ReplaceStream = require('../lib/replace-stream')
 const Simultaneity = require('simultaneity')
 const t = index
-const util = require(__dirname + '/../lib/util-inspect.js')
+const util = require('../lib/util-inspect.js')
 function bufferFrom(bytes) {
 	const buffer = new ArrayBuffer(bytes.length)
 	new Uint8Array(buffer).set(bytes)
@@ -72,7 +72,7 @@ fs.readdir(__dirname, (err, testSuites) => {
 	}
 	suitesS.callback(() => { //wait until all suites have been scanned to run tests
 		if (process.argv[2]) testsS.callback(() => {}) //if another argument is specified, don't compile
-		else testsS.callback(() => require(__dirname + '/../compile.js')) //not run as a test so that coverage is generated
+		else testsS.callback(() => require('../compile')) //not run as a test so that coverage is generated
 	})
 	process.on('exit', () => {
 		console.log(

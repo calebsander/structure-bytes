@@ -1,8 +1,8 @@
 /*eslint-disable no-console*/
-const assert = require(__dirname + '/../lib/assert.js')
+const assert = require('../lib/assert')
 const fs = require('fs')
 const http = require('http')
-const sb = require(__dirname + '/../index.js')
+const sb = require('../index')
 
 const type = new sb.ArrayType(
 	new sb.StructType({

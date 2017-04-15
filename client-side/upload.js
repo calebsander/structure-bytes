@@ -1,7 +1,7 @@
 /*eslint-env browser*/
 (() => {
-	require('/client-side/common.js')
-	const assert = require('/lib/assert.js')
+	require('./common')
+	const assert = require('../lib/assert')
 	/** @function
 	 * @name upload
 	 * @desc <b>(client-side only)</b>
