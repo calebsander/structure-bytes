@@ -1,3 +1,5 @@
 node_modules
 client-side/upload-download.js
 compiled/*-unminified.js
+test/**/*.js
+typings/*.js
