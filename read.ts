@@ -7,11 +7,12 @@ import {REPEATED_TYPE} from './lib/constants'
 import * as constructorRegistry from './constructor-registry'
 import * as date from './lib/date'
 import * as flexInt from './lib/flex-int'
+import * as strint from './lib/strint'
+import {inspect} from './lib/util-inspect'
 import * as recursiveRegistry from './recursive-registry'
 import {RegisterableType} from './recursive-registry-type'
-import * as strint from './lib/strint'
 import * as t from './structure-types'
-import {inspect} from './lib/util-inspect'
+import AbstractType from './types/abstract'
 
 export interface ReadResult<E> {
 	value: E
@@ -85,7 +86,7 @@ function makeBaseValue(type: RegisterableType, count?: number) {
 			return {}
 		}
 		/*istanbul ignore next*/
-		default: assert.fail('Invalid type for base value: ' + inspect(type))
+		default: throw new Error('Invalid type for base value: ' + inspect(type))
 	}
 }
 interface ReadBooleansParams {
@@ -691,7 +692,7 @@ export interface ValueParams<E> {
  */
 export function value<E>({buffer, type, offset = 0}: ValueParams<E>): E {
 	assert.instanceOf(buffer, ArrayBuffer)
-	assert.instanceOf(type, t.AbstractType)
+	assert.instanceOf(type, AbstractType)
 	assert.instanceOf(offset, Number)
 	const {value} = consumeValue({buffer, offset, type, pointerStart: offset})
 	//no length validation because bytes being pointed to don't get counted in the length

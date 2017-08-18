@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import * as http from 'http';
 import { Readable, Writable } from 'stream';
-import { Type } from './structure-types';
+import Type from './types/type';
 export interface WriteParams<E> {
     type: Type<E>;
     outStream: Writable;

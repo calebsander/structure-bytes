@@ -1,12 +1,12 @@
 import assert from '../../dist/lib/assert'
-import * as t from '../../dist'
+import AbstractType from '../../dist/types/abstract'
 
 export = () => {
 	assert.throws(
-		() => t.AbstractType._value,
+		() => AbstractType._value,
 		'Generic Type has no value byte'
 	)
-	const type = new (t.AbstractType as any)
+	const type = new (AbstractType as any)
 	assert.throws(
 		() => type.valueBuffer(23),
 		'this.writeValue is not a function'

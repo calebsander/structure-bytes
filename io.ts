@@ -8,7 +8,8 @@ import GrowableBuffer from './lib/growable-buffer'
 import * as http from 'http'
 import * as r from './read'
 import {Duplex, Readable, Writable} from 'stream'
-import {Type, AbstractType} from './structure-types'
+import AbstractType from './types/abstract'
+import Type from './types/type'
 import * as zlib from 'zlib'
 
 function toArrayBuffer(buffer: Buffer): ArrayBuffer {

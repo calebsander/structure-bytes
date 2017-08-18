@@ -17,7 +17,14 @@ promisify(fs.readdir)(__dirname)
 				console.error('Error in test file ' + file)
 				console.error(err)
 			}
-			const runTest = require(file)
+			let runTest: Promise<void> | Function
+			try {
+				runTest = require(file)
+			}
+			catch (e) {
+				error(e)
+				return
+			}
 			if (runTest instanceof Promise) {
 				runTest
 					.then(success)
@@ -35,7 +42,7 @@ promisify(fs.readdir)(__dirname)
 		}
 		Promise.all(
 			testSuites
-				.filter(suite => suite.indexOf('.') === -1)
+				.filter(suite => !suite.includes('.'))
 				.map(testSuite => {
 					const dir = __dirname + '/' + testSuite
 					return promisify(fs.readdir)(dir)

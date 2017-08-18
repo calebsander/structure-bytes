@@ -8,10 +8,11 @@ const constants_1 = require("./lib/constants");
 const constructorRegistry = require("./constructor-registry");
 const date = require("./lib/date");
 const flexInt = require("./lib/flex-int");
-const recursiveRegistry = require("./recursive-registry");
 const strint = require("./lib/strint");
-const t = require("./structure-types");
 const util_inspect_1 = require("./lib/util-inspect");
+const recursiveRegistry = require("./recursive-registry");
+const t = require("./structure-types");
+const abstract_1 = require("./types/abstract");
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readFlexInt(buffer, offset) {
     assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
@@ -78,7 +79,7 @@ function makeBaseValue(type, count) {
             return {};
         }
         /*istanbul ignore next*/
-        default: assert_1.default.fail('Invalid type for base value: ' + util_inspect_1.inspect(type));
+        default: throw new Error('Invalid type for base value: ' + util_inspect_1.inspect(type));
     }
 }
 //Counterpart for writeBooleans() in structure-types.ts
@@ -678,7 +679,7 @@ exports.type = type;
  */
 function value({ buffer, type, offset = 0 }) {
     assert_1.default.instanceOf(buffer, ArrayBuffer);
-    assert_1.default.instanceOf(type, t.AbstractType);
+    assert_1.default.instanceOf(type, abstract_1.default);
     assert_1.default.instanceOf(offset, Number);
     const { value } = consumeValue({ buffer, offset, type, pointerStart: offset });
     //no length validation because bytes being pointed to don't get counted in the length

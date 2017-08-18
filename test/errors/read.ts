@@ -1,6 +1,7 @@
 import assert from '../../dist/lib/assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
+import AbstractType from '../../dist/types/abstract'
 import {bufferFrom} from '../test-common'
 
 export = () => {
@@ -13,7 +14,7 @@ export = () => {
 		'Buffer is not long enough'
 	)
 	assert.throws(
-		() => r.value({buffer: new ArrayBuffer(0), type: new (t.AbstractType as any)}),
+		() => r.value({buffer: new ArrayBuffer(0), type: new (AbstractType as any)}),
 		'Not a structure type: AbstractType {}'
 	)
 	assert.throws(

@@ -9,7 +9,7 @@ const growable_buffer_1 = require("./lib/growable-buffer");
 const http = require("http");
 const r = require("./read");
 const stream_1 = require("stream");
-const structure_types_1 = require("./structure-types");
+const abstract_1 = require("./types/abstract");
 const zlib = require("zlib");
 function toArrayBuffer(buffer) {
     return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
@@ -33,7 +33,7 @@ const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http.OutgoingMessa
  * @return {stream.Writable} {@link params.outStream}
  */
 function writeType({ type, outStream }, callback) {
-    assert_1.default.instanceOf(type, structure_types_1.AbstractType);
+    assert_1.default.instanceOf(type, abstract_1.default);
     assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
     if (callback === undefined)
         callback = () => { };
@@ -69,7 +69,7 @@ exports.writeType = writeType;
  * @return {stream.Writable} {@link params.outStream}
  */
 function writeValue({ type, value, outStream }, callback) {
-    assert_1.default.instanceOf(type, structure_types_1.AbstractType);
+    assert_1.default.instanceOf(type, abstract_1.default);
     assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
     if (callback === undefined)
         callback = () => { };
@@ -106,7 +106,7 @@ exports.writeValue = writeValue;
  * @return {stream.Writable} {@link params.outStream}
  */
 function writeTypeAndValue({ type, value, outStream }, callback) {
-    assert_1.default.instanceOf(type, structure_types_1.AbstractType);
+    assert_1.default.instanceOf(type, abstract_1.default);
     assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
     if (callback === undefined)
         callback = () => { };
@@ -275,7 +275,7 @@ exports.readTypeAndValue = readTypeAndValue;
  * @param {errCallback=} callback
  */
 function httpRespond({ req, res, type, value }, callback) {
-    assert_1.default.instanceOf(type, structure_types_1.AbstractType);
+    assert_1.default.instanceOf(type, abstract_1.default);
     if (callback === undefined)
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
