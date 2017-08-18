@@ -1,4 +1,4 @@
-import {ArrayType, MapType, SetType, StructType, TupleType} from './structure-types'
+import {ArrayType, MapType, SetType, StructType, TupleType} from './types'
 
 export type RegisterableType
 	= ArrayType<any>

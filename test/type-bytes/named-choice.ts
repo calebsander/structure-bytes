@@ -1,5 +1,5 @@
 import assert from '../../dist/lib/assert'
-import * as constructorRegistry from '../../dist/constructor-registry'
+import * as constructorRegistry from '../../dist/lib/constructor-registry'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'

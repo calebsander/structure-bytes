@@ -5,13 +5,13 @@ const assert_1 = require("./lib/assert");
 const bit_math_1 = require("./lib/bit-math");
 const bufferString = require("./lib/buffer-string");
 const constants_1 = require("./lib/constants");
-const constructorRegistry = require("./constructor-registry");
+const constructorRegistry = require("./lib/constructor-registry");
 const date = require("./lib/date");
 const flexInt = require("./lib/flex-int");
 const strint = require("./lib/strint");
 const util_inspect_1 = require("./lib/util-inspect");
 const recursiveRegistry = require("./recursive-registry");
-const t = require("./structure-types");
+const t = require("./types");
 const abstract_1 = require("./types/abstract");
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readFlexInt(buffer, offset) {

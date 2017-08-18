@@ -28,4 +28,4 @@ export * from './io'
 import * as read from './read'
 export const r = read
 export * from './recursive-registry'
-export * from './structure-types'
+export * from './types'

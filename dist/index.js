@@ -32,4 +32,4 @@ __export(require("./io"));
 const read = require("./read");
 exports.r = read;
 __export(require("./recursive-registry"));
-__export(require("./structure-types"));
+__export(require("./types"));

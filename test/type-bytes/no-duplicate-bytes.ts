@@ -1,6 +1,6 @@
 import assert from '../../dist/lib/assert'
 import {REPEATED_TYPE} from '../../dist/lib/constants'
-import * as t from '../../dist/structure-types'
+import * as t from '../../dist/types'
 import AbstractType from '../../dist/types/abstract'
 
 interface TypesOnly {

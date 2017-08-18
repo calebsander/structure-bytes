@@ -1,4 +1,4 @@
-import * as t from './structure-types';
+import * as t from './types';
 export interface ReadResult<E> {
     value: E;
     length: number;

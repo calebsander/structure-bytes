@@ -27,4 +27,4 @@ export * from './io';
 import * as read from './read';
 export declare const r: typeof read;
 export * from './recursive-registry';
-export * from './structure-types';
+export * from './types';
