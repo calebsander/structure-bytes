@@ -7,6 +7,7 @@ export = () => {
 		() => assert.throws(() => {}),
 		'Should throw an error'
 	)
+	assert.throws(() => { throw new Error('abc') })
 	assert.throws(
 		() => assert.equal(null, {a: 1}),
 		'Expected {a: 1} but got null'

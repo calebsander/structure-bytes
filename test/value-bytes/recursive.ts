@@ -70,4 +70,21 @@ export = () => {
 		assert(nodes[2] === nodeLinks[1][1]) //node3
 		assert(nodes[3] === nodeLinks[1][2]) //node1Second
 	}
+
+	interface SelfReference {
+		self: SelfReference
+	}
+	const selfReferenceType = new t.RecursiveType<SelfReference>('self-reference')
+	rec.registerType({
+		type: new t.StructType({
+			self: selfReferenceType
+		}),
+		name: 'self-reference'
+	})
+	const selfReference: SelfReference = {} as SelfReference
+	selfReference.self = selfReference
+	assert.equal(selfReferenceType.valueBuffer(selfReference), bufferFrom([
+		0xff,
+			0x00, 1
+	]))
 }

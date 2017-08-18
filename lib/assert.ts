@@ -74,6 +74,7 @@ function equal(actual: any, expected: any) {
 			case Object: {
 				if (!(actual && actual.constructor === Object)) throw error()
 				for (const key in expected) { //actual is allowed to have fields that are not in expected
+					/*istanbul ignore else*/
 					if ({}.hasOwnProperty.call(expected, key)) {
 						try { equal(actual[key], expected[key]) }
 						catch (e) { throw error() }

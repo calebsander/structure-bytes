@@ -2,6 +2,7 @@ import assert from '../../dist/lib/assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import {r} from '../../dist'
 import * as t from '../../dist'
+import * as strint from '../../dist/lib/strint'
 import {bufferFill, bufferFrom} from '../test-common'
 
 export = () => {
@@ -24,4 +25,7 @@ export = () => {
 		() => type.writeValue(gb, '120971.00'),
 		'Illegal strint format: 120971.00'
 	)
+
+	//For more coverage of strint
+	assert.equal(strint.mulPositive('0', '0'), '0')
 }

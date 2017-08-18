@@ -31,4 +31,5 @@ export = () => {
 		}
 	}]
 	assert.equal(util.inspect(new B), '{one: 2}')
+	assert.equal(util.inspect(Buffer.from([0x01, 0x10])), '<Buffer 01 10>')
 }

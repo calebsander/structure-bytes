@@ -20,5 +20,6 @@ export = () => {
 			)
 		)
 	})
+	assert.equal(type.getHash(), 'YwJi4ZvHdopqQNW0lf2i8zQ37DEDMWmT9gFoqInimHw=')
 	assert.equal(type.getSignature(), 'AAs=YwJi4ZvHdopqQNW0lf2i8zQ37DEDMWmT9gFoqInimHw=')
 }

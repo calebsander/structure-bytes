@@ -749,6 +749,7 @@ class BooleanTupleType extends AbsoluteType {
         this.length = length;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             buffer.add(this.length);
             return true;
@@ -896,6 +897,7 @@ class TupleType extends AbsoluteType {
         return 0x50;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
             buffer.add(this.length);
@@ -988,16 +990,18 @@ class StructType extends AbsoluteType {
         this.fields.sort((a, b) => {
             if (a.name < b.name)
                 return -1;
-            else if (a.name > b.name)
+            /*istanbul ignore else*/
+            if (a.name > b.name)
                 return 1;
-            /*istanbul ignore next*/
-            return 0; //should never occur since names are distinct
+            else
+                return 0; //should never occur since names are distinct
         });
     }
     static get _value() {
         return 0x51;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             buffer.add(this.fields.length);
             for (const field of this.fields) {
@@ -1097,6 +1101,7 @@ class ArrayType extends AbsoluteType {
         return 0x52;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
             return true;
@@ -1144,6 +1149,7 @@ class SetType extends AbsoluteType {
         return 0x53;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
             return true;
@@ -1196,6 +1202,7 @@ class MapType extends AbsoluteType {
         return 0x54;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.keyType.addToBuffer(buffer);
             this.valueType.addToBuffer(buffer);
@@ -1285,6 +1292,7 @@ class EnumType extends AbstractType {
         return 0x55;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
             buffer.add(this.valueIndices.size);
@@ -1370,6 +1378,7 @@ class ChoiceType extends AbsoluteType {
         return 0x56;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             buffer.add(this.types.length);
             for (const type of this.types)
@@ -1505,6 +1514,7 @@ class NamedChoiceType extends AbsoluteType {
         return 0x58;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             buffer.add(this.constructorTypes.length);
             for (const { nameBuffer, type } of this.constructorTypes) {
@@ -1609,6 +1619,7 @@ class RecursiveType extends AbsoluteType {
         return type;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             let bufferRecursiveIDs = recursiveIDs.get(buffer);
             if (!bufferRecursiveIDs) {
@@ -1725,6 +1736,7 @@ class OptionalType extends AbsoluteType {
         return 0x60;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
             return true;
@@ -1802,6 +1814,7 @@ class PointerType extends AbstractType {
         return 0x70;
     }
     addToBuffer(buffer) {
+        /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
             return true;

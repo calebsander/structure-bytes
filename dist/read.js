@@ -170,8 +170,7 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             if (bytes) {
                 value = String(dataView.getInt8(offset + length));
                 for (let byte = 1; byte < bytes; byte++) {
-                    if (byte)
-                        value = strint.mul(value, strint.BYTE_SHIFT); //after the first byte, shift everything left one byte before adding
+                    value = strint.mul(value, strint.BYTE_SHIFT); //after the first byte, shift everything left one byte before adding
                     value = strint.add(value, String(dataView.getUint8(offset + length + byte)));
                 }
             }

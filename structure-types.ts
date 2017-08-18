@@ -768,6 +768,7 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 		this.length = length
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.length)
 			return true
@@ -921,6 +922,7 @@ export class TupleType<E> extends AbsoluteType<E[]> {
 		this.length = length
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
 			buffer.add(this.length)
@@ -1017,12 +1019,13 @@ export class StructType<E extends StringIndexable> extends AbsoluteType<E> {
 		//Sort by field name so field order is predictable
 		this.fields.sort((a, b) => {
 			if (a.name < b.name) return -1
-			else if (a.name > b.name) return 1
-			/*istanbul ignore next*/
-			return 0 //should never occur since names are distinct
+			/*istanbul ignore else*/
+			if (a.name > b.name) return 1
+			else return 0 //should never occur since names are distinct
 		})
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.fields.length)
 			for (const field of this.fields) {
@@ -1123,6 +1126,7 @@ export class ArrayType<E> extends AbsoluteType<E[]> {
 		this.type = type
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
 			return true
@@ -1170,6 +1174,7 @@ export class SetType<E> extends AbsoluteType<Set<E>> {
 		this.type = type
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
 			return true
@@ -1224,6 +1229,7 @@ export class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 		this.valueType = valueType
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.keyType.addToBuffer(buffer)
 			this.valueType.addToBuffer(buffer)
@@ -1316,6 +1322,7 @@ export class EnumType<E> extends AbstractType<E> {
 		this.valueIndices = valueIndices
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
 			buffer.add(this.valueIndices.size)
@@ -1392,6 +1399,7 @@ export class ChoiceType<E> extends AbsoluteType<E> {
 		this.types = types
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.types.length)
 			for (const type of this.types) type.addToBuffer(buffer)
@@ -1516,6 +1524,7 @@ export class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		}
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.constructorTypes.length)
 			for (const {nameBuffer, type} of this.constructorTypes) { //eslint-disable-line no-unused-vars
@@ -1613,6 +1622,7 @@ export class RecursiveType<E> extends AbsoluteType<E> {
 		return (type as RegisterableType & Type<E>)
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			let bufferRecursiveIDs = recursiveIDs.get(buffer)
 			if (!bufferRecursiveIDs) {
@@ -1730,6 +1740,7 @@ export class OptionalType<E> extends AbsoluteType<E | null | undefined> {
 		this.type = type
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
 			return true
@@ -1806,6 +1817,7 @@ export class PointerType<E> extends AbstractType<E> {
 		this.type = type
 	}
 	addToBuffer(buffer: GrowableBuffer) {
+		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
 			return true

@@ -4,6 +4,7 @@ const jsonTypes = new Set([String, Number, Boolean, Date]);
 function toObject(obj) {
     const result = {};
     for (const key in obj) {
+        /*istanbul ignore else*/
         if ({}.hasOwnProperty.call(obj, key))
             result[key] = obj[key];
     }
@@ -76,6 +77,7 @@ function inspect(obj) {
     if (obj.constructor === Object) {
         let result = '{';
         for (const key in obj) {
+            /*istanbul ignore else*/
             if ({}.hasOwnProperty.call(obj, key)) {
                 if (result !== '{')
                     result += ', ';

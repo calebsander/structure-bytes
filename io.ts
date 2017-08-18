@@ -60,7 +60,13 @@ export function writeType<E>({type, outStream}: WriteParams<E>, callback?: ErrCa
 	assert.instanceOf(outStream, WRITABLE_STREAMS)
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
-	const typeStream = new BufferStream(type.toBuffer())
+	let typeBuffer: ArrayBuffer
+	try { typeBuffer = type.toBuffer() }
+	catch (err) {
+		callback(err)
+		return outStream
+	}
+	const typeStream = new BufferStream(typeBuffer)
 	return typeStream.pipe(outStream)
 		.on('error', function(this: typeof outStream, err: Error) {
 			this.end()
@@ -88,7 +94,11 @@ export function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>,
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
 	const valueBuffer = new GrowableBuffer
-	type.writeValue(valueBuffer, value)
+	try { type.writeValue(valueBuffer, value) }
+	catch (err) {
+		callback(err)
+		return outStream
+	}
 	return new BufferStream(valueBuffer).pipe(outStream)
 		.on('error', function(this: typeof outStream, err: Error) {
 			this.end()
@@ -117,7 +127,13 @@ export function writeTypeAndValue<E>({type, value, outStream}: WriteTypeValuePar
 	assert.instanceOf(outStream, WRITABLE_STREAMS)
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
-	const typeStream = new BufferStream(type.toBuffer())
+	let typeBuffer: ArrayBuffer
+	try { typeBuffer = type.toBuffer() }
+	catch (err) {
+		callback(err)
+		return outStream
+	}
+	const typeStream = new BufferStream(typeBuffer)
 	typeStream.pipe(outStream, {end: false})
 		.on('error', function(this: typeof outStream) {
 			this.end()
@@ -257,12 +273,6 @@ export function readTypeAndValue(inStream: Readable, callback: TypeAndValueCallb
  * @param {errCallback=} callback
  */
 export function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?: ErrCallback) {
-	function writeEndCallback(acceptsGzip: boolean) {
-		return (err: Error) => {
-			if (err) (callback as ErrCallback)(err)
-			if (!acceptsGzip) (callback as ErrCallback)(null)
-		}
-	}
 	assert.instanceOf(type, AbstractType)
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
@@ -278,10 +288,14 @@ export function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?
 			outStream = zlib.createGzip() //pipe into a zip stream to decrease size of response
 		}
 		else outStream = res
-		if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
-			writeValue({type, value, outStream}, writeEndCallback(acceptsGzip))
+		function writeEndCallback(err: Error) {
+			if (err) (callback as ErrCallback)(err)
+			else if (!acceptsGzip) (callback as ErrCallback)(null)
 		}
-		else writeTypeAndValue({type, value, outStream}, writeEndCallback(acceptsGzip)) //otherwise, type and value need to be sent
+		if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
+			writeValue({type, value, outStream}, writeEndCallback)
+		}
+		else writeTypeAndValue({type, value, outStream}, writeEndCallback) //otherwise, type and value need to be sent
 		if (acceptsGzip) { //don't pipe until writing begins
 			outStream.pipe(res)
 				.on('finish', () => (callback as ErrCallback)(null))

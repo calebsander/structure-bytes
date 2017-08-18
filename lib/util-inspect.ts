@@ -6,6 +6,7 @@ interface StringIndexable {
 function toObject(obj: StringIndexable) {
 	const result: StringIndexable = {}
 	for (const key in obj) {
+		/*istanbul ignore else*/
 		if ({}.hasOwnProperty.call(obj, key)) result[key] = obj[key]
 	}
 	return result
@@ -70,6 +71,7 @@ export function inspect(obj: any): string {
 	if (obj.constructor === Object) { //as opposed to a subclass of Object
 		let result = '{'
 		for (const key in obj) {
+			/*istanbul ignore else*/
 			if ({}.hasOwnProperty.call(obj, key)) {
 				if (result !== '{') result += ', '
 				result += key + ': ' + inspect(obj[key])

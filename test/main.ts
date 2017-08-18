@@ -54,7 +54,7 @@ promisify(fs.readdir)(__dirname)
 			.on('exit', () => {
 				console.log(
 					String(passed) +
-					' (synchronous parts of) tests out of ' +
+					' tests out of ' +
 					String(total) +
 					' passed (' +
 					Math.round(passed / total * 100) +

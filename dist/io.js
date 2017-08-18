@@ -38,7 +38,15 @@ function writeType({ type, outStream }, callback) {
     if (callback === undefined)
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
-    const typeStream = new buffer_stream_1.default(type.toBuffer());
+    let typeBuffer;
+    try {
+        typeBuffer = type.toBuffer();
+    }
+    catch (err) {
+        callback(err);
+        return outStream;
+    }
+    const typeStream = new buffer_stream_1.default(typeBuffer);
     return typeStream.pipe(outStream)
         .on('error', function (err) {
         this.end();
@@ -67,7 +75,13 @@ function writeValue({ type, value, outStream }, callback) {
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
     const valueBuffer = new growable_buffer_1.default;
-    type.writeValue(valueBuffer, value);
+    try {
+        type.writeValue(valueBuffer, value);
+    }
+    catch (err) {
+        callback(err);
+        return outStream;
+    }
     return new buffer_stream_1.default(valueBuffer).pipe(outStream)
         .on('error', function (err) {
         this.end();
@@ -97,7 +111,15 @@ function writeTypeAndValue({ type, value, outStream }, callback) {
     if (callback === undefined)
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
-    const typeStream = new buffer_stream_1.default(type.toBuffer());
+    let typeBuffer;
+    try {
+        typeBuffer = type.toBuffer();
+    }
+    catch (err) {
+        callback(err);
+        return outStream;
+    }
+    const typeStream = new buffer_stream_1.default(typeBuffer);
     typeStream.pipe(outStream, { end: false })
         .on('error', function () {
         this.end();
@@ -253,14 +275,6 @@ exports.readTypeAndValue = readTypeAndValue;
  * @param {errCallback=} callback
  */
 function httpRespond({ req, res, type, value }, callback) {
-    function writeEndCallback(acceptsGzip) {
-        return (err) => {
-            if (err)
-                callback(err);
-            if (!acceptsGzip)
-                callback(null);
-        };
-    }
     assert_1.default.instanceOf(type, structure_types_1.AbstractType);
     if (callback === undefined)
         callback = () => { };
@@ -278,11 +292,17 @@ function httpRespond({ req, res, type, value }, callback) {
         }
         else
             outStream = res;
+        function writeEndCallback(err) {
+            if (err)
+                callback(err);
+            else if (!acceptsGzip)
+                callback(null);
+        }
         if (req.headers.sig && req.headers.sig === type.getSignature()) {
-            writeValue({ type, value, outStream }, writeEndCallback(acceptsGzip));
+            writeValue({ type, value, outStream }, writeEndCallback);
         }
         else
-            writeTypeAndValue({ type, value, outStream }, writeEndCallback(acceptsGzip)); //otherwise, type and value need to be sent
+            writeTypeAndValue({ type, value, outStream }, writeEndCallback); //otherwise, type and value need to be sent
         if (acceptsGzip) {
             outStream.pipe(res)
                 .on('finish', () => callback(null));

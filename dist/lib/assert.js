@@ -76,6 +76,7 @@ function equal(actual, expected) {
                 if (!(actual && actual.constructor === Object))
                     throw error();
                 for (const key in expected) {
+                    /*istanbul ignore else*/
                     if ({}.hasOwnProperty.call(expected, key)) {
                         try {
                             equal(actual[key], expected[key]);

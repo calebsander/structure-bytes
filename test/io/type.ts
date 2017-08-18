@@ -15,8 +15,8 @@ const type = new t.ArrayType(
 		)
 	})
 )
-const outStream = fs.createWriteStream(OUT_FILE)
 const writePromise = new Promise((resolve, reject) => {
+	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeType({type, outStream}, err => {
 		try {
 			if (err) throw err
@@ -32,16 +32,39 @@ const writePromise = new Promise((resolve, reject) => {
 									0x52,
 										0x02
 					]))
-					fs.unlink(OUT_FILE, err => {
-						try {
-							if (err) throw err
-							resolve()
-						}
-						catch (e) { reject(e) }
-					})
+					fs.unlink(OUT_FILE, _ => resolve())
 				}
 				catch (e) { reject(e) }
 			})
+		}
+		catch (e) { reject(e) }
+	})
+})
+const writeWithoutCallback = () => new Promise((resolve, reject) => {
+	const wait = setTimeout(() => {}, 1000000)
+	const outStream = fs.createWriteStream(OUT_FILE)
+	io.writeType({type: new t.StringType, outStream})
+	outStream.on('finish', () => {
+		clearTimeout(wait)
+		try {
+			fs.readFile(OUT_FILE, (err, data) => {
+				try {
+					if (err) throw err
+					assert.equal(data, Buffer.from([0x41]))
+					fs.unlink(OUT_FILE, _ => resolve())
+				}
+				catch (e) { reject(e) }
+			})
+		}
+		catch (e) { reject(e) }
+	})
+})
+const writeErrorPromise = () => new Promise((resolve, reject) => {
+	const outStream = fs.createWriteStream(OUT_FILE)
+	io.writeType({type: new t.RecursiveType('no-such-type'), outStream}, err => {
+		try {
+			assert.errorMessage(err, '"no-such-type" is not a registered type')
+			fs.unlink(OUT_FILE, _ => resolve())
 		}
 		catch (e) { reject(e) }
 	})
@@ -67,4 +90,10 @@ const readErrorPromise = new Promise((resolve, reject) => {
 		catch (e) { reject(e) }
 	})
 })
-export = Promise.all([writePromise, readPromise, readErrorPromise])
+export = Promise.all([
+	writePromise
+		.then(writeWithoutCallback)
+		.then(writeErrorPromise),
+	readPromise,
+	readErrorPromise
+])
