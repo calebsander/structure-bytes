@@ -33,7 +33,7 @@ export = () => {
 	const personCube = new t.ArrayType(
 		new t.ArrayType(
 			new t.ArrayType(
-				new t.ChoiceType<any>([
+				new t.ChoiceType<number | string | undefined | null | Person>([
 					new t.ByteType,
 					new t.UnsignedIntType,
 					new t.UnsignedLongType,
