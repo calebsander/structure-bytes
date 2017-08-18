@@ -41,6 +41,7 @@ function makeValueBuffer(value) {
             if (maxValue > value)
                 return bytes;
         }
+        /*istanbul ignore next*/
         throw new Error('Cannot represent ' + String(value)); //should never occur
     })();
     const writeValue = value - UPPER_BOUNDS.get(bytes - 1);

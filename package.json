@@ -17,7 +17,7 @@
 		"browserify": "^14.3.0",
 		"coveralls": "^2.13.0",
 		"google-closure-compiler": "^20170409.0.0",
-		"nyc": "^10.2.0",
+		"nyc": "^10.3.2",
 		"typescript": "^2.4.2"
 	},
 	"directories": {
@@ -25,8 +25,8 @@
 	},
 	"scripts": {
 		"build": "rm -rf dist && tsc",
-		"test": "tsc -p test/tsconfig.json && node test/main.js no-compile",
-		"test-travis": "node_modules/nyc/bin/nyc.js --reporter=lcov node test/main.js && node_modules/coveralls/bin/coveralls.js < coverage/lcov.info"
+		"test": "npm run build && tsc -p test/tsconfig.json && node test/main.js no-compile",
+		"test-travis": "nyc --reporter=lcov npm test && coveralls < coverage/lcov.info"
 	},
 	"repository": {
 		"type": "git",

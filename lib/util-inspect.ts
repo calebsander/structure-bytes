@@ -64,6 +64,9 @@ export function inspect(obj: any): string {
 		}
 		return result + ']'
 	}
+	if (obj instanceof Function) {
+		return 'Function ' + obj.name
+	}
 	if (obj.constructor === Object) { //as opposed to a subclass of Object
 		let result = '{'
 		for (const key in obj) {

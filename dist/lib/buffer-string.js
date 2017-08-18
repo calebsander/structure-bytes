@@ -6,8 +6,7 @@ const growable_buffer_1 = require("./growable-buffer");
 //Arbitrarily set; fairly low to be safe
 const MAX_ARGUMENTS_LENGTH = 0x1000;
 //Convert bytes to a UTF-8 string
-function toString(bytes) {
-    const buffer = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+function toString(buffer) {
     assert_1.default.instanceOf(buffer, Uint8Array);
     //Taken from https://github.com/feross/buffer/blob/da8a677bdb746ed9d6dae42ee1eaf236aad32ccb/index.js#L917-L988
     const codePoints = [];
@@ -42,6 +41,7 @@ function toString(bytes) {
                             codePoint = tempCodePoint;
                     }
                     break;
+                /*istanbul ignore next*/
                 case 4:
                     secondByte = buffer[i + 1];
                     thirdByte = buffer[i + 2];
@@ -57,10 +57,13 @@ function toString(bytes) {
             codePoint = 0xFFFD;
             bytesPerSequence = 1;
         }
-        else if (codePoint > 0xFFFF) {
-            codePoint -= 0x10000;
-            codePoints.push(codePoint >>> 10 & 0x3FF | 0xD800);
-            codePoint = 0xDC00 | codePoint & 0x3FF;
+        else {
+            /*istanbul ignore if*/
+            if (codePoint > 0xFFFF) {
+                codePoint -= 0x10000;
+                codePoints.push(codePoint >>> 10 & 0x3FF | 0xD800);
+                codePoint = 0xDC00 | codePoint & 0x3FF;
+            }
         }
         codePoints.push(codePoint);
         i += bytesPerSequence;
@@ -85,17 +88,20 @@ function fromString(str) {
             utf8.add(0xc0 | (charcode >> 6));
             utf8.add(0x80 | (charcode & 0x3f));
         }
-        else if (charcode < 0xd800 || charcode >= 0xe000) {
-            utf8.add(0xe0 | (charcode >> 12));
-            utf8.add(0x80 | ((charcode >> 6) & 0x3f));
-            utf8.add(0x80 | (charcode & 0x3f));
-        }
         else {
-            charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (charcode & 0x3ff));
-            utf8.add(0xf0 | (charcode >> 18));
-            utf8.add(0x80 | ((charcode >> 12) & 0x3f));
-            utf8.add(0x80 | ((charcode >> 6) & 0x3f));
-            utf8.add(0x80 | (charcode & 0x3f));
+            /*istanbul ignore else*/
+            if (charcode < 0xd800 || charcode >= 0xe000) {
+                utf8.add(0xe0 | (charcode >> 12));
+                utf8.add(0x80 | ((charcode >> 6) & 0x3f));
+                utf8.add(0x80 | (charcode & 0x3f));
+            }
+            else {
+                charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (charcode & 0x3ff));
+                utf8.add(0xf0 | (charcode >> 18));
+                utf8.add(0x80 | ((charcode >> 12) & 0x3f));
+                utf8.add(0x80 | ((charcode >> 6) & 0x3f));
+                utf8.add(0x80 | (charcode & 0x3f));
+            }
         }
     }
     return utf8.toBuffer();

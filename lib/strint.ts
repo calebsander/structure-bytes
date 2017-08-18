@@ -1,12 +1,13 @@
 /*eslint-disable*/
 //From https://github.com/calebsander/strint, mostly not my code
-/*istanbul ignore next*/
+
 //------------------- Addition
 
 export function subPositive(x: string, y: string): string {
 	forcePositiveString(x);
 	forcePositiveString(y);
-	if (! ge(x, y)) {
+	/*istanbul ignore if*/
+	if (!ge(x, y)) {
 		throw new Error('x must be greater or equal to y');
 	}
 
@@ -212,6 +213,7 @@ export function mul(lhs: string, rhs: string): string {
 		// Not done, shift
 		remainingDigits--;
 		quotient = shiftLeft(quotient, 1);
+		/*istanbul ignore if*/
 		if (remainingDigits < 0) {
 			throw new Error('Illegal state');
 		}
@@ -235,6 +237,7 @@ export function eq(lhs: string, rhs: string): boolean {
 }
 
 function ltPositive(x: string, y: string): boolean {
+	/*istanbul ignore next*/
 	if (isNegative(x) || isNegative(y)) {
 		throw new Error('Both operands must be positive: '+x+' '+y);
 	}
@@ -361,6 +364,7 @@ function getDigit(x: string, digitIndex: number): string {
 }
 
 function getDigitCount(strint: string): number {
+	/*istanbul ignore if*/
 	if (isNegative(strint)) {
 		return strint.length -1;
 	} else {
@@ -382,16 +386,19 @@ function forceNumber(value: any) {
 }
 function forceNonNegativeNumber(value: any) {
 	forceType(value, 'number');
+	/*istanbul ignore if*/
 	if (value < 0) {
 		throw new Error('Expected a positive number: '+value);
 	}
 }
 function forceCondition(value: any, condition: (value: any) => boolean, conditionName: string) {
+	/*istanbul ignore if*/
 	if (!condition.call(null, value)) {
 		throw new Error('Condition '+conditionName+' failed for value '+value);
 	}
 }
 function forceType(value: any, type: string) {
+	/*istanbul ignore if*/
 	if (typeof value !== type) {
 		throw new Error('Not a '+type+': '+value);
 	}

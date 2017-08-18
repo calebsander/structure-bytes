@@ -37,10 +37,10 @@ function between(lower, value, upper, message) {
             ',' +
             util_inspect_1.inspect(upper) +
             ')';
-        if (message === undefined)
-            throw new RangeError(errorMessage);
-        else
+        if (message)
             throw new RangeError(message + ' (' + errorMessage + ')');
+        else
+            throw new RangeError(errorMessage);
     }
 }
 function byteUnsignedInteger(value) {
@@ -62,7 +62,7 @@ function throws(block, message) {
         success = false;
     }
     catch (e) {
-        if (message !== undefined)
+        if (message)
             errorMessage(e, message);
     }
     assert(success, message ? 'Was expecting error: ' + message : 'Should throw an error');

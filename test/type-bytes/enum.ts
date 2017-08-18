@@ -19,7 +19,7 @@ export = () => {
 			() => {
 				new t.EnumType({ //eslint-disable-line no-new
 					type: new t.StringType,
-					values: invalidValues as string[]
+					values: invalidValues as any
 				})
 			},
 			message as string
@@ -61,6 +61,7 @@ export = () => {
 			type: new t.FlexUnsignedIntType,
 			values: [1, 2, 3]
 		})
+		assert(!type1.equals(new t.IntType))
 		const type2 = new t.EnumType({
 			type: new t.UnsignedByteType,
 			values: [1, 2, 3]

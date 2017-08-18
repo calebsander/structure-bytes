@@ -108,6 +108,10 @@ export = () => {
 		() => rec.registerType({name: 'tree-node', type: new t.StructType({})}),
 		'"tree-node" is already a registered type'
 	)
+	assert.throws(
+		() => new t.RecursiveType('abc').toBuffer(),
+		'"abc" is not a registered type'
+	)
 
 	const randomString = crypto.randomBytes(1000).toString('binary')
 	assert(!rec.isRegistered(randomString))

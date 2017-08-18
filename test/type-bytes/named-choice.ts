@@ -69,4 +69,47 @@ export = () => {
 			.set(a.func, new t.UnsignedIntType)
 		)
 	}, 'UnsignedIntType {} is not an instance of StructType')
+	assert.throws(
+		() => r.type(bufferFrom([0x58, 1, 0, 0x01])),
+		'Not a StructType: ByteType {}'
+	)
+
+	assert(!type.equals(new t.IntType))
+	assert(!type.equals(new t.NamedChoiceType(new Map())))
+	assert(!type.equals(
+		new t.NamedChoiceType(new Map<Function, t.StructType<QRCode | UPC>>()
+			.set(QRCode, new t.StructType({
+				text: new t.UnsignedLongType
+			}))
+			.set(UPC, new t.StructType({
+				number: new t.UnsignedLongType
+			}))
+		)
+	))
+	class QRCode2 {
+		text: string
+		constructor(text: string) {
+			this.text = text
+		}
+	}
+	assert(!type.equals(
+		new t.NamedChoiceType(new Map<Function, t.StructType<QRCode | UPC>>()
+			.set(QRCode2, new t.StructType({
+				text: new t.StringType
+			}))
+			.set(UPC, new t.StructType({
+				number: new t.UnsignedLongType
+			}))
+		)
+	))
+	assert(type.equals(
+		new t.NamedChoiceType(new Map<Function, t.StructType<QRCode | UPC>>()
+			.set(QRCode, new t.StructType({
+				text: new t.StringType
+			}))
+			.set(UPC, new t.StructType({
+				number: new t.UnsignedLongType
+			}))
+		)
+	))
 }

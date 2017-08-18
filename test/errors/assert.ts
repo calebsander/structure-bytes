@@ -8,6 +8,14 @@ export = () => {
 		'Should throw an error'
 	)
 	assert.throws(
+		() => assert.equal(null, {a: 1}),
+		'Expected {a: 1} but got null'
+	)
+	assert.throws(
+		() => assert.equal([1, 2], {a: 1}),
+		'Expected {a: 1} but got [1, 2]'
+	)
+	assert.throws(
 		() => assert.equal({a: 2}, {a: 2, b: 3}),
 		'Expected {a: 2, b: 3} but got {a: 2}'
 	)
@@ -88,5 +96,17 @@ export = () => {
 	assert.throws(
 		() => assert.equal(Buffer.from([1, 2, 3, 4]), Buffer.from([1, 2, 3])),
 		'Expected <Buffer 01 02 03> but got <Buffer 01 02 03 04>'
+	)
+	assert.throws(
+		() => assert.equal(null, function a() {}),
+		'Expected Function a but got null'
+	)
+	assert.throws(
+		() => assert.equal([1, 2, 3], function b() {}),
+		'Expected Function b but got [1, 2, 3]'
+	)
+	assert.throws(
+		() => assert(false),
+		'Assertion failed'
 	)
 }

@@ -70,6 +70,9 @@ function inspect(obj) {
         }
         return result + ']';
     }
+    if (obj instanceof Function) {
+        return 'Function ' + obj.name;
+    }
     if (obj.constructor === Object) {
         let result = '{';
         for (const key in obj) {

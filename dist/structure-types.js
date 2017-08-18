@@ -12,7 +12,7 @@ const constants_1 = require("./lib/constants");
 const date = require("./lib/date");
 const flexInt = require("./lib/flex-int");
 const growable_buffer_1 = require("./lib/growable-buffer");
-let recursiveRegistry;
+const recursiveRegistry = require("./recursive-registry");
 const js_sha256_1 = require("js-sha256");
 const strint = require("./lib/strint");
 const util_inspect_1 = require("./lib/util-inspect");
@@ -126,13 +126,9 @@ class AbstractType {
         but it is faster if we short-circuit when any fields don't match
     */
     equals(otherType) {
-        //Other type must be descended from the same class (this check will ensure that otherType is not null or undefined)
-        try {
-            assert_1.default.instanceOf(otherType, this.constructor);
-        }
-        catch (e) {
+        //Checks that otherType is not null or undefined, so constructor property exists
+        if (!otherType)
             return false;
-        }
         //Other type must have the same constructor
         try {
             assert_1.default.equal(otherType.constructor, this.constructor);
@@ -757,6 +753,7 @@ class BooleanTupleType extends AbsoluteType {
             buffer.add(this.length);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -904,6 +901,7 @@ class TupleType extends AbsoluteType {
             buffer.add(this.length);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -992,6 +990,7 @@ class StructType extends AbsoluteType {
                 return -1;
             else if (a.name > b.name)
                 return 1;
+            /*istanbul ignore next*/
             return 0; //should never occur since names are distinct
         });
     }
@@ -1009,6 +1008,7 @@ class StructType extends AbsoluteType {
             }
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1101,6 +1101,7 @@ class ArrayType extends AbsoluteType {
             this.type.addToBuffer(buffer);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1147,6 +1148,7 @@ class SetType extends AbsoluteType {
             this.type.addToBuffer(buffer);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1199,6 +1201,7 @@ class MapType extends AbsoluteType {
             this.valueType.addToBuffer(buffer);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1290,6 +1293,7 @@ class EnumType extends AbstractType {
             }
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1372,6 +1376,7 @@ class ChoiceType extends AbsoluteType {
                 type.addToBuffer(buffer);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1509,6 +1514,7 @@ class NamedChoiceType extends AbsoluteType {
             }
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1599,12 +1605,7 @@ class RecursiveType extends AbsoluteType {
         return 0x57;
     }
     get type() {
-        if (!recursiveRegistry) {
-            recursiveRegistry = require('./recursive-registry');
-        }
         const type = recursiveRegistry.getType(this.name);
-        if (!type)
-            throw new Error('No recursive type found with name: ' + this.name);
         return type;
     }
     addToBuffer(buffer) {
@@ -1630,6 +1631,7 @@ class RecursiveType extends AbsoluteType {
             }
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1686,8 +1688,6 @@ class RecursiveType extends AbsoluteType {
             //Keep track of the location before writing the data so that this location can be referenced by sub-values
             bufferRecursiveLocations.set(value, buffer.length);
             const { type } = this;
-            if (type === undefined)
-                throw new Error('No type registered with name: ' + this.name);
             type.writeValue(buffer, value, false);
         }
         setPointers(buffer, root);
@@ -1729,6 +1729,7 @@ class OptionalType extends AbsoluteType {
             this.type.addToBuffer(buffer);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**
@@ -1805,6 +1806,7 @@ class PointerType extends AbstractType {
             this.type.addToBuffer(buffer);
             return true;
         }
+        /*istanbul ignore next*/
         return false;
     }
     /**

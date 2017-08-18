@@ -40,6 +40,7 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 		for (const [bytes, maxValue] of UPPER_BOUNDS) {
 			if (maxValue > value) return bytes
 		}
+		/*istanbul ignore next*/
 		throw new Error('Cannot represent ' + String(value)) //should never occur
 	})()
 	const writeValue = value - (UPPER_BOUNDS.get(bytes - 1) as number)

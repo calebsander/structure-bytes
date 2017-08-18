@@ -12,8 +12,8 @@ import {REPEATED_TYPE} from './lib/constants'
 import * as date from './lib/date'
 import * as flexInt from './lib/flex-int'
 import GrowableBuffer from './lib/growable-buffer'
-import {RegisterableType, RecursiveRegistry} from './recursive-registry-type'
-let recursiveRegistry: RecursiveRegistry | undefined
+import {RegisterableType} from './recursive-registry-type'
+import * as recursiveRegistry from './recursive-registry'
 import {sha256} from 'js-sha256'
 import * as strint from './lib/strint'
 import {inspect} from './lib/util-inspect'
@@ -187,9 +187,8 @@ export abstract class AbstractType<VALUE> implements Type<VALUE> {
 		but it is faster if we short-circuit when any fields don't match
 	*/
 	equals(otherType: any) {
-		//Other type must be descended from the same class (this check will ensure that otherType is not null or undefined)
-		try { assert.instanceOf(otherType, this.constructor) }
-		catch (e) { return false }
+		//Checks that otherType is not null or undefined, so constructor property exists
+		if (!otherType) return false
 		//Other type must have the same constructor
 		try { assert.equal(otherType.constructor, this.constructor) }
 		catch (e) { return false }
@@ -773,6 +772,7 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 			buffer.add(this.length)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -926,6 +926,7 @@ export class TupleType<E> extends AbsoluteType<E[]> {
 			buffer.add(this.length)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1017,6 +1018,7 @@ export class StructType<E extends StringIndexable> extends AbsoluteType<E> {
 		this.fields.sort((a, b) => {
 			if (a.name < b.name) return -1
 			else if (a.name > b.name) return 1
+			/*istanbul ignore next*/
 			return 0 //should never occur since names are distinct
 		})
 	}
@@ -1031,6 +1033,7 @@ export class StructType<E extends StringIndexable> extends AbsoluteType<E> {
 			}
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1124,6 +1127,7 @@ export class ArrayType<E> extends AbsoluteType<E[]> {
 			this.type.addToBuffer(buffer)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1170,6 +1174,7 @@ export class SetType<E> extends AbsoluteType<Set<E>> {
 			this.type.addToBuffer(buffer)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1224,6 +1229,7 @@ export class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 			this.valueType.addToBuffer(buffer)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1318,6 +1324,7 @@ export class EnumType<E> extends AbstractType<E> {
 			}
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1390,6 +1397,7 @@ export class ChoiceType<E> extends AbsoluteType<E> {
 			for (const type of this.types) type.addToBuffer(buffer)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1517,6 +1525,7 @@ export class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 			}
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1600,11 +1609,7 @@ export class RecursiveType<E> extends AbsoluteType<E> {
 		this.name = name
 	}
 	get type(): RegisterableType & Type<E> {
-		if (!recursiveRegistry) { //lazy load to avoid circular dependency
-			recursiveRegistry = require('./recursive-registry') as RecursiveRegistry
-		}
 		const type = recursiveRegistry.getType(this.name)
-		if (!type) throw new Error('No recursive type found with name: ' + this.name)
 		return (type as RegisterableType & Type<E>)
 	}
 	addToBuffer(buffer: GrowableBuffer) {
@@ -1630,6 +1635,7 @@ export class RecursiveType<E> extends AbsoluteType<E> {
 			}
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1686,7 +1692,6 @@ export class RecursiveType<E> extends AbsoluteType<E> {
 			//Keep track of the location before writing the data so that this location can be referenced by sub-values
 			bufferRecursiveLocations.set(value, buffer.length)
 			const {type} = this
-			if (type === undefined) throw new Error('No type registered with name: ' + this.name)
 			type.writeValue(buffer, value, false)
 		}
 		setPointers(buffer, root)
@@ -1729,6 +1734,7 @@ export class OptionalType<E> extends AbsoluteType<E | null | undefined> {
 			this.type.addToBuffer(buffer)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**
@@ -1804,6 +1810,7 @@ export class PointerType<E> extends AbstractType<E> {
 			this.type.addToBuffer(buffer)
 			return true
 		}
+		/*istanbul ignore next*/
 		return false
 	}
 	/**

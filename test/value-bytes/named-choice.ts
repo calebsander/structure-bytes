@@ -69,4 +69,11 @@ export = () => {
 		() => type.valueBuffer(null as any),
 		'null is not an instance of Object'
 	)
+	assert.throws(
+		() => r.value({
+			buffer: bufferFrom([100]),
+			type
+		}),
+		'Constructor index 100 is invalid'
+	)
 }

@@ -264,9 +264,7 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             break;
         }
         case t.BooleanTupleType: {
-            if (!(type instanceof t.BooleanTupleType))
-                throw new Error('Unexpected type') //should never occur
-                ;
+            ;
             ({ value, length } = readBooleans({ buffer, offset, count: type.length, baseValue }));
             break;
         }
@@ -298,11 +296,10 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
         }
         case t.TupleType: {
             length = 0;
-            if (!(type instanceof t.TupleType))
-                throw new Error('Unexpected type'); //should never occur
-            value = baseValue || makeBaseValue(type);
-            for (let i = 0; i < type.length; i++) {
-                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.type });
+            const castType = type;
+            value = baseValue || makeBaseValue(castType);
+            for (let i = 0; i < castType.length; i++) {
+                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.type });
                 length += element.length;
                 value[i] = element.value;
             }
@@ -310,10 +307,9 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
         }
         case t.StructType: {
             length = 0;
-            if (!(type instanceof t.StructType))
-                throw new Error('Unexpected type'); //should never occur
-            value = baseValue || makeBaseValue(type);
-            for (const field of type.fields) {
+            const castType = type;
+            value = baseValue || makeBaseValue(castType);
+            for (const field of castType.fields) {
                 const readField = consumeValue({ buffer, pointerStart, offset: offset + length, type: field.type });
                 value[field.name] = readField.value;
                 length += readField.length;
@@ -324,11 +320,10 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             const arrayLengthInt = readFlexInt(buffer, offset);
             const arrayLength = arrayLengthInt.value;
             ({ length } = arrayLengthInt);
-            if (!(type instanceof t.ArrayType))
-                throw new Error('Unexpected type'); //should never occur
-            value = baseValue || makeBaseValue(type, arrayLength);
+            const castType = type;
+            value = baseValue || makeBaseValue(castType, arrayLength);
             for (let i = 0; i < arrayLength; i++) {
-                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.type });
+                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.type });
                 length += element.length;
                 value[i] = element.value;
             }
@@ -336,12 +331,12 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
         }
         case t.SetType: {
             const size = readFlexInt(buffer, offset);
+            const setSize = size.value;
             ({ length } = size);
-            if (!(type instanceof t.SetType))
-                throw new Error('Unexpected type'); //should never occur
-            value = baseValue || makeBaseValue(type);
-            for (let i = 0; i < size.value; i++) {
-                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.type });
+            const castType = type;
+            value = baseValue || makeBaseValue(castType);
+            for (let i = 0; i < setSize; i++) {
+                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.type });
                 length += element.length;
                 value.add(element.value);
             }
@@ -350,13 +345,12 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
         case t.MapType: {
             const size = readFlexInt(buffer, offset);
             ({ length } = size);
-            if (!(type instanceof t.MapType))
-                throw new Error('Unexpected type'); //should never occur
-            value = baseValue || makeBaseValue(type);
+            const castType = type;
+            value = baseValue || makeBaseValue(castType);
             for (let i = 0; i < size.value; i++) {
-                const keyElement = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.keyType });
+                const keyElement = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.keyType });
                 length += keyElement.length;
-                const valueElement = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.valueType });
+                const valueElement = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.valueType });
                 length += valueElement.length;
                 value.set(keyElement.value, valueElement.value);
             }
@@ -366,20 +360,21 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             length = 1;
             assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
             const valueIndex = new Uint8Array(buffer)[offset];
-            if (!(type instanceof t.EnumType))
-                throw new Error('Unexpected type'); //should never occur
             const { values } = type;
             assert_1.default.between(0, valueIndex, values.length, 'Index ' + valueIndex + ' is invalid');
-            value = type.values[valueIndex];
+            value = values[valueIndex];
             break;
         }
         case t.ChoiceType: {
             length = 1;
             assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
             const typeIndex = new Uint8Array(buffer)[offset];
-            if (!(type instanceof t.ChoiceType))
-                throw new Error('Unexpected type'); //should never occur
-            const subValue = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.types[typeIndex] });
+            const subValue = consumeValue({
+                buffer,
+                pointerStart,
+                offset: offset + length,
+                type: type.types[typeIndex]
+            });
             length += subValue.length;
             ({ value } = subValue);
             break;
@@ -388,9 +383,8 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             length = 1;
             assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
             const typeIndex = new Uint8Array(buffer)[offset];
-            if (!(type instanceof t.NamedChoiceType))
-                throw new Error('Unexpected type'); //should never occur
-            const typeConstructor = type.indexConstructors.get(typeIndex);
+            const castType = type;
+            const typeConstructor = castType.indexConstructors.get(typeIndex);
             if (typeConstructor === undefined)
                 throw new Error('Constructor index ' + typeIndex + ' is invalid');
             const constructor = constructorRegistry.get(typeConstructor.name);
@@ -398,7 +392,7 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
                 buffer,
                 pointerStart,
                 offset: offset + length,
-                type: type.constructorTypes[typeIndex].type,
+                type: castType.constructorTypes[typeIndex].type,
                 baseValue: new constructor
             });
             length += subValue.length;
@@ -409,8 +403,6 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             let explicitValue;
             ({ value: explicitValue, length } = readBooleanByte(buffer, offset));
             if (explicitValue) {
-                if (!(type instanceof t.RecursiveType))
-                    throw new Error('Unexpected type'); //should never occur
                 const subType = type.type;
                 value = makeBaseValue(subType);
                 let bufferReadRecursives = readRecursives.get(buffer);
@@ -425,7 +417,7 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
                 const indexOffset = readFlexInt(buffer, offset + length);
                 const target = offset + length - indexOffset.value;
                 value = readRecursives.get(buffer).get(target);
-                assert_1.default(value !== undefined, 'Cannot find target at ' + String(target));
+                assert_1.default(value, 'Cannot find target at ' + String(target));
                 length += indexOffset.length;
             }
             break;
@@ -434,11 +426,14 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             let nonNull;
             ({ value: nonNull, length } = readBooleanByte(buffer, offset));
             if (nonNull) {
-                if (!(type instanceof t.OptionalType))
-                    throw new Error('Unexpected type'); //should never occur
-                const subValue = consumeValue({ buffer, pointerStart, offset: offset + length, type: type.type });
+                const subValue = consumeValue({
+                    buffer,
+                    pointerStart,
+                    offset: offset + length,
+                    type: type.type
+                });
                 length += subValue.length;
-                value = subValue.value;
+                ({ value } = subValue);
             }
             else
                 value = null;
@@ -448,9 +443,12 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             length = 4;
             assert_1.default(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
             const location = new DataView(buffer).getUint32(offset);
-            if (!(type instanceof t.PointerType))
-                throw new Error('Unexpected type'); //should never occur
-            value = consumeValue({ buffer, pointerStart, offset: pointerStart + location, type: type.type }).value;
+            ({ value } = consumeValue({
+                buffer,
+                pointerStart,
+                offset: pointerStart + location,
+                type: type.type
+            }));
             break;
         }
         default:
