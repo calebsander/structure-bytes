@@ -139,6 +139,8 @@ interface ValueReadParams<E> {
 	type: t.Type<E>
 	baseValue?: any
 }
+//Map of read value buffers to maps of pointer types to maps of pointer values to read results
+const pointerReads = new WeakMap<ArrayBuffer, Map<t.PointerType<any>, Map<number, any>>>()
 /*
 	Reads a value from the specified bytes at the specified offset, given a type
 	Returns the value that was read and the number of bytes consumed (excepting any values being pointed to)
@@ -452,13 +454,28 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 		case t.PointerType: {
 			length = 4
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+			let bufferPointerReads = pointerReads.get(buffer)
+			if (!bufferPointerReads) {
+				bufferPointerReads = new Map
+				pointerReads.set(buffer, bufferPointerReads)
+			}
+			const castType = type as any as t.PointerType<any>
+			let bufferTypePointerReads = bufferPointerReads.get(castType)
+			if (!bufferTypePointerReads) {
+				bufferTypePointerReads = new Map
+				bufferPointerReads.set(castType, bufferTypePointerReads)
+			}
 			const location = new DataView(buffer).getUint32(offset)
-			;({value} = consumeValue({
-				buffer,
-				pointerStart,
-				offset: pointerStart + location,
-				type: (type as any as t.PointerType<any>).type
-			}))
+			if (bufferTypePointerReads.has(location)) value = bufferTypePointerReads.get(location)
+			else {
+				({value} = consumeValue({
+					buffer,
+					pointerStart,
+					offset: pointerStart + location,
+					type: castType.type
+				}))
+				bufferTypePointerReads.set(location, value)
+			}
 			break
 		}
 		default:

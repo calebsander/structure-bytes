@@ -11,7 +11,7 @@ function instanceOf(instance: any, constructors: Function | Function[]): void {
 			(!(instance === undefined || instance === null) && instance.constructor === constructor) //necessary for primitives
 		) {
 			constructorMatched = true
-			break
+			return
 		}
 	}
 	if (!constructorMatched) {
@@ -19,25 +19,25 @@ function instanceOf(instance: any, constructors: Function | Function[]): void {
 			inspect(instance) +
 			' is not an instance of ' +
 			constructors
-				.map(constructor => constructor.name)
-					.join(' or ')
+				.map(({name}) => name)
+				.join(' or ')
 		)
 	}
 }
-function integer(instance: any) {
+function integer(instance: any): void {
 	instanceOf(instance, Number)
 	if (!Number.isSafeInteger(instance)) {
 		throw new RangeError(inspect(instance) + ' is not an integer')
 	}
 }
-function between(lower: number, value: number, upper: number, message?: string) {
+function between(lower: number, value: number, upper: number, message?: string): void {
 	if (value < lower || value >= upper) {
 		const errorMessage =
 			inspect(value) +
 			' is not in [' +
-			inspect(lower) +
+			String(lower) +
 			',' +
-			inspect(upper) +
+			String(upper) +
 			')'
 		if (message) throw new RangeError(message + ' (' + errorMessage + ')')
 		else throw new RangeError(errorMessage)
@@ -65,7 +65,7 @@ function throws(block: () => void, message?: string) {
 	}
 	assert(success, message ? 'Was expecting error: ' + message : 'Should throw an error')
 }
-function equal(actual: any, expected: any) {
+function equal(actual: any, expected: any): void {
 	const error = () => //lazily computed
 		new RangeError('Expected ' + inspect(expected) + ' but got ' + inspect(actual))
 	if (expected) {
@@ -152,7 +152,7 @@ function equal(actual: any, expected: any) {
 		if (expected !== actual) throw error()
 	}
 }
-function errorMessage(err: Error | null, message: string) {
+function errorMessage(err: Error | null, message: string): void {
 	instanceOf(message, String)
 	assert(
 		err !== null && err.message.startsWith(message),

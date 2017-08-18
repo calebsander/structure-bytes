@@ -70,7 +70,7 @@ export = () => {
 		assert.equal(r.value({buffer: gb.toBuffer(), type}), map)
 	}
 
-	//Note that reading a value being pointed to twice can result in different values
+	//Reading a value being pointed to twice should always give the same value
 	const threeDVectorType = new t.PointerType(
 		new t.TupleType({
 			type: new t.FloatType,
@@ -81,9 +81,27 @@ export = () => {
 		a: threeDVectorType,
 		b: threeDVectorType
 	})
-	const vector = [2, 0, 1]
-	const valueBuffer = duplicateType.valueBuffer({a: vector, b: vector})
+	const valueBuffer = duplicateType.valueBuffer({a: [2, 0, 1], b: [2, 0, 1]})
 	assert.equal(valueBuffer, bufferFrom([0, 0, 0, 8, 0, 0, 0, 8, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3f, 0x80, 0x00, 0x00]))
 	const valueReadBack = r.value({buffer: valueBuffer, type: duplicateType})
-	assert(valueReadBack.a !== valueReadBack.b)
+	assert(valueReadBack.a === valueReadBack.b)
+
+	//Different types should be able to use the same pointer location if value bytes are equivalent
+	{
+		const type = new t.StructType({
+			number: new t.PointerType(new t.UnsignedShortType),
+			string: new t.PointerType(new t.StringType)
+		})
+		const value = {
+			string: 'a',
+			number: 'a'.charCodeAt(0) << 8
+		}
+		const buffer = type.valueBuffer(value)
+		assert.equal(buffer, bufferFrom([
+			0, 0, 0, 8,
+			0, 0, 0, 8,
+			97, 0
+		]))
+		assert.equal(r.value({buffer, type}), value)
+	}
 }

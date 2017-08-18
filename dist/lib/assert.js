@@ -12,14 +12,14 @@ function instanceOf(instance, constructors) {
             (!(instance === undefined || instance === null) && instance.constructor === constructor) //necessary for primitives
         ) {
             constructorMatched = true;
-            break;
+            return;
         }
     }
     if (!constructorMatched) {
         throw new TypeError(util_inspect_1.inspect(instance) +
             ' is not an instance of ' +
             constructors
-                .map(constructor => constructor.name)
+                .map(({ name }) => name)
                 .join(' or '));
     }
 }
@@ -33,9 +33,9 @@ function between(lower, value, upper, message) {
     if (value < lower || value >= upper) {
         const errorMessage = util_inspect_1.inspect(value) +
             ' is not in [' +
-            util_inspect_1.inspect(lower) +
+            String(lower) +
             ',' +
-            util_inspect_1.inspect(upper) +
+            String(upper) +
             ')';
         if (message)
             throw new RangeError(message + ' (' + errorMessage + ')');
