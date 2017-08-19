@@ -65,7 +65,7 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 				recursiveID = bufferRecursiveIDs.size //use the next number as the ID
 				bufferRecursiveIDs.set(this.name, recursiveID)
 			}
-			buffer.addAll(flexInt.makeValueBuffer(recursiveID as number))
+			buffer.addAll(flexInt.makeValueBuffer(recursiveID!))
 			if (firstOccurence) { //only define type if type has not already been defined
 				//Keep track of how far we are inside writing recursive types (see how this is used in AbstractType.addToBuffer())
 				recursiveNesting.increment(buffer)

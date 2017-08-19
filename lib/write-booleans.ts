@@ -14,12 +14,11 @@ export default (buffer: GrowableBuffer, booleans: boolean[]): void => {
 	const byteBuffer = new ArrayBuffer(length)
 	const castBuffer = new Uint8Array(byteBuffer)
 	for (let i = 0; i < booleans.length; i++) {
-		const boolean = booleans[i]
-		assert.instanceOf(boolean, Boolean)
+		const bool = booleans[i]
+		assert.instanceOf(bool, Boolean)
 		const bit = modEight(~modEight(i)) //7 - (i % 8)
 		//Set desired bit, leaving the others unchanges
-		if (boolean) castBuffer[dividedByEight(i)] |= 1 << bit
-		else castBuffer[dividedByEight(i)] &= ~(1 << bit)
+		if (bool) castBuffer[dividedByEight(i)] |= 1 << bit
 	}
 	buffer.addAll(byteBuffer)
 }

@@ -1,4 +1,4 @@
-/*eslint-disable*/
+/*tslint:disable*/
 //From https://github.com/calebsander/strint, mostly not my code
 
 //------------------- Addition

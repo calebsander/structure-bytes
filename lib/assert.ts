@@ -32,15 +32,15 @@ function integer(instance: any): void {
 }
 function between(lower: number, value: number, upper: number, message?: string): void {
 	if (value < lower || value >= upper) {
-		const errorMessage =
+		const outOfBoundsMessage =
 			inspect(value) +
 			' is not in [' +
 			String(lower) +
 			',' +
 			String(upper) +
 			')'
-		if (message) throw new RangeError(message + ' (' + errorMessage + ')')
-		else throw new RangeError(errorMessage)
+		if (message) throw new RangeError(message + ' (' + outOfBoundsMessage + ')')
+		else throw new RangeError(outOfBoundsMessage)
 	}
 }
 function byteUnsignedInteger(value: any): void {
@@ -159,6 +159,7 @@ function errorMessage(err: Error | null, message: string): void {
 		'Message "' + (err ? err.message : 'No error thrown') + '" does not start with "' + message + '"'
 	)
 }
+//tslint:disable-next-line:prefer-object-spread
 export default Object.assign(assert, {
 	//Assert that the instance is an instance of the constructor, or at least one of the constructors, or a subclass
 	instanceOf,

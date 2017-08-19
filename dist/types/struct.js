@@ -4,6 +4,7 @@ const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const growable_buffer_1 = require("../lib/growable-buffer");
 const pointers_1 = require("../lib/pointers");
+const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -54,7 +55,7 @@ class StructType extends absolute_1.default {
                 assert_1.default.instanceOf(fieldType, abstract_1.default);
             }
             catch (e) {
-                assert_1.default.fail(String(fieldType) + ' is not a valid field type');
+                assert_1.default.fail(util_inspect_1.inspect(fieldType) + ' is not a valid field type');
             }
             this.fields[fieldIndex] = {
                 name: fieldName,

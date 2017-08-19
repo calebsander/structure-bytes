@@ -14,13 +14,13 @@ const registeredConstructors = new Map<string, Constructor>()
  * @return {constructor} A function that can be used
  * as a constructor and has the desired name
  * @private
-*/
+ */
 export function get(constructorName: string): Constructor {
 	const constructor = registeredConstructors.get(constructorName)
 	if (constructor) return constructor //ensure same name always maps to same constructor
 	else {
 		//Create a new function with the correct name
-		const newConstructor = {[constructorName]: class {}}[constructorName] //eslint-disable-line object-shorthand
+		const newConstructor = {[constructorName]: class {}}[constructorName]
 		registeredConstructors.set(constructorName, newConstructor)
 		return newConstructor
 	}

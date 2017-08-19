@@ -16,14 +16,12 @@ exports.default = (buffer, booleans) => {
     const byteBuffer = new ArrayBuffer(length);
     const castBuffer = new Uint8Array(byteBuffer);
     for (let i = 0; i < booleans.length; i++) {
-        const boolean = booleans[i];
-        assert_1.default.instanceOf(boolean, Boolean);
+        const bool = booleans[i];
+        assert_1.default.instanceOf(bool, Boolean);
         const bit = bit_math_1.modEight(~bit_math_1.modEight(i)); //7 - (i % 8)
         //Set desired bit, leaving the others unchanges
-        if (boolean)
+        if (bool)
             castBuffer[bit_math_1.dividedByEight(i)] |= 1 << bit;
-        else
-            castBuffer[bit_math_1.dividedByEight(i)] &= ~(1 << bit);
     }
     buffer.addAll(byteBuffer);
 };

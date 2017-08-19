@@ -17,7 +17,7 @@ const registeredTypes = new Map<string, RegisterableType>()
  * @param {{type, name}} params
  * @param {Type} params.type The type to register
  * @param {string} params.name The name to associate it with
-*/
+ */
 export function registerType({type, name}: TypeAndName): void {
 	assert.instanceOf(type, [ //these are the only types capable of being recursive and having a known base value, e.g. [] or new Map
 		ArrayType,

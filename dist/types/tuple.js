@@ -52,7 +52,7 @@ class TupleType extends absolute_1.default {
     writeValue(buffer, value, root = true) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, Array);
-        assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
+        assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length));
         for (const instance of value)
             this.type.writeValue(buffer, instance, false);
         pointers_1.setPointers({ buffer, root });

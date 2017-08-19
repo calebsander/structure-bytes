@@ -17,7 +17,7 @@ const registeredTypes = new Map();
  * @param {{type, name}} params
  * @param {Type} params.type The type to register
  * @param {string} params.name The name to associate it with
-*/
+ */
 function registerType({ type, name }) {
     assert_1.default.instanceOf(type, [
         types_1.ArrayType,

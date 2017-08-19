@@ -1,5 +1,5 @@
 "use strict";
-/*eslint-disable*/
+/*tslint:disable*/
 //From https://github.com/calebsander/strint, mostly not my code
 Object.defineProperty(exports, "__esModule", { value: true });
 //------------------- Addition

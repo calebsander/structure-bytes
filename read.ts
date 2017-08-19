@@ -280,7 +280,7 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			break
 		}
 		case t.BooleanTupleType: {
-			;({value, length} = readBooleans({buffer, offset, count: (type as any as t.BooleanTupleType).length, baseValue}))
+			({value, length} = readBooleans({buffer, offset, count: (type as any as t.BooleanTupleType).length, baseValue}))
 			break
 		}
 		case t.CharType: {
@@ -375,7 +375,7 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const valueIndex = new Uint8Array(buffer)[offset]
 			const {values} = type as any as t.EnumType<any>
-			assert.between(0, valueIndex, values.length, 'Index ' + valueIndex + ' is invalid')
+			assert.between(0, valueIndex, values.length, 'Index ' + String(valueIndex) + ' is invalid')
 			value = values[valueIndex]
 			break
 		}
@@ -399,7 +399,7 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			const typeIndex = new Uint8Array(buffer)[offset]
 			const castType = type as any as t.NamedChoiceType<any>
 			const typeConstructor = castType.indexConstructors.get(typeIndex)
-			if (typeConstructor === undefined) throw new Error('Constructor index ' + typeIndex + ' is invalid')
+			if (typeConstructor === undefined) throw new Error('Constructor index ' + String(typeIndex) + ' is invalid')
 			const constructor = constructorRegistry.get(typeConstructor.name)
 			const subValue = consumeValue({
 				buffer,
@@ -496,7 +496,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 	const typeByte = castBuffer[offset]
 	let value: t.Type<any>, length = 1 //going to be at least one type byte
 	const singleByteType = SINGLE_BYTE_TYPE_BYTES.get(typeByte)
-	if (singleByteType) return {value: new singleByteType, length} //eslint-disable-line new-cap
+	if (singleByteType) return {value: new singleByteType, length}
 	switch (typeByte) {
 		case t.BooleanTupleType._value: {
 			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
@@ -567,14 +567,14 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			const values = new Array(valueCount)
 			for (let i = 0; i < valueCount; i++) {
 				const valueLocation = offset + length
-				const value = consumeValue({ //reading values rather than types
+				const enumValue = consumeValue({ //reading values rather than types
 					buffer: typeBuffer,
 					pointerStart: valueLocation,
 					offset: valueLocation,
 					type: type.value
 				})
-				length += value.length
-				values[i] = value.value
+				length += enumValue.length
+				values[i] = enumValue.value
 			}
 			value = new t.EnumType({
 				type: type.value,
@@ -684,12 +684,13 @@ export {consumeType as _consumeType}
  * the whole buffer was read. In most use cases, should be omitted.
  * @return {Type} The type that was read
  */
-export function type(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
+function readType(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
 	const {value, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value
 }
+export {readType as type}
 export interface ValueParams<E> {
 	buffer: ArrayBuffer
 	type: t.Type<E>
@@ -707,7 +708,7 @@ export interface ValueParams<E> {
  * The offset in the buffer to start reading at
  * @return The value that was read
  */
-export function value<E>({buffer, type, offset = 0}: ValueParams<E>): E {
+function readValue<E>({buffer, type, offset = 0}: ValueParams<E>): E {
 	assert.instanceOf(buffer, ArrayBuffer)
 	assert.instanceOf(type, AbstractType)
 	assert.instanceOf(offset, Number)
@@ -715,3 +716,4 @@ export function value<E>({buffer, type, offset = 0}: ValueParams<E>): E {
 	//no length validation because bytes being pointed to don't get counted in the length
 	return value
 }
+export {readValue as value}

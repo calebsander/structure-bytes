@@ -2,6 +2,7 @@ import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import GrowableBuffer from '../lib/growable-buffer'
 import {setPointers} from '../lib/pointers'
+import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -54,11 +55,11 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 			//Name must fit in 255 UTF-8 bytes
 			const fieldNameBuffer = bufferString.fromString(fieldName)
 			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength) }
-			catch (e) { assert.fail('Field name ' + fieldName + ' is too long') }
+			catch (e) { assert.fail('Field name ' + (fieldName as string) + ' is too long') }
 			//Type must be a Type
 			const fieldType = fields[fieldName]
 			try { assert.instanceOf(fieldType, AbstractType) }
-			catch (e) { assert.fail(String(fieldType) + ' is not a valid field type') }
+			catch (e) { assert.fail(inspect(fieldType) + ' is not a valid field type') }
 			this.fields[fieldIndex] = {
 				name: fieldName,
 				type: fieldType,

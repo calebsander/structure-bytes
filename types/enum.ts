@@ -32,8 +32,8 @@ export default class EnumType<E> extends AbstractType<E> {
 	static get _value() {
 		return 0x55
 	}
-	private readonly type: Type<E>
 	readonly values: E[]
+	private readonly type: Type<E>
 	private readonly valueIndices: Map<string, number>
 	/**
 	 * @param {{type, value}} params
@@ -87,8 +87,8 @@ export default class EnumType<E> extends AbstractType<E> {
 		const valueBuffer = new GrowableBuffer
 		this.type.writeValue(valueBuffer, value, false)
 		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()))
-		if (index === undefined) assert.fail('Not a valid enum value: ' + inspect(value))
-		buffer.add(index as number) //write the index to the requested value in the values array
+		if (index === undefined) throw new Error('Not a valid enum value: ' + inspect(value))
+		buffer.add(index) //write the index to the requested value in the values array
 		setPointers({buffer, root})
 	}
 	equals(otherType: any) {

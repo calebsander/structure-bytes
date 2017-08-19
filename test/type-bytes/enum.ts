@@ -17,7 +17,7 @@ export = () => {
 	]) {
 		assert.throws(
 			() => {
-				new t.EnumType({ //eslint-disable-line no-new
+				new t.EnumType({
 					type: new t.StringType,
 					values: invalidValues as any
 				})

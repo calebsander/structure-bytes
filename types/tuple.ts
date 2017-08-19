@@ -60,7 +60,7 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 		assert.instanceOf(value, Array)
 		assert(
 			value.length === this.length,
-			'Length does not match: expected ' + String(this.length) + ' but got ' + value.length
+			'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length)
 		)
 		for (const instance of value) this.type.writeValue(buffer, instance, false)
 		setPointers({buffer, root})

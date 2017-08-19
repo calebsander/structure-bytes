@@ -2,15 +2,15 @@
 //This file contains functions for performing I/O;
 //specifically, reads and writes of types and values and HTTP responses
 Object.defineProperty(exports, "__esModule", { value: true });
+const http = require("http");
+const stream_1 = require("stream");
+const zlib = require("zlib");
 const accepts = require("accepts");
 const assert_1 = require("./lib/assert");
 const buffer_stream_1 = require("./lib/buffer-stream");
 const growable_buffer_1 = require("./lib/growable-buffer");
-const http = require("http");
 const r = require("./read");
-const stream_1 = require("stream");
 const abstract_1 = require("./types/abstract");
-const zlib = require("zlib");
 function toArrayBuffer(buffer) {
     return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 }

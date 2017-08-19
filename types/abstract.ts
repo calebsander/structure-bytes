@@ -42,45 +42,13 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer()
 		return this.cachedBuffer
 	}
-	/**
-	 * Generates the type buffer, recomputed each time
-	 * @private
-	 * @see Type#toBuffer
-	 * @return {external:ArrayBuffer} A Buffer containing the type bytes
-	 */
-	private _toBuffer(): ArrayBuffer {
-		const buffer = new GrowableBuffer
-		this.addToBuffer(buffer)
-		return buffer.toBuffer()
-	}
 	getHash() {
 		if (!this.cachedHash) this.cachedHash = this._getHash()
 		return this.cachedHash
 	}
-	/**
-	 * Gets an SHA256 hash of the type, recomputed each time
-	 * @private
-	 * @see Type#getHash
-	 * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
-	 */
-	private _getHash(): string {
-		const hash = sha256.create()
-		hash.update(this.toBuffer())
-		const bytes = new Uint8Array(hash.arrayBuffer())
-		return base64.fromByteArray(bytes)
-	}
 	getSignature() {
 		if (!this.cachedSignature) this.cachedSignature = this._getSignature()
 		return this.cachedSignature
-	}
-	/**
-	 * Gets a signature string for the type, recomputed each time
-	 * @private
-	 * @see Type#getSignature
-	 * @return {string} a signature for the type
-	 */
-	private _getSignature(): string {
-		return VERSION_STRING + this.getHash()
 	}
 	abstract writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void
 	valueBuffer(value: VALUE) {
@@ -100,5 +68,37 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 		try { assert.equal(otherType.constructor, this.constructor) }
 		catch (e) { return false }
 		return true
+	}
+	/**
+	 * Generates the type buffer, recomputed each time
+	 * @private
+	 * @see Type#toBuffer
+	 * @return {external:ArrayBuffer} A Buffer containing the type bytes
+	 */
+	private _toBuffer(): ArrayBuffer {
+		const buffer = new GrowableBuffer
+		this.addToBuffer(buffer)
+		return buffer.toBuffer()
+	}
+	/**
+	 * Gets an SHA256 hash of the type, recomputed each time
+	 * @private
+	 * @see Type#getHash
+	 * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
+	 */
+	private _getHash(): string {
+		const hash = sha256.create()
+		hash.update(this.toBuffer())
+		const bytes = new Uint8Array(hash.arrayBuffer())
+		return base64.fromByteArray(bytes)
+	}
+	/**
+	 * Gets a signature string for the type, recomputed each time
+	 * @private
+	 * @see Type#getSignature
+	 * @return {string} a signature for the type
+	 */
+	private _getSignature(): string {
+		return VERSION_STRING + this.getHash()
 	}
 }

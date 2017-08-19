@@ -12,6 +12,11 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
     static readonly _value: number;
     addToBuffer(buffer: GrowableBuffer): boolean;
     toBuffer(): ArrayBuffer;
+    getHash(): string;
+    getSignature(): string;
+    abstract writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void;
+    valueBuffer(value: VALUE): ArrayBuffer;
+    equals(otherType: any): boolean;
     /**
      * Generates the type buffer, recomputed each time
      * @private
@@ -19,7 +24,6 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
      * @return {external:ArrayBuffer} A Buffer containing the type bytes
      */
     private _toBuffer();
-    getHash(): string;
     /**
      * Gets an SHA256 hash of the type, recomputed each time
      * @private
@@ -27,7 +31,6 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
      * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
      */
     private _getHash();
-    getSignature(): string;
     /**
      * Gets a signature string for the type, recomputed each time
      * @private
@@ -35,7 +38,4 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
      * @return {string} a signature for the type
      */
     private _getSignature();
-    abstract writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void;
-    valueBuffer(value: VALUE): ArrayBuffer;
-    equals(otherType: any): boolean;
 }

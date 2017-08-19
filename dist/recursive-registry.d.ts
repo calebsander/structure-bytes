@@ -12,7 +12,7 @@ import { RegisterableType, TypeAndName } from './recursive-registry-type';
  * @param {{type, name}} params
  * @param {Type} params.type The type to register
  * @param {string} params.name The name to associate it with
-*/
+ */
 export declare function registerType({type, name}: TypeAndName): void;
 /** @function
  * @name getType

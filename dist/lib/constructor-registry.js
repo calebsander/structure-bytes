@@ -11,7 +11,7 @@ const registeredConstructors = new Map();
  * @return {constructor} A function that can be used
  * as a constructor and has the desired name
  * @private
-*/
+ */
 function get(constructorName) {
     const constructor = registeredConstructors.get(constructorName);
     if (constructor)
@@ -19,7 +19,7 @@ function get(constructorName) {
     else {
         //Create a new function with the correct name
         const newConstructor = { [constructorName]: class {
-            } }[constructorName]; //eslint-disable-line object-shorthand
+            } }[constructorName];
         registeredConstructors.set(constructorName, newConstructor);
         return newConstructor;
     }

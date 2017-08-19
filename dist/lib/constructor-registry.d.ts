@@ -12,5 +12,5 @@ export declare type Constructor = Function & Newable;
  * @return {constructor} A function that can be used
  * as a constructor and has the desired name
  * @private
-*/
+ */
 export declare function get(constructorName: string): Constructor;

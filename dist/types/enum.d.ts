@@ -24,8 +24,8 @@ export interface EnumParams<E> {
  */
 export default class EnumType<E> extends AbstractType<E> {
     static readonly _value: number;
-    private readonly type;
     readonly values: E[];
+    private readonly type;
     private readonly valueIndices;
     /**
      * @param {{type, value}} params

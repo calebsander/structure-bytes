@@ -25,6 +25,7 @@ export function inspect(obj: any): string {
 		}
 		return result + ']'
 	}
+	//tslint:disable-next-line:strict-type-predicates
 	if (typeof Buffer !== 'undefined' && obj instanceof Buffer) {
 		let result = '<Buffer'
 		for (const b of obj) result += ' ' + (b < 16 ? '0' : '') + b.toString(16)
@@ -66,6 +67,7 @@ export function inspect(obj: any): string {
 		return result + ']'
 	}
 	if (obj instanceof Function) {
+		//tslint:disable-next-line:restrict-plus-operands
 		return 'Function ' + obj.name
 	}
 	if (obj.constructor === Object) { //as opposed to a subclass of Object
@@ -79,5 +81,6 @@ export function inspect(obj: any): string {
 		}
 		return result + '}'
 	}
+	//tslint:disable-next-line:restrict-plus-operands
 	return (obj.constructor.name ? obj.constructor.name + ' ' : '') + inspect(toObject(obj))
 }

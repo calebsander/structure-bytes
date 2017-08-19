@@ -12,7 +12,7 @@ export = () => {
 	for (const typeName in t) {
 		let typeByte: number
 		try {
-			typeByte = ((t as any) as TypesOnly)[typeName]._value
+			typeByte = (t as any as TypesOnly)[typeName]._value
 		}
 		catch (e) {
 			assert.errorMessage(e, 'Generic Type has no value byte')

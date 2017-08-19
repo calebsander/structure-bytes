@@ -140,12 +140,12 @@ class NamedChoiceType extends absolute_1.default {
         if (this.constructorTypes.length !== otherChoiceType.constructorTypes.length)
             return false;
         for (let i = 0; i < this.constructorTypes.length; i++) {
-            const thisType = this.constructorTypes[i];
-            const otherType = otherChoiceType.constructorTypes[i];
-            if (!thisType.type.equals(otherType.type))
+            const thisConstructor = this.constructorTypes[i];
+            const otherConstructor = otherChoiceType.constructorTypes[i];
+            if (!thisConstructor.type.equals(otherConstructor.type))
                 return false;
             try {
-                assert_1.default.equal(otherType.nameBuffer, thisType.nameBuffer);
+                assert_1.default.equal(otherConstructor.nameBuffer, thisConstructor.nameBuffer);
             }
             catch (e) {
                 return false;

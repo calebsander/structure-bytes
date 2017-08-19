@@ -14,7 +14,7 @@ export = () => {
 		['abc', 'abc is not a valid buffer length']
 	]) {
 		assert.throws(
-			() => new GrowableBuffer(invalidSize as number),
+			() => new GrowableBuffer(invalidSize as any),
 			message as string
 		)
 	}

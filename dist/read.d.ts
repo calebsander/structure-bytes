@@ -16,7 +16,8 @@ export { consumeType as _consumeType };
  * the whole buffer was read. In most use cases, should be omitted.
  * @return {Type} The type that was read
  */
-export declare function type(typeBuffer: ArrayBuffer, fullBuffer?: boolean): t.Type<any>;
+declare function readType(typeBuffer: ArrayBuffer, fullBuffer?: boolean): t.Type<any>;
+export { readType as type };
 export interface ValueParams<E> {
     buffer: ArrayBuffer;
     type: t.Type<E>;
@@ -34,4 +35,5 @@ export interface ValueParams<E> {
  * The offset in the buffer to start reading at
  * @return The value that was read
  */
-export declare function value<E>({buffer, type, offset}: ValueParams<E>): E;
+declare function readValue<E>({buffer, type, offset}: ValueParams<E>): E;
+export { readValue as value };

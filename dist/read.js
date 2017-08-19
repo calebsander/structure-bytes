@@ -266,7 +266,6 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             break;
         }
         case t.BooleanTupleType: {
-            ;
             ({ value, length } = readBooleans({ buffer, offset, count: type.length, baseValue }));
             break;
         }
@@ -363,7 +362,7 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
             const valueIndex = new Uint8Array(buffer)[offset];
             const { values } = type;
-            assert_1.default.between(0, valueIndex, values.length, 'Index ' + valueIndex + ' is invalid');
+            assert_1.default.between(0, valueIndex, values.length, 'Index ' + String(valueIndex) + ' is invalid');
             value = values[valueIndex];
             break;
         }
@@ -388,7 +387,7 @@ function consumeValue({ buffer, pointerStart, offset, type, baseValue }) {
             const castType = type;
             const typeConstructor = castType.indexConstructors.get(typeIndex);
             if (typeConstructor === undefined)
-                throw new Error('Constructor index ' + typeIndex + ' is invalid');
+                throw new Error('Constructor index ' + String(typeIndex) + ' is invalid');
             const constructor = constructorRegistry.get(typeConstructor.name);
             const subValue = consumeValue({
                 buffer,
@@ -488,7 +487,7 @@ function consumeType(typeBuffer, offset) {
     let value, length = 1; //going to be at least one type byte
     const singleByteType = SINGLE_BYTE_TYPE_BYTES.get(typeByte);
     if (singleByteType)
-        return { value: new singleByteType, length }; //eslint-disable-line new-cap
+        return { value: new singleByteType, length };
     switch (typeByte) {
         case t.BooleanTupleType._value: {
             assert_1.default(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH);
@@ -559,14 +558,14 @@ function consumeType(typeBuffer, offset) {
             const values = new Array(valueCount);
             for (let i = 0; i < valueCount; i++) {
                 const valueLocation = offset + length;
-                const value = consumeValue({
+                const enumValue = consumeValue({
                     buffer: typeBuffer,
                     pointerStart: valueLocation,
                     offset: valueLocation,
                     type: type.value
                 });
-                length += value.length;
-                values[i] = value.value;
+                length += enumValue.length;
+                values[i] = enumValue.value;
             }
             value = new t.EnumType({
                 type: type.value,
@@ -675,14 +674,14 @@ exports._consumeType = consumeType;
  * the whole buffer was read. In most use cases, should be omitted.
  * @return {Type} The type that was read
  */
-function type(typeBuffer, fullBuffer = true) {
+function readType(typeBuffer, fullBuffer = true) {
     assert_1.default.instanceOf(typeBuffer, ArrayBuffer);
     const { value, length } = consumeType(typeBuffer, 0);
     if (fullBuffer)
         assert_1.default(length === typeBuffer.byteLength, 'Did not consume all of the buffer');
     return value;
 }
-exports.type = type;
+exports.type = readType;
 /** @function
  * @desc Reads a value from its written buffer.
  * Requires the type to be known.
@@ -695,7 +694,7 @@ exports.type = type;
  * The offset in the buffer to start reading at
  * @return The value that was read
  */
-function value({ buffer, type, offset = 0 }) {
+function readValue({ buffer, type, offset = 0 }) {
     assert_1.default.instanceOf(buffer, ArrayBuffer);
     assert_1.default.instanceOf(type, abstract_1.default);
     assert_1.default.instanceOf(offset, Number);
@@ -703,4 +702,4 @@ function value({ buffer, type, offset = 0 }) {
     //no length validation because bytes being pointed to don't get counted in the length
     return value;
 }
-exports.value = value;
+exports.value = readValue;

@@ -45,7 +45,7 @@ class BooleanTupleType extends absolute_1.default {
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, Array);
-        assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + value.length);
+        assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length));
         write_booleans_1.default(buffer, value);
     }
     equals(otherType) {

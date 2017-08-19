@@ -1,16 +1,16 @@
 //This file contains functions for performing I/O;
 //specifically, reads and writes of types and values and HTTP responses
 
+import * as http from 'http'
+import {Duplex, Readable, Writable} from 'stream'
+import * as zlib from 'zlib'
 import accepts = require('accepts')
 import assert from './lib/assert'
 import BufferStream from './lib/buffer-stream'
 import GrowableBuffer from './lib/growable-buffer'
-import * as http from 'http'
 import * as r from './read'
-import {Duplex, Readable, Writable} from 'stream'
 import AbstractType from './types/abstract'
 import Type from './types/type'
-import * as zlib from 'zlib'
 
 function toArrayBuffer(buffer: Buffer): ArrayBuffer {
 	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
@@ -71,9 +71,9 @@ export function writeType<E>({type, outStream}: WriteParams<E>, callback?: ErrCa
 	return typeStream.pipe(outStream)
 		.on('error', function(this: typeof outStream, err: Error) {
 			this.end()
-			;(callback as ErrCallback)(err)
+			callback!(err)
 		})
-		.on('finish', () => (callback as ErrCallback)(null))
+		.on('finish', () => callback!(null))
 }
 
 /** @function
@@ -103,9 +103,9 @@ export function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>,
 	return new BufferStream(valueBuffer).pipe(outStream)
 		.on('error', function(this: typeof outStream, err: Error) {
 			this.end()
-			;(callback as ErrCallback)(err)
+			callback!(err)
 		})
-		.on('finish', () => (callback as ErrCallback)(null))
+		.on('finish', () => callback!(null))
 	}
 
 /** @function
@@ -290,8 +290,8 @@ export function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?
 		}
 		else outStream = res
 		function writeEndCallback(err: Error) {
-			if (err) (callback as ErrCallback)(err)
-			else if (!acceptsGzip) (callback as ErrCallback)(null)
+			if (err) callback!(err)
+			else if (!acceptsGzip) callback!(null)
 		}
 		if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
 			writeValue({type, value, outStream}, writeEndCallback)
@@ -299,7 +299,7 @@ export function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?
 		else writeTypeAndValue({type, value, outStream}, writeEndCallback) //otherwise, type and value need to be sent
 		if (acceptsGzip) { //don't pipe until writing begins
 			outStream.pipe(res)
-				.on('finish', () => (callback as ErrCallback)(null))
+				.on('finish', () => callback!(null))
 		}
 	}
 	catch (err) { callback(err) }

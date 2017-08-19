@@ -88,7 +88,7 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.constructorTypes.length)
-			for (const {nameBuffer, type} of this.constructorTypes) { //eslint-disable-line no-unused-vars
+			for (const {nameBuffer, type} of this.constructorTypes) {
 				buffer.add(nameBuffer.byteLength)
 				buffer.addAll(nameBuffer)
 				type.addToBuffer(buffer)
@@ -134,10 +134,10 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		const otherChoiceType = otherType as NamedChoiceType<any>
 		if (this.constructorTypes.length !== otherChoiceType.constructorTypes.length) return false
 		for (let i = 0; i < this.constructorTypes.length; i++) {
-			const thisType = this.constructorTypes[i]
-			const otherType = otherChoiceType.constructorTypes[i]
-			if (!thisType.type.equals(otherType.type)) return false
-			try { assert.equal(otherType.nameBuffer, thisType.nameBuffer) }
+			const thisConstructor = this.constructorTypes[i]
+			const otherConstructor = otherChoiceType.constructorTypes[i]
+			if (!thisConstructor.type.equals(otherConstructor.type)) return false
+			try { assert.equal(otherConstructor.nameBuffer, thisConstructor.nameBuffer) }
 			catch (e) { return false }
 		}
 		return true

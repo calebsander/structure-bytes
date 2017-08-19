@@ -60,10 +60,14 @@ export default class OptionalType<E> extends AbsoluteType<E | null | undefined> 
 	 */
 	writeValue(buffer: GrowableBuffer, value: E | null | undefined) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		if (value === null || value === undefined) buffer.add(0x00)
-		else {
-			buffer.add(0xFF)
-			this.type.writeValue(buffer, value)
+		switch (value) {
+			case null:
+			case undefined:
+				buffer.add(0x00)
+				break
+			default:
+				buffer.add(0xFF)
+				this.type.writeValue(buffer, value)
 		}
 	}
 	equals(otherType: any) {

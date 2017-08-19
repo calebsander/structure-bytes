@@ -1,4 +1,3 @@
-/*eslint-disable no-console*/
 import * as fs from 'fs'
 import {promisify} from 'util'
 
@@ -17,10 +16,8 @@ promisify(fs.readdir)(__dirname)
 				console.error('Error in test file ' + file)
 				console.error(err)
 			}
-			let runTest: Promise<void> | Function
-			try {
-				runTest = require(file)
-			}
+			let runTest: Promise<void> | (() => void)
+			try { runTest = require(file) }
 			catch (e) {
 				error(e)
 				return
@@ -32,12 +29,10 @@ promisify(fs.readdir)(__dirname)
 			}
 			else {
 				try {
-					(runTest as () => void)()
+					runTest()
 					success()
 				}
-				catch (e) {
-					error(e)
-				}
+				catch (e) { error(e) }
 			}
 		}
 		Promise.all(

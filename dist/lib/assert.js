@@ -31,16 +31,16 @@ function integer(instance) {
 }
 function between(lower, value, upper, message) {
     if (value < lower || value >= upper) {
-        const errorMessage = util_inspect_1.inspect(value) +
+        const outOfBoundsMessage = util_inspect_1.inspect(value) +
             ' is not in [' +
             String(lower) +
             ',' +
             String(upper) +
             ')';
         if (message)
-            throw new RangeError(message + ' (' + errorMessage + ')');
+            throw new RangeError(message + ' (' + outOfBoundsMessage + ')');
         else
-            throw new RangeError(errorMessage);
+            throw new RangeError(outOfBoundsMessage);
     }
 }
 function byteUnsignedInteger(value) {
@@ -209,6 +209,7 @@ function errorMessage(err, message) {
     instanceOf(message, String);
     assert(err !== null && err.message.startsWith(message), 'Message "' + (err ? err.message : 'No error thrown') + '" does not start with "' + message + '"');
 }
+//tslint:disable-next-line:prefer-object-spread
 exports.default = Object.assign(assert, {
     //Assert that the instance is an instance of the constructor, or at least one of the constructors, or a subclass
     instanceOf,

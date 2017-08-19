@@ -85,7 +85,7 @@ class EnumType extends abstract_1.default {
         this.type.writeValue(valueBuffer, value, false);
         const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()));
         if (index === undefined)
-            assert_1.default.fail('Not a valid enum value: ' + util_inspect_1.inspect(value));
+            throw new Error('Not a valid enum value: ' + util_inspect_1.inspect(value));
         buffer.add(index); //write the index to the requested value in the values array
         pointers_1.setPointers({ buffer, root });
     }

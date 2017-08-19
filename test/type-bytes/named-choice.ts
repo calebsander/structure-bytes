@@ -43,32 +43,36 @@ export = () => {
 	const tooManyConstructors: {[key: string]: Newable} = {}
 	for (let i = 1; i <= 256; i++) tooManyConstructors['a'.repeat(i)] = class {}
 	const tooManyTypes = new Map<Newable, t.StructType<{}>>()
-	for (const name in tooManyConstructors) tooManyTypes.set(tooManyConstructors[name], new t.StructType({})) //eslint-disable-line guard-for-in
+	for (const name in tooManyConstructors) tooManyTypes.set(tooManyConstructors[name], new t.StructType({}))
 	assert.throws(() => new t.NamedChoiceType(tooManyTypes), '256 types is too many')
-	assert.throws(() => { //eslint-disable-line arrow-body-style
-		return new t.NamedChoiceType(new Map()
+	assert.throws(() =>
+		new t.NamedChoiceType(new Map()
 			.set(() => {}, new t.StructType({}))
-		)
-	}, 'Function does not have a name')
+		),
+		'Function does not have a name'
+	)
 	const a = {func() {}}
 	const b = {func() {}}
-	assert.throws(() => { //eslint-disable-line arrow-body-style
-		return new t.NamedChoiceType(new Map()
+	assert.throws(() =>
+		new t.NamedChoiceType(new Map()
 			.set(a.func, new t.StructType({}))
 			.set(b.func, new t.StructType({}))
-		)
-	}, 'Function name "func" is repeated')
+		),
+		'Function name "func" is repeated'
+	)
 	const longConstructorName = 'c'.repeat(256)
-	assert.throws(() => { //eslint-disable-line arrow-body-style
-		return new t.NamedChoiceType(new Map()
+	assert.throws(() =>
+		new t.NamedChoiceType(new Map()
 			.set(constructorRegistry.get(longConstructorName), new t.StructType({}))
-		)
-	}, 'Function name "' + longConstructorName + '" is too long')
-	assert.throws(() => { //eslint-disable-line arrow-body-style
-		return new t.NamedChoiceType(new Map()
+		),
+		'Function name "' + longConstructorName + '" is too long'
+	)
+	assert.throws(() =>
+		new t.NamedChoiceType(new Map()
 			.set(a.func, new t.UnsignedIntType)
-		)
-	}, 'UnsignedIntType {} is not an instance of StructType')
+		),
+		'UnsignedIntType {} is not an instance of StructType'
+	)
 	assert.throws(
 		() => r.type(bufferFrom([0x58, 1, 0, 0x01])),
 		'Not a StructType: ByteType {}'

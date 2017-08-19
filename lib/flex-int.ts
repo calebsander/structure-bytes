@@ -23,7 +23,7 @@ const BYTE_MASKS = new Map<number, number>()
 {
 	let mask = 0
 	let bitToMaskNext = 7 //0 is least significant bit, 7 is most significant bit
-	for (const bytes of UPPER_BOUNDS.keys()) { //eslint-disable-line no-unused-vars
+	for (const bytes of UPPER_BOUNDS.keys()) {
 		if (!bytes) continue //should never be writing with 0 bytes
 
 		BYTE_MASKS.set(bytes, mask)
@@ -37,13 +37,13 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 	assert.integer(value)
 	assert(value >= 0, String(value) + ' is negative')
 	const bytes = (() => {
-		for (const [bytes, maxValue] of UPPER_BOUNDS) {
-			if (maxValue > value) return bytes
+		for (const [byteCount, maxValue] of UPPER_BOUNDS) {
+			if (maxValue > value) return byteCount
 		}
 		/*istanbul ignore next*/
 		throw new Error('Cannot represent ' + String(value)) //should never occur
 	})()
-	const writeValue = value - (UPPER_BOUNDS.get(bytes - 1) as number)
+	const writeValue = value - UPPER_BOUNDS.get(bytes - 1)!
 	const buffer = new ArrayBuffer(bytes)
 	const castBuffer = new Uint8Array(buffer)
 	{
@@ -55,21 +55,16 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 			shiftedValue = Math.floor(shiftedValue / 0x100)
 		}
 	}
-	castBuffer[0] |= BYTE_MASKS.get(bytes) as number
+	castBuffer[0] |= BYTE_MASKS.get(bytes)!
 	return buffer
 }
 export function getByteCount(firstByte: number): number {
 	assert.byteUnsignedInteger(firstByte)
-	const leadingOnes = (() => {
-		let leadingOnes: number
-		for (leadingOnes = 0; firstByte & (1 << 7); leadingOnes++) {
-			firstByte <<= 1
-		}
-		return leadingOnes
-	})()
+	let leadingOnes: number
+	for (leadingOnes = 0; firstByte & (1 << 7); leadingOnes++) firstByte <<= 1
 	const bytes = NUMBER_OF_BYTES.get(leadingOnes)
 	assert(bytes !== undefined, 'Invalid number of bytes')
-	return bytes as number
+	return bytes!
 }
 export function readValueBuffer(valueBuffer: ArrayBuffer): number {
 	assert.instanceOf(valueBuffer, ArrayBuffer)
@@ -77,7 +72,7 @@ export function readValueBuffer(valueBuffer: ArrayBuffer): number {
 	assert(bytes > 0, 'Empty flex int buffer')
 	const castBuffer = new Uint8Array(valueBuffer)
 	const valueOfPossible = (() => {
-		let value = castBuffer[0] ^ (BYTE_MASKS.get(bytes) as number)
+		let value = castBuffer[0] ^ BYTE_MASKS.get(bytes)!
 		for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
 			//Can't use bitwise math here because number may not fit in 32 bits
 			value *= 0x100
@@ -85,5 +80,5 @@ export function readValueBuffer(valueBuffer: ArrayBuffer): number {
 		}
 		return value
 	})()
-	return (UPPER_BOUNDS.get(bytes - 1) as number) + valueOfPossible
+	return UPPER_BOUNDS.get(bytes - 1)! + valueOfPossible
 }

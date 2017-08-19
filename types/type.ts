@@ -12,7 +12,7 @@ export default interface Type<VALUE> {
 	 * More complex types should override this method,
 	 * invoking [super.addToBuffer()]{@link Type#addToBuffer} and then adding their own data if it returns true.
 	 * @param {GrowableBuffer} buffer The buffer to append to
-	 * @return {boolean} {@link false} if it wrote a pointer to a previous instance, {@link true} if it wrote the type byte. Intended to only be used internally.
+	 * @return {boolean} {@link false} if it wrote a pointer to a previous instance, {@link true} if it wrote the type byte. For internal use.
 	 */
 	addToBuffer(buffer: GrowableBuffer): boolean
 	/**

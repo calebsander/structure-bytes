@@ -59,11 +59,14 @@ class OptionalType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
-        if (value === null || value === undefined)
-            buffer.add(0x00);
-        else {
-            buffer.add(0xFF);
-            this.type.writeValue(buffer, value);
+        switch (value) {
+            case null:
+            case undefined:
+                buffer.add(0x00);
+                break;
+            default:
+                buffer.add(0xFF);
+                this.type.writeValue(buffer, value);
         }
     }
     equals(otherType) {

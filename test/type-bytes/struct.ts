@@ -23,7 +23,7 @@ export = () => {
 		() => {
 			const struct: {[field: string]: t.Type<any>} = {}
 			for (let i = 1; i <= 256; i++) struct[(i % 2 ? 'a' : 'b').repeat(Math.floor(i / 2))] = new t.IntType
-			new t.StructType(struct) //eslint-disable-line no-new
+			new t.StructType(struct)
 		},
 		'256 fields is too many'
 	)
@@ -34,12 +34,11 @@ export = () => {
 		}),
 		'Field name ' + longString + ' is too long'
 	)
-	const date = new Date
 	assert.throws(
 		() => new t.StructType({
-			field: date
+			field: 'abc'
 		}),
-		date.toString() + ' is not a valid field type'
+		'"abc" is not a valid field type'
 	)
 
 	//Test hasOwnProperty()

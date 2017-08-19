@@ -1,7 +1,0 @@
-node_modules
-**/*-noutil.js
-**/*-nozlib.js
-client-side/upload-download.js
-
-compiled
-docs

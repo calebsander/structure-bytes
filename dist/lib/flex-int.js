@@ -37,9 +37,9 @@ function makeValueBuffer(value) {
     assert_1.default.integer(value);
     assert_1.default(value >= 0, String(value) + ' is negative');
     const bytes = (() => {
-        for (const [bytes, maxValue] of UPPER_BOUNDS) {
+        for (const [byteCount, maxValue] of UPPER_BOUNDS) {
             if (maxValue > value)
-                return bytes;
+                return byteCount;
         }
         /*istanbul ignore next*/
         throw new Error('Cannot represent ' + String(value)); //should never occur
@@ -62,13 +62,9 @@ function makeValueBuffer(value) {
 exports.makeValueBuffer = makeValueBuffer;
 function getByteCount(firstByte) {
     assert_1.default.byteUnsignedInteger(firstByte);
-    const leadingOnes = (() => {
-        let leadingOnes;
-        for (leadingOnes = 0; firstByte & (1 << 7); leadingOnes++) {
-            firstByte <<= 1;
-        }
-        return leadingOnes;
-    })();
+    let leadingOnes;
+    for (leadingOnes = 0; firstByte & (1 << 7); leadingOnes++)
+        firstByte <<= 1;
     const bytes = NUMBER_OF_BYTES.get(leadingOnes);
     assert_1.default(bytes !== undefined, 'Invalid number of bytes');
     return bytes;

@@ -39,47 +39,15 @@ class AbstractType {
             this.cachedBuffer = this._toBuffer();
         return this.cachedBuffer;
     }
-    /**
-     * Generates the type buffer, recomputed each time
-     * @private
-     * @see Type#toBuffer
-     * @return {external:ArrayBuffer} A Buffer containing the type bytes
-     */
-    _toBuffer() {
-        const buffer = new growable_buffer_1.default;
-        this.addToBuffer(buffer);
-        return buffer.toBuffer();
-    }
     getHash() {
         if (!this.cachedHash)
             this.cachedHash = this._getHash();
         return this.cachedHash;
     }
-    /**
-     * Gets an SHA256 hash of the type, recomputed each time
-     * @private
-     * @see Type#getHash
-     * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
-     */
-    _getHash() {
-        const hash = js_sha256_1.sha256.create();
-        hash.update(this.toBuffer());
-        const bytes = new Uint8Array(hash.arrayBuffer());
-        return base64.fromByteArray(bytes);
-    }
     getSignature() {
         if (!this.cachedSignature)
             this.cachedSignature = this._getSignature();
         return this.cachedSignature;
-    }
-    /**
-     * Gets a signature string for the type, recomputed each time
-     * @private
-     * @see Type#getSignature
-     * @return {string} a signature for the type
-     */
-    _getSignature() {
-        return config_1.VERSION_STRING + this.getHash();
     }
     valueBuffer(value) {
         const buffer = new growable_buffer_1.default;
@@ -103,6 +71,38 @@ class AbstractType {
             return false;
         }
         return true;
+    }
+    /**
+     * Generates the type buffer, recomputed each time
+     * @private
+     * @see Type#toBuffer
+     * @return {external:ArrayBuffer} A Buffer containing the type bytes
+     */
+    _toBuffer() {
+        const buffer = new growable_buffer_1.default;
+        this.addToBuffer(buffer);
+        return buffer.toBuffer();
+    }
+    /**
+     * Gets an SHA256 hash of the type, recomputed each time
+     * @private
+     * @see Type#getHash
+     * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
+     */
+    _getHash() {
+        const hash = js_sha256_1.sha256.create();
+        hash.update(this.toBuffer());
+        const bytes = new Uint8Array(hash.arrayBuffer());
+        return base64.fromByteArray(bytes);
+    }
+    /**
+     * Gets a signature string for the type, recomputed each time
+     * @private
+     * @see Type#getSignature
+     * @return {string} a signature for the type
+     */
+    _getSignature() {
+        return config_1.VERSION_STRING + this.getHash();
     }
 }
 exports.default = AbstractType;
