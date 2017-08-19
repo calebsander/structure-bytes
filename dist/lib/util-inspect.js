@@ -73,7 +73,6 @@ function inspect(obj) {
         return result + ']';
     }
     if (obj instanceof Function) {
-        //tslint:disable-next-line:restrict-plus-operands
         return 'Function ' + obj.name;
     }
     if (obj.constructor === Object) {
@@ -88,7 +87,7 @@ function inspect(obj) {
         }
         return result + '}';
     }
-    //tslint:disable-next-line:restrict-plus-operands
-    return (obj.constructor.name ? obj.constructor.name + ' ' : '') + inspect(toObject(obj));
+    const { name } = obj.constructor;
+    return (name ? name + ' ' : '') + inspect(toObject(obj));
 }
 exports.inspect = inspect;

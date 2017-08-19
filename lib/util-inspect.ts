@@ -67,8 +67,7 @@ export function inspect(obj: any): string {
 		return result + ']'
 	}
 	if (obj instanceof Function) {
-		//tslint:disable-next-line:restrict-plus-operands
-		return 'Function ' + obj.name
+		return 'Function ' + (obj as Function).name
 	}
 	if (obj.constructor === Object) { //as opposed to a subclass of Object
 		let result = '{'
@@ -81,6 +80,6 @@ export function inspect(obj: any): string {
 		}
 		return result + '}'
 	}
-	//tslint:disable-next-line:restrict-plus-operands
-	return (obj.constructor.name ? obj.constructor.name + ' ' : '') + inspect(toObject(obj))
+	const {name} = (obj as object).constructor
+	return (name ? name + ' ' : '') + inspect(toObject(obj))
 }

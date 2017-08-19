@@ -1,177 +1,213 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="default no-js">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Home</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>structure-bytes</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
 </head>
-
 <body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">structure-bytes</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> structure-bytes</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="structure-bytes">structure-bytes</h1>
+				<p>A Node.js library for more efficient data transfers by separating the structure from the values and efficiently storing each as binary data.</p>
+				<p><a href="https://www.npmjs.com/package/structure-bytes"><img src="https://img.shields.io/npm/v/structure-bytes.svg" alt="npm Version"></a>
+					<a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
+					<a href="https://coveralls.io/github/calebsander/structure-bytes?branch=master"><img src="https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master" alt="Coverage Status"></a>
+					<a href="https://david-dm.org/calebsander/structure-bytes"><img src="https://david-dm.org/calebsander/structure-bytes/status.svg" alt="Dependencies"></a>
+				<a href="https://david-dm.org/calebsander/structure-bytes?type=dev"><img src="https://david-dm.org/calebsander/structure-bytes/dev-status.svg" alt="Dev Dependencies"></a></p>
+				<h2 id="concept">Concept</h2>
+				<p>A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google&#39;s <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>, but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:</p>
+				<ul>
+					<li>Types (user-created formats of data) are created by combining a wide variety of datatypes, both primitive and recursive. This allows for representations which accurately describe types (e.g. distinguishing between structs and mappings of strings to values, and numeric types, unlike JSON). Types are very customizable, so you can build any desired type formats.</li>
+					<li>Types are kept separate from values (instances of a type) because types are designed to be created once and used to store many different values. This allows for communications to cache the type format after the first use and only have to send the values in subsequent requests.</li>
+					<li>Redundancy in data storage is kept to a minimum. For example, in an array of structs, the field names are only specified once in the type spec rather than for each element in the array.</li>
+				</ul>
+				<h2 id="use-cases">Use cases</h2>
+				<ul>
+					<li>Use when the structure of the data is complicated. For example, if you are just sending text to be interpreted as text, that can be done easily in almost any environment.</li>
+					<li>Use when you plan to have many different values for the type (either many different files storing the same sort of information, or many communications of the same sort of information). This will give you the benefit of being able to keep only a single copy of the type spec.</li>
+					<li>Use when there is a lot of repetition in the data. If you don&#39;t have any arrays, sets, or maps, you can&#39;t really benefit from the cutdown on redundancy.</li>
+				</ul>
+				<h2 id="differences-from-protocol-buffers">Differences from Protocol Buffers</h2>
+				<ul>
+					<li>Types are generated programmatically rather than by reading <code>.proto</code> files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.</li>
+					<li>This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn&#39;t know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.</li>
+					<li><code>structure-bytes</code> provides a larger set of primitive and recursive types.</li>
+				</ul>
+				<h2 id="data-types">Data types</h2>
+				<ul>
+					<li>Primitive types<ul>
+							<li><code>Byte</code> (1-byte signed integer)</li>
+							<li><code>Short</code> (2-byte signed integer)</li>
+							<li><code>Int</code> (4-byte signed integer)</li>
+							<li><code>Long</code> (8-byte signed integer)</li>
+							<li><code>BigInt</code> (a signed integer with arbitrary precision)</li>
+							<li><code>UnsignedByte</code> (1-byte unsigned integer)</li>
+							<li><code>UnsignedShort</code> (2-byte unsigned integer)</li>
+							<li><code>UnsignedInt</code> (4-byte unsigned integer)</li>
+							<li><code>UnsignedLong</code> (8-byte unsigned integer)</li>
+							<li><code>BigUnsignedInt</code> (an unsigned integer with arbitrary precision)</li>
+							<li><code>FlexUnsignedInt</code> (an unsigned integer below <code>2^53</code> with a variable-length representation)</li>
+							<li><code>Date</code> (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)</li>
+							<li><code>Day</code> (3-byte unsigned integer representing a specific day in history)</li>
+							<li><code>Time</code> (4-byte unsigned integer representing a specific time of day)</li>
+							<li><code>Float</code> (IEEE 32-bit floating-point number)</li>
+							<li><code>Double</code> (IEEE 64-bit floating-point number)</li>
+							<li><code>Boolean</code> (a single true or false value)</li>
+							<li><code>BooleanTuple</code> (a constant-length array of <code>Boolean</code>s)</li>
+							<li><code>BooleanArray</code> (a variable-length array of <code>Boolean</code>s)</li>
+							<li><code>Char</code> (a single UTF-8 character)</li>
+							<li><code>String</code> (an array of UTF-8 characters that also stores its total byte length)</li>
+							<li><code>Octets</code> (an <code>ArrayBuffer</code> (raw binary data))</li>
+						</ul>
+					</li>
+					<li>Recursive types<ul>
+							<li><code>Tuple&lt;Type&gt;</code> (a constant-length array of <code>Type</code>s)</li>
+							<li><code>Struct</code> (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)</li>
+							<li><code>Array&lt;Type&gt;</code> (a variable-length array of <code>Type</code>s)</li>
+							<li><code>Set&lt;Type&gt;</code> (like an <code>Array</code>, except creates a set when read)</li>
+							<li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
+							<li><code>Enum&lt;Type&gt;</code> (a fixed set of up to 255 <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
+							<li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
+							<li><code>NamedChoice</code> (a fixed set of up to 255 named types that values can take on, each associated with a constructor)</li>
+							<li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
+							<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or an instance of <code>Type</code>)</li>
+							<li><code>Pointer&lt;Type&gt;</code> (allows multiple long instances of <code>Type</code> with the same bytes to be stored only once)</li>
+						</ul>
+					</li>
+				</ul>
+				<h2 id="documentation">Documentation</h2>
+				<p>The <code>docs</code> folder is hosted at <a href="https://calebsander.github.io/structure-bytes">https://calebsander.github.io/structure-bytes</a>.</p>
+				<h2 id="examples">Examples</h2>
+				<h3 id="type-creation">Type creation</h3>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-<div id="main">
-
-    <h1 class="page-title">Home</h1>
-
-    
-
-
-
-    
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    <section>
-        <article><h1>structure-bytes</h1><p>A Node.js library for more efficient data transfers by separating the structure from the values and efficiently storing each as binary data.</p>
-<p><a href="https://www.npmjs.com/package/structure-bytes"><img src="https://img.shields.io/npm/v/structure-bytes.svg" alt="npm Version"></a>
-<a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
-<a href="https://coveralls.io/github/calebsander/structure-bytes?branch=master"><img src="https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master" alt="Coverage Status"></a>
-<a href="https://david-dm.org/calebsander/structure-bytes"><img src="https://david-dm.org/calebsander/structure-bytes/status.svg" alt="Dependencies"></a>
-<a href="https://david-dm.org/calebsander/structure-bytes?type=dev"><img src="https://david-dm.org/calebsander/structure-bytes/dev-status.svg" alt="Dev Dependencies"></a></p>
-<h2>Concept</h2><p>A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google's <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>, but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:</p>
-<ul>
-<li>Types (user-created formats of data) are created by combining a wide variety of datatypes, both primitive and recursive. This allows for representations which accurately describe types (e.g. distinguishing between structs and mappings of strings to values, and numeric types, unlike JSON). Types are very customizable, so you can build any desired type formats.</li>
-<li>Types are kept separate from values (instances of a type) because types are designed to be created once and used to store many different values. This allows for communications to cache the type format after the first use and only have to send the values in subsequent requests.</li>
-<li>Redundancy in data storage is kept to a minimum. For example, in an array of structs, the field names are only specified once in the type spec rather than for each element in the array.</li>
-</ul>
-<h2>Use cases</h2><ul>
-<li>Use when the structure of the data is complicated. For example, if you are just sending text to be interpreted as text, that can be done easily in almost any environment.</li>
-<li>Use when you plan to have many different values for the type (either many different files storing the same sort of information, or many communications of the same sort of information). This will give you the benefit of being able to keep only a single copy of the type spec.</li>
-<li>Use when there is a lot of repetition in the data. If you don't have any arrays, sets, or maps, you can't really benefit from the cutdown on redundancy.</li>
-</ul>
-<h2>Differences from Protocol Buffers</h2><ul>
-<li>Types are generated programmatically rather than by reading <code>.proto</code> files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.</li>
-<li>This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.</li>
-<li><code>structure-bytes</code> provides a larger set of primitive and recursive types.</li>
-</ul>
-<h2>Data types</h2><ul>
-<li>Primitive types<ul>
-<li><code>Byte</code> (1-byte signed integer)</li>
-<li><code>Short</code> (2-byte signed integer)</li>
-<li><code>Int</code> (4-byte signed integer)</li>
-<li><code>Long</code> (8-byte signed integer)</li>
-<li><code>BigInt</code> (a signed integer with up to 65535 bytes of precision)</li>
-<li><code>UnsignedByte</code> (1-byte unsigned integer)</li>
-<li><code>UnsignedShort</code> (2-byte unsigned integer)</li>
-<li><code>UnsignedInt</code> (4-byte unsigned integer)</li>
-<li><code>UnsignedLong</code> (8-byte unsigned integer)</li>
-<li><code>BigUnsignedInt</code> (an unsigned integer with up to 65535 bytes of precision)</li>
-<li><code>Date</code> (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)</li>
-<li><code>Day</code> (3-byte unsigned integer representing a specific day in history)</li>
-<li><code>Time</code> (4-byte unsigned integer representing a specific time of day)</li>
-<li><code>Float</code> (IEEE 32-bit floating-point number)</li>
-<li><code>Double</code> (IEEE 64-bit floating-point number)</li>
-<li><code>Boolean</code> (a single true or false value)</li>
-<li><code>BooleanTuple</code> (a constant-length array of <code>Boolean</code>s)</li>
-<li><code>BooleanArray</code> (a variable-length array of <code>Boolean</code>s)</li>
-<li><code>Char</code> (a single UTF-8 character)</li>
-<li><code>String</code> (an array of UTF-8 characters that also stores its total byte length)</li>
-<li><code>Octets</code> (an <code>ArrayBuffer</code> (raw binary data))</li>
-</ul>
-</li>
-<li>Recursive types<ul>
-<li><code>Tuple&lt;Type&gt;</code> (a constant-length array of <code>Type</code>s)</li>
-<li><code>Struct</code> (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)</li>
-<li><code>Array&lt;Type&gt;</code> (a variable-length array of <code>Type</code>s)</li>
-<li><code>Set&lt;Type&gt;</code> (like an <code>Array</code>, except creates a set when read)</li>
-<li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
-<li><code>Enum&lt;Type&gt;</code> (a fixed set of up to 255 <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
-<li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
-<li><code>NamedChoice</code> (a fixed set of up to 255 named types that values can take on, each associated with a constructor)</li>
-<li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
-<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or an instance of <code>Type</code>)</li>
-<li><code>Pointer&lt;Type&gt;</code> (allows multiple long instances of <code>Type</code> with the same bytes to be stored only once)</li>
-</ul>
-</li>
-</ul>
-<h2>Documentation</h2><p>The <code>docs</code> folder is hosted at https://calebsander.github.io/structure-bytes.</p>
-<h2>Examples</h2><h3>Type creation</h3><pre class="prettyprint source lang-javascript"><code>const sb = require('structure-bytes');
-
-const personType = new sb.StructType({
-    dob: new sb.DateType,
-    id: new sb.UnsignedShortType,
-    name: new sb.StringType
+<span class="hljs-keyword">const</span> personType = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> sb.DateType,
+    <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.UnsignedShortType,
+    <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType
 });
-const tribeType = new sb.StructType({
-    leader: personType,
-    members: new sb.SetType(personType),
-    money: new sb.MapType(personType, new sb.FloatType)
-});</code></pre><h3>Converting types and values to <code>Buffer</code>s</h3><pre class="prettyprint source lang-javascript"><code>const sb = require('structure-bytes');
-
-const personType = new sb.StructType({
-    dob: new sb.DateType,
-    id: new sb.UnsignedShortType,
-    name: new sb.StringType
+<span class="hljs-keyword">const</span> tribeType = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">leader</span>: personType,
+    <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> sb.SetType(personType),
+    <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> sb.MapType(personType, <span class="hljs-keyword">new</span> sb.FloatType)
 });
-const tribeType = new sb.StructType({
-    leader: personType,
-    members: new sb.SetType(personType),
-    money: new sb.MapType(personType, new sb.FloatType)
-});
-let typeBuffer = tribeType.toBuffer(); //ArrayBuffer { byteLength: 49 }
-console.log(Buffer.from(typeBuffer));
-//&lt;Buffer 51 03 06 6c 65 61 64 65 72 51 03 03 64 6f 62 15 02 69 64 12 04 6e 61 6d 65 41 07 6d 65 6d 62 65 72 73 53 ff 00 1b 05 6d 6f 6e 65 79 54 ff 00 25 20>
+</code></pre>
+				<h3 id="converting-types-and-values-to-buffer-s">Converting types and values to <code>Buffer</code>s</h3>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-let louis = {
-    dob: new Date(1437592284193),
-    id: 9,
-    name: 'Louis'
+<span class="hljs-keyword">const</span> personType = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> sb.DateType,
+    <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.UnsignedShortType,
+    <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType
+});
+<span class="hljs-keyword">const</span> tribeType = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">leader</span>: personType,
+    <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> sb.SetType(personType),
+    <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> sb.MapType(personType, <span class="hljs-keyword">new</span> sb.FloatType)
+});
+<span class="hljs-keyword">let</span> typeBuffer = tribeType.toBuffer(); <span class="hljs-comment">//ArrayBuffer { byteLength: 49 }</span>
+<span class="hljs-built_in">console</span>.log(Buffer.from(typeBuffer));
+<span class="hljs-comment">//&lt;Buffer 51 03 06 6c 65 61 64 65 72 51 03 03 64 6f 62 15 02 69 64 12 04 6e 61 6d 65 41 07 6d 65 6d 62 65 72 73 53 ff 00 1b 05 6d 6f 6e 65 79 54 ff 00 25 20&gt;</span>
+
+<span class="hljs-keyword">let</span> louis = {
+    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284193</span>),
+    <span class="hljs-attr">id</span>: <span class="hljs-number">9</span>,
+    <span class="hljs-attr">name</span>: <span class="hljs-string">'Louis'</span>
 },
 garfield = {
-    dob: new Date(1437592284194),
-    id: 17,
-    name: 'Garfield'
+    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284194</span>),
+    <span class="hljs-attr">id</span>: <span class="hljs-number">17</span>,
+    <span class="hljs-attr">name</span>: <span class="hljs-string">'Garfield'</span>
 };
-let value = {
-    leader: {
-        dob: new Date(1437592284192),
-        id: 10,
-        name: 'Joe'
+<span class="hljs-keyword">let</span> value = {
+    <span class="hljs-attr">leader</span>: {
+        <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284192</span>),
+        <span class="hljs-attr">id</span>: <span class="hljs-number">10</span>,
+        <span class="hljs-attr">name</span>: <span class="hljs-string">'Joe'</span>
     },
-    members: new Set().add(louis).add(garfield),
-    money: new Map().set(louis, 23.05).set(garfield, -10.07)
+    <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>().add(louis).add(garfield),
+    <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>().set(louis, <span class="hljs-number">23.05</span>).set(garfield, <span class="hljs-number">-10.07</span>)
 };
-let valueBuffer = tribeType.valueBuffer(value); //ArrayBuffer { byteLength: 100 }
-console.log(Buffer.from(valueBuffer));
-//&lt;Buffer 00 00 01 4e b7 2d 6c 20 00 0a 4a 6f 65 00 00 00 00 02 00 00 01 4e b7 2d 6c 21 00 09 4c 6f 75 69 73 00 00 00 01 4e b7 2d 6c 22 00 11 47 61 72 66 69 65 ... ></code></pre><h3>Reading from type and value <code>Buffer</code>s</h3><pre class="prettyprint source lang-javascript"><code>const sb = require('structure-bytes');
+<span class="hljs-keyword">let</span> valueBuffer = tribeType.valueBuffer(value); <span class="hljs-comment">//ArrayBuffer { byteLength: 100 }</span>
+<span class="hljs-built_in">console</span>.log(Buffer.from(valueBuffer));
+<span class="hljs-comment">//&lt;Buffer 00 00 01 4e b7 2d 6c 20 00 0a 4a 6f 65 00 00 00 00 02 00 00 01 4e b7 2d 6c 21 00 09 4c 6f 75 69 73 00 00 00 01 4e b7 2d 6c 22 00 11 47 61 72 66 69 65 ... &gt;</span>
+</code></pre>
+				<h3 id="reading-from-type-and-value-buffer-s">Reading from type and value <code>Buffer</code>s</h3>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-//Buffer obtained somehow
-let tribeBuffer = new Uint8Array([0x51, 0x03, 0x06, 0x6c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x51, 0x03, 0x03, 0x64, 0x6f, 0x62, 0x15, 0x02, 0x69, 0x64, 0x12, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x41, 0x07, 0x6d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x73, 0x53, 0xff, 0x00, 0x1b, 0x05, 0x6d, 0x6f, 0x6e, 0x65, 0x79, 0x54, 0xff, 0x00, 0x25, 0x20]);
-let type = sb.r.type(tribeBuffer.buffer);
-console.log(type);
-/*
+<span class="hljs-comment">//Buffer obtained somehow</span>
+<span class="hljs-keyword">let</span> tribeBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x51</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x06</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x51</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x62</span>, <span class="hljs-number">0x15</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x12</span>, <span class="hljs-number">0x04</span>, <span class="hljs-number">0x6e</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x41</span>, <span class="hljs-number">0x07</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x62</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x73</span>, <span class="hljs-number">0x53</span>, <span class="hljs-number">0xff</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x1b</span>, <span class="hljs-number">0x05</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x6e</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x79</span>, <span class="hljs-number">0x54</span>, <span class="hljs-number">0xff</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x25</span>, <span class="hljs-number">0x20</span>]);
+<span class="hljs-keyword">let</span> type = sb.r.type(tribeBuffer.buffer);
+<span class="hljs-built_in">console</span>.log(type);
+<span class="hljs-comment">/*
 StructType {
   fields:
    [ { name: 'leader', type: [Object] },
      { name: 'members', type: [Object] },
      { name: 'money', type: [Object] } ] }
-*/
+*/</span>
 
-//Buffer obtained somehow
-let valueBuffer = new Uint8Array([0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x20, 0x00, 0x0a, 0x4a, 0x6f, 0x65, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x21, 0x00, 0x09, 0x4c, 0x6f, 0x75, 0x69, 0x73, 0x00, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x22, 0x00, 0x11, 0x47, 0x61, 0x72, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x21, 0x00, 0x09, 0x4c, 0x6f, 0x75, 0x69, 0x73, 0x00, 0x41, 0xb8, 0x66, 0x66, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x22, 0x00, 0x11, 0x47, 0x61, 0x72, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x00, 0xc1, 0x21, 0x1e, 0xb8]);
-console.log(sb.r.value({type, buffer: valueBuffer.buffer}));
-/*
+<span class="hljs-comment">//Buffer obtained somehow</span>
+<span class="hljs-keyword">let</span> valueBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x0a</span>, <span class="hljs-number">0x4a</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x09</span>, <span class="hljs-number">0x4c</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x75</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x73</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x22</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x47</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x09</span>, <span class="hljs-number">0x4c</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x75</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x73</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x41</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x22</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x47</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0xc1</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x1e</span>, <span class="hljs-number">0xb8</span>]);
+<span class="hljs-built_in">console</span>.log(sb.r.value({type, <span class="hljs-attr">buffer</span>: valueBuffer.buffer}));
+<span class="hljs-comment">/*
 { leader: { dob: 2015-07-22T19:11:24.192Z, id: 10, name: 'Joe' },
   members:
    Set {
@@ -179,373 +215,670 @@ console.log(sb.r.value({type, buffer: valueBuffer.buffer}));
      { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } },
   money:
    Map {
-     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' } => 23.05,
-     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } => -10.07 } }
-*/</code></pre><h3>File I/O</h3><pre class="prettyprint source lang-javascript"><code>const fs = require('fs');
-const sb = require('structure-bytes');
+     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' } =&gt; 23.05,
+     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } =&gt; -10.07 } }
+*/</span>
+</code></pre>
+				<h3 id="file-i-o">File I/O</h3>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-let type = new sb.EnumType({
-    type: new sb.StringType,
-    values: [
-        'ON_TIME',
-        'LATE',
-        'CANCELLED',
-        'UNKNOWN'
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.EnumType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StringType,
+    <span class="hljs-attr">values</span>: [
+        <span class="hljs-string">'ON_TIME'</span>,
+        <span class="hljs-string">'LATE'</span>,
+        <span class="hljs-string">'CANCELLED'</span>,
+        <span class="hljs-string">'UNKNOWN'</span>
     ]
 });
 sb.writeType({
     type,
-    outStream: fs.createWriteStream('./type')
-}, err => {
-    sb.readType(fs.createReadStream('./type'), (err, readType) => {
-        console.log(readType);
-        /*
+    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'./type'</span>)
+}, err =&gt; {
+    sb.readType(fs.createReadStream(<span class="hljs-string">'./type'</span>), (err, readType) =&gt; {
+        <span class="hljs-built_in">console</span>.log(readType);
+        <span class="hljs-comment">/*
         EnumType {
             type: StringType {},
             values: [ 'ON_TIME', 'LATE', 'CANCELLED', 'UNKNOWN' ] }
-        */
+        */</span>
     });
 });
-let value = 'CANCELLED';
+<span class="hljs-keyword">let</span> value = <span class="hljs-string">'CANCELLED'</span>;
 sb.writeValue({
     type,
     value,
-    outStream: fs.createWriteStream('./value')
-}, err => {
+    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'./value'</span>)
+}, err =&gt; {
     sb.readValue({
         type,
-        inStream: fs.createReadStream('./value')
-    }, (err, value) => {
-        console.log(value); //'CANCELLED'
+        <span class="hljs-attr">inStream</span>: fs.createReadStream(<span class="hljs-string">'./value'</span>)
+    }, (err, value) =&gt; {
+        <span class="hljs-built_in">console</span>.log(value); <span class="hljs-comment">//'CANCELLED'</span>
     });
 });
 sb.writeTypeAndValue({
     type,
     value,
-    outStream: fs.createWriteStream('./type-value')
-}, err => {
-    sb.readTypeAndValue(fs.createReadStream('./type-value'), (err, type, value) => {
-        console.log(value); //'CANCELLED'
+    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'./type-value'</span>)
+}, err =&gt; {
+    sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'./type-value'</span>), (err, type, value) =&gt; {
+        <span class="hljs-built_in">console</span>.log(value); <span class="hljs-comment">//'CANCELLED'</span>
     });
-});</code></pre><h3>HTTP GET value</h3><p>Server-side:</p>
-<pre class="prettyprint source lang-javascript"><code>const http = require('http');
-const sb = require('structure-bytes');
+});
+</code></pre>
+				<h3 id="http-get-value">HTTP GET value</h3>
+				<p>Server-side:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);
+<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-let type = new sb.DateType();
-http.createServer((req, res) => {
-    sb.httpRespond({req, res, type, value: new Date}, err => {
-        console.log('Responded');
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.DateType();
+http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+    sb.httpRespond({req, res, type, <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>}, err =&gt; {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Responded'</span>);
     });
-}).listen(80);</code></pre><p>Client-side:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script src = '/structure-bytes/compiled/jquery.js'>&lt;/script>
-&lt;script src = '/structure-bytes/compiled/download.js'>&lt;/script>
-&lt;script>
-    //'date' specifies the name of the type being transferred so it can be cached
-    sb.download('date', {
-        url: '/date',
-        success: function(value) {
-            console.log(value.getFullYear()); //2016
+}).listen(<span class="hljs-number">80</span>);
+</code></pre>
+				<p>Client-side:</p>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/jquery.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/download.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+    <span class="hljs-comment">//'date' specifies the name of the type being transferred so it can be cached</span>
+    sb.download(<span class="hljs-string">'date'</span>, {
+        <span class="hljs-attr">url</span>: <span class="hljs-string">'/date'</span>,
+        <span class="hljs-attr">success</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
+            <span class="hljs-built_in">console</span>.log(value.getFullYear()); <span class="hljs-comment">//2016</span>
         }
     });
-&lt;/script></code></pre><h3>HTTP POST value</h3><p>Server-side:</p>
-<pre class="prettyprint source lang-javascript"><code>const http = require('http');
-const sb = require('structure-bytes');
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+				<h3 id="http-post-value">HTTP POST value</h3>
+				<p>Server-side:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);
+<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-let type = new sb.DateType();
-http.createServer((req, res) => {
-    sb.readValue({type: new sb.UnsignedIntType, inStream: req}, (err, value) => {
-        res.end(String(value));
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.DateType();
+http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+    sb.readValue({<span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedIntType, <span class="hljs-attr">inStream</span>: req}, (err, value) =&gt; {
+        res.end(<span class="hljs-built_in">String</span>(value));
     });
-}).listen(80);</code></pre><p>Client-side:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script src = '/structure-bytes/compiled/jquery.js'>&lt;/script>
-&lt;script src = '/structure-bytes/compiled/upload.js'>&lt;/script>
-&lt;button>Click me&lt;/button>
-&lt;script>
-    var clickCount = 0;
-    $('button').click(function() {
+}).listen(<span class="hljs-number">80</span>);
+</code></pre>
+				<p>Client-side:</p>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/jquery.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/upload.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span>&gt;</span>Click me<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+    <span class="hljs-keyword">var</span> clickCount = <span class="hljs-number">0</span>;
+    $(<span class="hljs-string">'button'</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
         clickCount++;
         sb.upload({
-            type: new sb.UnsignedIntType,
-            value: clickCount
+            <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedIntType,
+            <span class="hljs-attr">value</span>: clickCount
         }, {
-            url: '/click',
-            type: 'POST',
-            dataType: 'text',
-            success: function(response) {
-                alert(response); //alerts '1', '2', etc.
+            <span class="hljs-attr">url</span>: <span class="hljs-string">'/click'</span>,
+            <span class="hljs-attr">type</span>: <span class="hljs-string">'POST'</span>,
+            <span class="hljs-attr">dataType</span>: <span class="hljs-string">'text'</span>,
+            <span class="hljs-attr">success</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
+                alert(response); <span class="hljs-comment">//alerts '1', '2', etc.</span>
             }
         });
     });
-&lt;/script></code></pre><h2>Binary formats</h2><p>In the following definitions, <code>uint8_t</code> means an 8-bit unsigned integer, <code>uint16_t</code> means a 16-bit unsigned integer, and <code>uint32_t</code> means a 32-bit unsigned integer.
-All numbers are stored in big-endian format.</p>
-<h3>Type</h3><p>The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the specific instance of the type, if necesary.
-For example, <code>new sb.UnsignedIntType</code> translates into <code>[0x13]</code>, and <code>new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})</code> translates into:</p>
-<pre class="prettyprint source lang-javascript"><code>[
-    0x51 /*StructType*/,
-        2 /*2 fields*/,
-            3 /*3 characters in first field's name*/, 0x61 /*a*/, 0x62 /*b*/, 0x63 /*c*/, 0x01 /*ByteType*/,
-            3 /*3 characters in second field's name*/, 0x64 /*d*/, 0x65 /*e*/, 0x66 /*f*/, 0x41 /*StringType*/
-]</code></pre><p>If the type has already been written to the buffer, it is also valid to serialize the type as:</p>
-<ul>
-<li><code>0xFF</code></li>
-<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of type in buffer]) - <code>uint16_t</code></li>
-</ul>
-<p>For example:</p>
-<pre class="prettyprint source lang-javascript"><code>const someType = new sb.TupleType({
-    type: new sb.FloatType,
-    length: 3
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+				<h2 id="binary-formats">Binary formats</h2>
+				<p>In the following definitions, <code>uint8_t</code> means an 8-bit unsigned integer. <code>flexInt</code> means a variable-length unsigned integer with the following format, where <code>X</code> represents either <code>0</code> or <code>1</code>:</p>
+				<ul>
+					<li><code>[0b0XXXXXXX]</code> stores values from <code>0</code> to <code>2^7 - 1</code> in their unsigned 7-bit integer representations</li>
+					<li><code>[0b10XXXXXX, 0bXXXXXXXX]</code> stores values from <code>2^7</code> to <code>2^7 + 2^14 - 1</code>, where a value <code>x</code> is encoded into the unsigned 14-bit representation of <code>x - 2^7</code></li>
+					<li><code>[0b110XXXXX, 0bXXXXXXXX, 0bXXXXXXXX]</code> stores values from <code>2^7 + 2^14</code> to <code>2^7 + 2^14 + 2^21 - 1</code>, where a value <code>x</code> is encoded into the unsigned 14-bit representation of <code>x - (2^7 + 2^14)</code></li>
+					<li>and so on, up to 8-byte representations</li>
+				</ul>
+				<p>All numbers are stored in big-endian format.</p>
+				<h3 id="type">Type</h3>
+				<p>The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the specific instance of the type, if necesary.
+				For example, <code>new sb.UnsignedIntType</code> translates into <code>[0x13]</code>, and <code>new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})</code> translates into:</p>
+				<pre><code class="lang-javascript">[
+    <span class="hljs-number">0x51</span> <span class="hljs-comment">/*StructType*/</span>,
+        <span class="hljs-number">2</span> <span class="hljs-comment">/*2 fields*/</span>,
+            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in first field's name*/</span>, <span class="hljs-number">0x61</span> <span class="hljs-comment">/*a*/</span>, <span class="hljs-number">0x62</span> <span class="hljs-comment">/*b*/</span>, <span class="hljs-number">0x63</span> <span class="hljs-comment">/*c*/</span>, <span class="hljs-number">0x01</span> <span class="hljs-comment">/*ByteType*/</span>,
+            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in second field's name*/</span>, <span class="hljs-number">0x64</span> <span class="hljs-comment">/*d*/</span>, <span class="hljs-number">0x65</span> <span class="hljs-comment">/*e*/</span>, <span class="hljs-number">0x66</span> <span class="hljs-comment">/*f*/</span>, <span class="hljs-number">0x41</span> <span class="hljs-comment">/*StringType*/</span>
+]
+</code></pre>
+				<p>If the type has already been written to the buffer, it is also valid to serialize the type as:</p>
+				<ul>
+					<li><code>0xFF</code></li>
+					<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of type in buffer]) - <code>flexInt</code></li>
+				</ul>
+				<p>For example:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> someType = <span class="hljs-keyword">new</span> sb.TupleType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FloatType,
+    <span class="hljs-attr">length</span>: <span class="hljs-number">3</span>
 })
-const type = new sb.StructType({
-    one: someType,
-    two: someType
+<span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">one</span>: someType,
+    <span class="hljs-attr">two</span>: someType
 })
-//type translates into
+<span class="hljs-comment">//type translates into</span>
 [
-    0x51 /*StructType*/,
-        2 /*2 fields*/,
-            3 /*3 characters in first field's name*/, 0x6f /*o*/, 0x6e /*n*/, 0x65 /*e*/,
-                0x50 /*TupleType*/,
-                    0x20 /*FloatType*/,
-                    3 /*3 floats in the tuple*/,
-            3 /*3 characters in second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/,
-                0xff, /*type is defined previously*/
-                    0, 11 /*type is defined 11 bytes before the 0 on this line*/
-]</code></pre><p>In the following definitions, <code>type</code> means the binary type format.</p>
-<ul>
-<li><code>ByteType</code>: identifier <code>0x01</code></li>
-<li><code>ShortType</code>: identifier <code>0x02</code></li>
-<li><code>IntType</code>: identifier <code>0x03</code></li>
-<li><code>LongType</code>: identifier <code>0x04</code></li>
-<li><code>BigIntType</code>: identifier <code>0x05</code></li>
-<li><code>UnsignedByteType</code>: identifier <code>0x11</code></li>
-<li><code>UnsignedShortType</code>: identifier <code>0x12</code></li>
-<li><code>UnsignedIntType</code>: identifier <code>0x13</code></li>
-<li><code>UnsignedLongType</code>: identifier <code>0x14</code></li>
-<li><code>BigUnsignedIntType</code>: identifier <code>0x15</code></li>
-<li><code>DateType</code>: identifier <code>0x1A</code></li>
-<li><code>DayType</code>: identifier <code>0x1B</code></li>
-<li><code>TimeType</code>: identifier <code>0x1C</code></li>
-<li><code>FloatType</code>: identifier <code>0x20</code></li>
-<li><code>DoubleType</code>: identifier <code>0x21</code></li>
-<li><code>BooleanType</code>: identifier <code>0x30</code></li>
-<li><code>BooleanTupleType</code>: identifier <code>0x31</code>, payload:<ul>
-<li><code>length</code> - <code>uint8_t</code></li>
-</ul>
-</li>
-<li><code>BooleanArrayType</code>: identifier <code>0x32</code></li>
-<li><code>CharType</code>: identifier <code>0x40</code></li>
-<li><code>StringType</code>: identifier <code>0x41</code></li>
-<li><code>OctetsType</code>: identifier <code>0x42</code></li>
-<li><code>TupleType</code>: identifier <code>0x50</code>, payload:<ul>
-<li><code>elementType</code> - <code>type</code></li>
-<li><code>length</code> - <code>uint8_t</code></li>
-</ul>
-</li>
-<li><code>StructType</code>: identifier <code>0x51</code>, payload:<ul>
-<li><code>fieldCount</code> - <code>uint8_t</code></li>
-<li><code>fieldCount</code> instances of <code>field</code>:<ul>
-<li><code>nameLength</code> - <code>uint8_t</code></li>
-<li><code>name</code> - a UTF-8 string containing <code>nameLength</code> bytes</li>
-<li><code>fieldType</code> - <code>type</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>ArrayType</code>: identifier <code>0x52</code>, payload:<ul>
-<li><code>elementType</code> - <code>type</code></li>
-</ul>
-</li>
-<li><code>SetType</code>: identifier <code>0x53</code>, payload identical to <code>ArrayType</code>:<ul>
-<li><code>elementType</code> - <code>type</code></li>
-</ul>
-</li>
-<li><code>MapType</code>: identifier <code>0x54</code>, payload:<ul>
-<li><code>keyType</code> - <code>type</code></li>
-<li><code>valueType</code> - <code>type</code></li>
-</ul>
-</li>
-<li><code>EnumType</code>: identifier <code>0x55</code>, payload:<ul>
-<li><code>valueType</code> - <code>type</code></li>
-<li><code>valueCount</code> - <code>uint8_t</code></li>
-<li><code>valueCount</code> instances of <code>value</code>:<ul>
-<li><code>value</code> - a value that conforms to <code>valueType</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>ChoiceType</code>: identifier <code>0x56</code>, payload:<ul>
-<li><code>typeCount</code> - <code>uint8_t</code></li>
-<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
-<li><code>possibleType</code> - <code>type</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>NamedChoiceType</code>: identifier <code>0x58</code>, payload:<ul>
-<li><code>typeCount</code> - <code>uint8_t</code></li>
-<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
-<li><code>typeNameLength</code> - <code>uint8_t</code></li>
-<li><code>typeName</code> - a UTF-8 string containing <code>typeNameLength</code> bytes</li>
-<li><code>typeType</code> - <code>type</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>RecursiveType</code>: identifier <code>0x57</code>, payload:<ul>
-<li><code>recursiveID</code> (an identifier unique to this recursive type in this type buffer) - <code>uint16_t</code></li>
-<li>If this is the first instance of this recursive type in this buffer:<ul>
-<li><code>recursiveType</code> (the type definition of this type) - <code>type</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>OptionalType</code>: identifier <code>0x60</code>, payload:<ul>
-<li><code>typeIfNonNull</code> - <code>type</code></li>
-</ul>
-</li>
-<li><code>PointerType</code>: identifier <code>0x70</code>, payload:<ul>
-<li><code>targetType</code> - <code>type</code></li>
-</ul>
-</li>
-</ul>
-<h3>Value</h3><ul>
-<li><code>ByteType</code>: 1-byte integer</li>
-<li><code>ShortType</code>: 2-byte integer</li>
-<li><code>IntType</code>: 4-byte integer</li>
-<li><code>LongType</code>: 8-byte integer</li>
-<li><code>BigIntType</code>:<ul>
-<li><code>byteCount</code> - <code>uint16_t</code></li>
-<li><code>number</code> - <code>byteCount</code>-byte integer</li>
-</ul>
-</li>
-<li><code>UnsignedByteType</code>: 1-byte unsigned integer</li>
-<li><code>UnsignedShortType</code>: 2-byte unsigned integer</li>
-<li><code>UnsignedIntType</code>: 4-byte unsigned integer</li>
-<li><code>UnsignedLongType</code>: 8-byte unsigned integer</li>
-<li><code>BigUnsignedIntType</code>:<ul>
-<li><code>byteCount</code> - <code>uint16_t</code></li>
-<li><code>number</code> - <code>byteCount</code>-byte unsigned integer</li>
-</ul>
-</li>
-<li><code>DateType</code>: 8-byte unsigned integer storing milliseconds in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a></li>
-<li><code>DayType</code>: 3-byte unsigned integer storing days since the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a> epoch</li>
-<li><code>TimeType</code>: 4-byte unsigned integer storing milliseconds since the start of the day</li>
-<li><code>FloatType</code>: single precision (4-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
-<li><code>DoubleType</code>: double precision (8-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
-<li><code>BooleanType</code>: 1-byte value, either <code>0x00</code> for <code>false</code> or <code>0xFF</code> for <code>true</code></li>
-<li><code>BooleanTupleType</code>: <code>ceil(length / 8)</code> bytes, where the <code>n</code>th boolean is stored at the <code>(n % 8)</code>th MSB (<code>0</code>-indexed) of the <code>floor(n / 8)</code>th byte (<code>0</code>-indexed)</li>
-<li><code>BooleanArrayType</code>:<ul>
-<li><code>length</code> - <code>uint32_t</code></li>
-<li><code>booleans</code> - <code>ceil(length / 8)</code> bytes, where the <code>n</code>th boolean is stored at the <code>(n % 8)</code>th MSB (<code>0</code>-indexed) of the <code>floor(n / 8)</code>th byte (<code>0</code>-indexed)</li>
-</ul>
-</li>
-<li><code>CharType</code>: UTF-8 codepoint (somewhere between 1 and 4 bytes long)</li>
-<li><code>StringType</code>:<ul>
-<li><code>string</code> - a UTF-8 string of any length not containing <code>'\0'</code></li>
-<li><code>0x00</code> to mark the end of the string</li>
-</ul>
-</li>
-<li><code>OctetsType</code>:<ul>
-<li><code>length</code> - <code>uint32_t</code></li>
-<li><code>octets</code> - <code>length</code> bytes</li>
-</ul>
-</li>
-<li><code>TupleType</code>:<ul>
-<li><code>length</code> values serialized by <code>elementType</code></li>
-</ul>
-</li>
-<li><code>StructType</code>:<ul>
-<li>For each field in order of declaration in the type format:<ul>
-<li>The field's value serialized by <code>fieldType</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>ArrayType</code>:<ul>
-<li><code>length</code> - <code>uint32_t</code></li>
-<li><code>length</code> values serialized by <code>elementType</code></li>
-</ul>
-</li>
-<li><code>SetType</code>:<ul>
-<li><code>size</code> - <code>uint32_t</code></li>
-<li><code>size</code> values serialized by <code>elementType</code></li>
-</ul>
-</li>
-<li><code>MapType</code>:<ul>
-<li><code>size</code> - <code>uint32_t</code></li>
-<li><code>size</code> instances of <code>keyValuePair</code>:<ul>
-<li><code>key</code> - value serialized by <code>keyType</code></li>
-<li><code>value</code> - value serialized by <code>valueType</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>EnumType</code>:<ul>
-<li><code>index</code> of value in values array - <code>uint8_t</code></li>
-</ul>
-</li>
-<li><code>ChoiceType</code>:<ul>
-<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
-<li><code>value</code> - value serialized by specified type</li>
-</ul>
-</li>
-<li><code>NamedChoiceType</code>:<ul>
-<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
-<li><code>value</code> - value serialized by specified type</li>
-</ul>
-</li>
-<li><code>RecursiveType</code>:<ul>
-<li><code>valueNotYetWrittenInBuffer</code> - byte containing either <code>0x00</code> or <code>0xFF</code></li>
-<li>If <code>valueNotYetWrittenInBuffer</code>:<ul>
-<li><code>value</code> - value serialized by <code>recursiveType</code></li>
-</ul>
-</li>
-<li>Else:<ul>
-<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of <code>value</code> in buffer]) - <code>uint32_t</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>OptionalType</code>:<ul>
-<li><code>valueIsNonNull</code> - byte containing either <code>0x00</code> or <code>0xFF</code></li>
-<li>If <code>valueIsNonNull</code>:<ul>
-<li><code>value</code> - value serialized by <code>typeIfNonNull</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>PointerType</code>:<ul>
-<li><code>index</code> of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - <code>uint32_t</code></li>
-</ul>
-</li>
-</ul>
-<h2>Versioning</h2><p>Versions will be of the form <code>x.y.z</code>.
-<code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>.
-<code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases.
-<code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
-<h2>Testing</h2><p>To test the Node.js code, run <code>npm test</code>.
-To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page. <code>Upload</code> and <code>Download</code> should each alert <code>Success</code>, while <code>Upload &amp; Download</code> should alert <code>Upload: Success</code> and <code>Download: Success</code>.</p>
-<p><em>Caleb Sander, 2016</em></p></article>
-    </section>
-
-
-
-
-
-
+    <span class="hljs-number">0x51</span> <span class="hljs-comment">/*StructType*/</span>,
+        <span class="hljs-number">2</span> <span class="hljs-comment">/*2 fields*/</span>,
+            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in first field's name*/</span>, <span class="hljs-number">0x6f</span> <span class="hljs-comment">/*o*/</span>, <span class="hljs-number">0x6e</span> <span class="hljs-comment">/*n*/</span>, <span class="hljs-number">0x65</span> <span class="hljs-comment">/*e*/</span>,
+                <span class="hljs-number">0x50</span> <span class="hljs-comment">/*TupleType*/</span>,
+                    <span class="hljs-number">0x20</span> <span class="hljs-comment">/*FloatType*/</span>,
+                    <span class="hljs-number">3</span> <span class="hljs-comment">/*3 floats in the tuple*/</span>,
+            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in second field's name*/</span>, <span class="hljs-number">0x74</span> <span class="hljs-comment">/*t*/</span>, <span class="hljs-number">0x77</span> <span class="hljs-comment">/*w*/</span>, <span class="hljs-number">0x6f</span> <span class="hljs-comment">/*o*/</span>,
+                <span class="hljs-number">0xff</span>, <span class="hljs-comment">/*type is defined previously*/</span>
+                    <span class="hljs-number">8</span> <span class="hljs-comment">/*type is defined 8 bytes before this byte*/</span>
+]
+</code></pre>
+				<p>In the following definitions, <code>type</code> means the binary type format.</p>
+				<ul>
+					<li><code>ByteType</code>: identifier <code>0x01</code></li>
+					<li><code>ShortType</code>: identifier <code>0x02</code></li>
+					<li><code>IntType</code>: identifier <code>0x03</code></li>
+					<li><code>LongType</code>: identifier <code>0x04</code></li>
+					<li><code>BigIntType</code>: identifier <code>0x05</code></li>
+					<li><code>UnsignedByteType</code>: identifier <code>0x11</code></li>
+					<li><code>UnsignedShortType</code>: identifier <code>0x12</code></li>
+					<li><code>UnsignedIntType</code>: identifier <code>0x13</code></li>
+					<li><code>UnsignedLongType</code>: identifier <code>0x14</code></li>
+					<li><code>BigUnsignedIntType</code>: identifier <code>0x15</code></li>
+					<li><code>FlexUnsignedIntType</code>: identifier <code>0x17</code></li>
+					<li><code>DateType</code>: identifier <code>0x1A</code></li>
+					<li><code>DayType</code>: identifier <code>0x1B</code></li>
+					<li><code>TimeType</code>: identifier <code>0x1C</code></li>
+					<li><code>FloatType</code>: identifier <code>0x20</code></li>
+					<li><code>DoubleType</code>: identifier <code>0x21</code></li>
+					<li><code>BooleanType</code>: identifier <code>0x30</code></li>
+					<li><code>BooleanTupleType</code>: identifier <code>0x31</code>, payload:<ul>
+							<li><code>length</code> - <code>uint8_t</code></li>
+						</ul>
+					</li>
+					<li><code>BooleanArrayType</code>: identifier <code>0x32</code></li>
+					<li><code>CharType</code>: identifier <code>0x40</code></li>
+					<li><code>StringType</code>: identifier <code>0x41</code></li>
+					<li><code>OctetsType</code>: identifier <code>0x42</code></li>
+					<li><code>TupleType</code>: identifier <code>0x50</code>, payload:<ul>
+							<li><code>elementType</code> - <code>type</code></li>
+							<li><code>length</code> - <code>uint8_t</code></li>
+						</ul>
+					</li>
+					<li><code>StructType</code>: identifier <code>0x51</code>, payload:<ul>
+							<li><code>fieldCount</code> - <code>uint8_t</code></li>
+							<li><code>fieldCount</code> instances of <code>field</code>:<ul>
+									<li><code>nameLength</code> - <code>uint8_t</code></li>
+									<li><code>name</code> - a UTF-8 string containing <code>nameLength</code> bytes</li>
+									<li><code>fieldType</code> - <code>type</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>ArrayType</code>: identifier <code>0x52</code>, payload:<ul>
+							<li><code>elementType</code> - <code>type</code></li>
+						</ul>
+					</li>
+					<li><code>SetType</code>: identifier <code>0x53</code>, payload identical to <code>ArrayType</code>:<ul>
+							<li><code>elementType</code> - <code>type</code></li>
+						</ul>
+					</li>
+					<li><code>MapType</code>: identifier <code>0x54</code>, payload:<ul>
+							<li><code>keyType</code> - <code>type</code></li>
+							<li><code>valueType</code> - <code>type</code></li>
+						</ul>
+					</li>
+					<li><code>EnumType</code>: identifier <code>0x55</code>, payload:<ul>
+							<li><code>valueType</code> - <code>type</code></li>
+							<li><code>valueCount</code> - <code>uint8_t</code></li>
+							<li><code>valueCount</code> instances of <code>value</code>:<ul>
+									<li><code>value</code> - a value that conforms to <code>valueType</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>ChoiceType</code>: identifier <code>0x56</code>, payload:<ul>
+							<li><code>typeCount</code> - <code>uint8_t</code></li>
+							<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
+									<li><code>possibleType</code> - <code>type</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>NamedChoiceType</code>: identifier <code>0x58</code>, payload:<ul>
+							<li><code>typeCount</code> - <code>uint8_t</code></li>
+							<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
+									<li><code>typeNameLength</code> - <code>uint8_t</code></li>
+									<li><code>typeName</code> - a UTF-8 string containing <code>typeNameLength</code> bytes</li>
+									<li><code>typeType</code> - <code>type</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>RecursiveType</code>: identifier <code>0x57</code>, payload:<ul>
+							<li><code>recursiveID</code> (an identifier unique to this recursive type in this type buffer) - <code>flexInt</code></li>
+							<li>If this is the first instance of this recursive type in this buffer:<ul>
+									<li><code>recursiveType</code> (the type definition of this type) - <code>type</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>OptionalType</code>: identifier <code>0x60</code>, payload:<ul>
+							<li><code>typeIfNonNull</code> - <code>type</code></li>
+						</ul>
+					</li>
+					<li><code>PointerType</code>: identifier <code>0x70</code>, payload:<ul>
+							<li><code>targetType</code> - <code>type</code></li>
+						</ul>
+					</li>
+				</ul>
+				<h3 id="value">Value</h3>
+				<ul>
+					<li><code>ByteType</code>: 1-byte integer</li>
+					<li><code>ShortType</code>: 2-byte integer</li>
+					<li><code>IntType</code>: 4-byte integer</li>
+					<li><code>LongType</code>: 8-byte integer</li>
+					<li><code>BigIntType</code>:<ul>
+							<li><code>byteCount</code> - <code>flexInt</code></li>
+							<li><code>number</code> - <code>byteCount</code>-byte integer</li>
+						</ul>
+					</li>
+					<li><code>UnsignedByteType</code>: 1-byte unsigned integer</li>
+					<li><code>UnsignedShortType</code>: 2-byte unsigned integer</li>
+					<li><code>UnsignedIntType</code>: 4-byte unsigned integer</li>
+					<li><code>UnsignedLongType</code>: 8-byte unsigned integer</li>
+					<li><code>BigUnsignedIntType</code>:<ul>
+							<li><code>byteCount</code> - <code>flexInt</code></li>
+							<li><code>number</code> - <code>byteCount</code>-byte unsigned integer</li>
+						</ul>
+					</li>
+					<li><code>FlexUnsignedIntType</code>: <code>flexInt</code></li>
+					<li><code>DateType</code>: 8-byte unsigned integer storing milliseconds in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a></li>
+					<li><code>DayType</code>: 3-byte unsigned integer storing days since the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a> epoch</li>
+					<li><code>TimeType</code>: 4-byte unsigned integer storing milliseconds since the start of the day</li>
+					<li><code>FloatType</code>: single precision (4-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
+					<li><code>DoubleType</code>: double precision (8-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
+					<li><code>BooleanType</code>: 1-byte value, either <code>0x00</code> for <code>false</code> or <code>0xFF</code> for <code>true</code></li>
+					<li><code>BooleanTupleType</code>: <code>ceil(length / 8)</code> bytes, where the <code>n</code>th boolean is stored at the <code>(n % 8)</code>th MSB (<code>0</code>-indexed) of the <code>floor(n / 8)</code>th byte (<code>0</code>-indexed)</li>
+					<li><code>BooleanArrayType</code>:<ul>
+							<li><code>length</code> - <code>flexInt</code></li>
+							<li><code>booleans</code> - <code>ceil(length / 8)</code> bytes, where the <code>n</code>th boolean is stored at the <code>(n % 8)</code>th MSB (<code>0</code>-indexed) of the <code>floor(n / 8)</code>th byte (<code>0</code>-indexed)</li>
+						</ul>
+					</li>
+					<li><code>CharType</code>: UTF-8 codepoint (somewhere between 1 and 4 bytes long)</li>
+					<li><code>StringType</code>:<ul>
+							<li><code>string</code> - a UTF-8 string of any length not containing <code>&#39;\0&#39;</code></li>
+							<li><code>0x00</code> to mark the end of the string</li>
+						</ul>
+					</li>
+					<li><code>OctetsType</code>:<ul>
+							<li><code>length</code> - <code>flexInt</code></li>
+							<li><code>octets</code> - <code>length</code> bytes</li>
+						</ul>
+					</li>
+					<li><code>TupleType</code>:<ul>
+							<li><code>length</code> values serialized by <code>elementType</code></li>
+						</ul>
+					</li>
+					<li><code>StructType</code>:<ul>
+							<li>For each field in order of declaration in the type format:<ul>
+									<li>The field&#39;s value serialized by <code>fieldType</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>ArrayType</code>:<ul>
+							<li><code>length</code> - <code>flexInt</code></li>
+							<li><code>length</code> values serialized by <code>elementType</code></li>
+						</ul>
+					</li>
+					<li><code>SetType</code>:<ul>
+							<li><code>size</code> - <code>flexInt</code></li>
+							<li><code>size</code> values serialized by <code>elementType</code></li>
+						</ul>
+					</li>
+					<li><code>MapType</code>:<ul>
+							<li><code>size</code> - <code>flexInt</code></li>
+							<li><code>size</code> instances of <code>keyValuePair</code>:<ul>
+									<li><code>key</code> - value serialized by <code>keyType</code></li>
+									<li><code>value</code> - value serialized by <code>valueType</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>EnumType</code>:<ul>
+							<li><code>index</code> of value in values array - <code>uint8_t</code></li>
+						</ul>
+					</li>
+					<li><code>ChoiceType</code>:<ul>
+							<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
+							<li><code>value</code> - value serialized by specified type</li>
+						</ul>
+					</li>
+					<li><code>NamedChoiceType</code>:<ul>
+							<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
+							<li><code>value</code> - value serialized by specified type</li>
+						</ul>
+					</li>
+					<li><code>RecursiveType</code>:<ul>
+							<li><code>valueNotYetWrittenInBuffer</code> - byte containing either <code>0x00</code> or <code>0xFF</code></li>
+							<li>If <code>valueNotYetWrittenInBuffer</code>:<ul>
+									<li><code>value</code> - value serialized by <code>recursiveType</code></li>
+								</ul>
+							</li>
+							<li>Else:<ul>
+									<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of <code>value</code> in buffer]) - <code>flexInt</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>OptionalType</code>:<ul>
+							<li><code>valueIsNonNull</code> - byte containing either <code>0x00</code> or <code>0xFF</code></li>
+							<li>If <code>valueIsNonNull</code>:<ul>
+									<li><code>value</code> - value serialized by <code>typeIfNonNull</code></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><code>PointerType</code>:<ul>
+							<li><code>index</code> of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - 32-bit unsigned integer</li>
+						</ul>
+					</li>
+				</ul>
+				<h2 id="versioning">Versioning</h2>
+				<p>Versions will be of the form <code>x.y.z</code>.
+					<code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>.
+					<code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases.
+				<code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
+				<h2 id="testing">Testing</h2>
+				<p>To test the Node.js code, run <code>npm test</code>.
+				To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page. <code>Upload</code> and <code>Download</code> should each alert <code>Success</code>, while <code>Upload &amp; Download</code> should alert <code>Upload: Success</code> and <code>Download: Success</code>.</p>
+				<p><em>Caleb Sander, 2016</em></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_config_.html">"config"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_io_.html">"io"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_read_.html">"read"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_recursive_registry_.html">"recursive-<wbr>registry"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_recursive_registry_type_.html">"recursive-<wbr>registry-<wbr>type"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_typings_accepts_.html">"typings/accepts"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_typings_js_sha256_.html">"typings/js-<wbr>sha256"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_assert_.html">"lib/assert"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_bit_math_.html">"lib/bit-<wbr>math"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_buffer_stream_.html">"lib/buffer-<wbr>stream"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_buffer_string_.html">"lib/buffer-<wbr>string"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_constants_.html">"lib/constants"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_constructor_registry_.html">"lib/constructor-<wbr>registry"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_date_.html">"lib/date"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_flex_int_.html">"lib/flex-<wbr>int"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_growable_buffer_.html">"lib/growable-<wbr>buffer"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_pointers_.html">"lib/pointers"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_recursive_nesting_.html">"lib/recursive-<wbr>nesting"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_str_to_num_.html">"lib/str-<wbr>to-<wbr>num"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_strint_.html">"lib/strint"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_util_inspect_.html">"lib/util-<wbr>inspect"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_write_booleans_.html">"lib/write-<wbr>booleans"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_write_iterable_.html">"lib/write-<wbr>iterable"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_lib_write_long_.html">"lib/write-<wbr>long"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_absolute_.html">"types/absolute"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_abstract_.html">"types/abstract"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_array_.html">"types/array"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_big_int_.html">"types/big-<wbr>int"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_big_unsigned_int_.html">"types/big-<wbr>unsigned-<wbr>int"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_boolean_.html">"types/boolean"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_boolean_array_.html">"types/boolean-<wbr>array"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_boolean_tuple_.html">"types/boolean-<wbr>tuple"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_byte_.html">"types/byte"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_char_.html">"types/char"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_choice_.html">"types/choice"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_chrono_.html">"types/chrono"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_date_.html">"types/date"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_day_.html">"types/day"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_double_.html">"types/double"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_enum_.html">"types/enum"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_flex_int_.html">"types/flex-<wbr>int"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_float_.html">"types/float"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_floating_.html">"types/floating"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_index_.html">"types/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_int_.html">"types/int"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_integer_.html">"types/integer"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_long_.html">"types/long"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_map_.html">"types/map"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_named_choice_.html">"types/named-<wbr>choice"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_octets_.html">"types/octets"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_optional_.html">"types/optional"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_pointer_.html">"types/pointer"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_recursive_.html">"types/recursive"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_set_.html">"types/set"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_short_.html">"types/short"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_string_.html">"types/string"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_struct_.html">"types/struct"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_time_.html">"types/time"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_tuple_.html">"types/tuple"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_type_.html">"types/type"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_unsigned_.html">"types/unsigned"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_unsigned_byte_.html">"types/unsigned-<wbr>byte"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_unsigned_int_.html">"types/unsigned-<wbr>int"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_unsigned_long_.html">"types/unsigned-<wbr>long"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_unsigned_short_.html">"types/unsigned-<wbr>short"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-ArrayBuffer.html">ArrayBuffer</a></li><li><a href="external-Date.html">Date</a></li><li><a href="external-http.html">http</a></li></ul><h3>Classes</h3><ul><li><a href="ArrayType.html">ArrayType</a></li><li><a href="BigIntType.html">BigIntType</a></li><li><a href="BigUnsignedIntType.html">BigUnsignedIntType</a></li><li><a href="BooleanArrayType.html">BooleanArrayType</a></li><li><a href="BooleanTupleType.html">BooleanTupleType</a></li><li><a href="BooleanType.html">BooleanType</a></li><li><a href="BufferStream.html">BufferStream</a></li><li><a href="ByteType.html">ByteType</a></li><li><a href="CharType.html">CharType</a></li><li><a href="ChoiceType.html">ChoiceType</a></li><li><a href="DateType.html">DateType</a></li><li><a href="DayType.html">DayType</a></li><li><a href="DoubleType.html">DoubleType</a></li><li><a href="EnumType.html">EnumType</a></li><li><a href="external-http.IncomingMessage.html">IncomingMessage</a></li><li><a href="external-http.ServerResponse.html">ServerResponse</a></li><li><a href="FlexUnsignedIntType.html">FlexUnsignedIntType</a></li><li><a href="FloatType.html">FloatType</a></li><li><a href="GrowableBuffer.html">GrowableBuffer</a></li><li><a href="IntType.html">IntType</a></li><li><a href="LongType.html">LongType</a></li><li><a href="MapType.html">MapType</a></li><li><a href="NamedChoiceType.html">NamedChoiceType</a></li><li><a href="OctetsType.html">OctetsType</a></li><li><a href="OptionalType.html">OptionalType</a></li><li><a href="PointerType.html">PointerType</a></li><li><a href="RecursiveType.html">RecursiveType</a></li><li><a href="SetType.html">SetType</a></li><li><a href="ShortType.html">ShortType</a></li><li><a href="StringType.html">StringType</a></li><li><a href="StructType.html">StructType</a></li><li><a href="TimeType.html">TimeType</a></li><li><a href="TupleType.html">TupleType</a></li><li><a href="Type.html">Type</a></li><li><a href="UnsignedByteType.html">UnsignedByteType</a></li><li><a href="UnsignedIntType.html">UnsignedIntType</a></li><li><a href="UnsignedLongType.html">UnsignedLongType</a></li><li><a href="UnsignedShortType.html">UnsignedShortType</a></li></ul><h3>Namespaces</h3><ul><li><a href="r.html">r</a></li></ul><h3>Global</h3><ul><li><a href="global.html#download">download</a></li><li><a href="global.html#getType">getType</a></li><li><a href="global.html#httpRespond">httpRespond</a></li><li><a href="global.html#isRegistered">isRegistered</a></li><li><a href="global.html#readType">readType</a></li><li><a href="global.html#readTypeAndValue">readTypeAndValue</a></li><li><a href="global.html#readValue">readValue</a></li><li><a href="global.html#registerType">registerType</a></li><li><a href="global.html#upload">upload</a></li><li><a href="global.html#writeType">writeType</a></li><li><a href="global.html#writeTypeAndValue">writeTypeAndValue</a></li><li><a href="global.html#writeValue">writeValue</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
