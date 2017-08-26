@@ -1,19 +1,4 @@
-type-value-out
-type-out
-value-out
-**/*-noutil.js
+**/*
 
-.babelrc
-client-side
-client-test
-compile.js
-docs
-.eslintignore
-.eslintrc.json
-eslint.sh
-.gitignore
-js-conf.json
-jsdoc.sh
-README.md
-test
-.travis.yml
+!dist
+!compiled
