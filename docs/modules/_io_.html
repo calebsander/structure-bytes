@@ -102,7 +102,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_io_.html#readtypeandvalue" class="tsd-kind-icon">read<wbr>Type<wbr>And<wbr>Value</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_io_.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_io_.html#toarraybuffer" class="tsd-kind-icon">to<wbr>Array<wbr>Buffer</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_io_.html#writetype" class="tsd-kind-icon">write<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_io_.html#writetype" class="tsd-kind-icon">write<wbr>Type</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_io_.html#writetypeandvalue" class="tsd-kind-icon">write<wbr>Type<wbr>And<wbr>Value</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_io_.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
 							</ul>
@@ -118,9 +118,14 @@
 					<div class="tsd-signature tsd-kind-icon">Err<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in io.ts:37</li>
+							<li>Defined in io.ts:40</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A callback that receives only a possible error</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -149,9 +154,15 @@
 					<div class="tsd-signature tsd-kind-icon">Type<wbr>And<wbr>Value<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in io.ts:40</li>
+							<li>Defined in io.ts:55</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A callback that receives a possible error and,
+							if no error occurred, a read type and value</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -186,9 +197,15 @@
 					<div class="tsd-signature tsd-kind-icon">Type<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in io.ts:38</li>
+							<li>Defined in io.ts:45</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A callback that receives a possible error and,
+							if no error occurred, a read type</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -220,9 +237,15 @@
 					<div class="tsd-signature tsd-kind-icon">Value<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in io.ts:39</li>
+							<li>Defined in io.ts:50</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A callback that receives a possible error and,
+							if no error occurred, a read value</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -274,25 +297,26 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:276</li>
+									<li>Defined in io.ts:334</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>httpRespond</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Responds to an HTTP(S) request for a value.
-											Will send both type and value if the {@link sig} header
-											doesn&#39;t match the type&#39;s signature.
-											Will only send the value if the signatures match.
-											Response is gzipped to decrease size.
-										Calls {@link callback} when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Responds to an HTTP(S) request for a value.
+										Will send both type and value if the <code>sig</code> header
+										doesn&#39;t match the type&#39;s signature.
+										Will only send the value if the signatures match.
+										Response is gzipped to decrease size, if client allows.
+									Calls <code>callback</code> when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.httpRespond({
+  req,
+  res,
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.DateType
+  value: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -307,21 +331,34 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IncomingMessage</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The client request</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>res<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OutgoingMessage</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The server response</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The <a href="../interfaces/_types_type_.type.html">Type</a> to use to write the value</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The value to send</p>
+											</div>
 										</li>
 									</ul>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> callback: <a href="_io_.html#errcallback" class="tsd-signature-type">ErrCallback</a></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>The optional callback to call when response ends</p>
 									</div>
 								</li>
 							</ul>
@@ -339,23 +376,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:164</li>
+									<li>Defined in io.ts:208</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>readType</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Reads a type from a readable stream.
-											This should be used when reading from sources
-											written to by <a href="_io_.html#writetype">writeType</a>.
-										Calls {@link callback} with the type when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Reads a type from a readable stream.
+										This should be used when reading from sources
+										written to by <a href="_io_.html#writetype">writeType</a>.
+									Calls <code>callback</code> with the type when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.readType(fs.createReadStream(<span class="hljs-string">'out.sbt'</span>), (err, type) =&gt; {
+  <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
+  <span class="hljs-built_in">console</span>.log(type)
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -368,6 +404,7 @@
 								<li>
 									<h5>callback: <a href="_io_.html#typecallback" class="tsd-signature-type">TypeCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>The callback to call with the read result</p>
 									</div>
 								</li>
 							</ul>
@@ -385,23 +422,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:238</li>
+									<li>Defined in io.ts:287</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>readTypeAndValue</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Reads a type and a value from a readable stream.
-											This should be used when reading from sources
-											written to by <a href="_io_.html#writetypeandvalue">writeTypeAndValue</a>.
-										Calls {@link callback} with the type and value when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Reads a type and a value from a readable stream.
+										This should be used when reading from sources
+										written to by <a href="_io_.html#writetypeandvalue">writeTypeAndValue</a>.
+									Calls <code>callback</code> with the type and value when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'out.sbtv'</span>), (err, type, value) =&gt; {
+  <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
+  <span class="hljs-built_in">console</span>.log(type, value)
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -414,6 +450,7 @@
 								<li>
 									<h5>callback: <a href="_io_.html#typeandvaluecallback" class="tsd-signature-type">TypeAndValueCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>The callback to call with the read result</p>
 									</div>
 								</li>
 							</ul>
@@ -431,29 +468,35 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:202</li>
+									<li>Defined in io.ts:251</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>readValue</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Reads a value from a readable stream.
-											The <a href="../interfaces/_types_type_.type.html">Type</a> used to write the value bytes must be known.
-											This should be used when reading from sources
-											written to by <a href="_io_.html#writevalue">writeValue</a>.
-										Calls {@link callback} with the value when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Reads a value from a readable stream.
+										The <a href="../interfaces/_types_type_.type.html">Type</a> used to write the value bytes must be known.
+										This should be used when reading from sources
+										written to by <a href="_io_.html#writevalue">writeValue</a>.
+									Calls <code>callback</code> with the value when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.readValue({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType,
+  <span class="hljs-attr">inStream</span>: fs.createReadStream(<span class="hljs-string">'out.sbv'</span>)
+}, (err, value) =&gt; {
+  <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
+  <span class="hljs-built_in">console</span>.log(value)
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of value being read
+										(must match the <code>VALUE</code> parameter of <code>type</code>)</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -463,15 +506,22 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>in<wbr>Stream<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readable</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The stream to read from</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The <a href="../interfaces/_types_type_.type.html">Type</a> (or an equivalent one) that wrote the value bytes</p>
+											</div>
 										</li>
 									</ul>
 								</li>
 								<li>
 									<h5>callback: <a href="_io_.html#valuecallback" class="tsd-signature-type">ValueCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>The callback to call with the read result</p>
 									</div>
 								</li>
 							</ul>
@@ -502,40 +552,38 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
 					<a name="writetype" class="tsd-anchor"></a>
 					<h3>write<wbr>Type</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Type&lt;E&gt;<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, callback<span class="tsd-signature-symbol">?: </span><a href="_io_.html#errcallback" class="tsd-signature-type">ErrCallback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Writable</span></li>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Type<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, callback<span class="tsd-signature-symbol">?: </span><a href="_io_.html#errcallback" class="tsd-signature-type">ErrCallback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Writable</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:59</li>
+									<li>Defined in io.ts:81</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>writeType</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Writes type bytes to a writable stream.
-											Writes the contents of [type.toBuffer()]{@link Type#toBuffer}
-											followed by a null byte.
-										Calls {@link callback} when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Writes the contents of <code>type.toBuffer()</code> (<a href="../interfaces/_types_type_.type.html#tobuffer">Type.toBuffer</a>)
+										followed by a null byte to a writable stream.
+									Calls <code>callback</code> when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.writeType({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">abc</span>: <span class="hljs-keyword">new</span> sb.ArrayType(<span class="hljs-keyword">new</span> sb.StringType),
+    <span class="hljs-attr">def</span>: <span class="hljs-keyword">new</span> sb.DateType
+  }),
+  <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'out.sbt'</span>)
+}, err =&gt; {
+  <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Done'</span>)
+})
+</code></pre>
 							</div>
-							<h4 class="tsd-type-parameters-title">Type parameters</h4>
-							<ul class="tsd-type-parameters">
-								<li>
-									<h4>E</h4>
-								</li>
-							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -543,18 +591,27 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>out<wbr>Stream<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Writable</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The stream to write to</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
-											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The type to write</p>
+											</div>
 										</li>
 									</ul>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> callback: <a href="_io_.html#errcallback" class="tsd-signature-type">ErrCallback</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The optional callback to call when write ends</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Writable</span></h4>
-							<p>{@link params.outStream}</p>
+							<p><code>outStream</code></p>
 						</li>
 					</ul>
 				</section>
@@ -568,29 +625,34 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:126</li>
+									<li>Defined in io.ts:169</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>writeTypeAndValue</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Writes both type and value bytes to a writable stream.
-											Writes the contents of [type.toBuffer()]{@link Type#toBuffer},
-											followed by the contents of [type.valueBuffer(value)]{@link Type#valueBuffer},
-											and then a null byte.
-										Calls {@link callback} when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Writes the contents of <code>type.toBuffer()</code> (<a href="../interfaces/_types_type_.type.html#tobuffer">Type.toBuffer</a>),
+										followed by the contents of <code>type.valueBuffer(value)</code> (<a href="../interfaces/_types_type_.type.html#valuebuffer">Type.valueBuffer</a>),
+										and then a null byte to a writable stream.
+									Calls <code>callback</code> when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.writeTypeAndValue({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType,
+  <span class="hljs-attr">value</span>: <span class="hljs-number">1000</span>,
+  <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'out.sbtv'</span>)
+}, err =&gt; {
+  <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Done'</span>)
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of value being written</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -600,21 +662,33 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>out<wbr>Stream<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Writable</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The stream to write to</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The type to write and to use to write the value</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The value to write</p>
+											</div>
 										</li>
 									</ul>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> callback: <a href="_io_.html#errcallback" class="tsd-signature-type">ErrCallback</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The optional callback to call when write ends</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Writable</span></h4>
-							<p>{@link params.outStream}</p>
+							<p><code>outStream</code></p>
 						</li>
 					</ul>
 				</section>
@@ -628,28 +702,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in io.ts:92</li>
+									<li>Defined in io.ts:125</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>writeValue</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Writes value bytes to a writable stream.
-											Writes the contents of [type.valueBuffer(value)]{@link Type#valueBuffer}
-											followed by a null byte.
-										Calls {@link callback} when done.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Writes the contents of <code>type.valueBuffer(value)</code> (<a href="../interfaces/_types_type_.type.html#valuebuffer">Type.valueBuffer</a>)
+										followed by a null byte to a writable stream.
+									Calls <code>callback</code> when done.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">sb.writeValue({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType,
+  <span class="hljs-attr">value</span>: <span class="hljs-number">1000</span>,
+  <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'out.sbv'</span>)
+}, err =&gt; {
+  <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Done'</span>)
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of value being written</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -659,21 +738,33 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>out<wbr>Stream<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Writable</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The stream to write to</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The type to use to write the value</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The value to write</p>
+											</div>
 										</li>
 									</ul>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> callback: <a href="_io_.html#errcallback" class="tsd-signature-type">ErrCallback</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The optional callback to call when write ends</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Writable</span></h4>
-							<p>{@link params.outStream}</p>
+							<p><code>outStream</code></p>
 						</li>
 					</ul>
 				</section>
@@ -734,7 +825,7 @@
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_io_.html#toarraybuffer" class="tsd-kind-icon">to<wbr>Array<wbr>Buffer</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_io_.html#writetype" class="tsd-kind-icon">write<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">

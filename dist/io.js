@@ -16,21 +16,28 @@ function toArrayBuffer(buffer) {
 }
 const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http.OutgoingMessage];
 /**
- * A callback that receives an error object, if any was thrown.
- * @callback errCallback
- * @param {null|Error} err The error (if any) that occurred
- */
-/** @function
- * @name writeType
- * @desc Writes type bytes to a writable stream.
- * Writes the contents of [type.toBuffer()]{@link Type#toBuffer}
- * followed by a null byte.
- * Calls {@link callback} when done.
- * @param {{type, outStream}} params
- * @param {Type} params.type The type to write
- * @param {stream.Writable} params.outStream The stream to write to
- * @param {errCallback=} callback
- * @return {stream.Writable} {@link params.outStream}
+ * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])
+ * followed by a null byte to a writable stream.
+ * Calls `callback` when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.writeType({
+ *   type: new sb.StructType({
+ *     abc: new sb.ArrayType(new sb.StringType),
+ *     def: new sb.DateType
+ *   }),
+ *   outStream: fs.createWriteStream('out.sbt')
+ * }, err => {
+ *   if (err) throw err
+ *   console.log('Done')
+ * })
+ * ````
+ *
+ * @param type The type to write
+ * @param outStream The stream to write to
+ * @param callback The optional callback to call when write ends
+ * @return `outStream`
  */
 function writeType({ type, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
@@ -55,18 +62,29 @@ function writeType({ type, outStream }, callback) {
         .on('finish', () => callback(null));
 }
 exports.writeType = writeType;
-/** @function
- * @name writeValue
- * @desc Writes value bytes to a writable stream.
- * Writes the contents of [type.valueBuffer(value)]{@link Type#valueBuffer}
- * followed by a null byte.
- * Calls {@link callback} when done.
- * @param {{type, value, outStream}} params
- * @param {Type} params.type The type to use to write the value
- * @param {type} params.value The value to write
- * @param {stream.Writable} params.outStream The stream to write to
- * @param {errCallback=} callback
- * @return {stream.Writable} {@link params.outStream}
+/**
+ * Writes the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]])
+ * followed by a null byte to a writable stream.
+ * Calls `callback` when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.writeValue({
+ *   type: new sb.FlexUnsignedIntType,
+ *   value: 1000,
+ *   outStream: fs.createWriteStream('out.sbv')
+ * }, err => {
+ *   if (err) throw err
+ *   console.log('Done')
+ * })
+ * ````
+ *
+ * @param E The type of value being written
+ * @param type The type to use to write the value
+ * @param value The value to write
+ * @param outStream The stream to write to
+ * @param callback The optional callback to call when write ends
+ * @return `outStream`
  */
 function writeValue({ type, value, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
@@ -90,20 +108,30 @@ function writeValue({ type, value, outStream }, callback) {
         .on('finish', () => callback(null));
 }
 exports.writeValue = writeValue;
-/** @function
- * @name writeTypeAndValue
- * @desc Writes both type and value bytes to a writable stream.
- * Writes the contents of [type.toBuffer()]{@link Type#toBuffer},
- * followed by the contents of [type.valueBuffer(value)]{@link Type#valueBuffer},
- * and then a null byte.
- * Calls {@link callback} when done.
- * @param {{type, value, outStream}} params
- * @param {Type} params.type The type to write
- * and to use to write the value
- * @param {type} params.value The value to write
- * @param {stream.Writable} params.outStream The stream to write to
- * @param {errCallback=} callback
- * @return {stream.Writable} {@link params.outStream}
+/**
+ * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]]),
+ * followed by the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]]),
+ * and then a null byte to a writable stream.
+ * Calls `callback` when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.writeTypeAndValue({
+ *   type: new sb.FlexUnsignedIntType,
+ *   value: 1000,
+ *   outStream: fs.createWriteStream('out.sbtv')
+ * }, err => {
+ *   if (err) throw err
+ *   console.log('Done')
+ * })
+ * ````
+ *
+ * @param E The type of value being written
+ * @param type The type to write and to use to write the value
+ * @param value The value to write
+ * @param outStream The stream to write to
+ * @param callback The optional callback to call when write ends
+ * @return `outStream`
  */
 function writeTypeAndValue({ type, value, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
@@ -131,20 +159,21 @@ function writeTypeAndValue({ type, value, outStream }, callback) {
 }
 exports.writeTypeAndValue = writeTypeAndValue;
 /**
- * A callback that receives an error object, if any was thrown,
- * and a type, if no error was thrown.
- * @callback typeCallback
- * @param {null|Error} err The error (if any) that occurred
- * @param {null|Type} type The type that was read
- */
-/** @function
- * @name readType
- * @desc Reads a type from a readable stream.
+ * Reads a type from a readable stream.
  * This should be used when reading from sources
- * written to by {@link writeType}.
- * Calls {@link callback} with the type when done.
- * @param {stream.Readable} inStream The stream to read from
- * @param {typeCallback} callback
+ * written to by [[writeType]].
+ * Calls `callback` with the type when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.readType(fs.createReadStream('out.sbt'), (err, type) => {
+ *   if (err) throw err
+ *   console.log(type)
+ * })
+ * ````
+ *
+ * @param inStream The stream to read from
+ * @param callback The callback to call with the read result
  */
 function readType(inStream, callback) {
     assert_1.default.instanceOf(inStream, stream_1.Readable);
@@ -170,23 +199,28 @@ function readType(inStream, callback) {
 }
 exports.readType = readType;
 /**
- * A callback that receives an error object, if any was thrown,
- * and a value, if no error was thrown.
- * @callback valueCallback
- * @param {null|Error} err The error (if any) that occurred
- * @param {null|type} value The value that was read
- */
-/** @function
- * @name readValue
- * @desc Reads a value from a readable stream.
- * The {@link Type} used to write the value bytes must be known.
+ * Reads a value from a readable stream.
+ * The [[Type]] used to write the value bytes must be known.
  * This should be used when reading from sources
- * written to by {@link writeValue}.
- * Calls {@link callback} with the value when done.
- * @param {{type, inStream}} params
- * @param {Type} params.type The type that wrote the value bytes
- * @param {stream.Readable} params.inStream The stream to read from
- * @param {valueCallback} callback
+ * written to by [[writeValue]].
+ * Calls `callback` with the value when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.readValue({
+ *   type: new sb.FlexUnsignedIntType,
+ *   inStream: fs.createReadStream('out.sbv')
+ * }, (err, value) => {
+ *   if (err) throw err
+ *   console.log(value)
+ * })
+ * ````
+ *
+ * @param E The type of value being read
+ * (must match the `VALUE` parameter of `type`)
+ * @param type The [[Type]] (or an equivalent one) that wrote the value bytes
+ * @param inStream The stream to read from
+ * @param callback The callback to call with the read result
  */
 function readValue({ type, inStream }, callback) {
     assert_1.default.instanceOf(inStream, stream_1.Readable);
@@ -212,21 +246,21 @@ function readValue({ type, inStream }, callback) {
 }
 exports.readValue = readValue;
 /**
- * A callback that receives an error object, if any was thrown,
- * and a type and value, if no error was thrown.
- * @callback typeAndValueCallback
- * @param {null|Error} err The error (if any) that occurred
- * @param {null|Type} type The type that was read
- * @param {null|type} value The value that was read
- */
-/** @function
- * @name readTypeAndValue
- * @desc Reads a type and a value from a readable stream.
+ * Reads a type and a value from a readable stream.
  * This should be used when reading from sources
- * written to by {@link writeTypeAndValue}.
- * Calls {@link callback} with the type and value when done.
- * @param {stream.Readable} inStream The stream to read from
- * @param {typeAndValueCallback} callback
+ * written to by [[writeTypeAndValue]].
+ * Calls `callback` with the type and value when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.readTypeAndValue(fs.createReadStream('out.sbtv'), (err, type, value) => {
+ *   if (err) throw err
+ *   console.log(type, value)
+ * })
+ * ````
+ *
+ * @param inStream The stream to read from
+ * @param callback The callback to call with the read result
  */
 function readTypeAndValue(inStream, callback) {
     assert_1.default.instanceOf(inStream, stream_1.Readable);
@@ -259,20 +293,29 @@ function readTypeAndValue(inStream, callback) {
     });
 }
 exports.readTypeAndValue = readTypeAndValue;
-/** @function
- * @name httpRespond
- * @desc Responds to an HTTP(S) request for a value.
- * Will send both type and value if the {@link sig} header
+/**
+ * Responds to an HTTP(S) request for a value.
+ * Will send both type and value if the `sig` header
  * doesn't match the type's signature.
  * Will only send the value if the signatures match.
- * Response is gzipped to decrease size.
- * Calls {@link callback} when done.
- * @param {{req, res, type, value}} params
- * @param {external:http.IncomingMessage} params.req The client request
- * @param {external:http.OutgoingMessage} params.res The server response
- * @param {Type} params.type The type of the message
- * @param {type} params.value The value to send
- * @param {errCallback=} callback
+ * Response is gzipped to decrease size, if client allows.
+ * Calls `callback` when done.
+ *
+ * Example:
+ * ````javascript
+ * sb.httpRespond({
+ *   req,
+ *   res,
+ *   type: new sb.DateType
+ *   value: new Date
+ * })
+ * ````
+ *
+ * @param req The client request
+ * @param res The server response
+ * @param type The [[Type]] to use to write the value
+ * @param value The value to send
+ * @param callback The optional callback to call when response ends
  */
 function httpRespond({ req, res, type, value }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
