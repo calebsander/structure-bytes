@@ -69,6 +69,14 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The superclass of all <a href="../interfaces/_types_type_.type.html">Type</a> classes
+						in this package</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
@@ -147,7 +155,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Buffer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBuffer</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:12</li>
+							<li>Defined in types/abstract.ts:16</li>
 						</ul>
 					</aside>
 				</section>
@@ -157,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Hash<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:13</li>
+							<li>Defined in types/abstract.ts:17</li>
 						</ul>
 					</aside>
 				</section>
@@ -167,7 +175,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:14</li>
+							<li>Defined in types/abstract.ts:18</li>
 						</ul>
 					</aside>
 				</section>
@@ -177,7 +185,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Type<wbr>Locations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:15</li>
+							<li>Defined in types/abstract.ts:19</li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +202,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:21</li>
+									<li>Defined in types/abstract.ts:25</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -220,21 +228,16 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:89</li>
+									<li>Defined in types/abstract.ts:91</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Gets an SHA256 hash of the type, recomputed each time</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>see</dt>
-									<dd><p>Type#getHash</p>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p>a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}</p>
+							<p>A hash of the buffer given by <a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 						</li>
 					</ul>
 				</section>
@@ -248,21 +251,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:101</li>
+									<li>Defined in types/abstract.ts:103</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Gets a signature string for the type, recomputed each time</p>
+									<p>Gets a signature string for the type, recomputed each time,
+									based on the <code>structure-bytes</code> protocol version and the type hash</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>see</dt>
-									<dd><p>Type#getSignature</p>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p>a signature for the type</p>
+							<p>A signature for the type</p>
 						</li>
 					</ul>
 				</section>
@@ -276,21 +275,16 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:78</li>
+									<li>Defined in types/abstract.ts:81</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Generates the type buffer, recomputed each time</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>see</dt>
-									<dd><p>Type#toBuffer</p>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
-							<p>A Buffer containing the type bytes</p>
+							<p>An <code>ArrayBuffer</code> containing the type bytes</p>
 						</li>
 					</ul>
 				</section>
@@ -305,7 +299,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:24</li>
+									<li>Defined in types/abstract.ts:28</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -329,7 +323,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:64</li>
+									<li>Defined in types/abstract.ts:68</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -353,7 +347,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -371,7 +365,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -389,7 +383,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -407,7 +401,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -431,7 +425,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:53</li>
+									<li>Defined in types/abstract.ts:57</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

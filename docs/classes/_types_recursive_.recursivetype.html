@@ -78,25 +78,58 @@
 							Values that contain circular references will have the
 						references preserved after serialization and deserialization.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><p>//A binary tree of unsigned bytes
-								const treeType = new sb.RecursiveType(&#39;tree-node&#39;)
-								sb.registerType({
-								type: new sb.StructType({
-								left: new sb.OptionalType(treeType),
-								value: new sb.UnsignedByteType,
-								right: new sb.OptionalType(treeType)
-								}),
-								name: &#39;tree-node&#39; //name must match name passed to RecursiveType constructor
-							})</p>
-						</dd>
-						<dt>extends</dt>
-						<dd><p>Type</p>
-						</dd>
-						<dt>inheritdoc</dt>
-						<dd></dd>
-					</dl>
+					<p>Note that it is impossible to create self-referencing types
+						any other way, due to the immutable nature of types.
+					Also, other types will infinitely recurse on writes with circular references.</p>
+					<p>Recursive types must be of one of the following types:</p>
+					<ul>
+						<li><a href="_types_array_.arraytype.html">ArrayType</a></li>
+						<li><a href="_types_map_.maptype.html">MapType</a></li>
+						<li><a href="_types_set_.settype.html">SetType</a></li>
+						<li><a href="_types_struct_.structtype.html">StructType</a></li>
+						<li><a href="_types_tuple_.tupletype.html">TupleType</a></li>
+					</ul>
+					<p>This is due to the way that recursive values are deserialized.
+					For example, say the value was created with the following code:</p>
+					<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> selfType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'self-type'</span>)
+sb.registerType({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">self</span>: selfType
+  }),
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'self-type'</span>
+})
+<span class="hljs-keyword">let</span> self = {} <span class="hljs-comment">//note that we had to give self a "base value" of {}</span>
+self.self = self
+</code></pre>
+					<p>In order to deserialize the value, we need to carry out the same process:</p>
+					<ul>
+						<li>Set the value to some mutable base value so we have a reference to it</li>
+						<li>Read the value for the <code>self</code> field, which gives the base value</li>
+						<li>Assign the result of the read to the <code>self</code> field, mutating the base value</li>
+					</ul>
+					<p>The base values used are as follows:</p>
+					<ul>
+						<li><code>[]</code> for <a href="_types_array_.arraytype.html">ArrayType</a> and <a href="_types_tuple_.tupletype.html">TupleType</a></li>
+						<li><code>new Map</code> for <a href="_types_map_.maptype.html">MapType</a></li>
+						<li><code>new Set</code> for <a href="_types_set_.settype.html">SetType</a></li>
+						<li><code>{}</code> for <a href="_types_struct_.structtype.html">StructType</a></li>
+					</ul>
+					<p>Base values for other types are harder to compute, which is why
+						they are not allowed as <a href="_types_recursive_.recursivetype.html">RecursiveType</a>s.
+						You can always use another type by making it the sole field
+					of a <a href="_types_struct_.structtype.html">StructType</a>.</p>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
+<span class="hljs-keyword">let</span> treeType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'tree-node'</span>)
+sb.registerType({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">left</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType),
+    <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
+    <span class="hljs-attr">right</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType)
+  }),
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'tree-node'</span> <span class="hljs-comment">//name must match name passed to RecursiveType constructor</span>
+})
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -104,6 +137,12 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>E</h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of value this type can write
+								(presumably a recursive value)</p>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</section>
@@ -176,7 +215,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/recursive.ts:40</li>
+									<li>Defined in types/recursive.ts:87</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -206,9 +245,14 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/recursive.ts:40</li>
+							<li>Defined in types/recursive.ts:87</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The name passed into the constructor</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -223,7 +267,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/recursive.ts:50</li>
+									<li>Defined in types/recursive.ts:97</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../modules/_recursive_registry_type_.html#registerabletype" class="tsd-signature-type">RegisterableType</a>
@@ -244,7 +288,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/recursive.ts:37</li>
+									<li>Defined in types/recursive.ts:81</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -266,7 +310,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/recursive.ts:54</li>
+									<li>Defined in types/recursive.ts:101</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -291,7 +335,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/recursive.ts:139</li>
+									<li>Defined in types/recursive.ts:191</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -316,7 +360,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -335,7 +379,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -354,7 +398,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -373,7 +417,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -397,43 +441,44 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/recursive.ts:113</li>
+									<li>Defined in types/recursive.ts:165</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
 								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">treeType.writeValue(buffer, {
+  <span class="hljs-attr">left</span>: {
+    <span class="hljs-attr">left</span>: {
+      <span class="hljs-attr">left</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">value</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">right</span>: <span class="hljs-literal">null</span>
+    },
+    <span class="hljs-attr">value</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">right</span>: {
+      <span class="hljs-attr">left</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">value</span>: <span class="hljs-number">3</span>,
+      <span class="hljs-attr">right</span>: <span class="hljs-literal">null</span>
+    }
+  },
+  <span class="hljs-attr">value</span>: <span class="hljs-number">4</span>,
+  <span class="hljs-attr">right</span>: {
+    <span class="hljs-attr">left</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">value</span>: <span class="hljs-number">5</span>,
+    <span class="hljs-attr">right</span>: {
+      <span class="hljs-attr">left</span>: <span class="hljs-literal">null</span>,
+      <span class="hljs-attr">value</span>: <span class="hljs-number">6</span>,
+      <span class="hljs-attr">right</span>: <span class="hljs-literal">null</span>
+    }
+  }
+})
+</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} If the value doesn&#39;t match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}</p>
-									</dd>
-									<dt>example</dt>
-									<dd><p>treeType.writeValue(buffer, {
-											left: {
-											left: {
-											left: null,
-											value: 1,
-											right: null
-											},
-											value: 2,
-											right: {
-											left: null,
-											value: 3,
-											right: null
-											}
-											},
-											value: 4,
-											right: {
-											left: null,
-											value: 5,
-											right: {
-											left: null,
-											value: 6,
-											right: null
-											}
-											}
-										})</p>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code>;
+										also throws if no type has been registered with this type&#39;s name</p>
 									</dd>
 								</dl>
 							</div>
@@ -453,6 +498,9 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> root: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Omit if used externally; only used internally</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

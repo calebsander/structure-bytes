@@ -5,22 +5,23 @@ const growable_buffer_1 = require("../lib/growable-buffer");
 const write_booleans_1 = require("../lib/write-booleans");
 const absolute_1 = require("./absolute");
 /**
- * A type storing a fixed-length array of {@link Boolean} values.
- * This type creates more efficient serializations than
- * {@link TupleType} for boolean arrays.
+ * A type storing a fixed-length array of `Boolean` values.
  * The length must be at most 255.
- * @see BooleanType
- * @see TupleType
- * @extends Type
- * @inheritdoc
+ * This type creates more efficient serializations than
+ * `new sb.TupleType({type: new sb.BooleanType})` for boolean tuples,
+ * since it works with bits instead of whole bytes.
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.BooleanTupleType(100)
+ * ````
  */
 class BooleanTupleType extends absolute_1.default {
     static get _value() {
         return 0x31;
     }
     /**
-     * @param {number} length The number of {@link Boolean}s in each value of this type.
-     * Must fit in a 1-byte unsigned integer.
+     * @param length The number of `Boolean`s in each value of this type. Must be between 0 and 255.
      */
     constructor(length) {
         super();
@@ -37,10 +38,16 @@ class BooleanTupleType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a {@link GrowableBuffer} according to the type
-     * @param {GrowableBuffer} buffer The buffer to which to append
-     * @param {Boolean[]} value The value to write
-     * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     *
+     * Example:
+     * ````javascript
+     * type.writeValue(buffer, new Array(100).fill(true)) //takes up 13 bytes
+     * ````
+     * @param buffer The buffer to which to append
+     * @param value The value to write
+     * @param root Omit if used externally; only used internally
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);

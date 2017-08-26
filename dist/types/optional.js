@@ -5,22 +5,29 @@ const growable_buffer_1 = require("../lib/growable-buffer");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
- * A type storing a value of another type or {@link null} or {@link undefined}.
- * {@link null} and {@link undefined} are treated identically,
- * and reading either value will result in {@link null}.
- * @example
+ * A type storing a value of another type or `null` or `undefined`.
+ * `null` and `undefined` are treated identically,
+ * and reading either value will result in `null`.
+ *
+ * Example:
+ * ````javascript
  * //If you have a job slot that may or may not be filled
- * let personType = new sb.StructType({...})
+ * let personType = new sb.StructType({
+ *   age: new sb.UnsignedByteType,
+ *   name: new sb.StringType
+ * })
  * let type = new sb.StructType({
  *   title: new sb.StringType,
  *   employee: new sb.OptionalType(personType)
  * })
- * @extends Type
- * @inheritdoc
+ * ````
+ *
+ * @param E The type of non-`null` values
  */
 class OptionalType extends absolute_1.default {
     /**
-     * @param {Type} type The type of any non-{@link null} value
+     * @param type The [[Type]] used to write values
+     * if they are not `null` or `undefined`
      */
     constructor(type) {
         super();
@@ -40,22 +47,26 @@ class OptionalType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a {@link GrowableBuffer} according to the type
-     * @param {GrowableBuffer} buffer The buffer to which to append
-     * @param {null|undefined|type} value The value to write
-     * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-     * @example
+     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     *
+     * Examples:
+     * ````javascript
      * type.writeValue(buffer, {
      *   title: 'Manager',
-     *   employee: person1
+     *   employee: null //or undefined
      * })
+     * ````
+     * or
+     * ````javascript
      * type.writeValue(buffer, {
-     *   title: 'Assistant Librarian',
-     *   employee: null
+     *   title: 'Coder',
+     *   employee: {age: 19, name: 'Johnny'}
      * })
-     * type.writeValue(buffer, {
-     *   title: 'Assistant Librarian'
-     * })
+     * ````
+     * @param buffer The buffer to which to append
+     * @param value The value to write
+     * @param root Omit if used externally; only used internally
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);

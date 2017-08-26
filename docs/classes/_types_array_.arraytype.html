@@ -74,18 +74,21 @@
 					<div class="lead">
 						<p>A type storing a variable-length array of values of the same type</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><p>//For storing some number of people in order
-								let personType = new sb.StructType({...})
-							let type = new sb.ArrayType(personType)</p>
-						</dd>
-						<dt>extends</dt>
-						<dd><p>Type</p>
-						</dd>
-						<dt>inheritdoc</dt>
-						<dd></dd>
-					</dl>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> </span>{
+  <span class="hljs-keyword">constructor</span>(brand, model, year) {
+    <span class="hljs-keyword">this</span>.brand = brand
+    <span class="hljs-keyword">this</span>.model = model
+    <span class="hljs-keyword">this</span>.year = year
+  }
+}
+<span class="hljs-keyword">let</span> carType = <span class="hljs-keyword">new</span> sb.StructType({ <span class="hljs-comment">//Type&lt;Car&gt;</span>
+  brand: <span class="hljs-keyword">new</span> sb.StringType,
+  <span class="hljs-attr">model</span>: <span class="hljs-keyword">new</span> sb.StringType,
+  <span class="hljs-attr">year</span>: <span class="hljs-keyword">new</span> sb.ShortType
+})
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.ArrayType(carType) <span class="hljs-comment">//Type&lt;Car[]&gt;</span>
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -93,6 +96,11 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>E</h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of each element in the array</p>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</section>
@@ -164,7 +172,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/array.ts:21</li>
+									<li>Defined in types/array.ts:37</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -175,7 +183,7 @@
 									<h5>type: <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
-											<p>The type of each element in the array</p>
+											<p>A <a href="../interfaces/_types_type_.type.html">Type</a> that can serialize each element in the array</p>
 										</div>
 									</div>
 								</li>
@@ -193,9 +201,14 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/array.ts:21</li>
+							<li>Defined in types/array.ts:37</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The <a href="../interfaces/_types_type_.type.html">Type</a> passed into the constructor</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -211,7 +224,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/array.ts:18</li>
+									<li>Defined in types/array.ts:31</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -233,7 +246,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/array.ts:30</li>
+									<li>Defined in types/array.ts:46</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -258,7 +271,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/array.ts:51</li>
+									<li>Defined in types/array.ts:74</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -283,7 +296,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -302,7 +315,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -321,7 +334,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -339,7 +352,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -363,19 +376,22 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/array.ts:47</li>
+									<li>Defined in types/array.ts:70</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
 								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> car1 = <span class="hljs-keyword">new</span> Car(<span class="hljs-string">'VW'</span>, <span class="hljs-string">'Bug'</span>, <span class="hljs-number">1960</span>)
+<span class="hljs-keyword">let</span> car2 = <span class="hljs-keyword">new</span> Car(<span class="hljs-string">'Honda'</span>, <span class="hljs-string">'Fit'</span>, <span class="hljs-number">2015</span>)
+<span class="hljs-keyword">let</span> car3 = <span class="hljs-keyword">new</span> Car(<span class="hljs-string">'Tesla'</span>, <span class="hljs-string">'Model 3'</span>, <span class="hljs-number">2017</span>)
+type.writeValue(buffer, [car1, car2, car3])
+</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} If the value doesn&#39;t match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}</p>
-									</dd>
-									<dt>example</dt>
-									<dd><p>type.writeValue(buffer, [person1, person2, person3])</p>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
 									</dd>
 								</dl>
 							</div>
@@ -395,6 +411,9 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> root: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Omit if used externally; only used internally</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

@@ -8,18 +8,28 @@ const abstract_1 = require("./abstract");
 /**
  * A type storing a fixed-length array of values of the same type.
  * The length must be at most 255.
- * @example
- * //For storing 5 4-byte unsigned integers
- * let type = new sb.TupleType({type: new sb.UnsignedIntType, length: 5})
- * @extends Type
- * @inheritdoc
+ *
+ * Example:
+ * ````javascript
+ * //For storing a 3x3 matrix
+ * //This represents values just as efficiently
+ * //as a single tuple with 9 elements
+ * let type = new sb.TupleType({
+ *   type: new sb.TupleType({
+ *     type: new sb.FloatType,
+ *     length: 3
+ *   }),
+ *   length: 3
+ * })
+ * ````
+ *
+ * @param E The type of each element in the tuple
  */
 class TupleType extends absolute_1.default {
     /**
-     * @param {{type, length}} params
-     * @param {Type} params.type The type of each element in the tuple
-     * @param {number} params.length The number of elements in the tuple.
-     * Must fit in a 1-byte unsigned integer.
+     * @param type A [[Type]] that can write each element in the tuple
+     * @param number The number of elements in the tuple.
+     * Must be at most 255.
      */
     constructor({ type, length }) {
         super();
@@ -42,12 +52,20 @@ class TupleType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a {@link GrowableBuffer} according to the type
-     * @param {GrowableBuffer} buffer The buffer to which to append
-     * @param {type[]} value The value to write
-     * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-     * @example
-     * type.writeValue(buffer, [10, 5, 101, 43, 889])
+     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     *
+     * Example:
+     * ````javascript
+     * type.writeValue(buffer, [
+     *   [1, 2, 3],
+     *   [4, 5, 6],
+     *   [7, 8, 9]
+     * ])
+     * ````
+     * @param buffer The buffer to which to append
+     * @param value The value to write
+     * @param root Omit if used externally; only used internally
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value, root = true) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);

@@ -1,5 +1,9 @@
 import GrowableBuffer from '../lib/growable-buffer';
 import Type from './type';
+/**
+ * The superclass of all [[Type]] classes
+ * in this package
+ */
 export default abstract class AbstractType<VALUE> implements Type<VALUE> {
     private cachedBuffer?;
     private cachedHash?;
@@ -20,22 +24,20 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
     /**
      * Generates the type buffer, recomputed each time
      * @private
-     * @see Type#toBuffer
-     * @return {external:ArrayBuffer} A Buffer containing the type bytes
+     * @return An `ArrayBuffer` containing the type bytes
      */
     private _toBuffer();
     /**
      * Gets an SHA256 hash of the type, recomputed each time
      * @private
-     * @see Type#getHash
-     * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
+     * @return A hash of the buffer given by [[toBuffer]]
      */
     private _getHash();
     /**
-     * Gets a signature string for the type, recomputed each time
+     * Gets a signature string for the type, recomputed each time,
+     * based on the `structure-bytes` protocol version and the type hash
      * @private
-     * @see Type#getSignature
-     * @return {string} a signature for the type
+     * @return A signature for the type
      */
     private _getSignature();
 }

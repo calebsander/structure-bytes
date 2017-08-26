@@ -4,7 +4,7 @@ exports.default = (str) => {
     if (str) {
         if (str.constructor === String) {
             const converted = Number(str);
-            if (!isNaN(converted))
+            if (!isNaN(converted) || str === 'NaN')
                 return converted;
         }
     }

@@ -5,19 +5,29 @@ const growable_buffer_1 = require("../lib/growable-buffer");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
 /**
- * A type storing a 2-byte unsigned integer
- * @extends Type
- * @inheritdoc
+ * A type storing a 2-byte unsigned integer (`0` to `65535`).
+ * Can specify values to write as numbers or strings.
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.UnsignedShortType
+ * ````
  */
 class UnsignedShortType extends unsigned_1.default {
     static get _value() {
         return 0x12;
     }
     /**
-     * Appends value bytes to a {@link GrowableBuffer} according to the type
-     * @param {GrowableBuffer} buffer The buffer to which to append
-     * @param {number|string} value The value to write
-     * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     *
+     * Example:
+     * ````javascript
+     * type.writeValue(buffer, 12345) //or '12345'
+     * ````
+     * @param buffer The buffer to which to append
+     * @param value The value to write
+     * @param root Omit if used externally; only used internally
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);

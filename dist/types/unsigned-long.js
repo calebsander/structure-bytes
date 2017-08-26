@@ -7,18 +7,29 @@ const unsigned_1 = require("./unsigned");
 const UNSIGNED_LONG_MAX = '18446744073709551615';
 /**
  * A type storing an 8-byte unsigned integer
- * @extends Type
- * @inheritdoc
+ * (`0` to `18446744073709551615`).
+ * Values to write must be given in base-10 string form.
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.UnsignedLongType
+ * ````
  */
 class UnsignedLongType extends unsigned_1.default {
     static get _value() {
         return 0x14;
     }
     /**
-     * Appends value bytes to a {@link GrowableBuffer} according to the type
-     * @param {GrowableBuffer} buffer The buffer to which to append
-     * @param {string} value The value to write (a base-10 string representation of an integer)
-     * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
+     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     *
+     * Example:
+     * ````javascript
+     * type.writeValue(buffer, '1234567890123456789')
+     * ````
+     * @param buffer The buffer to which to append
+     * @param value The value to write
+     * @param root Omit if used externally; only used internally
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);

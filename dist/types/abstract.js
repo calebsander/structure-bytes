@@ -8,6 +8,10 @@ const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
 const growable_buffer_1 = require("../lib/growable-buffer");
 const recursiveNesting = require("../lib/recursive-nesting");
+/**
+ * The superclass of all [[Type]] classes
+ * in this package
+ */
 class AbstractType {
     /**
      * Returns an unsigned byte value unique to this type class;
@@ -75,8 +79,7 @@ class AbstractType {
     /**
      * Generates the type buffer, recomputed each time
      * @private
-     * @see Type#toBuffer
-     * @return {external:ArrayBuffer} A Buffer containing the type bytes
+     * @return An `ArrayBuffer` containing the type bytes
      */
     _toBuffer() {
         const buffer = new growable_buffer_1.default;
@@ -86,8 +89,7 @@ class AbstractType {
     /**
      * Gets an SHA256 hash of the type, recomputed each time
      * @private
-     * @see Type#getHash
-     * @return {string} a hash of the buffer given by [toBuffer()]{@link Type#toBuffer}
+     * @return A hash of the buffer given by [[toBuffer]]
      */
     _getHash() {
         const hash = js_sha256_1.sha256.create();
@@ -96,10 +98,10 @@ class AbstractType {
         return base64.fromByteArray(bytes);
     }
     /**
-     * Gets a signature string for the type, recomputed each time
+     * Gets a signature string for the type, recomputed each time,
+     * based on the `structure-bytes` protocol version and the type hash
      * @private
-     * @see Type#getSignature
-     * @return {string} a signature for the type
+     * @return A signature for the type
      */
     _getSignature() {
         return config_1.VERSION_STRING + this.getHash();

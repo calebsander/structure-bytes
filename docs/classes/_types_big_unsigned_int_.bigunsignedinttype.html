@@ -73,15 +73,12 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>A type storing an arbitrary precision unsigned integer.
-						Each written value has its own number of bytes of precision.</p>
+							Each written value has its own number of bytes of precision.
+						Values must be provided as base-10 strings.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>extends</dt>
-						<dd><p>Type</p>
-						</dd>
-						<dt>inheritdoc</dt>
-						<dd></dd>
-					</dl>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.BigUnsignedIntType
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -141,7 +138,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/big-unsigned-int.ts:14</li>
+									<li>Defined in types/big-unsigned-int.ts:18</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -163,7 +160,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:24</li>
+									<li>Defined in types/abstract.ts:28</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -188,7 +185,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:64</li>
+									<li>Defined in types/abstract.ts:68</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -213,7 +210,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -232,7 +229,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -251,7 +248,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -269,7 +266,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -293,16 +290,22 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/big-unsigned-int.ts:23</li>
+									<li>Defined in types/big-unsigned-int.ts:37</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
 								</div>
+								<p>Examples:</p>
+								<pre><code class="lang-javascript">type.writeValue(buffer, <span class="hljs-string">'1'</span>) <span class="hljs-comment">//takes up 2 bytes</span>
+</code></pre>
+								<p>or</p>
+								<pre><code class="lang-javascript">type.writeValue(buffer, <span class="hljs-string">'12345678901234567890'</span>) <span class="hljs-comment">//takes up 9 bytes</span>
+</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} If the value doesn&#39;t match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}</p>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
 									</dd>
 								</dl>
 							</div>
@@ -317,7 +320,7 @@
 								<li>
 									<h5>value: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The value to write (a base-10 string representation of an integer)</p>
+										<p>The value to write</p>
 									</div>
 								</li>
 							</ul>

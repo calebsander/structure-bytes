@@ -6,16 +6,29 @@ const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
  * A type storing a variable-length array of values of the same type
- * @example
- * //For storing some number of people in order
- * let personType = new sb.StructType({...})
- * let type = new sb.ArrayType(personType)
- * @extends Type
- * @inheritdoc
+ *
+ * Example:
+ * ````javascript
+ * class Car {
+ *   constructor(brand, model, year) {
+ *     this.brand = brand
+ *     this.model = model
+ *     this.year = year
+ *   }
+ * }
+ * let carType = new sb.StructType({ //Type<Car>
+ *   brand: new sb.StringType,
+ *   model: new sb.StringType,
+ *   year: new sb.ShortType
+ * })
+ * let type = new sb.ArrayType(carType) //Type<Car[]>
+ * ````
+ *
+ * @param E The type of each element in the array
  */
 class ArrayType extends absolute_1.default {
     /**
-     * @param {Type} type The type of each element in the array
+     * @param type A [[Type]] that can serialize each element in the array
      */
     constructor(type) {
         super();
@@ -35,12 +48,19 @@ class ArrayType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a {@link GrowableBuffer} according to the type
-     * @param {GrowableBuffer} buffer The buffer to which to append
-     * @param {type[]} value The value to write
-     * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-     * @example
-     * type.writeValue(buffer, [person1, person2, person3])
+     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     *
+     * Example:
+     * ````javascript
+     * let car1 = new Car('VW', 'Bug', 1960)
+     * let car2 = new Car('Honda', 'Fit', 2015)
+     * let car3 = new Car('Tesla', 'Model 3', 2017)
+     * type.writeValue(buffer, [car1, car2, car3])
+     * ````
+     * @param buffer The buffer to which to append
+     * @param value The value to write
+     * @param root Omit if used externally; only used internally
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value, root = true) {
         assert_1.default.instanceOf(value, Array);

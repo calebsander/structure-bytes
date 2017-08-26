@@ -72,23 +72,30 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A type storing up to 255 named fields</p>
+						<p>A type storing up to 255 named fields.
+							Intended to model a generic JavaScript object,
+							whose field names are known in advance.
+							If field names are part of the value rather than the type,
+						use a <a href="_types_map_.maptype.html">MapType</a> instead.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><p>//For storing a person&#39;s information
-								let type = new sb.StructType({
-								name: new sb.StringType,
-								age: new sb.UnsignedByteType,
-								drowsiness: new sb.DoubleType
-							})</p>
-						</dd>
-						<dt>extends</dt>
-						<dd><p>Type</p>
-						</dd>
-						<dt>inheritdoc</dt>
-						<dd></dd>
-					</dl>
+					<p>The value passed into the constructor should resemble
+						the values to be written.
+						For example, to write <code>{a: 100, b: &#39;abc&#39;, c: false}</code>,
+					you could use:</p>
+					<pre><code class="lang-javascript"><span class="hljs-keyword">new</span> sb.StructType({
+  <span class="hljs-attr">a</span>: <span class="hljs-keyword">new</span> sb.UnsignedIntType,
+  <span class="hljs-attr">b</span>: <span class="hljs-keyword">new</span> sb.StringType,
+  <span class="hljs-attr">c</span>: <span class="hljs-keyword">new</span> sb.BooleanType
+})
+</code></pre>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-comment">//For storing a person's information</span>
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.StructType({
+  <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType,
+  <span class="hljs-attr">age</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
+  <span class="hljs-attr">netWorth</span>: <span class="hljs-keyword">new</span> sb.FloatType
+})
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -96,6 +103,11 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>E<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_struct_.stringindexable.html" class="tsd-signature-type">StringIndexable</a></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of object values this type can write</p>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</section>
@@ -167,7 +179,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/struct.ts:37</li>
+									<li>Defined in types/struct.ts:71</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -198,9 +210,18 @@
 					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_struct_.structfield.html" class="tsd-signature-type">StructField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/struct.ts:37</li>
+							<li>Defined in types/struct.ts:71</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An array of the field names with their corresponding types.
+								Fields are sorted lexicographically by name,
+								so that passing in equivalent <code>fields</code> objects
+								to the constructor always gives the same result.
+							Field names&#39; UTF-8 representations are also cached.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -216,7 +237,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/struct.ts:34</li>
+									<li>Defined in types/struct.ts:61</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -238,7 +259,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/struct.ts:78</li>
+									<li>Defined in types/struct.ts:112</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -263,7 +284,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/struct.ts:120</li>
+									<li>Defined in types/struct.ts:158</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -288,7 +309,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -307,7 +328,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -326,7 +347,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -344,7 +365,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -368,23 +389,23 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/struct.ts:105</li>
+									<li>Defined in types/struct.ts:143</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
 								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript">type.writeValue(buffer, {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'Gertrude'</span>,
+  <span class="hljs-attr">age</span>: <span class="hljs-number">29</span>,
+  <span class="hljs-attr">netWorth</span>: <span class="hljs-number">1.2e6</span>
+})
+</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} If the value doesn&#39;t match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}</p>
-									</dd>
-									<dt>example</dt>
-									<dd><p>type.writeValue(buffer, {
-											name: &#39;Papa&#39;,
-											age: 67,
-											drowsiness: 0.2
-										})</p>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
 									</dd>
 								</dl>
 							</div>
@@ -399,11 +420,14 @@
 								<li>
 									<h5>value: <span class="tsd-signature-type">E</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The value to write. Each field must have a valid value supplied.</p>
+										<p>The value to write</p>
 									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> root: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Omit if used externally; only used internally</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

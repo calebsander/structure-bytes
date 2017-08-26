@@ -74,32 +74,25 @@
 					<div class="lead">
 						<p>A type storing a value of another type through a pointer.
 							If you expect to have the same large value repeated many times,
-							using a pointer will decrease the size of the value [ArrayBuffer]{@link external:ArrayBuffer}.
+							using a pointer will decrease the size of the value <code>ArrayBuffer</code>.
 							Each time the value is written, it will use 4 bytes to write the pointer,
 						so you will only save space if the value is longer than 4 bytes and written more than once.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><p>//If the same people will be used many times
-								let personType = new sb.PointerType(
-								new sb.StructType({
-								dob: new sb.DateType,
-								id: new sb.UnsignedShortType,
-								name: new sb.StringType
-								})
-								)
-								let tribeType = new sb.StructType({
-								leader: personType,
-								members: new sb.SetType(personType),
-								money: new sb.MapType(personType, new sb.FloatType)
-							})</p>
-						</dd>
-						<dt>extends</dt>
-						<dd><p>Type</p>
-						</dd>
-						<dt>inheritdoc</dt>
-						<dd></dd>
-					</dl>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-comment">//If the same people will be used many times</span>
+<span class="hljs-keyword">let</span> personType = <span class="hljs-keyword">new</span> sb.PointerType(
+  <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> sb.DayType,
+    <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.UnsignedShortType,
+    <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType
+  })
+)
+<span class="hljs-keyword">let</span> tribeType = <span class="hljs-keyword">new</span> sb.StructType({
+  <span class="hljs-attr">leader</span>: personType,
+  <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> sb.SetType(personType),
+  <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> sb.MapType(personType, <span class="hljs-keyword">new</span> sb.FloatType)
+})
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -107,6 +100,11 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>E</h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of values that can be written</p>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</section>
@@ -178,7 +176,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/pointer.ts:35</li>
+									<li>Defined in types/pointer.ts:41</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -189,7 +187,7 @@
 									<h5>type: <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
-											<p>The type of any value</p>
+											<p>The <a href="../interfaces/_types_type_.type.html">Type</a> used to write the values being pointed to</p>
 										</div>
 									</div>
 								</li>
@@ -207,9 +205,14 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/pointer.ts:35</li>
+							<li>Defined in types/pointer.ts:41</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The <a href="../interfaces/_types_type_.type.html">Type</a> passed to the constructor</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -225,7 +228,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/pointer.ts:32</li>
+									<li>Defined in types/pointer.ts:35</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -247,7 +250,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/pointer.ts:44</li>
+									<li>Defined in types/pointer.ts:50</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -272,7 +275,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/pointer.ts:86</li>
+									<li>Defined in types/pointer.ts:96</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -297,7 +300,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -316,7 +319,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -335,7 +338,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -354,7 +357,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -378,38 +381,38 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/pointer.ts:80</li>
+									<li>Defined in types/pointer.ts:90</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
 								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> louis = {
+  <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284193</span>),
+  <span class="hljs-attr">id</span>: <span class="hljs-number">9</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'Louis'</span>
+},
+garfield = {
+  <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284194</span>),
+  <span class="hljs-attr">id</span>: <span class="hljs-number">17</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'Garfield'</span>
+}
+<span class="hljs-keyword">let</span> value = {
+  <span class="hljs-attr">leader</span>: {
+    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284192</span>),
+    <span class="hljs-attr">id</span>: <span class="hljs-number">10</span>,
+    <span class="hljs-attr">name</span>: <span class="hljs-string">'Joe'</span>
+  },
+  <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>([louis, garfield]),
+  <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>().set(louis, <span class="hljs-number">23.05</span>).set(garfield, <span class="hljs-number">-10.07</span>)
+}
+tribeType.writeValue(buffer, value)
+</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} If the value doesn&#39;t match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}</p>
-									</dd>
-									<dt>example</dt>
-									<dd><p>let louis = {
-											dob: new Date(1437592284193),
-											id: 9,
-											name: &#39;Louis&#39;
-											},
-											garfield = {
-											dob: new Date(1437592284194),
-											id: 17,
-											name: &#39;Garfield&#39;
-											}
-											let value = {
-											leader: {
-											dob: new Date(1437592284192),
-											id: 10,
-											name: &#39;Joe&#39;
-											},
-											members: new Set().add(louis).add(garfield),
-											money: new Map().set(louis, 23.05).set(garfield, -10.07)
-											}
-										tribeType.writeValue(buffer, value)</p>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
 									</dd>
 								</dl>
 							</div>
@@ -429,6 +432,9 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> root: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Omit if used externally; only used internally</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

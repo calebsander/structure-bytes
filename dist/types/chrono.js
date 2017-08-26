@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const absolute_1 = require("./absolute");
 /**
- * A type storing some sort of time.
+ * A type storing some sort of time
  * @private
  */
 class ChronoType extends absolute_1.default {

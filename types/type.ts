@@ -39,8 +39,8 @@ export default interface Type<VALUE> {
 	 */
 	writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void
 	/**
-	 * Gets a `ArrayBuffer` containing the value in binary format.
-	 * See this type's [[writeValue]] documentation for acceptable values.
+	 * Gets an `ArrayBuffer` containing the value in binary format.
+	 * See this type's [[writeValue]] documentation for examples of values.
 	 * @param value The value to write
 	 * @return An `ArrayBuffer` storing the value
 	 */

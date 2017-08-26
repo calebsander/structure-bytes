@@ -8,25 +8,37 @@ import Type from './type'
 
 /**
  * A type storing a variable-size mapping of keys of one type to values of another
- * @example
- * //For storing friendships (a mapping of people to their set of friends)
- * let personType = new sb.StructType({...})
+ *
+ * Example:
+ * ````javascript
+ * //For storing stock prices on different days
  * let type = new sb.MapType(
- *   personType,
- *   new sb.SetType(personType)
+ *   new sb.StringType,
+ *   new sb.MapType(
+ *     new sb.DayType,
+ *     new sb.FloatType
+ *   )
  * )
- * @extends Type
- * @inheritdoc
+ * ````
+ *
+ * @param K The type of values stored in keys of the map
+ * @param V The type of values stored in values of the map
  */
 export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 	static get _value() {
 		return 0x54
 	}
+	/**
+	 * The type used to serialize keys
+	 */
 	readonly keyType: Type<K>
+	/**
+	 * The type used to serialize values
+	 */
 	readonly valueType: Type<V>
 	/**
-	 * @param {Type} keyType The type of each key in the map
-	 * @param {Type} valueType The type of each value in the map
+	 * @param keyType The type of each key in the map
+	 * @param valueType The type of each value in the map
 	 */
 	constructor(keyType: Type<K>, valueType: Type<V>) {
 		super()
@@ -46,16 +58,28 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type
-	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {Map.<keyType, valueType>} value The value to write
-	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-	 * @example
-	 * let friendMap = new Map
-	 * friendMap.set(person1, new Set([person2, person3]))
-	 * friendMap.set(person2, new Set([person1]))
-	 * friendMap.set(person3, new Set([person1]))
-	 * type.writeValue(buffer, friendMap)
+	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 *
+	 * Example:
+	 * ````javascript
+	 * let GOOG = new Map()
+	 *   .set(new Date(2000, 0, 1), 33.2)
+	 *   .set(new Date(2000, 0, 2), 38.5)
+	 *   .set(new Date(2000, 0, 3), 39.9)
+	 * let YHOO = new Map()
+	 *   .set(new Date(2010, 0, 1), 10.1)
+	 *   .set(new Date(2010, 0, 2), 10.2)
+	 * let AMZN = new Map()
+	 * let stocks = new Map()
+	 *   .set('GOOG', GOOG)
+	 *   .set('YHOO', YHOO)
+	 *   .set('AMZN', AMZN)
+	 * type.writeValue(buffer, stocks)
+	 * ````
+	 * @param buffer The buffer to which to append
+	 * @param value The value to write
+	 * @param root Omit if used externally; only used internally
+	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: GrowableBuffer, value: Map<K, V>, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)

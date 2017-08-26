@@ -14,7 +14,9 @@ export interface EnumParams<E> {
 /**
  * A type storing a value in a fixed set of possible values.
  * There can be at most 255 possible values.
- * @example
+ *
+ * Example:
+ * ````javascript
  * //Storing different species' characteristics
  * const HUMAN = {heightFt: 6, speedMph: 28}
  * const CHEETAH = {heightFt: 3, speedMph: 70}
@@ -25,22 +27,25 @@ export interface EnumParams<E> {
  *   }),
  *   values: [HUMAN, CHEETAH]
  * })
- * @extends Type
- * @inheritdoc
+ * ````
+ *
+ * @param E The type of each value in the enum
  */
 export default class EnumType<E> extends AbstractType<E> {
 	static get _value() {
 		return 0x55
 	}
+	/**
+	 * The list of possible values
+	 */
 	readonly values: E[]
 	private readonly type: Type<E>
 	private readonly valueIndices: Map<string, number>
 	/**
-	 * @param {{type, value}} params
-	 * @param {Type} params.type The type of each element in the tuple
-	 * @param {type[]} params.values The possible distinct values.
+	 * @param type The type of each element in the tuple
+	 * @param values The possible distinct values.
 	 * Cannot contain more than 255 values.
-	 * @throws {Error} If any value is invalid for {@link type}
+	 * @throws If any value cannot be serialized by `type`
 	 */
 	constructor({type, values}: EnumParams<E>) {
 		super()
@@ -75,12 +80,16 @@ export default class EnumType<E> extends AbstractType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type
-	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {type} value The value to write
-	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-	 * @example
+	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 *
+	 * Example:
+	 * ````javascript
 	 * type.writeValue(buffer, CHEETAH)
+	 * ````
+	 * @param buffer The buffer to which to append
+	 * @param value The value to write
+	 * @param root Omit if used externally; only used internally
+	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: GrowableBuffer, value: E, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)

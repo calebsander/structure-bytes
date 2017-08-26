@@ -12,4 +12,6 @@ export = () => {
 	assert.equal(r.value({buffer: gb.toBuffer(), type}), Infinity)
 
 	assert.equal(type.valueBuffer(String(Math.E)), bufferFrom([0x40, 0x2d, 0xf8, 0x54]))
+	assert.equal(type.valueBuffer('NaN'), type.valueBuffer(NaN))
+	assert.equal(type.valueBuffer('Infinity'), type.valueBuffer(Infinity))
 }

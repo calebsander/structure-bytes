@@ -77,37 +77,33 @@
 							used to write values of instances of the class.
 							Unlike <a href="_types_choice_.choicetype.html">ChoiceType</a>, read values specify the type
 							used to write them.
-							The list of possible types must contain at most 255 types.
-						<a href="_types_named_choice_.namedchoicetype.html">NamedChoiceType</a> is similar to <a href="_types_choice_.choicetype.html">ChoiceType</a> in most respects.</p>
+							Be aware that the constructor of the read value is synthetic,
+							so it will not be the same as the constructor of the written value.
+							However, they will have the same name.
+							<a href="_types_named_choice_.namedchoicetype.html">NamedChoiceType</a> is similar to <a href="_types_choice_.choicetype.html">ChoiceType</a> in other respects.
+						The list of possible types must contain at most 255 types.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><p>//Storing various barcode types
-								class QRCode {
-								constructor(text) {
-								this.text = text
-								}
-								}
-								class UPC {
-								constructor(number) {
-								this.number = number
-								}
-								}
-								let barcodeType = new sb.NamedChoiceType(new Map()
-								.set(QRCode, new sb.StructType({
-								text: new sb.StringType
-								}))
-								.set(UPC, new sb.StructType({
-								number: new sb.UnsignedLongType
-								}))
-							)</p>
-						</dd>
-						<dt>extends</dt>
-						<dd><p>Type</p>
-						</dd>
-						<dt>inheritdoc</dt>
-						<dd></dd>
-					</dl>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-comment">//Storing various barcode types</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">QRCode</span> </span>{
+  <span class="hljs-keyword">constructor</span>(text) {
+    <span class="hljs-keyword">this</span>.text = text
+  }
+}
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UPC</span> </span>{
+  <span class="hljs-keyword">constructor</span>(number) {
+    <span class="hljs-keyword">this</span>.number = number
+  }
+}
+<span class="hljs-keyword">let</span> barcodeType = <span class="hljs-keyword">new</span> sb.NamedChoiceType(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>()
+  .set(QRCode, <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">text</span>: <span class="hljs-keyword">new</span> sb.StringType
+  }))
+  .set(UPC, <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">number</span>: <span class="hljs-keyword">new</span> sb.UnsignedLongType
+  }))
+)
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -115,6 +111,15 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>E<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of value this choice type can write.
+									If you provide, e.g. a <code>Type&lt;A&gt;</code> and a <code>Type&lt;B&gt;</code> and a <code>Type&lt;C&gt;</code>
+									to the constructor, <code>E</code> should be <code>A | B | C</code>.
+									In TypeScript, you have to declare this manually
+								unless all the value types are identical.</p>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</section>
@@ -187,7 +192,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/named-choice.ts:49</li>
+									<li>Defined in types/named-choice.ts:66</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -196,6 +201,21 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>constructorTypes: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">, </span><a href="_types_struct_.structtype.html" class="tsd-signature-type">StructType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The mapping
+												of constructors to associated types.
+												Cannot contain more than 255 types.
+												Values will be written using the type
+												associated with the first constructor in the map
+												of which they are an instance,
+												so place higher priority types earlier.
+												For example, if you wanted to be able to write
+												the values of instances of a subclass and a superclass,
+												put the subclass first so that all its fields
+											are written, not just those inherited from the superclass.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_types_named_choice_.namedchoicetype.html" class="tsd-signature-type">NamedChoiceType</a></h4>
@@ -211,9 +231,14 @@
 					<div class="tsd-signature tsd-kind-icon">constructor<wbr>Types<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_named_choice_.nameandtype.html" class="tsd-signature-type">NameAndType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/named-choice.ts:48</li>
+							<li>Defined in types/named-choice.ts:61</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The names of constructors and each&#39;s matching <a href="../interfaces/_types_type_.type.html">Type</a></p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-external">
 					<a name="indexconstructors" class="tsd-anchor"></a>
@@ -221,9 +246,15 @@
 					<div class="tsd-signature tsd-kind-icon">index<wbr>Constructors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/named-choice.ts:49</li>
+							<li>Defined in types/named-choice.ts:66</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A map of constructor indices to constructors.
+							Essentially an array.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -239,7 +270,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/named-choice.ts:45</li>
+									<li>Defined in types/named-choice.ts:55</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -261,7 +292,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/named-choice.ts:87</li>
+									<li>Defined in types/named-choice.ts:104</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -286,7 +317,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/named-choice.ts:132</li>
+									<li>Defined in types/named-choice.ts:162</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -311,7 +342,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:45</li>
+									<li>Defined in types/abstract.ts:49</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -330,7 +361,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:49</li>
+									<li>Defined in types/abstract.ts:53</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -349,7 +380,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:41</li>
+									<li>Defined in types/abstract.ts:45</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -367,7 +398,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -391,26 +422,34 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/named-choice.ts:116</li>
+									<li>Defined in types/named-choice.ts:146</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type.
-										The constructor name will be transfered to the read value.
-										So, if you write using the type associated with {@link QRCode},
-										the read value&#39;s constructor will also be named {@link &quot;QRCode&quot;}.
-										If, however, you write an instance of a subclass of {@link QRCode},
-										it will write as {@link QRCode} and the read value&#39;s constructor
-									will be named {@link &quot;QRCode&quot;}.</p>
+									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
 								</div>
+								<p>Examples:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> buffer = <span class="hljs-keyword">new</span> GrowableBuffer
+barcodeType.writeValue(buffer, <span class="hljs-keyword">new</span> QRCode(<span class="hljs-string">'abc'</span>))
+<span class="hljs-keyword">let</span> readValue = sb.r.value({
+  <span class="hljs-attr">type</span>: barcodeType,
+  <span class="hljs-attr">buffer</span>: buffer.toBuffer()
+})
+<span class="hljs-built_in">console</span>.log(readValue.constructor.name) <span class="hljs-comment">//'QRCode'</span>
+</code></pre>
+								<p>or</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> buffer = <span class="hljs-keyword">new</span> GrowableBuffer
+barcodeType.writeValue(buffer, <span class="hljs-keyword">new</span> UPC(<span class="hljs-string">'0123'</span>))
+<span class="hljs-keyword">let</span> readValue = sb.r.value({
+  <span class="hljs-attr">type</span>: barcodeType,
+  <span class="hljs-attr">buffer</span>: buffer.toBuffer()
+})
+<span class="hljs-built_in">console</span>.log(readValue.constructor.name) <span class="hljs-comment">//'UPC'</span>
+</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} If the value doesn&#39;t match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}</p>
-									</dd>
-									<dt>example</dt>
-									<dd><p>type.writeValue(buffer, new QRCode(&#39;abc&#39;)) //writes as QRCode
-										type.writeValue(buffer, new UPC(&#39;0123&#39;)) //writes as UPC</p>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
 									</dd>
 								</dl>
 							</div>
@@ -430,6 +469,9 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> root: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Omit if used externally; only used internally</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>

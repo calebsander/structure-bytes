@@ -12,13 +12,18 @@ export interface NameAndType<E> {
 }
 /**
  * A type storing a value of one of several fixed classes.
- * Each class is associated with a {@link StructType}
+ * Each class is associated with a [[StructType]]
  * used to write values of instances of the class.
- * Unlike {@link ChoiceType}, read values specify the type
+ * Unlike [[ChoiceType]], read values specify the type
  * used to write them.
+ * Be aware that the constructor of the read value is synthetic,
+ * so it will not be the same as the constructor of the written value.
+ * However, they will have the same name.
+ * [[NamedChoiceType]] is similar to [[ChoiceType]] in other respects.
  * The list of possible types must contain at most 255 types.
- * {@link NamedChoiceType} is similar to {@link ChoiceType} in most respects.
- * @example
+ *
+ * Example:
+ * ````javascript
  * //Storing various barcode types
  * class QRCode {
  *   constructor(text) {
@@ -38,17 +43,29 @@ export interface NameAndType<E> {
  *     number: new sb.UnsignedLongType
  *   }))
  * )
- * @extends Type
- * @inheritdoc
+ * ````
+ *
+ * @param E The type of value this choice type can write.
+ * If you provide, e.g. a `Type<A>` and a `Type<B>` and a `Type<C>`
+ * to the constructor, `E` should be `A | B | C`.
+ * In TypeScript, you have to declare this manually
+ * unless all the value types are identical.
  */
 export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 	static get _value() {
 		return 0x58
 	}
+	/**
+	 * The names of constructors and each's matching [[Type]]
+	 */
 	readonly constructorTypes: NameAndType<E>[]
+	/**
+	 * A map of constructor indices to constructors.
+	 * Essentially an array.
+	 */
 	readonly indexConstructors: Map<number, Function>
 	/**
-	 * @param {Map.<constructor, StructType>} types The mapping
+	 * @param constructorTypes The mapping
 	 * of constructors to associated types.
 	 * Cannot contain more than 255 types.
 	 * Values will be written using the type
@@ -99,19 +116,32 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a {@link GrowableBuffer} according to the type.
-	 * The constructor name will be transfered to the read value.
-	 * So, if you write using the type associated with {@link QRCode},
-	 * the read value's constructor will also be named {@link "QRCode"}.
-	 * If, however, you write an instance of a subclass of {@link QRCode},
-	 * it will write as {@link QRCode} and the read value's constructor
-	 * will be named {@link "QRCode"}.
-	 * @param {GrowableBuffer} buffer The buffer to which to append
-	 * @param {*} value The value to write
-	 * @throws {Error} If the value doesn't match the type, e.g. {@link new sb.StringType().writeValue(buffer, 23)}
-	 * @example
-	 * type.writeValue(buffer, new QRCode('abc')) //writes as QRCode
-	 * type.writeValue(buffer, new UPC('0123')) //writes as UPC
+	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 *
+	 * Examples:
+	 * ````javascript
+	 * let buffer = new GrowableBuffer
+	 * barcodeType.writeValue(buffer, new QRCode('abc'))
+	 * let readValue = sb.r.value({
+	 *   type: barcodeType,
+	 *   buffer: buffer.toBuffer()
+	 * })
+	 * console.log(readValue.constructor.name) //'QRCode'
+	 * ````
+	 * or
+	 * ````javascript
+	 * let buffer = new GrowableBuffer
+	 * barcodeType.writeValue(buffer, new UPC('0123'))
+	 * let readValue = sb.r.value({
+	 *   type: barcodeType,
+	 *   buffer: buffer.toBuffer()
+	 * })
+	 * console.log(readValue.constructor.name) //'UPC'
+	 * ````
+	 * @param buffer The buffer to which to append
+	 * @param value The value to write
+	 * @param root Omit if used externally; only used internally
+	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: GrowableBuffer, value: E, root = true) {
 		assert.instanceOf(buffer, GrowableBuffer)
