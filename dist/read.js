@@ -674,14 +674,14 @@ exports._consumeType = consumeType;
  * the whole buffer was read. In most use cases, should be omitted.
  * @return {Type} The type that was read
  */
-function readType(typeBuffer, fullBuffer = true) {
+function readTypeBuffer(typeBuffer, fullBuffer = true) {
     assert_1.default.instanceOf(typeBuffer, ArrayBuffer);
     const { value, length } = consumeType(typeBuffer, 0);
     if (fullBuffer)
         assert_1.default(length === typeBuffer.byteLength, 'Did not consume all of the buffer');
     return value;
 }
-exports.type = readType;
+exports.type = readTypeBuffer;
 /** @function
  * @desc Reads a value from its written buffer.
  * Requires the type to be known.
@@ -694,7 +694,7 @@ exports.type = readType;
  * The offset in the buffer to start reading at
  * @return The value that was read
  */
-function readValue({ buffer, type, offset = 0 }) {
+function readValueBuffer({ buffer, type, offset = 0 }) {
     assert_1.default.instanceOf(buffer, ArrayBuffer);
     assert_1.default.instanceOf(type, abstract_1.default);
     assert_1.default.instanceOf(offset, Number);
@@ -702,4 +702,4 @@ function readValue({ buffer, type, offset = 0 }) {
     //no length validation because bytes being pointed to don't get counted in the length
     return value;
 }
-exports.value = readValue;
+exports.value = readValueBuffer;

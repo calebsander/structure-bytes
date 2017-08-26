@@ -69,16 +69,92 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>The JavaScript ArrayBuffer class</p>
+						<p><code>structure-bytes</code> exports the following named members:</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>external</dt>
-						<dd><p>ArrayBuffer</p>
-						</dd>
-						<dt>see</dt>
-						<dd><p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer" class="external">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer</a></p>
-						</dd>
-					</dl>
+					<ul>
+						<li><strong>From</strong> <code>io</code><ul>
+								<li><a href="_io_.html#writetype">writeType</a></li>
+								<li><a href="../interfaces/_types_type_.type.html#writevalue">writeValue</a></li>
+								<li><a href="_io_.html#writetypeandvalue">writeTypeAndValue</a></li>
+								<li><a href="_io_.html#readtype">readType</a></li>
+								<li><a href="_io_.html#readvalue">readValue</a></li>
+								<li><a href="_io_.html#readtypeandvalue">readTypeAndValue</a></li>
+								<li><a href="_io_.html#httprespond">httpRespond</a></li>
+							</ul>
+						</li>
+						<li><strong>From</strong> <code>read</code><ul>
+								<li><a href="_read_.html#readtypebuffer">readTypeBuffer</a> as <code>r.type</code></li>
+								<li><a href="_lib_flex_int_.html#readvaluebuffer">readValueBuffer</a> as <code>r.value</code></li>
+							</ul>
+						</li>
+						<li><strong>From</strong> <code>recursive-registry</code><ul>
+								<li><a href="../interfaces/_recursive_registry_type_.recursiveregistry.html#registertype">registerType</a></li>
+								<li><a href="../interfaces/_recursive_registry_type_.recursiveregistry.html#gettype">getType</a></li>
+								<li><a href="../interfaces/_recursive_registry_type_.recursiveregistry.html#isregistered">isRegistered</a></li>
+							</ul>
+						</li>
+						<li><strong>From</strong> <code>types</code><ul>
+								<li><a href="../interfaces/_types_type_.type.html">Type</a></li>
+								<li>Signed integer types<ul>
+										<li><a href="../classes/_types_byte_.bytetype.html">ByteType</a></li>
+										<li><a href="../classes/_types_short_.shorttype.html">ShortType</a></li>
+										<li><a href="../classes/_types_int_.inttype.html">IntType</a></li>
+										<li><a href="../classes/_types_long_.longtype.html">LongType</a></li>
+										<li><a href="../classes/_types_big_int_.biginttype.html">BigIntType</a></li>
+									</ul>
+								</li>
+								<li>Unsigned integer types<ul>
+										<li><a href="../classes/_types_unsigned_byte_.unsignedbytetype.html">UnsignedByteType</a></li>
+										<li><a href="../classes/_types_unsigned_short_.unsignedshorttype.html">UnsignedShortType</a></li>
+										<li><a href="../classes/_types_unsigned_int_.unsignedinttype.html">UnsignedIntType</a></li>
+										<li><a href="../classes/_types_unsigned_long_.unsignedlongtype.html">UnsignedLongType</a></li>
+										<li><a href="../classes/_types_big_unsigned_int_.bigunsignedinttype.html">BigUnsignedIntType</a></li>
+										<li><a href="../classes/_types_flex_int_.flexunsignedinttype.html">FlexUnsignedIntType</a></li>
+									</ul>
+								</li>
+								<li>Chrono types<ul>
+										<li><a href="../classes/_types_date_.datetype.html">DateType</a></li>
+										<li><a href="../classes/_types_day_.daytype.html">DayType</a></li>
+										<li><a href="../classes/_types_time_.timetype.html">TimeType</a></li>
+									</ul>
+								</li>
+								<li>Floating-point types<ul>
+										<li><a href="../classes/_types_float_.floattype.html">FloatType</a></li>
+										<li><a href="../classes/_types_double_.doubletype.html">DoubleType</a></li>
+									</ul>
+								</li>
+								<li>Boolean types<ul>
+										<li><a href="../classes/_types_boolean_.booleantype.html">BooleanType</a></li>
+										<li><a href="../classes/_types_boolean_tuple_.booleantupletype.html">BooleanTupleType</a></li>
+										<li><a href="../classes/_types_boolean_array_.booleanarraytype.html">BooleanArrayType</a></li>
+									</ul>
+								</li>
+								<li>String and buffer types<ul>
+										<li><a href="../classes/_types_char_.chartype.html">CharType</a></li>
+										<li><a href="../classes/_types_string_.stringtype.html">StringType</a></li>
+										<li><a href="../classes/_types_octets_.octetstype.html">OctetsType</a></li>
+									</ul>
+								</li>
+								<li>Non-primitive types<ul>
+										<li><a href="../classes/_types_tuple_.tupletype.html">TupleType</a></li>
+										<li><a href="../classes/_types_struct_.structtype.html">StructType</a></li>
+										<li><a href="../classes/_types_array_.arraytype.html">ArrayType</a></li>
+										<li><a href="../classes/_types_set_.settype.html">SetType</a></li>
+										<li><a href="../classes/_types_map_.maptype.html">MapType</a></li>
+										<li><a href="../classes/_types_enum_.enumtype.html">EnumType</a></li>
+										<li><a href="../classes/_types_choice_.choicetype.html">ChoiceType</a></li>
+										<li><a href="../classes/_types_named_choice_.namedchoicetype.html">NamedChoiceType</a></li>
+										<li><a href="../classes/_types_recursive_.recursivetype.html">RecursiveType</a></li>
+									</ul>
+								</li>
+								<li>Modifier types<ul>
+										<li><a href="../classes/_types_optional_.optionaltype.html">OptionalType</a></li>
+										<li><a href="../classes/_types_pointer_.pointertype.html">PointerType</a></li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
 				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -102,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">r<span class="tsd-signature-symbol">:</span> <a href="_read_.html" class="tsd-signature-type">&quot;read&quot;</a><span class="tsd-signature-symbol"> =&nbsp;read</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in index.ts:29</li>
+							<li>Defined in index.ts:68</li>
 						</ul>
 					</aside>
 				</section>

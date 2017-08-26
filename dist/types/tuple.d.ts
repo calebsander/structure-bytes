@@ -43,7 +43,7 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
     readonly length: number;
     /**
      * @param type A [[Type]] that can write each element in the tuple
-     * @param number The number of elements in the tuple.
+     * @param length The number of elements in the tuple.
      * Must be at most 255.
      */
     constructor({type, length}: TupleParams<E>);

@@ -684,13 +684,13 @@ export {consumeType as _consumeType}
  * the whole buffer was read. In most use cases, should be omitted.
  * @return {Type} The type that was read
  */
-function readType(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
+function readTypeBuffer(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
 	const {value, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
 	return value
 }
-export {readType as type}
+export {readTypeBuffer as type}
 export interface ValueParams<E> {
 	buffer: ArrayBuffer
 	type: t.Type<E>
@@ -708,7 +708,7 @@ export interface ValueParams<E> {
  * The offset in the buffer to start reading at
  * @return The value that was read
  */
-function readValue<E>({buffer, type, offset = 0}: ValueParams<E>): E {
+function readValueBuffer<E>({buffer, type, offset = 0}: ValueParams<E>): E {
 	assert.instanceOf(buffer, ArrayBuffer)
 	assert.instanceOf(type, AbstractType)
 	assert.instanceOf(offset, Number)
@@ -716,4 +716,4 @@ function readValue<E>({buffer, type, offset = 0}: ValueParams<E>): E {
 	//no length validation because bytes being pointed to don't get counted in the length
 	return value
 }
-export {readValue as value}
+export {readValueBuffer as value}
