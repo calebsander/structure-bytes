@@ -27,7 +27,7 @@
 	},
 	"scripts": {
 		"build": "rm -rf dist && tsc",
-		"docs": "rm -rf docs && typedoc --out docs --name structure-bytes --readme README.md",
+		"docs": "rm -rf docs && typedoc --out docs --name structure-bytes --readme README.md && touch docs/.nojekyll",
 		"test": "npm run build && tsc -p test/tsconfig.json && node test/main.js no-compile && npm run tslint",
 		"test-travis": "nyc --reporter=lcov npm test && coveralls < coverage/lcov.info",
 		"tslint": "tslint -p . -c tslint.json -t verbose"
