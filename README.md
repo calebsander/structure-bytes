@@ -266,11 +266,167 @@ Client-side:
 </script>
 ````
 
+## Using with TypeScript
+The entire project is written in TypeScript, and declaration files are automatically generated. That means that if you are using TypeScript, the compiler can automatically infer the type of the various values exported from `structure-bytes`. To import the package, use:
+````javascript
+import * as sb from 'structure-bytes'
+````
+One of the most useful parts of having typings is that the compiler can automatically infer what types of valus a `Type` can serialize. For example:
+````javascript
+let type = new sb.StructType({
+	abc: new sb.DoubleType,
+	def: new sb.MapType(
+		new sb.StringType,
+		new sb.DayType
+	)
+})
+type.valueBuffer(/*...*/)
+/*
+If you hover over "valueBuffer", you can see
+that it requires the value to be of type:
+{ abc: number | string, def: Map<string, Date> }
+*/
+````
+You can even add explicit `VALUE` generics to make the compiler check that your `Type` serializes the correct types of values.
+
+With `StructType`:
+````typescript
+class Car {
+	constructor(
+		public make: string,
+		public model: string,
+		public year: number
+	) {}
+}
+let structType = new sb.StructType<Car>({
+	make: new sb.StringType,
+	model: new sb.StringType,
+	year: new sb.UnsignedShortType
+})
+//The compiler would have complained if one of the fields were missing
+//or one of the field's types didn't match the type of the field's values,
+//e.g. "make: new sb.BooleanType"
+````
+If you have transient fields (i.e. they shouldn't be serialized), you can create a separate interface for the fields that should be serialized:
+````typescript
+interface SerializedCar {
+	make: string
+	model: string
+	year: number
+}
+class Car implements SerializedCar {
+	public id: number //transient field
+	constructor(public make: string, public model: string, public year: number) {
+		this.id = Math.floor(Math.random() * 1000000)
+	}
+}
+let structType = new sb.StructType<SerializedCar>({
+	make: new sb.StringType,
+	model: new sb.StringType,
+	year: new sb.UnsignedShortType
+})
+````
+
+With `ChoiceType` (and similarly for `NamedChoiceType`), you can let the type be inferred automatically if each of the possible types writes the same type of values:
+````javascript
+let type = new sb.ChoiceType([ //Type<number | string>
+	new sb.ByteType,
+	new sb.ShortType,
+	new sb.IntType
+])
+````
+However, if the value types are not the same, TypeScript will complain about them not matching, and you should express the union type explicitly:
+````typescript
+interface RGB {
+	r: number
+	g: number
+	b: number
+}
+interface HSV {
+	h: number
+	s: number
+	v: number
+}
+type CSSColor = string
+
+let choiceType = new sb.ChoiceType<RGB | HSV | CSSColor>([
+	new sb.StructType<RGB>({
+		r: new sb.FloatType,
+		g: new sb.FloatType,
+		b: new sb.FloatType
+	}),
+	new sb.StructType<HSV>({
+		h: new sb.FloatType,
+		s: new sb.FloatType,
+		v: new sb.FloatType
+	}),
+	new sb.StringType
+])
+````
+A `RecursiveType` has no way to infer its value type, so you should always provide the `VALUE` generic:
+````typescript
+interface Cons<A> {
+	head: A
+	tail: List<A>
+}
+interface List<A> {
+	list: Cons<A> | null //null for empty list
+}
+
+let recursiveType = new sb.RecursiveType<List<string>>('linked-list')
+sb.registerType({
+	type: new sb.StructType<List<string>>({
+		list: new sb.OptionalType(
+			new sb.StructType<Cons<string>>({
+				head: new sb.StringType,
+				tail: recursiveType
+			})
+		)
+	}),
+	name: 'linked-list'
+})
+recursiveType.valueBuffer({
+	list: {
+		head: '1',
+		tail: {
+			list: {
+				head: '2',
+				tail: {list: null}
+			}
+		}
+	}
+})
+````
+When reading types from buffers and streams, they will be of type `Type<any>`.
+You should specify their value types before using them to write values:
+````typescript
+let booleanType = new sb.BooleanType
+let readType = sb.r.type(booleanType.toBuffer()) //Type<any>
+//Will throw a runtime error
+readType.valueBuffer('abc')
+
+//vs.
+
+let castReadType: sb.Type<boolean> = sb.r.type(booleanType.toBuffer())
+//Will throw a compiler error
+castReadType.valueBuffer('abc')
+````
+
+It may also sometimes be useful to be more specific about what types of values you want to be able to serialize.
+For example, if you want to serialize integer values that will always be represented as numbers (and never in string form), you can force the compiler to error out if you try to serialize a string value with the following:
+````typescript
+let intType: sb.Type<number> = new sb.IntType
+//Now this is valid:
+intType.valueBuffer(100)
+//But this is not, even though it would be if you omitted the type annotation on intType:
+intType.valueBuffer('100')
+````
+
 ## Binary formats
 In the following definitions, `uint8_t` means an 8-bit unsigned integer. `flexInt` means a variable-length unsigned integer with the following format, where `X` represents either `0` or `1`:
-- `[0b0XXXXXXX]` stores values from `0` to `2^7 - 1` in their unsigned 7-bit integer representations
-- `[0b10XXXXXX, 0bXXXXXXXX]` stores values from `2^7` to `2^7 + 2^14 - 1`, where a value `x` is encoded into the unsigned 14-bit representation of `x - 2^7`
-- `[0b110XXXXX, 0bXXXXXXXX, 0bXXXXXXXX]` stores values from `2^7 + 2^14` to `2^7 + 2^14 + 2^21 - 1`, where a value `x` is encoded into the unsigned 14-bit representation of `x - (2^7 + 2^14)`
+- `[0b0XXXXXXX]` stores values from `0` to `2**7 - 1` in their unsigned 7-bit integer representations
+- `[0b10XXXXXX, 0bXXXXXXXX]` stores values from `2**7` to `2**7 + 2**14 - 1`, where a value `x` is encoded into the unsigned 14-bit representation of `x - 2**7`
+- `[0b110XXXXX, 0bXXXXXXXX, 0bXXXXXXXX]` stores values from `2**7 + 2**14` to `2**7 + 2**14 + 2**21 - 1`, where a value `x` is encoded into the unsigned 21-bit representation of `x - (2**7 + 2**14)`
 - and so on, up to 8-byte representations
 
 All numbers are stored in big-endian format.
