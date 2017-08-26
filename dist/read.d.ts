@@ -4,36 +4,64 @@ export interface ReadResult<E> {
     length: number;
 }
 declare function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<any>>;
-/** @function
- * @private
- */
 export { consumeType as _consumeType };
-/** @function
- * @desc Reads a type from its written buffer
- * @param {external:Buffer} typeBuffer
- * The buffer containing the type bytes
- * @param {boolean} [fullBuffer=true] Whether to assert that
- * the whole buffer was read. In most use cases, should be omitted.
- * @return {Type} The type that was read
+/**
+ * Deserializes a type, i.e. takes a buffer
+ * containing its binary form and creates the type object.
+ * The inverse of calling [[Type.toBuffer]].
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.ArrayType(
+ *   new sb.FlexUnsignedIntType
+ * )
+ * let typeBuffer = type.toBuffer()
+ * let readType = sb.r.type(typeBuffer)
+ * console.log(readType) // ArrayType { type: FlexUnsignedIntType {} }
+ * ````
+ *
+ * @param typeBuffer The buffer containing the type bytes
+ * @param fullBuffer Whether to assert that the whole buffer was read.
+ * In most use cases, this argument should be be omitted.
+ * @return The type that was read
  */
-declare function readTypeBuffer(typeBuffer: ArrayBuffer, fullBuffer?: boolean): t.Type<any>;
-export { readTypeBuffer as type };
+export declare function type(typeBuffer: ArrayBuffer, fullBuffer?: boolean): t.Type<any>;
+/**
+ * @param E The type of value to be read
+ */
 export interface ValueParams<E> {
+    /**
+     * The buffer containing the value bytes
+     */
     buffer: ArrayBuffer;
+    /**
+     * The type (or an equivalent one) that wrote the value bytes
+     */
     type: t.Type<E>;
+    /**
+     * The index in the buffer to start reading from;
+     * defaults to `0`
+     */
     offset?: number;
 }
-/** @function
- * @desc Reads a value from its written buffer.
+/**
+ * Deserializes a value, i.e. takes
+ * the type that serialized it and a buffer
+ * containing its binary form and returns the value.
  * Requires the type to be known.
- * @param {{buffer, type, offset}} params
- * @param {external:Buffer} params.buffer
- * The buffer containing the value bytes
- * @param {Type} params.type
- * The type that was used to write the value bytes
- * @param {number} [params.offset=0]
- * The offset in the buffer to start reading at
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.ArrayType(
+ *   new sb.FlexUnsignedIntType
+ * )
+ * let value = [0, 10, 100, 1000, 10000]
+ * let buffer = type.valueBuffer(value)
+ * let readValue = sb.r.value({type, buffer})
+ * console.log(readValue) // [ 0, 10, 100, 1000, 10000 ]
+ * ````
+ *
+ * @param E The type of value to be read
  * @return The value that was read
  */
-declare function readValueBuffer<E>({buffer, type, offset}: ValueParams<E>): E;
-export { readValueBuffer as value };
+export declare function value<E>(params: ValueParams<E>): E;

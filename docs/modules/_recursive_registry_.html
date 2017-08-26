@@ -95,7 +95,7 @@
 					<div class="tsd-signature tsd-kind-icon">registered<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../classes/_types_tuple_.tupletype.html" class="tsd-signature-type">TupleType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_array_.arraytype.html" class="tsd-signature-type">ArrayType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_set_.settype.html" class="tsd-signature-type">SetType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_map_.maptype.html" class="tsd-signature-type">MapType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_struct_.structtype.html" class="tsd-signature-type">StructType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, RegisterableType&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in recursive-registry.ts:6</li>
+							<li>Defined in recursive-registry.ts:10</li>
 						</ul>
 					</aside>
 				</section>
@@ -112,22 +112,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in recursive-registry.ts:41</li>
+									<li>Defined in recursive-registry.ts:63</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets the recursive type
+									registered with the specified name</p>
+								</div>
 								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>getType</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Gets the recursive type
-										registered under the specified name</p>
-									</dd>
 									<dt>throws</dt>
-									<dd><p>{Error} If no type is registered with that name</p>
+									<dd><p>If no type is registered with that name</p>
 									</dd>
 								</dl>
 							</div>
@@ -155,24 +150,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in recursive-registry.ts:55</li>
+									<li>Defined in recursive-registry.ts:76</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>isRegistered</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Returns whether the specified name
-										already has a recursive type registered with it</p>
-									</dd>
-									<dt>see</dt>
-									<dd><p>registerType</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Returns whether the specified name
+										already has a recursive type registered with it
+									from a call to <a href="_recursive_registry_.html#registertype">registerType</a></p>
+								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -198,27 +184,40 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in recursive-registry.ts:21</li>
+									<li>Defined in recursive-registry.ts:44</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Registers a type with a name so
+										the name can be used in a <a href="../classes/_types_recursive_.recursivetype.html">RecursiveType</a>.
+										Due to implementation limitations,
+									the type must be one of the following types:</p>
+									<ul>
+										<li><a href="../classes/_types_array_.arraytype.html">ArrayType</a></li>
+										<li><a href="../classes/_types_map_.maptype.html">MapType</a></li>
+										<li><a href="../classes/_types_set_.settype.html">SetType</a></li>
+										<li><a href="../classes/_types_struct_.structtype.html">StructType</a></li>
+										<li><a href="../classes/_types_tuple_.tupletype.html">TupleType</a></li>
+									</ul>
+								</div>
+								<p>If you need to use a different type, wrap it
+								in a single-field <a href="../classes/_types_struct_.structtype.html">StructType</a>.</p>
+								<p>Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
+<span class="hljs-keyword">let</span> treeType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'tree-node'</span>)
+sb.registerType({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">left</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType),
+    <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
+    <span class="hljs-attr">right</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType)
+  }),
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'tree-node'</span> <span class="hljs-comment">//name must match name passed to RecursiveType constructor</span>
+})
+</code></pre>
 								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>registerType</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Registers a type under a name so
-											the name can be used in a <a href="../classes/_types_recursive_.recursivetype.html">RecursiveType</a>.
-											The type must be either an <a href="../classes/_types_array_.arraytype.html">ArrayType</a>,
-											<a href="../classes/_types_map_.maptype.html">MapType</a>, <a href="../classes/_types_set_.settype.html">SetType</a>, <a href="../classes/_types_struct_.structtype.html">StructType</a>,
-											or <a href="../classes/_types_tuple_.tupletype.html">TupleType</a> due to implementation limitations.
-											If you need to use a different type, wrap it
-										in a single-field <a href="../classes/_types_struct_.structtype.html">StructType</a>.</p>
-									</dd>
 									<dt>throws</dt>
-									<dd><p>{Error} If a type is already registered under the name</p>
+									<dd><p>If a type is already registered under the name</p>
 									</dd>
 								</dl>
 							</div>
@@ -229,9 +228,15 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The name to associate it with</p>
+											</div>
 										</li>
 										<li class="tsd-parameter">
 											<h5>type<span class="tsd-signature-symbol">: </span><a href="../classes/_types_tuple_.tupletype.html" class="tsd-signature-type">TupleType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_array_.arraytype.html" class="tsd-signature-type">ArrayType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_set_.settype.html" class="tsd-signature-type">SetType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_map_.maptype.html" class="tsd-signature-type">MapType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_struct_.structtype.html" class="tsd-signature-type">StructType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The type to register</p>
+											</div>
 										</li>
 									</ul>
 								</li>

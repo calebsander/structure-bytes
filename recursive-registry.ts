@@ -1,22 +1,45 @@
 import assert from './lib/assert'
 import {RegisterableType, TypeAndName} from './recursive-registry-type'
-import {ArrayType, MapType, SetType, StructType, TupleType} from './types'
+import ArrayType from './types/array'
+import MapType from './types/map'
+import SetType from './types/set'
+import StructType from './types/struct'
+import TupleType from './types/tuple'
 
 //A map of names of recursive types to their types
 const registeredTypes = new Map<string, RegisterableType>()
-/** @function
- * @name registerType
- * @desc Registers a type under a name so
- * the name can be used in a {@link RecursiveType}.
- * The type must be either an {@link ArrayType},
- * {@link MapType}, {@link SetType}, {@link StructType},
- * or {@link TupleType} due to implementation limitations.
+
+/**
+ * Registers a type with a name so
+ * the name can be used in a [[RecursiveType]].
+ * Due to implementation limitations,
+ * the type must be one of the following types:
+ * - [[ArrayType]]
+ * - [[MapType]]
+ * - [[SetType]]
+ * - [[StructType]]
+ * - [[TupleType]]
+ *
  * If you need to use a different type, wrap it
- * in a single-field {@link StructType}.
- * @throws {Error} If a type is already registered under the name
- * @param {{type, name}} params
- * @param {Type} params.type The type to register
- * @param {string} params.name The name to associate it with
+ * in a single-field [[StructType]].
+ *
+ * Example:
+ * ````javascript
+ * //A binary tree of unsigned bytes
+ * let treeType = new sb.RecursiveType('tree-node')
+ * sb.registerType({
+ *   type: new sb.StructType({
+ *     left: new sb.OptionalType(treeType),
+ *     value: new sb.UnsignedByteType,
+ *     right: new sb.OptionalType(treeType)
+ *   }),
+ *   name: 'tree-node' //name must match name passed to RecursiveType constructor
+ * })
+ * ````
+ *
+ * @param type The type to register
+ * @param name The name to associate it with
+ * @throws If a type is already registered under the name
  */
 export function registerType({type, name}: TypeAndName): void {
 	assert.instanceOf(type, [ //these are the only types capable of being recursive and having a known base value, e.g. [] or new Map
@@ -30,13 +53,12 @@ export function registerType({type, name}: TypeAndName): void {
 	assert(!isRegistered(name), '"' + name + '" is already a registered type')
 	registeredTypes.set(name, type)
 }
-/** @function
- * @name getType
- * @desc Gets the recursive type
- * registered under the specified name
- * @throws {Error} If no type is registered with that name
- * @param {string} name The name of the registered type
- * @return {Type} The registered type
+/**
+ * Gets the recursive type
+ * registered with the specified name
+ * @param name The name of the registered type
+ * @return The registered type
+ * @throws If no type is registered with that name
  */
 export function getType(name: string): RegisterableType {
 	assert.instanceOf(name, String)
@@ -44,13 +66,12 @@ export function getType(name: string): RegisterableType {
 	if (!type) throw new Error('"' + name + '" is not a registered type')
 	return type
 }
-/** @function
- * @name isRegistered
- * @desc Returns whether the specified name
+/**
+ * Returns whether the specified name
  * already has a recursive type registered with it
- * @param {string} name The name to check
- * @return {boolean} Whether the name has been mapped to a type
- * @see registerType
+ * from a call to [[registerType]]
+ * @param name The name to check
+ * @return Whether the name has been mapped to a type
  */
 export function isRegistered(name: string): boolean {
 	return registeredTypes.has(name)

@@ -68,13 +68,13 @@ function pad(str: string, digits: number): string {
 }
 //Returns an object to which keys are added when reading an instance of the specified type
 //This allows the reference to the read value to be used before it is populated
-function makeBaseValue(type: RegisterableType, count?: number) {
-	switch (type.constructor) {
+function makeBaseValue(readType: RegisterableType, count?: number) {
+	switch (readType.constructor) {
 		case t.ArrayType: {
 			return new Array(count)
 		}
 		case t.TupleType: {
-			return new Array((type as t.TupleType<any>).length)
+			return new Array((readType as t.TupleType<any>).length)
 		}
 		case t.MapType: {
 			return new Map
@@ -86,7 +86,7 @@ function makeBaseValue(type: RegisterableType, count?: number) {
 			return {}
 		}
 		/*istanbul ignore next*/
-		default: throw new Error('Invalid type for base value: ' + inspect(type))
+		default: throw new Error('Invalid type for base value: ' + inspect(readType))
 	}
 }
 interface ReadBooleansParams {
@@ -97,9 +97,9 @@ interface ReadBooleansParams {
 }
 //Counterpart for writeBooleans() in structure-types.ts
 function readBooleans({buffer, offset, count, baseValue}: ReadBooleansParams): ReadResult<boolean[]> {
-	const value = baseValue || new Array<boolean>(count)
-	const incompleteBytes = modEight(value.length)
-	const bytes = dividedByEight(value.length)
+	const readValue = baseValue || new Array<boolean>(count)
+	const incompleteBytes = modEight(readValue.length)
+	const bytes = dividedByEight(readValue.length)
 	let byteLength: number
 	if (incompleteBytes) byteLength = bytes + 1
 	else byteLength = bytes
@@ -109,26 +109,26 @@ function readBooleans({buffer, offset, count, baseValue}: ReadBooleansParams): R
 		const byte = castBuffer[offset + i]
 		for (let bit = 0; bit < 8; bit++) {
 			const index = i * 8 + bit
-			if (index === value.length) break
-			value[index] = !!(byte & (1 << modEight(~modEight(bit))))
+			if (index === readValue.length) break
+			readValue[index] = !!(byte & (1 << modEight(~modEight(bit))))
 		}
 	}
-	return {value, length: byteLength}
+	return {value: readValue, length: byteLength}
 }
 //Requires that a byte by 0x00 or 0xFF and returns its boolean value
 function readBooleanByte(buffer: ArrayBuffer, offset: number): ReadResult<boolean> {
 	assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
-	let value: boolean
+	let readValue: boolean
 	const readByte = new Uint8Array(buffer)[offset]
 	switch (readByte) {
 		case 0x00:
 		case 0xFF:
-			value = Boolean(readByte)
+			readValue = Boolean(readByte)
 			break
 		default:
 			throw new Error('0x' + pad(readByte.toString(16), 2) + ' is an invalid Boolean value')
 	}
-	return {value, length: 1}
+	return {value: readValue, length: 1}
 }
 //Map of value buffers to maps of indices to read values for recursive types
 const readRecursives = new WeakMap<ArrayBuffer, Map<number, any>>()
@@ -147,26 +147,26 @@ const pointerReads = new WeakMap<ArrayBuffer, Map<t.PointerType<any>, Map<number
 	Pointer start refers to the position in the buffer where the root value starts
 	(pointers will be relative to this location)
 */
-function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueReadParams<E>): ReadResult<E> {
-	let value, length: number
-	switch (type.constructor) {
+function consumeValue<E>({buffer, pointerStart, offset, type: readType, baseValue}: ValueReadParams<E>): ReadResult<E> {
+	let readValue, length: number
+	switch (readType.constructor) {
 		case t.ByteType: {
 			length = 1
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			value = new Int8Array(buffer)[offset] //endianness doesn't matter because there is only 1 byte
+			readValue = new Int8Array(buffer)[offset] //endianness doesn't matter because there is only 1 byte
 			break
 		}
 		case t.ShortType: {
 			length = 2
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
 			const dataView = new DataView(buffer)
-			value = dataView.getInt16(offset)
+			readValue = dataView.getInt16(offset)
 			break
 		}
 		case t.IntType: {
 			length = 4
 			const dataView = new DataView(buffer)
-			value = dataView.getInt32(offset)
+			readValue = dataView.getInt32(offset)
 			break
 		}
 		case t.LongType:
@@ -176,8 +176,8 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			const dataView = new DataView(buffer)
 			const upper = dataView.getInt32(offset)
 			const lower = dataView.getUint32(offset + 4)
-			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower))
-			if (type.constructor === t.DateType) value = new Date(Number(value))
+			readValue = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower))
+			if (readType.constructor === t.DateType) readValue = new Date(Number(readValue))
 			break
 		}
 		case t.BigIntType: {
@@ -187,32 +187,32 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
 			const dataView = new DataView(buffer)
 			if (bytes) {
-				value = String(dataView.getInt8(offset + length))
+				readValue = String(dataView.getInt8(offset + length))
 				for (let byte = 1; byte < bytes; byte++) {
-					value = strint.mul(value, strint.BYTE_SHIFT) //after the first byte, shift everything left one byte before adding
-					value = strint.add(value, String(dataView.getUint8(offset + length + byte)))
+					readValue = strint.mul(readValue, strint.BYTE_SHIFT) //after the first byte, shift everything left one byte before adding
+					readValue = strint.add(readValue, String(dataView.getUint8(offset + length + byte)))
 				}
 			}
-			else value = '0'
+			else readValue = '0'
 			length += bytes
 			break
 		}
 		case t.UnsignedByteType: {
 			length = 1
 			assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
-			value = new Uint8Array(buffer)[offset] //endianness doesn't matter because there is only 1 byte
+			readValue = new Uint8Array(buffer)[offset] //endianness doesn't matter because there is only 1 byte
 			break
 		}
 		case t.UnsignedShortType: {
 			length = 2
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			value = new DataView(buffer).getUint16(offset)
+			readValue = new DataView(buffer).getUint16(offset)
 			break
 		}
 		case t.UnsignedIntType: {
 			length = 4
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			value = new DataView(buffer).getUint32(offset)
+			readValue = new DataView(buffer).getUint32(offset)
 			break
 		}
 		case t.UnsignedLongType: {
@@ -221,7 +221,7 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			const dataView = new DataView(buffer)
 			const upper = dataView.getUint32(offset)
 			const lower = dataView.getUint32(offset + 4)
-			value = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower))
+			readValue = strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower))
 			break
 		}
 		case t.BigUnsignedIntType: {
@@ -230,15 +230,15 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			;({length} = lengthInt)
 			assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
 			const castBuffer = new Uint8Array(buffer)
-			value = '0'
+			readValue = '0'
 			for (let byte = 0; byte < bytes; byte++, length++) {
-				if (byte) value = strint.mul(value, strint.BYTE_SHIFT) //after the first byte, shift everything left one byte before adding
-				value = strint.add(value, String(castBuffer[offset + length]))
+				if (byte) readValue = strint.mul(readValue, strint.BYTE_SHIFT) //after the first byte, shift everything left one byte before adding
+				readValue = strint.add(readValue, String(castBuffer[offset + length]))
 			}
 			break
 		}
 		case t.FlexUnsignedIntType: {
-			({value, length} = readFlexInt(buffer, offset))
+			({value: readValue, length} = readFlexInt(buffer, offset))
 			break
 		}
 		case t.DayType: {
@@ -246,29 +246,29 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
 			const dataView = new DataView(buffer)
 			const day = (dataView.getInt16(offset) << 8) | dataView.getUint8(offset + 2)
-			value = date.fromUTC(day * date.MILLIS_PER_DAY)
+			readValue = date.fromUTC(day * date.MILLIS_PER_DAY)
 			break
 		}
 		case t.TimeType: {
 			length = 4
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			value = new Date(new DataView(buffer).getUint32(offset))
+			readValue = new Date(new DataView(buffer).getUint32(offset))
 			break
 		}
 		case t.FloatType: {
 			length = 4
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			value = new DataView(buffer).getFloat32(offset)
+			readValue = new DataView(buffer).getFloat32(offset)
 			break
 		}
 		case t.DoubleType: {
 			length = 8
 			assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-			value = new DataView(buffer).getFloat64(offset)
+			readValue = new DataView(buffer).getFloat64(offset)
 			break
 		}
 		case t.BooleanType: {
-			({value, length} = readBooleanByte(buffer, offset))
+			({value: readValue, length} = readBooleanByte(buffer, offset))
 			break
 		}
 		case t.BooleanArrayType: {
@@ -276,17 +276,21 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			;({length} = arrayLength)
 			const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value, baseValue})
 			length += booleans.length
-			;({value} = booleans)
+			readValue = booleans.value
 			break
 		}
 		case t.BooleanTupleType: {
-			({value, length} = readBooleans({buffer, offset, count: (type as any as t.BooleanTupleType).length, baseValue}))
+			({value: readValue, length} = readBooleans({
+				buffer,
+				offset,
+				count: (readType as any as t.BooleanTupleType).length, baseValue
+			}))
 			break
 		}
 		case t.CharType: {
 			assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
-			value = bufferString.toString(new Uint8Array(buffer).subarray(offset, offset + 4))[0] //UTF-8 codepoint can't be more than 4 bytes
-			length = bufferString.fromString(value).byteLength
+			readValue = bufferString.toString(new Uint8Array(buffer).subarray(offset, offset + 4))[0] //UTF-8 codepoint can't be more than 4 bytes
+			length = bufferString.fromString(readValue).byteLength
 			break
 		}
 		case t.StringType: {
@@ -295,7 +299,7 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 				assert(buffer.byteLength > offset + length, NOT_LONG_ENOUGH)
 				if (!castBuffer[offset + length]) break
 			}
-			value = bufferString.toString(new Uint8Array(buffer).subarray(offset, offset + length))
+			readValue = bufferString.toString(new Uint8Array(buffer).subarray(offset, offset + length))
 			length++ //account for null byte
 			break
 		}
@@ -304,28 +308,28 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			;({length} = octetsLength)
 			const finalLength = length + octetsLength.value
 			assert(buffer.byteLength >= offset + finalLength, NOT_LONG_ENOUGH)
-			value = buffer.slice(offset + length, offset + finalLength)
+			readValue = buffer.slice(offset + length, offset + finalLength)
 			length = finalLength
 			break
 		}
 		case t.TupleType: {
 			length = 0
-			const castType = type as any as t.TupleType<any>
-			value = baseValue || makeBaseValue(castType)
+			const castType = readType as any as t.TupleType<any>
+			readValue = baseValue || makeBaseValue(castType)
 			for (let i = 0; i < castType.length; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: castType.type})
 				length += element.length
-				value[i] = element.value
+				readValue[i] = element.value
 			}
 			break
 		}
 		case t.StructType: {
 			length = 0
-			const castType = type as any as t.StructType<any>
-			value = baseValue || makeBaseValue(castType)
+			const castType = readType as any as t.StructType<any>
+			readValue = baseValue || makeBaseValue(castType)
 			for (const field of castType.fields) {
 				const readField = consumeValue({buffer, pointerStart, offset: offset + length, type: field.type})
-				value[field.name] = readField.value
+				readValue[field.name] = readField.value
 				length += readField.length
 			}
 			break
@@ -334,12 +338,12 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			const arrayLengthInt = readFlexInt(buffer, offset)
 			const arrayLength = arrayLengthInt.value
 			;({length} = arrayLengthInt)
-			const castType = type as any as t.ArrayType<any>
-			value = baseValue || makeBaseValue(castType, arrayLength)
+			const castType = readType as any as t.ArrayType<any>
+			readValue = baseValue || makeBaseValue(castType, arrayLength)
 			for (let i = 0; i < arrayLength; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: castType.type})
 				length += element.length
-				value[i] = element.value
+				readValue[i] = element.value
 			}
 			break
 		}
@@ -347,26 +351,26 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			const size = readFlexInt(buffer, offset)
 			const setSize = size.value
 			;({length} = size)
-			const castType = type as any as t.SetType<any>
-			value = baseValue || makeBaseValue(castType)
+			const castType = readType as any as t.SetType<any>
+			readValue = baseValue || makeBaseValue(castType)
 			for (let i = 0; i < setSize; i++) {
 				const element = consumeValue({buffer, pointerStart, offset: offset + length, type: castType.type})
 				length += element.length
-				value.add(element.value)
+				readValue.add(element.value)
 			}
 			break
 		}
 		case t.MapType: {
 			const size = readFlexInt(buffer, offset)
 			;({length} = size)
-			const castType = type as any as t.MapType<any, any>
-			value = baseValue || makeBaseValue(castType)
+			const castType = readType as any as t.MapType<any, any>
+			readValue = baseValue || makeBaseValue(castType)
 			for (let i = 0; i < size.value; i++) {
 				const keyElement = consumeValue({buffer, pointerStart, offset: offset + length, type: castType.keyType})
 				length += keyElement.length
 				const valueElement = consumeValue({buffer, pointerStart, offset: offset + length, type: castType.valueType})
 				length += valueElement.length
-				value.set(keyElement.value, valueElement.value)
+				readValue.set(keyElement.value, valueElement.value)
 			}
 			break
 		}
@@ -374,9 +378,9 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 			length = 1
 			assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const valueIndex = new Uint8Array(buffer)[offset]
-			const {values} = type as any as t.EnumType<any>
+			const {values} = readType as any as t.EnumType<any>
 			assert.between(0, valueIndex, values.length, 'Index ' + String(valueIndex) + ' is invalid')
-			value = values[valueIndex]
+			readValue = values[valueIndex]
 			break
 		}
 		case t.ChoiceType: {
@@ -387,17 +391,17 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 				buffer,
 				pointerStart,
 				offset: offset + length,
-				type: (type as any as t.ChoiceType<any>).types[typeIndex]
+				type: (readType as any as t.ChoiceType<any>).types[typeIndex]
 			})
 			length += subValue.length
-			;({value} = subValue)
+			readValue = subValue.value
 			break
 		}
 		case t.NamedChoiceType: {
 			length = 1
 			assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 			const typeIndex = new Uint8Array(buffer)[offset]
-			const castType = type as any as t.NamedChoiceType<any>
+			const castType = readType as any as t.NamedChoiceType<any>
 			const typeConstructor = castType.indexConstructors.get(typeIndex)
 			if (typeConstructor === undefined) throw new Error('Constructor index ' + String(typeIndex) + ' is invalid')
 			const constructor = constructorRegistry.get(typeConstructor.name)
@@ -409,28 +413,28 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 				baseValue: new constructor
 			})
 			length += subValue.length
-			;({value} = subValue)
+			readValue = subValue.value
 			break
 		}
 		case t.RecursiveType: {
 			let explicitValue: boolean
 			({value: explicitValue, length} = readBooleanByte(buffer, offset))
 			if (explicitValue) {
-				const subType = (type as any as t.RecursiveType<any>).type
-				value = makeBaseValue(subType)
+				const subType = (readType as any as t.RecursiveType<any>).type
+				readValue = makeBaseValue(subType)
 				let bufferReadRecursives = readRecursives.get(buffer)
 				if (!bufferReadRecursives) {
 					bufferReadRecursives = new Map
 					readRecursives.set(buffer, bufferReadRecursives)
 				}
-				bufferReadRecursives.set(offset + length, value)
-				length += consumeValue({buffer, pointerStart, offset: offset + length, type: subType, baseValue: value}).length
+				bufferReadRecursives.set(offset + length, readValue)
+				length += consumeValue({buffer, pointerStart, offset: offset + length, type: subType, baseValue: readValue}).length
 			}
 			else {
 				const indexOffset = readFlexInt(buffer, offset + length)
 				const target = offset + length - indexOffset.value
-				value = (readRecursives.get(buffer) as Map<number, any>).get(target)
-				assert(value, 'Cannot find target at ' + String(target))
+				readValue = (readRecursives.get(buffer) as Map<number, any>).get(target)
+				assert(readValue, 'Cannot find target at ' + String(target))
 				length += indexOffset.length
 			}
 			break
@@ -443,12 +447,12 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 					buffer,
 					pointerStart,
 					offset: offset + length,
-					type: (type as any as t.OptionalType<any>).type
+					type: (readType as any as t.OptionalType<any>).type
 				})
 				length += subValue.length
-				;({value} = subValue)
+				readValue = subValue.value
 			}
-			else value = null
+			else readValue = null
 			break
 		}
 		case t.PointerType: {
@@ -459,29 +463,29 @@ function consumeValue<E>({buffer, pointerStart, offset, type, baseValue}: ValueR
 				bufferPointerReads = new Map
 				pointerReads.set(buffer, bufferPointerReads)
 			}
-			const castType = type as any as t.PointerType<any>
+			const castType = readType as any as t.PointerType<any>
 			let bufferTypePointerReads = bufferPointerReads.get(castType)
 			if (!bufferTypePointerReads) {
 				bufferTypePointerReads = new Map
 				bufferPointerReads.set(castType, bufferTypePointerReads)
 			}
 			const location = new DataView(buffer).getUint32(offset)
-			if (bufferTypePointerReads.has(location)) value = bufferTypePointerReads.get(location)
+			if (bufferTypePointerReads.has(location)) readValue = bufferTypePointerReads.get(location)
 			else {
-				({value} = consumeValue({
+				readValue = consumeValue({
 					buffer,
 					pointerStart,
 					offset: pointerStart + location,
 					type: castType.type
-				}))
-				bufferTypePointerReads.set(location, value)
+				}).value
+				bufferTypePointerReads.set(location, readValue)
 			}
 			break
 		}
 		default:
-			throw new Error('Not a structure type: ' + inspect(type))
+			throw new Error('Not a structure type: ' + inspect(readType))
 	}
-	return {value, length}
+	return {value: readValue, length}
 }
 //Number of random characters in synthetic recursive type names
 const RECURSIVE_NAME_LENGTH = 16
@@ -494,7 +498,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 	const castBuffer = new Uint8Array(typeBuffer)
 	assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH) //make sure there is a type byte
 	const typeByte = castBuffer[offset]
-	let value: t.Type<any>, length = 1 //going to be at least one type byte
+	let readType: t.Type<any>, length = 1 //going to be at least one type byte
 	const singleByteType = SINGLE_BYTE_TYPE_BYTES.get(typeByte)
 	if (singleByteType) return {value: new singleByteType, length}
 	switch (typeByte) {
@@ -502,17 +506,17 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
 			const tupleLength = castBuffer[offset + length]
 			length++
-			value = new t.BooleanTupleType(tupleLength)
+			readType = new t.BooleanTupleType(tupleLength)
 			break
 		}
 		case t.TupleType._value: {
-			const type = consumeType(typeBuffer, offset + length)
-			length += type.length
+			const elementType = consumeType(typeBuffer, offset + length)
+			length += elementType.length
 			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
 			const tupleLength = castBuffer[offset + length]
 			length++
-			value = new t.TupleType({
-				type: type.value,
+			readType = new t.TupleType({
+				type: elementType.value,
 				length: tupleLength
 			})
 			break
@@ -531,23 +535,23 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 				assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
 				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
 				length += nameLength
-				const type = consumeType(typeBuffer, nameEnd)
-				fields[name] = type.value
-				length += type.length
+				const fieldType = consumeType(typeBuffer, nameEnd)
+				fields[name] = fieldType.value
+				length += fieldType.length
 			}
-			value = new t.StructType(fields)
+			readType = new t.StructType(fields)
 			break
 		}
 		case t.ArrayType._value: {
-			const type = consumeType(typeBuffer, offset + length)
-			length += type.length
-			value = new t.ArrayType(type.value)
+			const elementType = consumeType(typeBuffer, offset + length)
+			length += elementType.length
+			readType = new t.ArrayType(elementType.value)
 			break
 		}
 		case t.SetType._value: {
-			const type = consumeType(typeBuffer, offset + length)
-			length += type.length
-			value = new t.SetType(type.value)
+			const elementType = consumeType(typeBuffer, offset + length)
+			length += elementType.length
+			readType = new t.SetType(elementType.value)
 			break
 		}
 		case t.MapType._value: {
@@ -555,12 +559,12 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			length += keyType.length
 			const valueType = consumeType(typeBuffer, offset + length)
 			length += valueType.length
-			value = new t.MapType(keyType.value, valueType.value)
+			readType = new t.MapType(keyType.value, valueType.value)
 			break
 		}
 		case t.EnumType._value: {
-			const type = consumeType(typeBuffer, offset + length)
-			length += type.length
+			const valueType = consumeType(typeBuffer, offset + length)
+			length += valueType.length
 			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
 			const valueCount = castBuffer[offset + length]
 			length++
@@ -571,13 +575,13 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 					buffer: typeBuffer,
 					pointerStart: valueLocation,
 					offset: valueLocation,
-					type: type.value
+					type: valueType.value
 				})
 				length += enumValue.length
 				values[i] = enumValue.value
 			}
-			value = new t.EnumType({
-				type: type.value,
+			readType = new t.EnumType({
+				type: valueType.value,
 				values
 			})
 			break
@@ -588,11 +592,11 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			length++
 			const types = new Array(typeCount)
 			for (let i = 0; i < typeCount; i++) {
-				const type = consumeType(typeBuffer, offset + length)
-				types[i] = type.value
-				length += type.length
+				const possibleType = consumeType(typeBuffer, offset + length)
+				types[i] = possibleType.value
+				length += possibleType.length
 			}
-			value = new t.ChoiceType(types)
+			readType = new t.ChoiceType(types)
 			break
 		}
 		case t.NamedChoiceType._value: {
@@ -609,12 +613,12 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 				assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
 				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
 				length += nameLength
-				const type = consumeType(typeBuffer, nameEnd)
-				if (!(type.value instanceof t.StructType)) throw new Error('Not a StructType: ' + inspect(type.value))
-				constructorTypes.set(constructorRegistry.get(name), type.value)
-				length += type.length
+				const possibleType = consumeType(typeBuffer, nameEnd)
+				if (!(possibleType.value instanceof t.StructType)) throw new Error('Not a StructType: ' + inspect(possibleType.value))
+				constructorTypes.set(constructorRegistry.get(name), possibleType.value)
+				length += possibleType.length
 			}
-			value = new t.NamedChoiceType(constructorTypes)
+			readType = new t.NamedChoiceType(constructorTypes)
 			break
 		}
 		case t.RecursiveType._value: {
@@ -636,84 +640,118 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 					}
 				} while (recursiveRegistry.isRegistered(recursiveName)) //make sure name doesn't conflict
 				bufferRecursiveNames.set(id, recursiveName) //register type before reading type definition so it can refer to this recursive type
-				const type = consumeType(typeBuffer, offset + length)
-				length += type.length
+				const subType = consumeType(typeBuffer, offset + length)
+				length += subType.length
 				recursiveRegistry.registerType({
-					type: type.value as RegisterableType,
+					type: subType.value as RegisterableType,
 					name: recursiveName
 				})
 			}
 			/*If we have already read the type, then we are either reading a recursive type without the type def
 			  or we are reading a repeated type (in which case we don't have to care about the length of the read)
 			  so we can safely reuse old value*/
-			value = new t.RecursiveType(recursiveName)
+			readType = new t.RecursiveType(recursiveName)
 			break
 		}
 		case t.OptionalType._value: {
-			const type = consumeType(typeBuffer, offset + length)
-			length += type.length
-			value = new t.OptionalType(type.value)
+			const subType = consumeType(typeBuffer, offset + length)
+			length += subType.length
+			readType = new t.OptionalType(subType.value)
 			break
 		}
 		case t.PointerType._value: {
-			const type = consumeType(typeBuffer, offset + length)
-			length += type.length
-			value = new t.PointerType(type.value)
+			const subType = consumeType(typeBuffer, offset + length)
+			length += subType.length
+			readType = new t.PointerType(subType.value)
 			break
 		}
 		case REPEATED_TYPE: {
 			const locationOffset = readFlexInt(typeBuffer, offset + length)
-			;({value} = consumeType(typeBuffer, offset + length - locationOffset.value))
+			readType = consumeType(typeBuffer, offset + length - locationOffset.value).value
 			length += locationOffset.length
 			break
 		}
 		default:
 			throw new Error('No such type: 0x' + pad(castBuffer[offset].toString(16), 2))
 	}
-	return {value, length}
+	return {value: readType, length}
 }
-/** @function
- * @private
- */
 export {consumeType as _consumeType}
-/** @function
- * @desc Reads a type from its written buffer
- * @param {external:Buffer} typeBuffer
- * The buffer containing the type bytes
- * @param {boolean} [fullBuffer=true] Whether to assert that
- * the whole buffer was read. In most use cases, should be omitted.
- * @return {Type} The type that was read
+/**
+ * Deserializes a type, i.e. takes a buffer
+ * containing its binary form and creates the type object.
+ * The inverse of calling [[Type.toBuffer]].
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.ArrayType(
+ *   new sb.FlexUnsignedIntType
+ * )
+ * let typeBuffer = type.toBuffer()
+ * let readType = sb.r.type(typeBuffer)
+ * console.log(readType) // ArrayType { type: FlexUnsignedIntType {} }
+ * ````
+ *
+ * @param typeBuffer The buffer containing the type bytes
+ * @param fullBuffer Whether to assert that the whole buffer was read.
+ * In most use cases, this argument should be be omitted.
+ * @return The type that was read
  */
-function readTypeBuffer(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
+export function type(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
-	const {value, length} = consumeType(typeBuffer, 0)
+	const {value: readValue, length} = consumeType(typeBuffer, 0)
 	if (fullBuffer) assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
-	return value
+	return readValue
 }
-export {readTypeBuffer as type}
+/**
+ * @param E The type of value to be read
+ */
 export interface ValueParams<E> {
+	/**
+	 * The buffer containing the value bytes
+	 */
 	buffer: ArrayBuffer
+	/**
+	 * The type (or an equivalent one) that wrote the value bytes
+	 */
 	type: t.Type<E>
+	/**
+	 * The index in the buffer to start reading from;
+	 * defaults to `0`
+	 */
 	offset?: number
 }
-/** @function
- * @desc Reads a value from its written buffer.
+/**
+ * Deserializes a value, i.e. takes
+ * the type that serialized it and a buffer
+ * containing its binary form and returns the value.
  * Requires the type to be known.
- * @param {{buffer, type, offset}} params
- * @param {external:Buffer} params.buffer
- * The buffer containing the value bytes
- * @param {Type} params.type
- * The type that was used to write the value bytes
- * @param {number} [params.offset=0]
- * The offset in the buffer to start reading at
+ *
+ * Example:
+ * ````javascript
+ * let type = new sb.ArrayType(
+ *   new sb.FlexUnsignedIntType
+ * )
+ * let value = [0, 10, 100, 1000, 10000]
+ * let buffer = type.valueBuffer(value)
+ * let readValue = sb.r.value({type, buffer})
+ * console.log(readValue) // [ 0, 10, 100, 1000, 10000 ]
+ * ````
+ *
+ * @param E The type of value to be read
  * @return The value that was read
  */
-function readValueBuffer<E>({buffer, type, offset = 0}: ValueParams<E>): E {
+export function value<E>(params: ValueParams<E>): E {
+	const {buffer, type: readType, offset = 0} = params
 	assert.instanceOf(buffer, ArrayBuffer)
-	assert.instanceOf(type, AbstractType)
+	assert.instanceOf(readType, AbstractType)
 	assert.instanceOf(offset, Number)
-	const {value} = consumeValue({buffer, offset, type, pointerStart: offset})
+	const readValue = consumeValue({
+		buffer,
+		offset,
+		type: readType,
+		pointerStart: offset
+	}).value
 	//no length validation because bytes being pointed to don't get counted in the length
-	return value
+	return readValue
 }
-export {readValueBuffer as value}
