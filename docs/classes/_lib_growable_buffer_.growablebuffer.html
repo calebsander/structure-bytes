@@ -72,20 +72,12 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A {@link StringBuilder}-like object which
-							automatically grows its internal buffer
-							as bytes are added.
-							Uses an [ArrayBuffer]{@link external:ArrayBuffer}
-							to store the binary data.
-							Used extensively throughout the project
-						for building up buffers.</p>
+						<p>A <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html"><code>StringBuilder</code></a>-like
+							object which automatically grows its internal buffer as bytes are added.
+							Uses an <code>ArrayBuffer</code> to store the binary data.
+							Used extensively throughout the project for building up buffers.
+						See <a href="_lib_growable_buffer_.growablebuffer.html#grow">GrowableBuffer.grow</a> for an explanation of the growing process.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>see</dt>
-						<dd><p>GrowableBuffer#grow
-							for explanation of the growing process</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -147,7 +139,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:18</li>
+									<li>Defined in lib/growable-buffer.ts:14</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -156,6 +148,12 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> initialLength: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;INITIAL_LENGTH</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The number of bytes in the internal buffer at start
+											(defaults to 10)</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a></h4>
@@ -171,7 +169,7 @@
 					<div class="tsd-signature tsd-kind-icon">buffer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBuffer</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/growable-buffer.ts:17</li>
+							<li>Defined in lib/growable-buffer.ts:13</li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +179,7 @@
 					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/growable-buffer.ts:18</li>
+							<li>Defined in lib/growable-buffer.ts:14</li>
 						</ul>
 					</aside>
 				</section>
@@ -198,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:40</li>
+									<li>Defined in lib/growable-buffer.ts:35</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -206,13 +204,6 @@
 									<p>The current number of bytes being occupied.
 									Note that this is NOT the size of the internal buffer.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>readonly</dt>
-									<dd></dd>
-									<dt>type</dt>
-									<dd><p>{number}</p>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
@@ -228,20 +219,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:154</li>
+									<li>Defined in lib/growable-buffer.ts:142</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Gets the internal buffer to avoid calling {@link ArrayBuffer#slice}</p>
+									<p>Gets the internal buffer to avoid calling <code>ArrayBuffer.slice()</code></p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>readonly</dt>
-									<dd></dd>
-									<dt>type</dt>
-									<dd><p>{external:ArrayBuffer}</p>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
 						</li>
@@ -260,7 +244,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:119</li>
+									<li>Defined in lib/growable-buffer.ts:110</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -279,7 +263,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-							<p>{@link this}</p>
 						</li>
 					</ul>
 				</section>
@@ -293,7 +276,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:139</li>
+									<li>Defined in lib/growable-buffer.ts:129</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -308,14 +291,13 @@
 								<li>
 									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The bytes to add
-											the byte at position {@link i} in <a href="_lib_growable_buffer_.growablebuffer.html#buffer">buffer</a> will be written to
-										position {@link this.length+i} of the <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>)</p>
+										<p>The bytes to add.
+											The byte at position <code>i</code> in <code>buffer</code> will be written to
+										position <code>this.length + i</code> of the <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>)</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-							<p>{@link this}</p>
 						</li>
 					</ul>
 				</section>
@@ -329,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:108</li>
+									<li>Defined in lib/growable-buffer.ts:100</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -349,7 +331,7 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-							<p>the unsigned byte at the specified index
+							<p>The unsigned byte at the specified index
 							of the internal buffer</p>
 						</li>
 					</ul>
@@ -364,7 +346,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:56</li>
+									<li>Defined in lib/growable-buffer.ts:50</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -372,11 +354,11 @@
 									<p>Grow the internal buffer to hold
 										at least the specified number of bytes.
 										If the internal buffer is too small,
-										it will be resized to {@link size*2}.
+										it will be resized to <code>size * 2</code>.
 										If the buffer is already sufficiently long, nothing happens.
 										This is called internally when needed,
 										but if a program knows it will need a lot of space eventually,
-									this method can be called explicitly.</p>
+									this method can be called explicitly to avoid unnecessary copying.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -390,7 +372,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-							<p>{@link this}</p>
 						</li>
 					</ul>
 				</section>
@@ -404,7 +385,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:74</li>
+									<li>Defined in lib/growable-buffer.ts:67</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -431,7 +412,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-							<p>{@link this}</p>
 						</li>
 					</ul>
 				</section>
@@ -445,7 +425,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:93</li>
+									<li>Defined in lib/growable-buffer.ts:85</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -466,14 +446,13 @@
 								<li>
 									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The values to write, starting at {@link index}
-											(the byte at position {@link i} in <a href="_lib_growable_buffer_.growablebuffer.html#buffer">buffer</a> will be written to
-										position {@link index+i} of the <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>)</p>
+										<p>The values to write, starting at <code>index</code>
+											(the byte at position <code>i</code> in <code>buffer</code> will be written to
+										position <code>index + i</code> of the <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>)</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
-							<p>{@link this}</p>
 						</li>
 					</ul>
 				</section>
@@ -487,17 +466,16 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:162</li>
+									<li>Defined in lib/growable-buffer.ts:149</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Gets the occupied portion in {@link ArrayBuffer} form.</p>
+									<p>Gets the occupied portion in <code>ArrayBuffer</code> form</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
-							<p>The internal buffer trimmed to
-							[this.length]{@link GrowableBuffer#length}</p>
+							<p>The internal buffer trimmed to <code>this.length</code></p>
 						</li>
 					</ul>
 				</section>

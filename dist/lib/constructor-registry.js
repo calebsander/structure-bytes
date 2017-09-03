@@ -1,16 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const registeredConstructors = new Map();
-/** @function
- * @name get
- * @desc Gets a constructor function
- * with the specified name. Multiple
- * invocations of this function with
+/**
+ * Gets a constructor function with the specified name.
+ * Multiple invocations of this function with
  * the same name produce the same function.
- * @param {Type} constructorName The name of the constructor
- * @return {constructor} A function that can be used
- * as a constructor and has the desired name
- * @private
+ * @param constructorName The name of the resulting constructor
+ * @return A function that can be used as a constructor and has the desired name
  */
 function get(constructorName) {
     const constructor = registeredConstructors.get(constructorName);

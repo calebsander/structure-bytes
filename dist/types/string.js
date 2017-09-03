@@ -33,9 +33,9 @@ class StringType extends absolute_1.default {
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, String);
-        const valueBuffer = bufferString.fromString(value);
-        buffer.addAll(valueBuffer);
-        buffer.add(0); //add a null byte to indicate end
+        buffer
+            .addAll(bufferString.fromString(value))
+            .add(0); //add a null byte to indicate end
     }
 }
 exports.default = StringType;

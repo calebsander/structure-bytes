@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * See [[FlexUnsignedIntType]] for an explanation
+ * of the `flexInt` format
+ */
 const assert_1 = require("./assert");
 function possibleValueCount(bytes) {
     const usableBits = 7 * bytes;
@@ -8,13 +12,14 @@ function possibleValueCount(bytes) {
 const UPPER_BOUNDS = new Map(); //mapping of numbers of bytes to the exclusive upper bound on numbers in the range
 {
     let cumulativeValues = 0;
-    let bytes = 0;
-    while (cumulativeValues <= Number.MAX_SAFE_INTEGER) {
-        UPPER_BOUNDS.set(bytes, cumulativeValues);
-        bytes++;
+    let bytes = 1;
+    while (true) {
         cumulativeValues += possibleValueCount(bytes);
+        UPPER_BOUNDS.set(bytes, cumulativeValues);
+        if (cumulativeValues > Number.MAX_SAFE_INTEGER)
+            break;
+        bytes++;
     }
-    UPPER_BOUNDS.set(bytes, cumulativeValues);
 }
 //Mapping of the number of leading ones in the first byte's mask to the number of bytes
 const NUMBER_OF_BYTES = new Map();
@@ -22,29 +27,30 @@ const NUMBER_OF_BYTES = new Map();
 //Goes 0b00000000, 0b10000000, 0b11000000, etc.
 const BYTE_MASKS = new Map();
 {
-    let mask = 0;
-    let bitToMaskNext = 7; //0 is least significant bit, 7 is most significant bit
+    let mask = -256; //0b111...100000000 in 2's complement
     for (const bytes of UPPER_BOUNDS.keys()) {
-        if (!bytes)
-            continue; //should never be writing with 0 bytes
-        BYTE_MASKS.set(bytes, mask);
+        BYTE_MASKS.set(bytes, mask & 0xFF);
         NUMBER_OF_BYTES.set(bytes - 1, bytes);
-        mask |= 1 << bitToMaskNext;
-        bitToMaskNext--;
+        mask >>= 1; //converts the most significant 0 to a 1
     }
 }
+/**
+ * Represents the input by its unique `flexInt` format
+ * @param value A non-negative JavaScript integer value
+ * @return An `ArrayBuffer` containing 1 to 8 bytes
+ */
 function makeValueBuffer(value) {
     assert_1.default.integer(value);
     assert_1.default(value >= 0, String(value) + ' is negative');
     const bytes = (() => {
         for (const [byteCount, maxValue] of UPPER_BOUNDS) {
-            if (maxValue > value)
+            if (value < maxValue)
                 return byteCount;
         }
         /*istanbul ignore next*/
         throw new Error('Cannot represent ' + String(value)); //should never occur
     })();
-    const writeValue = value - UPPER_BOUNDS.get(bytes - 1);
+    const writeValue = value - (UPPER_BOUNDS.get(bytes - 1) || 0);
     const buffer = new ArrayBuffer(bytes);
     const castBuffer = new Uint8Array(buffer);
     {
@@ -60,6 +66,13 @@ function makeValueBuffer(value) {
     return buffer;
 }
 exports.makeValueBuffer = makeValueBuffer;
+/**
+ * Gets the number of bytes taken up by a `flexInt`,
+ * given its first byte, so the slice of the buffer containing
+ * the `flexInt` can be extracted
+ * @param firstByte The first byte of the `flexInt`
+ * @return The length of the `flexInt`
+ */
 function getByteCount(firstByte) {
     assert_1.default.byteUnsignedInteger(firstByte);
     let leadingOnes;
@@ -70,6 +83,13 @@ function getByteCount(firstByte) {
     return bytes;
 }
 exports.getByteCount = getByteCount;
+/**
+ * Converts a binary `flexInt` representation
+ * into the number it stores.
+ * The inverse of [[makeValueBuffer]].
+ * @param valueBuffer The binary `flexInt` representation
+ * @return The number used to generate the `flexInt` buffer
+ */
 function readValueBuffer(valueBuffer) {
     assert_1.default.instanceOf(valueBuffer, ArrayBuffer);
     const bytes = valueBuffer.byteLength;
@@ -84,6 +104,6 @@ function readValueBuffer(valueBuffer) {
         }
         return value;
     })();
-    return UPPER_BOUNDS.get(bytes - 1) + valueOfPossible;
+    return (UPPER_BOUNDS.get(bytes - 1) || 0) + valueOfPossible;
 }
 exports.readValueBuffer = readValueBuffer;

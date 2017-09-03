@@ -95,9 +95,14 @@
 					<div class="tsd-signature tsd-kind-icon">MILLIS_<wbr>PER_<wbr>DAY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">86400000</span><span class="tsd-signature-symbol"> =&nbsp;86400000</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/date.ts:1</li>
+							<li>Defined in lib/date.ts:4</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The number of milliseconds in a day</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
 					<a name="millis_per_minute" class="tsd-anchor"></a>
@@ -105,7 +110,7 @@
 					<div class="tsd-signature tsd-kind-icon">MILLIS_<wbr>PER_<wbr>MINUTE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">60000</span><span class="tsd-signature-symbol"> =&nbsp;60000</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/date.ts:2</li>
+							<li>Defined in lib/date.ts:5</li>
 						</ul>
 					</aside>
 				</section>
@@ -122,16 +127,28 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/date.ts:8</li>
+									<li>Defined in lib/date.ts:24</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Converts a UTC timestamp to a date in local time
+									representing the same date in the local timezone</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>utc: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The epoch time during the day in UTC</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Date</span></h4>
+							<p>A date whose year, month, and date
+								match the UTC year, month, and date
+							of the input timestamp</p>
 						</li>
 					</ul>
 				</section>
@@ -145,16 +162,26 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/date.ts:4</li>
+									<li>Defined in lib/date.ts:12</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Converts a date in local time to a UTC timestamp
+									representing the same date and time at UTC</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>date: <span class="tsd-signature-type">Date</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The local time</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>The epoch time of the same time in UTC</p>
 						</li>
 					</ul>
 				</section>

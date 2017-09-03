@@ -34,7 +34,8 @@ export default class OctetsType extends AbsoluteType<ArrayBuffer> {
 	writeValue(buffer: GrowableBuffer, value: ArrayBuffer) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, ArrayBuffer)
-		buffer.addAll(flexInt.makeValueBuffer(value.byteLength))
-		buffer.addAll(value)
+		buffer
+			.addAll(flexInt.makeValueBuffer(value.byteLength))
+			.addAll(value)
 	}
 }

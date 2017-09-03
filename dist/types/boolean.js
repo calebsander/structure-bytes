@@ -30,10 +30,7 @@ class BooleanType extends absolute_1.default {
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, Boolean);
-        if (value)
-            buffer.add(0xFF); //all bits are set for good measure
-        else
-            buffer.add(0x00);
+        buffer.add(value ? 0xFF : 0x00); //all bits are set for good measure
     }
 }
 exports.default = BooleanType;

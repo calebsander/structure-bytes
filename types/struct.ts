@@ -115,8 +115,9 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 			buffer.add(this.fields.length)
 			for (const field of this.fields) {
 				const {nameBuffer} = field
-				buffer.add(nameBuffer.byteLength) //not using null-terminated string because length is only 1 byte
-				buffer.addAll(nameBuffer)
+				buffer
+					.add(nameBuffer.byteLength) //not using null-terminated string because length is only 1 byte
+					.addAll(nameBuffer)
 				field.type.addToBuffer(buffer)
 			}
 			return true

@@ -5,8 +5,8 @@ const growable_buffer_1 = require("./growable-buffer");
 const stream_1 = require("stream");
 /**
  * A class for creating a readable stream
- * out of an [ArrayBuffer]{@link external:ArrayBuffer}
- * or a {@link GrowableBuffer}.
+ * out of an `ArrayBuffer`
+ * or a [[GrowableBuffer]].
  * When dealing with very large buffers,
  * this allows chunks to be sent as they are requested
  * rather than stuffing the whole buffer into the stream at once.
@@ -15,13 +15,13 @@ const stream_1 = require("stream");
  */
 class BufferStream extends stream_1.Readable {
     /**
-     * @param {external:ArrayBuffer|GrowableBuffer} buffer
+     * @param buffer
      * The buffer whose data to use.
-     * If a {@link GrowableBuffer} is used, only the
+     * If a [[GrowableBuffer]] is used, only the
      * occupied portion will be written by the stream.
-     * Future additions to the {@link GrowableBuffer}
+     * Future additions to the [[GrowableBuffer]]
      * will not be written.
-     * If bytes inside the [ArrayBuffer]{@link external:ArrayBuffer}
+     * If bytes inside the `ArrayBuffer`
      * or occupied portion are changed, behavior is undefined.
      */
     constructor(buffer) {

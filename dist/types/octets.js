@@ -35,8 +35,9 @@ class OctetsType extends absolute_1.default {
     writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, ArrayBuffer);
-        buffer.addAll(flexInt.makeValueBuffer(value.byteLength));
-        buffer.addAll(value);
+        buffer
+            .addAll(flexInt.makeValueBuffer(value.byteLength))
+            .addAll(value);
     }
 }
 exports.default = OctetsType;

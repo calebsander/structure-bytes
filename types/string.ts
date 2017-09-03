@@ -32,8 +32,8 @@ export default class StringType extends AbsoluteType<string> {
 	writeValue(buffer: GrowableBuffer, value: string) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, String)
-		const valueBuffer = bufferString.fromString(value)
-		buffer.addAll(valueBuffer)
-		buffer.add(0) //add a null byte to indicate end
+		buffer
+			.addAll(bufferString.fromString(value))
+			.add(0) //add a null byte to indicate end
 	}
 }

@@ -29,7 +29,6 @@ export default class BooleanType extends AbsoluteType<boolean> {
 	writeValue(buffer: GrowableBuffer, value: boolean) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Boolean)
-		if (value) buffer.add(0xFF) //all bits are set for good measure
-		else buffer.add(0x00)
+		buffer.add(value ? 0xFF : 0x00) //all bits are set for good measure
 	}
 }

@@ -4,6 +4,11 @@ import * as strint from './strint'
 
 const LONG_MAX = '9223372036854775807',
 	LONG_MIN = '-9223372036854775808'
+/**
+ * Writes the given string value as a signed long (8 bytes)
+ * @param buffer The buffer to which to append
+ * @param value The value to write (a numeric string)
+ */
 export default (buffer: GrowableBuffer, value: string): void => {
 	assert.instanceOf(buffer, GrowableBuffer)
 	assert.instanceOf(value, String)

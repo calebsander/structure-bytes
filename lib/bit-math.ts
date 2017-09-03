@@ -1,6 +1,14 @@
+/**
+ * Efficiently computes `Math.floor(n / 8)`
+ * @param n The number in question
+ */
 export function dividedByEight(n: number): number {
-	return n >>> 3 //efficiently divide by 8
+	return n >>> 3
 }
+/**
+ * Efficiently computes `n % 8`
+ * @param n The number in question
+ */
 export function modEight(n: number): number {
-	return n & 0b111 //efficiently mod 8
+	return n & 0b111
 }

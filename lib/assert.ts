@@ -2,6 +2,13 @@ import {inspect} from './util-inspect'
 
 //A number of useful assertion functions
 //Used in tests and for validations in production
+
+/**
+ * Throws an error if the given value is not an instance
+ * of any of the provided constructors
+ * @param instance The value in question
+ * @param constructors A constructor or array of constructors to test against
+ */
 function instanceOf(instance: any, constructors: Function | Function[]): void {
 	if (!(constructors instanceof Array)) constructors = [constructors]
 	let constructorMatched = false
@@ -24,12 +31,25 @@ function instanceOf(instance: any, constructors: Function | Function[]): void {
 		)
 	}
 }
+/**
+ * Throws an error if the given value is not an integer
+ * within the range of integers representable in JavaScript
+ * @param instance The value in question
+ */
 function integer(instance: any): void {
 	instanceOf(instance, Number)
 	if (!Number.isSafeInteger(instance)) {
 		throw new RangeError(inspect(instance) + ' is not an integer')
 	}
 }
+/**
+ * Throws an error if a numeric value is not between
+ * the given bounds
+ * @param lower The lower bound (inclusive)
+ * @param value The value in question
+ * @param upper The upper bound (exclusive)
+ * @param message An optional message to include in the error message
+ */
 function between(lower: number, value: number, upper: number, message?: string): void {
 	if (value < lower || value >= upper) {
 		const outOfBoundsMessage =
@@ -43,17 +63,37 @@ function between(lower: number, value: number, upper: number, message?: string):
 		else throw new RangeError(outOfBoundsMessage)
 	}
 }
+/**
+ * Throws an error if the given value is not an integer
+ * and in the range that can be represented in an unsigned byte
+ * @param value The value in question
+ */
 function byteUnsignedInteger(value: any): void {
 	integer(value)
 	between(0, value, 256)
 }
+/**
+ * Throws an error with the specified message
+ * @param message The message of the thrown error
+ */
 function fail(message: string): never {
 	throw new Error(message)
 }
-//Assert that a condition is met if not, throw an error with the specified message
+/**
+ * Throws an error if the provided condition is false,
+ * using the given error message.
+ * This function is exported by this module.
+ */
 function assert(condition: boolean, message?: string): void {
 	if (!condition) fail(message || 'Assertion failed')
 }
+/**
+ * Throws an error if the given function does not throw
+ * an error when executed.
+ * Can also provide a message string given to [[errorMessage]].
+ * @param block A function that should throw an error
+ * @param message The optional message string to match against
+ */
 function throws(block: () => void, message?: string) {
 	let success = true
 	try {
@@ -65,6 +105,24 @@ function throws(block: () => void, message?: string) {
 	}
 	assert(success, message ? 'Was expecting error: ' + message : 'Should throw an error')
 }
+/**
+ * Throws an error if the provided values are not "equal".
+ * This has different meanings for different types of expected values:
+ * - If `expected` is an `Object`,
+ * `actual[key]` should "equal" `expected[key]` for each `key` in `expected`
+ * - If `expected` is an `Array`, the lengths should match
+ * and corresponding elements should be "equal"
+ * - If `expected` is a `Map`, the sizes should match and iterating
+ * should yield "equal" corresponding keys and values
+ * - If `expected` is a `Set`, `Array.from(actual)` should "equal" `Array.from(expected)`
+ * - If `expected` is an `ArrayBuffer`, the lengths should match and corresponding
+ * bytes should be "equal"
+ * - If `expected` is a `Function`, the names should be equal
+ * - If `expected` has an `equals()` method, that is used
+ * - Otherwise, `===` is used
+ * @param actual
+ * @param expected
+ */
 function equal(actual: any, expected: any): void {
 	const error = () => //lazily computed
 		new RangeError('Expected ' + inspect(expected) + ' but got ' + inspect(actual))
@@ -152,6 +210,12 @@ function equal(actual: any, expected: any): void {
 		if (expected !== actual) throw error()
 	}
 }
+/**
+ * Throws an error if the given value is not an error
+ * or its message doesn't start with the given message string
+ * @param err The error value to test
+ * @param message The string that the error message should start with
+ */
 function errorMessage(err: Error | null, message: string): void {
 	instanceOf(message, String)
 	assert(
@@ -161,21 +225,12 @@ function errorMessage(err: Error | null, message: string): void {
 }
 //tslint:disable-next-line:prefer-object-spread
 export default Object.assign(assert, {
-	//Assert that the instance is an instance of the constructor, or at least one of the constructors, or a subclass
 	instanceOf,
-	//Assert that a number is an integer (within the +/-2^53 that can be represented precisely in a double)
 	integer,
-	//Assert that a number is between the specified values, with an optional message
 	between,
-	//Assert that a number fits in an unsigned byte
 	byteUnsignedInteger,
-	//Throw an error
 	fail,
-	//Assert that the execution of a function throws an error, and that the error message matches the specified one
 	throws,
-	//Assert that two values are "equal"
-	//What this means depends a lot on the type of the expected value
 	equal,
-	//Assert that an error's message begins with the specified text
 	errorMessage
 })

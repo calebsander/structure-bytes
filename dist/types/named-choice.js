@@ -102,8 +102,9 @@ class NamedChoiceType extends absolute_1.default {
         if (super.addToBuffer(buffer)) {
             buffer.add(this.constructorTypes.length);
             for (const { nameBuffer, type } of this.constructorTypes) {
-                buffer.add(nameBuffer.byteLength);
-                buffer.addAll(nameBuffer);
+                buffer
+                    .add(nameBuffer.byteLength)
+                    .addAll(nameBuffer);
                 type.addToBuffer(buffer);
             }
             return true;

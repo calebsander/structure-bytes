@@ -31,8 +31,9 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
 				const location = this.cachedTypeLocations.get(buffer)
 				if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
-					buffer.add(REPEATED_TYPE)
-					buffer.addAll(flexInt.makeValueBuffer(buffer.length - location))
+					buffer
+						.add(REPEATED_TYPE)
+						.addAll(flexInt.makeValueBuffer(buffer.length - location))
 					return false
 				}
 			}

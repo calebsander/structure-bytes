@@ -96,8 +96,9 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 			const valueBuffer = new GrowableBuffer
 			try { type.writeValue(valueBuffer, value, false) }
 			catch (e) { continue }
-			buffer.add(i)
-			buffer.addAll(valueBuffer.toBuffer())
+			buffer
+				.add(i)
+				.addAll(valueBuffer.toBuffer())
 			success = true
 			break
 		}

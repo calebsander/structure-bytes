@@ -26,8 +26,9 @@ class AbstractType {
             if (!recursiveNesting.get(buffer)) {
                 const location = this.cachedTypeLocations.get(buffer);
                 if (location !== undefined) {
-                    buffer.add(constants_1.REPEATED_TYPE);
-                    buffer.addAll(flexInt.makeValueBuffer(buffer.length - location));
+                    buffer
+                        .add(constants_1.REPEATED_TYPE)
+                        .addAll(flexInt.makeValueBuffer(buffer.length - location));
                     return false;
                 }
             }

@@ -102,8 +102,9 @@ class ChoiceType extends absolute_1.default {
             catch (e) {
                 continue;
             }
-            buffer.add(i);
-            buffer.addAll(valueBuffer.toBuffer());
+            buffer
+                .add(i)
+                .addAll(valueBuffer.toBuffer());
             success = true;
             break;
         }

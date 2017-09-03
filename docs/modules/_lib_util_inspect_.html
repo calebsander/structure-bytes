@@ -117,16 +117,30 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/util-inspect.ts:16</li>
+									<li>Defined in lib/util-inspect.ts:24</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A simple replacement for <code>util.inspect()</code>.
+										Makes little effort at readability,
+										and cannot handle circular values.
+										Useful for generating more detailed
+										error messages, and so that the client-side
+									code doesn&#39;t need to pack <code>util</code> as a dependency.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The value to inspect</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>A string expressing the given value</p>
 						</li>
 					</ul>
 				</section>

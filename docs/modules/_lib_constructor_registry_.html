@@ -88,10 +88,10 @@
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="_lib_constructor_registry_.html#registeredconstructors" class="tsd-kind-icon">registered<wbr>Constructors</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-external">
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-private tsd-is-external"><a href="_lib_constructor_registry_.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_constructor_registry_.html#get" class="tsd-kind-icon">get</a></li>
 							</ul>
 						</section>
 					</div>
@@ -105,9 +105,14 @@
 					<div class="tsd-signature tsd-kind-icon">Constructor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/_lib_constructor_registry_.newable.html" class="tsd-signature-type">Newable</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/constructor-registry.ts:4</li>
+							<li>Defined in lib/constructor-registry.ts:10</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A function that acts as a constructor</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external tsd-is-not-exported">
@@ -118,53 +123,44 @@
 					<div class="tsd-signature tsd-kind-icon">registered<wbr>Constructors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/_lib_constructor_registry_.newable.html" class="tsd-signature-type">Newable</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, Constructor&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/constructor-registry.ts:6</li>
+							<li>Defined in lib/constructor-registry.ts:12</li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-external">
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-private tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 					<a name="get" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-private tsd-is-external">
+					<h3>get</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>constructorName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_lib_constructor_registry_.html#constructor" class="tsd-signature-type">Constructor</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/constructor-registry.ts:18</li>
+									<li>Defined in lib/constructor-registry.ts:21</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<dl class="tsd-comment-tags">
-									<dt>function</dt>
-									<dd></dd>
-									<dt>name</dt>
-									<dd><p>get</p>
-									</dd>
-									<dt>desc</dt>
-									<dd><p>Gets a constructor function
-											with the specified name. Multiple
-											invocations of this function with
-										the same name produce the same function.</p>
-									</dd>
-								</dl>
+								<div class="lead">
+									<p>Gets a constructor function with the specified name.
+										Multiple invocations of this function with
+									the same name produce the same function.</p>
+								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>constructorName: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The name of the constructor</p>
+										<p>The name of the resulting constructor</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_lib_constructor_registry_.html#constructor" class="tsd-signature-type">Constructor</a></h4>
-							<p>A function that can be used
-							as a constructor and has the desired name</p>
+							<p>A function that can be used as a constructor and has the desired name</p>
 						</li>
 					</ul>
 				</section>
@@ -192,7 +188,7 @@
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
 						<a href="_lib_constructor_registry_.html#registeredconstructors" class="tsd-kind-icon">registered<wbr>Constructors</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-private tsd-is-external">
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 						<a href="_lib_constructor_registry_.html#get" class="tsd-kind-icon">get</a>
 					</li>
 				</ul>

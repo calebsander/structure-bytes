@@ -48,13 +48,14 @@ export default class BigIntType extends IntegerType<string> {
 			}
 			bytes.push(Number(value))
 		}
-		buffer.addAll(flexInt.makeValueBuffer(bytes.length))
 		const byteBuffer = new ArrayBuffer(bytes.length)
 		const dataView = new DataView(byteBuffer)
 		for (let i = bytes.length - 2, offset = 1; i >= 0; i--, offset++) { //write in reverse order to get BE
 			dataView.setUint8(offset, bytes[i])
 		}
 		if (bytes.length) dataView.setInt8(0, bytes[bytes.length - 1]) //highest byte is signed so it must be treated separately
-		buffer.addAll(byteBuffer)
+		buffer
+			.addAll(flexInt.makeValueBuffer(bytes.length))
+			.addAll(byteBuffer)
 	}
 }

@@ -106,8 +106,9 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.constructorTypes.length)
 			for (const {nameBuffer, type} of this.constructorTypes) {
-				buffer.add(nameBuffer.byteLength)
-				buffer.addAll(nameBuffer)
+				buffer
+					.add(nameBuffer.byteLength)
+					.addAll(nameBuffer)
 				type.addToBuffer(buffer)
 			}
 			return true

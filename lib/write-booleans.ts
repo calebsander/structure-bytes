@@ -2,8 +2,15 @@ import assert from './assert'
 import {dividedByEight, modEight} from './bit-math'
 import GrowableBuffer from './growable-buffer'
 
-//Writes an array of booleans for BooleanTupleType or BooleanArrayType
-//The boolean at index 8a + b is in the bth MSB (0-indexed) of the ath byte
+/**
+ * Writes an array of booleans for [[BooleanTupleType]]
+ * or [[BooleanArrayType]].
+ * The boolean at index `8 * a + b` (where `a` is an integer
+ * and `b` is an integer from `0` to `7`) is in the `b`th MSB
+ * (0-indexed) of the `a`th appended byte.
+ * @param buffer The buffer to which to append the bytes
+ * @param booleans The boolean values to write
+ */
 export default (buffer: GrowableBuffer, booleans: boolean[]): void => {
 	assert.instanceOf(booleans, Array)
 	const incompleteBytes = modEight(booleans.length) //whether the booleans take up a partial byte

@@ -4,6 +4,11 @@ const assert_1 = require("./assert");
 const growable_buffer_1 = require("./growable-buffer");
 const strint = require("./strint");
 const LONG_MAX = '9223372036854775807', LONG_MIN = '-9223372036854775808';
+/**
+ * Writes the given string value as a signed long (8 bytes)
+ * @param buffer The buffer to which to append
+ * @param value The value to write (a numeric string)
+ */
 exports.default = (buffer, value) => {
     assert_1.default.instanceOf(buffer, growable_buffer_1.default);
     assert_1.default.instanceOf(value, String);

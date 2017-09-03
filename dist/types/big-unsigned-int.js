@@ -48,13 +48,14 @@ class BigUnsignedIntType extends unsigned_1.default {
             }
             bytes.push(Number(value));
         }
-        buffer.addAll(flexInt.makeValueBuffer(bytes.length));
         const byteBuffer = new ArrayBuffer(bytes.length);
         const castBuffer = new Uint8Array(byteBuffer);
         let offset = 0;
         for (let i = bytes.length - 1; i >= 0; i--, offset++)
             castBuffer[offset] = bytes[i]; //write in reverse order to get BE
-        buffer.addAll(byteBuffer);
+        buffer
+            .addAll(flexInt.makeValueBuffer(bytes.length))
+            .addAll(byteBuffer);
     }
 }
 exports.default = BigUnsignedIntType;

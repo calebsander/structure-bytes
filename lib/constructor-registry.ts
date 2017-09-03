@@ -1,19 +1,22 @@
+/**
+ * A value that acts as a constructor
+ */
 export interface Newable {
 	new(): object
 }
+/**
+ * A function that acts as a constructor
+ */
 export type Constructor = Function & Newable
 
 const registeredConstructors = new Map<string, Constructor>()
-/** @function
- * @name get
- * @desc Gets a constructor function
- * with the specified name. Multiple
- * invocations of this function with
+
+/**
+ * Gets a constructor function with the specified name.
+ * Multiple invocations of this function with
  * the same name produce the same function.
- * @param {Type} constructorName The name of the constructor
- * @return {constructor} A function that can be used
- * as a constructor and has the desired name
- * @private
+ * @param constructorName The name of the resulting constructor
+ * @return A function that can be used as a constructor and has the desired name
  */
 export function get(constructorName: string): Constructor {
 	const constructor = registeredConstructors.get(constructorName)
