@@ -1,8 +1,7 @@
-/*eslint-disable no-console*/
-const assert = require('../lib/assert')
+const assert = require('../dist/lib/assert').default
 const fs = require('fs')
 const http = require('http')
-const sb = require('../index')
+const sb = require('../dist')
 
 const type = new sb.ArrayType(
 	new sb.StructType({

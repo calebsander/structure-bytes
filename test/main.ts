@@ -49,9 +49,6 @@ promisify(fs.readdir)(__dirname)
 						.catch(err => {})
 					})
 		)
-			.then(() => {
-				if (!process.argv[2]) require('../compile') //if another argument is specified, don't compile
-			})
 		process
 			.on('exit', () => {
 				console.log(

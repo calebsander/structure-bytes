@@ -1,7 +1,7 @@
 node_modules
 
-client-side/upload-download.js
-compiled/*-unminified.js
+client-side/upload-download.ts
+compiled/dist
 test/**/*.js
 typings/*.js
 
