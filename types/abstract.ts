@@ -1,5 +1,5 @@
 import * as base64 from 'base64-js'
-import {sha256} from 'js-sha256'
+import sha256 from '../lib/sha-256'
 import {VERSION_STRING} from '../config'
 import assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
@@ -90,9 +90,7 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 	 * @return A hash of the buffer given by [[toBuffer]]
 	 */
 	private _getHash(): string {
-		const hash = sha256.create()
-		hash.update(this.toBuffer())
-		const bytes = new Uint8Array(hash.arrayBuffer())
+		const bytes = new Uint8Array(sha256(this.toBuffer()))
 		return base64.fromByteArray(bytes)
 	}
 	/**

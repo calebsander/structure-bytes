@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const base64 = require("base64-js");
-const js_sha256_1 = require("js-sha256");
+const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
 const assert_1 = require("../lib/assert");
 const constants_1 = require("../lib/constants");
@@ -93,9 +93,7 @@ class AbstractType {
      * @return A hash of the buffer given by [[toBuffer]]
      */
     _getHash() {
-        const hash = js_sha256_1.sha256.create();
-        hash.update(this.toBuffer());
-        const bytes = new Uint8Array(hash.arrayBuffer());
+        const bytes = new Uint8Array(sha_256_1.default(this.toBuffer()));
         return base64.fromByteArray(bytes);
     }
     /**

@@ -1,4 +1,4 @@
-import {sha256} from 'js-sha256'
+import sha256 from '../../dist/lib/sha-256'
 import assert from '../../dist/lib/assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
@@ -15,9 +15,10 @@ export = () => {
 		hash: string
 		constructor(text: string) {
 			super(text)
-			const hash = sha256.create()
-			hash.update(text)
-			this.hash = hash.hex()
+			const textBuffer = new Uint8Array(Array.from(text).map(c => c.charCodeAt(0))).buffer
+			this.hash = Array.from(new Uint8Array(sha256(textBuffer)))
+				.map(b => (b < 16 ? '0' : '') + b.toString(16))
+				.join('')
 		}
 	}
 	class UPC {
