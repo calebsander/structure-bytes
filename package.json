@@ -1,6 +1,6 @@
 {
 	"name": "structure-bytes",
-	"version": "15.0.1",
+	"version": "15.0.2",
 	"description": "A library for more efficient data transfers by separating the structure from the values and storing each as binary data",
 	"main": "dist/index.js",
 	"dependencies": {
@@ -54,7 +54,9 @@
 	},
 	"homepage": "https://github.com/calebsander/structure-bytes",
 	"files": [
-		"compiled",
+		"compiled/download.js",
+		"compiled/upload.js",
+		"compiled/upload-download.js",
 		"dist"
 	]
 }
