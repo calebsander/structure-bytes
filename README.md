@@ -604,13 +604,14 @@ In the following definitions, `type` means the binary type format.
 	- `index` of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - 32-bit unsigned integer
 
 ## Versioning
-Versions will be of the form `x.y.z`.
-`x` is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was `0`.
-`y` is the minor release; changes to it represent bug-fixing, non-breaking releases.
-`z` is the version of the type and value specification, which is independent of the API version. It should match the version set in `config.js`.
+Versions will be of the form `x.y.z`. They are in the `semver` format:
+
+- `x` is the major release; changes to it represent significant or breaking changes to the API, or to the type or value binary specification.
+- `y` is the minor release; changes to it represent new features that do not break backwards compatibility.
+- `z` is the patch release; changes to it represent bug fixes that do not change the documented API.
 
 ## Testing
 To test the Node.js code, run `npm test`.
 To test the HTTP transaction code, run `node client-test/server.js` and open `localhost:8080` in your browser. Open each link in a new page. `Upload` and `Download` should each alert `Success`, while `Upload & Download` should alert `Upload: Success` and `Download: Success`.
 
-_Caleb Sander, 2016_
+_Caleb Sander, 2017_
