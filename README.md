@@ -209,7 +209,7 @@ Server-side:
 const http = require('http');
 const sb = require('structure-bytes');
 
-let type = new sb.DateType();
+let type = new sb.DateType;
 http.createServer((req, res) => {
 	sb.httpRespond({req, res, type, value: new Date}, err => {
 		console.log('Responded');
@@ -218,16 +218,17 @@ http.createServer((req, res) => {
 ````
 Client-side:
 ````html
-<script src = '/structure-bytes/compiled/jquery.js'></script>
 <script src = '/structure-bytes/compiled/download.js'></script>
 <script>
 	//'date' specifies the name of the type being transferred so it can be cached
-	sb.download('date', {
-		url: '/date',
-		success: function(value) {
-			console.log(value.getFullYear()); //2016
-		}
-	});
+	sb.download({
+		name: 'date',
+		url: '/',
+		options: {} //optional options to pass to fetch() (e.g. cookies, headers, etc.)
+	})
+		.then(value =>
+			console.log(value.getFullYear()) //2017
+		);
 </script>
 ````
 ### HTTP POST value
@@ -236,34 +237,29 @@ Server-side:
 const http = require('http');
 const sb = require('structure-bytes');
 
-let type = new sb.DateType();
 http.createServer((req, res) => {
-	sb.readValue({type: new sb.UnsignedIntType, inStream: req}, (err, value) => {
+	sb.readValue({type: new sb.FlexUnsignedIntType, inStream: req}, (err, value) => {
 		res.end(String(value));
 	});
 }).listen(80);
 ````
 Client-side:
 ````html
-<script src = '/structure-bytes/compiled/jquery.js'></script>
 <script src = '/structure-bytes/compiled/upload.js'></script>
-<button>Click me</button>
+<button onclick = 'upload()'>Click me</button>
 <script>
 	var clickCount = 0;
-	$('button').click(function() {
+	function upload() {
 		clickCount++;
 		sb.upload({
-			type: new sb.UnsignedIntType,
-			value: clickCount
-		}, {
+			type: new sb.FlexUnsignedIntType,
+			value: clickCount,
 			url: '/click',
-			type: 'POST',
-			dataType: 'text',
-			success: function(response) {
-				alert(response); //alerts '1', '2', etc.
-			}
-		});
-	});
+			options: {method: 'POST'} //options to pass to fetch(); method 'POST' is required
+		})
+			.then(response => response.text())
+			.then(alert);
+	}
 </script>
 ````
 
