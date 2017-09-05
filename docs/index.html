@@ -274,7 +274,7 @@ sb.writeTypeAndValue({
 				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);
 <span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.DateType();
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.DateType;
 http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
     sb.httpRespond({req, res, type, <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>}, err =&gt; {
         <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Responded'</span>);
@@ -282,16 +282,17 @@ http.createServer(<span class="hljs-function">(<span class="hljs-params">req, re
 }).listen(<span class="hljs-number">80</span>);
 </code></pre>
 				<p>Client-side:</p>
-				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/jquery.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/download.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/download.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
     <span class="hljs-comment">//'date' specifies the name of the type being transferred so it can be cached</span>
-    sb.download(<span class="hljs-string">'date'</span>, {
-        <span class="hljs-attr">url</span>: <span class="hljs-string">'/date'</span>,
-        <span class="hljs-attr">success</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
-            <span class="hljs-built_in">console</span>.log(value.getFullYear()); <span class="hljs-comment">//2016</span>
-        }
-    });
+    sb.download({
+        <span class="hljs-attr">name</span>: <span class="hljs-string">'date'</span>,
+        <span class="hljs-attr">url</span>: <span class="hljs-string">'/'</span>,
+        <span class="hljs-attr">options</span>: {} <span class="hljs-comment">//optional options to pass to fetch() (e.g. cookies, headers, etc.)</span>
+    })
+        .then(<span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span>
+            <span class="hljs-built_in">console</span>.log(value.getFullYear()) <span class="hljs-comment">//2017</span>
+        );
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 				<h3 id="http-post-value">HTTP POST value</h3>
@@ -299,33 +300,28 @@ http.createServer(<span class="hljs-function">(<span class="hljs-params">req, re
 				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);
 <span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
 
-<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.DateType();
 http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
-    sb.readValue({<span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedIntType, <span class="hljs-attr">inStream</span>: req}, (err, value) =&gt; {
+    sb.readValue({<span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType, <span class="hljs-attr">inStream</span>: req}, (err, value) =&gt; {
         res.end(<span class="hljs-built_in">String</span>(value));
     });
 }).listen(<span class="hljs-number">80</span>);
 </code></pre>
 				<p>Client-side:</p>
-				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/jquery.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/upload.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">button</span>&gt;</span>Click me<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/upload.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span> = <span class="hljs-string">'upload()'</span>&gt;</span>Click me<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
     <span class="hljs-keyword">var</span> clickCount = <span class="hljs-number">0</span>;
-    $(<span class="hljs-string">'button'</span>).click(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload</span>(<span class="hljs-params"></span>) </span>{
         clickCount++;
         sb.upload({
-            <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedIntType,
-            <span class="hljs-attr">value</span>: clickCount
-        }, {
+            <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType,
+            <span class="hljs-attr">value</span>: clickCount,
             <span class="hljs-attr">url</span>: <span class="hljs-string">'/click'</span>,
-            <span class="hljs-attr">type</span>: <span class="hljs-string">'POST'</span>,
-            <span class="hljs-attr">dataType</span>: <span class="hljs-string">'text'</span>,
-            <span class="hljs-attr">success</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
-                alert(response); <span class="hljs-comment">//alerts '1', '2', etc.</span>
-            }
-        });
-    });
+            <span class="hljs-attr">options</span>: {<span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>} <span class="hljs-comment">//options to pass to fetch(); method 'POST' is required</span>
+        })
+            .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> response.text())
+            .then(alert);
+    }
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 				<h2 id="using-with-typescript">Using with TypeScript</h2>
@@ -730,14 +726,16 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)
 					</li>
 				</ul>
 				<h2 id="versioning">Versioning</h2>
-				<p>Versions will be of the form <code>x.y.z</code>.
-					<code>x</code> is the major release; changes to it represent significant or breaking changes to the API. Before the full release, it was <code>0</code>.
-					<code>y</code> is the minor release; changes to it represent bug-fixing, non-breaking releases.
-				<code>z</code> is the version of the type and value specification, which is independent of the API version. It should match the version set in <code>config.js</code>.</p>
+				<p>Versions will be of the form <code>x.y.z</code>. They are in the <code>semver</code> format:</p>
+				<ul>
+					<li><code>x</code> is the major release; changes to it represent significant or breaking changes to the API, or to the type or value binary specification.</li>
+					<li><code>y</code> is the minor release; changes to it represent new features that do not break backwards compatibility.</li>
+					<li><code>z</code> is the patch release; changes to it represent bug fixes that do not change the documented API.</li>
+				</ul>
 				<h2 id="testing">Testing</h2>
 				<p>To test the Node.js code, run <code>npm test</code>.
 				To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page. <code>Upload</code> and <code>Download</code> should each alert <code>Success</code>, while <code>Upload &amp; Download</code> should alert <code>Upload: Success</code> and <code>Download: Success</code>.</p>
-				<p><em>Caleb Sander, 2016</em></p>
+				<p><em>Caleb Sander, 2017</em></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -770,9 +768,6 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_typings_accepts_.html">"typings/accepts"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_typings_js_sha256_.html">"typings/js-<wbr>sha256"</a>
-					</li>
 					<li class="label tsd-is-external">
 						<span>Externals</span>
 					</li>
@@ -804,10 +799,10 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)
 						<a href="modules/_lib_growable_buffer_.html">"lib/growable-<wbr>buffer"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_pointers_.html">"lib/pointers"</a>
+						<a href="modules/_lib_recursive_nesting_.html">"lib/recursive-<wbr>nesting"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_recursive_nesting_.html">"lib/recursive-<wbr>nesting"</a>
+						<a href="modules/_lib_sha_256_.html">"lib/sha-<wbr>256"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_lib_str_to_num_.html">"lib/str-<wbr>to-<wbr>num"</a>

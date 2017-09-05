@@ -53,12 +53,11 @@ class SetType extends absolute_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer, value, root = true) {
+    writeValue(buffer, value) {
         assert_1.default.instanceOf(value, Set);
-        write_iterable_1.default({ type: this.type, buffer, value, length: value.size, root });
+        write_iterable_1.default({ type: this.type, buffer, value, length: value.size });
     }
     equals(otherType) {
         return super.equals(otherType) && this.type.equals(otherType.type);

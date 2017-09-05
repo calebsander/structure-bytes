@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const growable_buffer_1 = require("../lib/growable-buffer");
-const pointers_1 = require("../lib/pointers");
 const recursiveNesting = require("../lib/recursive-nesting");
 const recursiveRegistry = require("../recursive-registry");
 const absolute_1 = require("./absolute");
@@ -152,11 +151,10 @@ class RecursiveType extends absolute_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`;
      * also throws if no type has been registered with this type's name
      */
-    writeValue(buffer, value, root = true) {
+    writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         let writeValue = true;
         let bufferRecursiveLocations = recursiveLocations.get(buffer);
@@ -177,10 +175,8 @@ class RecursiveType extends absolute_1.default {
             buffer.add(0xFF);
             //Keep track of the location before writing the data so that this location can be referenced by sub-values
             bufferRecursiveLocations.set(value, buffer.length);
-            const { type } = this;
-            type.writeValue(buffer, value, false);
+            this.type.writeValue(buffer, value);
         }
-        pointers_1.setPointers({ buffer, root });
     }
     equals(otherType) {
         return super.equals(otherType)

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const growable_buffer_1 = require("../lib/growable-buffer");
-const pointers_1 = require("../lib/pointers");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -126,16 +125,15 @@ class StructType extends absolute_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer, value, root = true) {
+    writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, Object);
         for (const field of this.fields) {
             const fieldValue = value[field.name];
             try {
-                field.type.writeValue(buffer, fieldValue, false);
+                field.type.writeValue(buffer, fieldValue);
             }
             catch (writeError) {
                 //Reporting that field is missing is more useful than, for example,
@@ -144,7 +142,6 @@ class StructType extends absolute_1.default {
                 throw writeError; //throw original error if field is defined, but just invalid
             }
         }
-        pointers_1.setPointers({ buffer, root });
     }
     equals(otherType) {
         if (!super.equals(otherType))

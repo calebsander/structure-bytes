@@ -84,7 +84,6 @@ export function toString(buffer: Uint8Array) {
  * The inverse of [[toString]].
  * @param str The string to convert
  */
-//Convert a string to UTF-8 bytes
 export function fromString(str: string) {
 	assert.instanceOf(str, String)
 	//Taken from http://stackoverflow.com/a/18729931

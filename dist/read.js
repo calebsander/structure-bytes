@@ -127,15 +127,13 @@ const pointerReads = new WeakMap();
 /*
     Reads a value from the specified bytes at the specified offset, given a type
     Returns the value that was read and the number of bytes consumed (excepting any values being pointed to)
-    Pointer start refers to the position in the buffer where the root value starts
-    (pointers will be relative to this location)
 */
-function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue }) {
+function consumeValue({ buffer, offset, type: readType, baseValue }) {
     let readValue, length;
     switch (readType.constructor) {
         case t.ByteType: {
             length = 1;
-            assert_1.default(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+            assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
             readValue = new Int8Array(buffer)[offset]; //endianness doesn't matter because there is only 1 byte
             break;
         }
@@ -304,7 +302,7 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const castType = readType;
             readValue = baseValue || makeBaseValue(castType);
             for (let i = 0; i < castType.length; i++) {
-                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.type });
+                const element = consumeValue({ buffer, offset: offset + length, type: castType.type });
                 length += element.length;
                 readValue[i] = element.value;
             }
@@ -315,7 +313,7 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const castType = readType;
             readValue = baseValue || makeBaseValue(castType);
             for (const field of castType.fields) {
-                const readField = consumeValue({ buffer, pointerStart, offset: offset + length, type: field.type });
+                const readField = consumeValue({ buffer, offset: offset + length, type: field.type });
                 readValue[field.name] = readField.value;
                 length += readField.length;
             }
@@ -328,7 +326,7 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const castType = readType;
             readValue = baseValue || makeBaseValue(castType, arrayLength);
             for (let i = 0; i < arrayLength; i++) {
-                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.type });
+                const element = consumeValue({ buffer, offset: offset + length, type: castType.type });
                 length += element.length;
                 readValue[i] = element.value;
             }
@@ -341,7 +339,7 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const castType = readType;
             readValue = baseValue || makeBaseValue(castType);
             for (let i = 0; i < setSize; i++) {
-                const element = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.type });
+                const element = consumeValue({ buffer, offset: offset + length, type: castType.type });
                 length += element.length;
                 readValue.add(element.value);
             }
@@ -353,9 +351,9 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const castType = readType;
             readValue = baseValue || makeBaseValue(castType);
             for (let i = 0; i < size.value; i++) {
-                const keyElement = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.keyType });
+                const keyElement = consumeValue({ buffer, offset: offset + length, type: castType.keyType });
                 length += keyElement.length;
-                const valueElement = consumeValue({ buffer, pointerStart, offset: offset + length, type: castType.valueType });
+                const valueElement = consumeValue({ buffer, offset: offset + length, type: castType.valueType });
                 length += valueElement.length;
                 readValue.set(keyElement.value, valueElement.value);
             }
@@ -376,7 +374,6 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const typeIndex = new Uint8Array(buffer)[offset];
             const subValue = consumeValue({
                 buffer,
-                pointerStart,
                 offset: offset + length,
                 type: readType.types[typeIndex]
             });
@@ -395,7 +392,6 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             const constructor = constructorRegistry.get(typeConstructor.name);
             const subValue = consumeValue({
                 buffer,
-                pointerStart,
                 offset: offset + length,
                 type: castType.constructorTypes[typeIndex].type,
                 baseValue: new constructor
@@ -416,7 +412,7 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
                     readRecursives.set(buffer, bufferReadRecursives);
                 }
                 bufferReadRecursives.set(offset + length, readValue);
-                length += consumeValue({ buffer, pointerStart, offset: offset + length, type: subType, baseValue: readValue }).length;
+                length += consumeValue({ buffer, offset: offset + length, type: subType, baseValue: readValue }).length;
             }
             else {
                 const indexOffset = readFlexInt(buffer, offset + length);
@@ -433,7 +429,6 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             if (nonNull) {
                 const subValue = consumeValue({
                     buffer,
-                    pointerStart,
                     offset: offset + length,
                     type: readType.type
                 });
@@ -445,8 +440,18 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
             break;
         }
         case t.PointerType: {
-            length = 4;
-            assert_1.default(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH);
+            length = 1;
+            let explicitValue = true;
+            while (true) {
+                const offsetDiff = readFlexInt(buffer, offset);
+                if (!offsetDiff.value)
+                    break;
+                if (explicitValue) {
+                    ({ length } = offsetDiff);
+                    explicitValue = false;
+                }
+                offset -= offsetDiff.value;
+            }
             let bufferPointerReads = pointerReads.get(buffer);
             if (!bufferPointerReads) {
                 bufferPointerReads = new Map;
@@ -458,17 +463,16 @@ function consumeValue({ buffer, pointerStart, offset, type: readType, baseValue 
                 bufferTypePointerReads = new Map;
                 bufferPointerReads.set(castType, bufferTypePointerReads);
             }
-            const location = new DataView(buffer).getUint32(offset);
-            if (bufferTypePointerReads.has(location))
-                readValue = bufferTypePointerReads.get(location);
-            else {
-                readValue = consumeValue({
+            readValue = bufferTypePointerReads.get(offset);
+            if (readValue === undefined) {
+                const explicitRead = consumeValue({
                     buffer,
-                    pointerStart,
-                    offset: pointerStart + location,
+                    offset: offset + length,
                     type: castType.type
-                }).value;
-                bufferTypePointerReads.set(location, readValue);
+                });
+                readValue = explicitRead.value;
+                length += explicitRead.length;
+                bufferTypePointerReads.set(offset, readValue);
             }
             break;
         }
@@ -564,7 +568,6 @@ function consumeType(typeBuffer, offset) {
                 const valueLocation = offset + length;
                 const enumValue = consumeValue({
                     buffer: typeBuffer,
-                    pointerStart: valueLocation,
                     offset: valueLocation,
                     type: valueType.value
                 });
@@ -726,8 +729,7 @@ function value(params) {
     const readValue = consumeValue({
         buffer,
         offset,
-        type: readType,
-        pointerStart: offset
+        type: readType
     }).value;
     //no length validation because bytes being pointed to don't get counted in the length
     return readValue;

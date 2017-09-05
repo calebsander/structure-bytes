@@ -1,7 +1,6 @@
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import StructType from './struct'
@@ -141,10 +140,9 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E, root = true) {
+	writeValue(buffer: GrowableBuffer, value: E) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Object)
 		let writeIndex: number | undefined
@@ -157,8 +155,7 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		if (writeIndex === undefined) throw new Error('No types matched: ' + inspect(value))
 		buffer.add(writeIndex)
 		const {type} = this.constructorTypes[writeIndex]
-		type.writeValue(buffer, value, false)
-		setPointers({buffer, root})
+		type.writeValue(buffer, value)
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

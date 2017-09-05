@@ -55,7 +55,7 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 		if (!this.cachedSignature) this.cachedSignature = this._getSignature()
 		return this.cachedSignature
 	}
-	abstract writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void
+	abstract writeValue(buffer: GrowableBuffer, value: VALUE): void
 	valueBuffer(value: VALUE) {
 		const buffer = new GrowableBuffer
 		this.writeValue(buffer, value)

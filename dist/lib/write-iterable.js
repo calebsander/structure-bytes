@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("./assert");
 const flexInt = require("./flex-int");
 const growable_buffer_1 = require("./growable-buffer");
-const pointers_1 = require("./pointers");
 /**
  * Writes any iterable value to the buffer.
  * Used by [[ArrayType]] and [[SetType]].
@@ -14,10 +13,9 @@ const pointers_1 = require("./pointers");
  * @param length The number of elements in `value`
  * @throws If the value doesn't match the type, e.g. `new sb.ArrayType().writeValue(buffer, 23)`
  */
-exports.default = ({ type, buffer, value, length, root }) => {
+exports.default = ({ type, buffer, value, length }) => {
     assert_1.default.instanceOf(buffer, growable_buffer_1.default);
     buffer.addAll(flexInt.makeValueBuffer(length));
     for (const instance of value)
-        type.writeValue(buffer, instance, false);
-    pointers_1.setPointers({ buffer, root });
+        type.writeValue(buffer, instance);
 };

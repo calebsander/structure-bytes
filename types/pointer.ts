@@ -1,16 +1,23 @@
 import assert from '../lib/assert'
+import * as bufferString from '../lib/buffer-string'
+import * as flexInt from '../lib/flex-int'
 import GrowableBuffer from '../lib/growable-buffer'
-import {addInstance, setPointers} from '../lib/pointers'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
+
+//Map of write buffers to maps of binary strings to the location they were written
+const pointers = new WeakMap<GrowableBuffer, Map<string, number>>()
 
 /**
  * A type storing a value of another type through a pointer.
  * If you expect to have the same large value repeated many times,
  * using a pointer will decrease the size of the value `ArrayBuffer`.
- * Each time the value is written, it will use 4 bytes to write the pointer,
- * so you will only save space if the value is longer than 4 bytes and written more than once.
+ * If the value has already been written, 1 to 2 bytes are
+ * likely needed to write the pointer (more if values are far apart
+ * in output buffer).
+ * In comparison to without a pointer type, only 1 extra byte will
+ * be used if the value has not yet been written to the output buffer.
  *
  * Example:
  * ````javascript
@@ -84,14 +91,29 @@ export default class PointerType<E> extends AbstractType<E> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E, root = true) {
+	writeValue(buffer: GrowableBuffer, value: E) {
 		assert.instanceOf(buffer, GrowableBuffer)
-		addInstance({buffer, value: this.type.valueBuffer(value)})
-		buffer.addAll(new ArrayBuffer(4)) //placeholder for pointer
-		setPointers({buffer, root})
+		let bufferPointers = pointers.get(buffer)
+		if (!bufferPointers) {
+			bufferPointers = new Map //initialize pointers map if it doesn't exist
+			pointers.set(buffer, bufferPointers)
+		}
+		const valueBuffer = this.type.valueBuffer(value)
+		const valueString = bufferString.toBinaryString(valueBuffer) //have to convert the buffer to a string because equivalent buffers are not ===
+		const index = bufferPointers.get(valueString)
+		bufferPointers.set(valueString, buffer.length)
+		if (index === undefined) {
+			buffer
+				.add(0x00)
+				.addAll(valueBuffer)
+		}
+		else {
+			const offset = buffer.length - index
+			buffer
+				.addAll(flexInt.makeValueBuffer(offset))
+		}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

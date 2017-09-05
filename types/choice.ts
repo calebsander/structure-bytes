@@ -1,6 +1,5 @@
 import assert from '../lib/assert'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -84,17 +83,16 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E, root = true) {
+	writeValue(buffer: GrowableBuffer, value: E) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		let success = false
 		//Try to write value using each type in order until no error is thrown
 		for (let i = 0; i < this.types.length; i++) {
 			const type = this.types[i]
 			const valueBuffer = new GrowableBuffer
-			try { type.writeValue(valueBuffer, value, false) }
+			try { type.writeValue(valueBuffer, value) }
 			catch (e) { continue }
 			buffer
 				.add(i)
@@ -103,7 +101,6 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 			break
 		}
 		if (!success) assert.fail('No types matched: ' + inspect(value))
-		setPointers({buffer, root})
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

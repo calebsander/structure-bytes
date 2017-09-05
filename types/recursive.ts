@@ -1,7 +1,6 @@
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import * as recursiveRegistry from '../recursive-registry'
 import {RegisterableType} from '../recursive-registry-type'
@@ -158,11 +157,10 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`;
 	 * also throws if no type has been registered with this type's name
 	 */
-	writeValue(buffer: GrowableBuffer, value: E, root = true) {
+	writeValue(buffer: GrowableBuffer, value: E) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		let writeValue = true
 		let bufferRecursiveLocations = recursiveLocations.get(buffer)
@@ -183,10 +181,8 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 			buffer.add(0xFF)
 			//Keep track of the location before writing the data so that this location can be referenced by sub-values
 			bufferRecursiveLocations.set(value, buffer.length)
-			const {type} = this
-			type.writeValue(buffer, value, false)
+			this.type.writeValue(buffer, value)
 		}
-		setPointers({buffer, root})
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

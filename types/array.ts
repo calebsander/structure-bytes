@@ -64,12 +64,11 @@ export default class ArrayType<E> extends AbsoluteType<E[]> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E[], root = true) {
+	writeValue(buffer: GrowableBuffer, value: E[]) {
 		assert.instanceOf(value, Array)
-		writeIterable({type: this.type, buffer, value, length: value.length, root})
+		writeIterable({type: this.type, buffer, value, length: value.length})
 	}
 	equals(otherType: any) {
 		return super.equals(otherType) && this.type.equals((otherType as ArrayType<any>).type)

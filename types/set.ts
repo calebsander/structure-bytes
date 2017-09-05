@@ -58,12 +58,11 @@ export default class SetType<E> extends AbsoluteType<Set<E>> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: Set<E>, root = true) {
+	writeValue(buffer: GrowableBuffer, value: Set<E>) {
 		assert.instanceOf(value, Set)
-		writeIterable({type: this.type, buffer, value, length: value.size, root})
+		writeIterable({type: this.type, buffer, value, length: value.size})
 	}
 	equals(otherType: any) {
 		return super.equals(otherType) && this.type.equals((otherType as SetType<any>).type)

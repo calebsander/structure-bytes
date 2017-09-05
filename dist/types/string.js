@@ -27,7 +27,6 @@ class StringType extends absolute_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {

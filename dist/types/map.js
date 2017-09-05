@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const growable_buffer_1 = require("../lib/growable-buffer");
-const pointers_1 = require("../lib/pointers");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -70,18 +69,16 @@ class MapType extends absolute_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer, value, root = true) {
+    writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, Map);
         buffer.addAll(flexInt.makeValueBuffer(value.size));
         for (const [mapKey, mapValue] of value) {
-            this.keyType.writeValue(buffer, mapKey, false);
-            this.valueType.writeValue(buffer, mapValue, false);
+            this.keyType.writeValue(buffer, mapKey);
+            this.valueType.writeValue(buffer, mapValue);
         }
-        pointers_1.setPointers({ buffer, root });
     }
     equals(otherType) {
         return super.equals(otherType)

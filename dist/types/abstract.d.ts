@@ -18,7 +18,7 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
     toBuffer(): ArrayBuffer;
     getHash(): string;
     getSignature(): string;
-    abstract writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void;
+    abstract writeValue(buffer: GrowableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
     equals(otherType: any): boolean;
     /**

@@ -1,7 +1,6 @@
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -88,17 +87,15 @@ export default class EnumType<E> extends AbstractType<E> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E, root = true) {
+	writeValue(buffer: GrowableBuffer, value: E) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		const valueBuffer = new GrowableBuffer
-		this.type.writeValue(valueBuffer, value, false)
+		this.type.writeValue(valueBuffer, value)
 		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()))
 		if (index === undefined) throw new Error('Not a valid enum value: ' + inspect(value))
 		buffer.add(index) //write the index to the requested value in the values array
-		setPointers({buffer, root})
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

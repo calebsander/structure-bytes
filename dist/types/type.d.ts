@@ -33,10 +33,9 @@ export default interface Type<VALUE> {
      * Appends value bytes to a [[GrowableBuffer]] according to the type
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: VALUE, root?: boolean): void;
+    writeValue(buffer: GrowableBuffer, value: VALUE): void;
     /**
      * Gets an `ArrayBuffer` containing the value in binary format.
      * See this type's [[writeValue]] documentation for examples of values.

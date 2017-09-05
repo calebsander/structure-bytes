@@ -84,7 +84,6 @@ exports.toString = toString;
  * The inverse of [[toString]].
  * @param str The string to convert
  */
-//Convert a string to UTF-8 bytes
 function fromString(str) {
     assert_1.default.instanceOf(str, String);
     //Taken from http://stackoverflow.com/a/18729931

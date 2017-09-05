@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const growable_buffer_1 = require("../lib/growable-buffer");
-const pointers_1 = require("../lib/pointers");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const struct_1 = require("./struct");
@@ -137,10 +136,9 @@ class NamedChoiceType extends absolute_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer, value, root = true) {
+    writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         assert_1.default.instanceOf(value, Object);
         let writeIndex;
@@ -154,8 +152,7 @@ class NamedChoiceType extends absolute_1.default {
             throw new Error('No types matched: ' + util_inspect_1.inspect(value));
         buffer.add(writeIndex);
         const { type } = this.constructorTypes[writeIndex];
-        type.writeValue(buffer, value, false);
-        pointers_1.setPointers({ buffer, root });
+        type.writeValue(buffer, value);
     }
     equals(otherType) {
         if (!super.equals(otherType))

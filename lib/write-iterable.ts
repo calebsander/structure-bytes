@@ -1,7 +1,6 @@
 import assert from './assert'
 import * as flexInt from './flex-int'
 import GrowableBuffer from './growable-buffer'
-import {setPointers} from './pointers'
 import Type from '../types/type'
 
 export interface IterableWriteParams<E> {
@@ -9,7 +8,6 @@ export interface IterableWriteParams<E> {
 	buffer: GrowableBuffer
 	value: Iterable<E>
 	length: number
-	root: boolean
 }
 /**
  * Writes any iterable value to the buffer.
@@ -21,9 +19,8 @@ export interface IterableWriteParams<E> {
  * @param length The number of elements in `value`
  * @throws If the value doesn't match the type, e.g. `new sb.ArrayType().writeValue(buffer, 23)`
  */
-export default <E>({type, buffer, value, length, root}: IterableWriteParams<E>): void => {
+export default <E>({type, buffer, value, length}: IterableWriteParams<E>): void => {
 	assert.instanceOf(buffer, GrowableBuffer)
 	buffer.addAll(flexInt.makeValueBuffer(length))
-	for (const instance of value) type.writeValue(buffer, instance, false)
-	setPointers({buffer, root})
+	for (const instance of value) type.writeValue(buffer, instance)
 }

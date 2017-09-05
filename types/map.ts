@@ -1,7 +1,6 @@
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -78,18 +77,16 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: Map<K, V>, root = true) {
+	writeValue(buffer: GrowableBuffer, value: Map<K, V>) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Map)
 		buffer.addAll(flexInt.makeValueBuffer(value.size))
 		for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
-			this.keyType.writeValue(buffer, mapKey, false)
-			this.valueType.writeValue(buffer, mapValue, false)
+			this.keyType.writeValue(buffer, mapKey)
+			this.valueType.writeValue(buffer, mapValue)
 		}
-		setPointers({buffer, root})
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

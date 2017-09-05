@@ -12,6 +12,13 @@ const K = new Uint32Array([
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ]);
 const rightRotate = (value, bits) => (value >>> bits) | (value << (32 - bits));
+/**
+ * Computes a SHA-256 hash of the binary data,
+ * output as an `ArrayBuffer`.
+ * Implementation details mostly copied from
+ * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
+ * @param input The input data
+ */
 exports.default = (input) => {
     const lBytes = input.byteLength;
     const l = lBytes * 8; //not using bitwise math in case this overflows a 32-bit integer

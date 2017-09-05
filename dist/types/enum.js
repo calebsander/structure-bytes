@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const growable_buffer_1 = require("../lib/growable-buffer");
-const pointers_1 = require("../lib/pointers");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -82,18 +81,16 @@ class EnumType extends abstract_1.default {
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @param root Omit if used externally; only used internally
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer, value, root = true) {
+    writeValue(buffer, value) {
         assert_1.default.instanceOf(buffer, growable_buffer_1.default);
         const valueBuffer = new growable_buffer_1.default;
-        this.type.writeValue(valueBuffer, value, false);
+        this.type.writeValue(valueBuffer, value);
         const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()));
         if (index === undefined)
             throw new Error('Not a valid enum value: ' + util_inspect_1.inspect(value));
         buffer.add(index); //write the index to the requested value in the values array
-        pointers_1.setPointers({ buffer, root });
     }
     equals(otherType) {
         if (!super.equals(otherType))

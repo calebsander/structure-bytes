@@ -1,6 +1,5 @@
 import assert from '../lib/assert'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -82,18 +81,16 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E[], root = true) {
+	writeValue(buffer: GrowableBuffer, value: E[]) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Array)
 		assert(
 			value.length === this.length,
 			'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length)
 		)
-		for (const instance of value) this.type.writeValue(buffer, instance, false)
-		setPointers({buffer, root})
+		for (const instance of value) this.type.writeValue(buffer, instance)
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

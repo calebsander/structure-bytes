@@ -1,7 +1,6 @@
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import GrowableBuffer from '../lib/growable-buffer'
-import {setPointers} from '../lib/pointers'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -138,15 +137,14 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
-	 * @param root Omit if used externally; only used internally
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E, root = true) {
+	writeValue(buffer: GrowableBuffer, value: E) {
 		assert.instanceOf(buffer, GrowableBuffer)
 		assert.instanceOf(value, Object)
 		for (const field of this.fields) {
 			const fieldValue = value[field.name]
-			try { field.type.writeValue(buffer, fieldValue, false) }
+			try { field.type.writeValue(buffer, fieldValue) }
 			catch (writeError) {
 				//Reporting that field is missing is more useful than, for example,
 				//Saying "undefined is not an instance of Number"
@@ -154,7 +152,6 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 				throw writeError //throw original error if field is defined, but just invalid
 			}
 		}
-		setPointers({buffer, root})
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false
