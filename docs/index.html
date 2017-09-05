@@ -721,7 +721,15 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)
 						</ul>
 					</li>
 					<li><code>PointerType</code>:<ul>
-							<li><code>index</code> of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - 32-bit unsigned integer</li>
+							<li><code>offset</code> - <code>flexInt</code>:<ul>
+									<li>If this is the first instance of these value bytes in the write buffer, then <code>0</code></li>
+									<li>Otherwise, ([position of first byte of <code>offset</code>] - [position of first byte of <code>offset</code> in the last instance of these value bytes])</li>
+								</ul>
+							</li>
+							<li>If <code>offset</code> is <code>0</code> (i.e. this is the first instance):<ul>
+									<li>Value serialized by <code>targetType</code></li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 				</ul>

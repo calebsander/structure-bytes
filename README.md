@@ -601,7 +601,11 @@ In the following definitions, `type` means the binary type format.
 	- If `valueIsNonNull`:
 		- `value` - value serialized by `typeIfNonNull`
 - `PointerType`:
-	- `index` of value in buffer (note: if buffer contains both a type and a value, this index is relative to the start of the value data) - 32-bit unsigned integer
+	- `offset` - `flexInt`:
+		- If this is the first instance of these value bytes in the write buffer, then `0`
+		- Otherwise, ([position of first byte of `offset`] - [position of first byte of `offset` in the last instance of these value bytes])
+	- If `offset` is `0` (i.e. this is the first instance):
+		- Value serialized by `targetType`
 
 ## Versioning
 Versions will be of the form `x.y.z`. They are in the `semver` format:
