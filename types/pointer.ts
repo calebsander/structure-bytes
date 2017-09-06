@@ -1,13 +1,13 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import * as flexInt from '../lib/flex-int'
-import GrowableBuffer from '../lib/growable-buffer'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
 
 //Map of write buffers to maps of binary strings to the location they were written
-const pointers = new WeakMap<GrowableBuffer, Map<string, number>>()
+const pointers = new WeakMap<AppendableBuffer, Map<string, number>>()
 
 /**
  * A type storing a value of another type through a pointer.
@@ -54,7 +54,7 @@ export default class PointerType<E> extends AbstractType<E> {
 		assert.instanceOf(type, AbsoluteType)
 		this.type = type
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -64,7 +64,7 @@ export default class PointerType<E> extends AbstractType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -93,8 +93,8 @@ export default class PointerType<E> extends AbstractType<E> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E) {
+		this.isBuffer(buffer)
 		let bufferPointers = pointers.get(buffer)
 		if (!bufferPointers) {
 			bufferPointers = new Map //initialize pointers map if it doesn't exist
@@ -111,8 +111,7 @@ export default class PointerType<E> extends AbstractType<E> {
 		}
 		else {
 			const offset = buffer.length - index
-			buffer
-				.addAll(flexInt.makeValueBuffer(offset))
+			buffer.addAll(flexInt.makeValueBuffer(offset))
 		}
 	}
 	equals(otherType: any) {

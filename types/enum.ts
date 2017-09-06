@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
-import GrowableBuffer from '../lib/growable-buffer'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -65,7 +65,7 @@ export default class EnumType<E> extends AbstractType<E> {
 		this.values = values //used when reading to get constant-time lookup of value index into value
 		this.valueIndices = valueIndices
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -79,7 +79,7 @@ export default class EnumType<E> extends AbstractType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -89,11 +89,10 @@ export default class EnumType<E> extends AbstractType<E> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E) {
-		assert.instanceOf(buffer, GrowableBuffer)
-		const valueBuffer = new GrowableBuffer
-		this.type.writeValue(valueBuffer, value)
-		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()))
+	writeValue(buffer: AppendableBuffer, value: E) {
+		this.isBuffer(buffer)
+		const valueBuffer = this.type.valueBuffer(value)
+		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer))
 		if (index === undefined) throw new Error('Not a valid enum value: ' + inspect(value))
 		buffer.add(index) //write the index to the requested value in the values array
 	}

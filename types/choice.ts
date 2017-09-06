@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import GrowableBuffer from '../lib/growable-buffer'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -56,7 +56,7 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 		for (const type of types) assert.instanceOf(type, AbstractType)
 		this.types = types
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.types.length)
@@ -67,7 +67,7 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Examples:
 	 * ````javascript
@@ -85,18 +85,18 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E) {
+		this.isBuffer(buffer)
 		let success = false
 		//Try to write value using each type in order until no error is thrown
 		for (let i = 0; i < this.types.length; i++) {
 			const type = this.types[i]
-			const valueBuffer = new GrowableBuffer
-			try { type.writeValue(valueBuffer, value) }
+			let valueBuffer: ArrayBuffer
+			try { valueBuffer = type.valueBuffer(value) }
 			catch (e) { continue }
 			buffer
 				.add(i)
-				.addAll(valueBuffer.toBuffer())
+				.addAll(valueBuffer)
 			success = true
 			break
 		}

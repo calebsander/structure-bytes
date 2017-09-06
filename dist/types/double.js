@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
-const growable_buffer_1 = require("../lib/growable-buffer");
 const str_to_num_1 = require("../lib/str-to-num");
 const floating_1 = require("./floating");
 /**
@@ -19,7 +18,7 @@ class DoubleType extends floating_1.default {
         return 0x21;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Examples:
      * ````javascript
@@ -38,7 +37,7 @@ class DoubleType extends floating_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
+        this.isBuffer(buffer);
         const convertedValue = str_to_num_1.default(value);
         if (convertedValue !== undefined)
             value = convertedValue;

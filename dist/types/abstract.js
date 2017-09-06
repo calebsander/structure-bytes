@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const base64 = require("base64-js");
 const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
+const appendable_stream_1 = require("../lib/appendable-stream");
 const assert_1 = require("../lib/assert");
 const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
 const growable_buffer_1 = require("../lib/growable-buffer");
 const recursiveNesting = require("../lib/recursive-nesting");
+const APPENDABLES = [growable_buffer_1.default, appendable_stream_1.default];
 /**
  * The superclass of all [[Type]] classes
  * in this package
@@ -21,7 +23,7 @@ class AbstractType {
         throw new Error('Generic Type has no value byte');
     }
     addToBuffer(buffer) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
+        this.isBuffer(buffer);
         if (this.cachedTypeLocations) {
             if (!recursiveNesting.get(buffer)) {
                 const location = this.cachedTypeLocations.get(buffer);
@@ -76,6 +78,15 @@ class AbstractType {
             return false;
         }
         return true;
+    }
+    /**
+     * Requires that the buffer be a [[GrowableBuffer]]
+     * or [[AppendableStream]]
+     * @private
+     * @param buffer The value to assert is an [[AppendableBuffer]]
+     */
+    isBuffer(buffer) {
+        assert_1.default.instanceOf(buffer, APPENDABLES);
     }
     /**
      * Generates the type buffer, recomputed each time

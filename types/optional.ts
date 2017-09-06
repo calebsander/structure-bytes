@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import GrowableBuffer from '../lib/growable-buffer'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -41,7 +41,7 @@ export default class OptionalType<E> extends AbsoluteType<E | null | undefined> 
 		assert.instanceOf(type, AbstractType)
 		this.type = type
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -51,7 +51,7 @@ export default class OptionalType<E> extends AbsoluteType<E | null | undefined> 
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Examples:
 	 * ````javascript
@@ -71,8 +71,8 @@ export default class OptionalType<E> extends AbsoluteType<E | null | undefined> 
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E | null | undefined) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E | null | undefined) {
+		this.isBuffer(buffer)
 		switch (value) {
 			case null:
 			case undefined:

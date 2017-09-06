@@ -1,12 +1,16 @@
 import * as base64 from 'base64-js'
 import sha256 from '../lib/sha-256'
 import {VERSION_STRING} from '../config'
+import AppendableBuffer from '../lib/appendable'
+import AppendableStream from '../lib/appendable-stream'
 import assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
 import * as flexInt from '../lib/flex-int'
 import GrowableBuffer from '../lib/growable-buffer'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import Type from './type'
+
+const APPENDABLES = [GrowableBuffer, AppendableStream]
 
 /**
  * The superclass of all [[Type]] classes
@@ -16,7 +20,7 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 	private cachedBuffer?: ArrayBuffer
 	private cachedHash?: string
 	private cachedSignature?: string
-	private cachedTypeLocations?: Map<GrowableBuffer, number>
+	private cachedTypeLocations?: Map<AppendableBuffer, number>
 
 	/**
 	 * Returns an unsigned byte value unique to this type class;
@@ -25,8 +29,8 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 	static get _value(): number {
 		throw new Error('Generic Type has no value byte')
 	}
-	addToBuffer(buffer: GrowableBuffer) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	addToBuffer(buffer: AppendableBuffer) {
+		this.isBuffer(buffer)
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
 			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
 				const location = this.cachedTypeLocations.get(buffer)
@@ -55,7 +59,7 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 		if (!this.cachedSignature) this.cachedSignature = this._getSignature()
 		return this.cachedSignature
 	}
-	abstract writeValue(buffer: GrowableBuffer, value: VALUE): void
+	abstract writeValue(buffer: AppendableBuffer, value: VALUE): void
 	valueBuffer(value: VALUE) {
 		const buffer = new GrowableBuffer
 		this.writeValue(buffer, value)
@@ -73,6 +77,15 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 		try { assert.equal(otherType.constructor, this.constructor) }
 		catch (e) { return false }
 		return true
+	}
+	/**
+	 * Requires that the buffer be a [[GrowableBuffer]]
+	 * or [[AppendableStream]]
+	 * @private
+	 * @param buffer The value to assert is an [[AppendableBuffer]]
+	 */
+	protected isBuffer(buffer: AppendableBuffer): void {
+		assert.instanceOf(buffer, APPENDABLES)
 	}
 	/**
 	 * Generates the type buffer, recomputed each time

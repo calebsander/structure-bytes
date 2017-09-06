@@ -75,6 +75,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_bit_math_.html#dividedbyeight" class="tsd-kind-icon">divided<wbr>ByEight</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_bit_math_.html#modeight" class="tsd-kind-icon">mod<wbr>Eight</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_bit_math_.html#timeseight" class="tsd-kind-icon">times<wbr>Eight</a></li>
 							</ul>
 						</section>
 					</div>
@@ -92,12 +93,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/bit-math.ts:5</li>
+									<li>Defined in lib/bit-math.ts:6</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Efficiently computes <code>Math.floor(n / 8)</code></p>
+									<p>Efficiently computes <code>Math.floor(n / 8)</code>,
+									for positive <code>n</code></p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -123,12 +125,43 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/bit-math.ts:12</li>
+									<li>Defined in lib/bit-math.ts:13</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Efficiently computes <code>n % 8</code></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>n: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The number in question</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+					<a name="timeseight" class="tsd-anchor"></a>
+					<h3>times<wbr>Eight</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">times<wbr>Eight<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in lib/bit-math.ts:20</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Efficiently computes <code>n * 8</code></p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -164,6 +197,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 						<a href="_lib_bit_math_.html#modeight" class="tsd-kind-icon">mod<wbr>Eight</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<a href="_lib_bit_math_.html#timeseight" class="tsd-kind-icon">times<wbr>Eight</a>
 					</li>
 				</ul>
 			</nav>

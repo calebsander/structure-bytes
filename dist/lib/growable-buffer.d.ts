@@ -1,3 +1,4 @@
+import AppendableBuffer from './appendable';
 /**
  * A [`StringBuilder`](https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html)-like
  * object which automatically grows its internal buffer as bytes are added.
@@ -5,7 +6,7 @@
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-export default class GrowableBuffer {
+export default class GrowableBuffer implements AppendableBuffer {
     private buffer;
     private size;
     /**
@@ -72,7 +73,7 @@ export default class GrowableBuffer {
      * of the internal buffer
      * @param buffer The bytes to add.
      * The byte at position `i` in `buffer` will be written to
-     * position `this.length + i` of the [[GrowableBuffer]])
+     * position `this.length + i` of the [[GrowableBuffer]]).
      */
     addAll(buffer: ArrayBuffer): this;
     /**

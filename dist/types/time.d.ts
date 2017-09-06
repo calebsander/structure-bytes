@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import ChronoType from './chrono';
 /**
  * A type storing a specific time of day,
@@ -18,7 +18,7 @@ import ChronoType from './chrono';
 export default class TimeType extends ChronoType {
     static readonly _value: number;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -28,5 +28,5 @@ export default class TimeType extends ChronoType {
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: Date): void;
+    writeValue(buffer: AppendableBuffer, value: Date): void;
 }

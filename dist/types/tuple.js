@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
-const growable_buffer_1 = require("../lib/growable-buffer");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -51,7 +50,7 @@ class TupleType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -66,7 +65,7 @@ class TupleType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
+        this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Array);
         assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length));
         for (const instance of value)

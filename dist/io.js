@@ -6,18 +6,16 @@ const http = require("http");
 const stream_1 = require("stream");
 const zlib = require("zlib");
 const accepts = require("accepts");
+const appendable_stream_1 = require("./lib/appendable-stream");
 const assert_1 = require("./lib/assert");
-const buffer_stream_1 = require("./lib/buffer-stream");
-const growable_buffer_1 = require("./lib/growable-buffer");
 const r = require("./read");
 const abstract_1 = require("./types/abstract");
 function toArrayBuffer(buffer) {
     return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 }
-const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http.OutgoingMessage];
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])
- * followed by a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -41,30 +39,25 @@ const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http.OutgoingMessa
  */
 function writeType({ type, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
-    assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
     if (callback === undefined)
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
-    let typeBuffer;
+    const typeStream = new appendable_stream_1.default(outStream);
+    outStream.on('error', callback);
     try {
-        typeBuffer = type.toBuffer();
+        type.addToBuffer(typeStream);
+        outStream.on('finish', () => callback(null));
     }
     catch (err) {
         callback(err);
-        return outStream;
     }
-    const typeStream = new buffer_stream_1.default(typeBuffer);
-    return typeStream.pipe(outStream)
-        .on('error', function (err) {
-        this.end();
-        callback(err);
-    })
-        .on('finish', () => callback(null));
+    typeStream.end();
+    return outStream;
 }
 exports.writeType = writeType;
 /**
  * Writes the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]])
- * followed by a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -88,30 +81,26 @@ exports.writeType = writeType;
  */
 function writeValue({ type, value, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
-    assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
     if (callback === undefined)
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
-    const valueBuffer = new growable_buffer_1.default;
+    const valueStream = new appendable_stream_1.default(outStream);
+    outStream.on('error', callback);
     try {
-        type.writeValue(valueBuffer, value);
+        type.writeValue(valueStream, value);
+        outStream.on('finish', () => callback(null));
     }
     catch (err) {
         callback(err);
-        return outStream;
     }
-    return new buffer_stream_1.default(valueBuffer).pipe(outStream)
-        .on('error', function (err) {
-        this.end();
-        callback(err);
-    })
-        .on('finish', () => callback(null));
+    valueStream.end();
+    return outStream;
 }
 exports.writeValue = writeValue;
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]]),
  * followed by the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]]),
- * and then a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -135,26 +124,20 @@ exports.writeValue = writeValue;
  */
 function writeTypeAndValue({ type, value, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
-    assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
     if (callback === undefined)
         callback = () => { };
     assert_1.default.instanceOf(callback, Function);
-    let typeBuffer;
+    const typeValueStream = new appendable_stream_1.default(outStream);
+    outStream.on('error', callback);
     try {
-        typeBuffer = type.toBuffer();
+        type.addToBuffer(typeValueStream);
+        type.writeValue(typeValueStream, value);
+        outStream.on('finish', () => callback(null));
     }
     catch (err) {
         callback(err);
-        return outStream;
     }
-    const typeStream = new buffer_stream_1.default(typeBuffer);
-    typeStream.pipe(outStream, { end: false })
-        .on('error', function () {
-        this.end();
-    });
-    typeStream.on('bs-written', () => {
-        writeValue({ type, value, outStream }, callback);
-    });
+    typeValueStream.end();
     return outStream;
 }
 exports.writeTypeAndValue = writeTypeAndValue;

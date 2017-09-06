@@ -40,7 +40,7 @@ export declare type ValueCallback<E> = (err: Error | null, value: E | null) => v
 export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> | null, value: E | null) => void;
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])
- * followed by a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -65,7 +65,7 @@ export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> 
 export declare function writeType({type, outStream}: WriteParams<any>, callback?: ErrCallback): Writable;
 /**
  * Writes the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]])
- * followed by a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -91,7 +91,7 @@ export declare function writeValue<E>({type, value, outStream}: WriteTypeValuePa
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]]),
  * followed by the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]]),
- * and then a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:

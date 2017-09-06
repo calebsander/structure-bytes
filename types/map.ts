@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import GrowableBuffer from '../lib/growable-buffer'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -46,7 +46,7 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 		this.keyType = keyType
 		this.valueType = valueType
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.keyType.addToBuffer(buffer)
@@ -57,7 +57,7 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -79,8 +79,8 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: Map<K, V>) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: Map<K, V>) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Map)
 		buffer.addAll(flexInt.makeValueBuffer(value.size))
 		for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value

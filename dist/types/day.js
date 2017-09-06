@@ -17,7 +17,7 @@ class DayType extends chrono_1.default {
         return 0x1B;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type.
+     * Appends value bytes to an [[AppendableBuffer]] according to the type.
      * Writes `Date` objects but ignores all units smaller than the day.
      *
      * Example:
@@ -29,6 +29,7 @@ class DayType extends chrono_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
+        this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Date);
         //Instead of taking value.getTime() / MILLIS_PER_DAY (which would act as if the date was measured at UTC),
         //we round down the date in the current time zone

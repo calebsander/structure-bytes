@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as date from '../lib/date'
-import GrowableBuffer from '../lib/growable-buffer'
 import ChronoType from './chrono'
 
 /**
@@ -23,7 +23,7 @@ export default class TimeType extends ChronoType {
 		return 0x1C
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -33,7 +33,8 @@ export default class TimeType extends ChronoType {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: Date) {
+	writeValue(buffer: AppendableBuffer, value: Date) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		const byteBuffer = new ArrayBuffer(4)
 		new DataView(byteBuffer).setUint32(0, value.getTime() % date.MILLIS_PER_DAY)

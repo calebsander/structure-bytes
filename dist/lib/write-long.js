@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("./assert");
-const growable_buffer_1 = require("./growable-buffer");
 const strint = require("./strint");
 const LONG_MAX = '9223372036854775807', LONG_MIN = '-9223372036854775808';
 /**
@@ -10,7 +9,6 @@ const LONG_MAX = '9223372036854775807', LONG_MIN = '-9223372036854775808';
  * @param value The value to write (a numeric string)
  */
 exports.default = (buffer, value) => {
-    assert_1.default.instanceOf(buffer, growable_buffer_1.default);
     assert_1.default.instanceOf(value, String);
     assert_1.default(!(strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)), 'Value out of range');
     const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true); //get upper signed int

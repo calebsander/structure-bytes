@@ -1,11 +1,9 @@
 import * as fs from 'fs'
 import assert from '../../dist/lib/assert'
-import BufferStream from '../../dist/lib/buffer-stream'
+import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
-
-const OUT_FILE = 'type-out'
 
 const type = new t.ArrayType(
 	new t.StructType({
@@ -16,6 +14,7 @@ const type = new t.ArrayType(
 	})
 )
 const writePromise = new Promise((resolve, reject) => {
+	const OUT_FILE = 'type-out'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeType({type, outStream}, err => {
 		try {
@@ -41,11 +40,10 @@ const writePromise = new Promise((resolve, reject) => {
 	})
 })
 const writeWithoutCallback = () => new Promise((resolve, reject) => {
-	const wait = setTimeout(() => {}, 1000000)
+	const OUT_FILE = 'type-out2'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeType({type: new t.StringType, outStream})
 	outStream.on('finish', () => {
-		clearTimeout(wait)
 		try {
 			fs.readFile(OUT_FILE, (err, data) => {
 				try {
@@ -60,6 +58,7 @@ const writeWithoutCallback = () => new Promise((resolve, reject) => {
 	})
 })
 const writeErrorPromise = () => new Promise((resolve, reject) => {
+	const OUT_FILE = 'type-out3'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeType({type: new t.RecursiveType('no-such-type'), outStream}, err => {
 		try {

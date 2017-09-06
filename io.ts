@@ -2,12 +2,11 @@
 //specifically, reads and writes of types and values and HTTP responses
 
 import * as http from 'http'
-import {Duplex, Readable, Writable} from 'stream'
+import {Readable, Writable} from 'stream'
 import * as zlib from 'zlib'
 import accepts = require('accepts')
+import AppendableStream from './lib/appendable-stream'
 import assert from './lib/assert'
-import BufferStream from './lib/buffer-stream'
-import GrowableBuffer from './lib/growable-buffer'
 import * as r from './read'
 import AbstractType from './types/abstract'
 import Type from './types/type'
@@ -15,7 +14,6 @@ import Type from './types/type'
 function toArrayBuffer(buffer: Buffer): ArrayBuffer {
 	return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
 }
-const WRITABLE_STREAMS = [Writable, Duplex, http.OutgoingMessage]
 
 export interface WriteParams<E> {
 	type: Type<E>
@@ -56,7 +54,7 @@ export type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> | null, 
 
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])
- * followed by a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -78,29 +76,24 @@ export type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> | null, 
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export function writeType({type, outStream}: WriteParams<any>, callback?: ErrCallback) {
+export function writeType({type, outStream}: WriteParams<any>, callback?: ErrCallback): Writable {
 	assert.instanceOf(type, AbstractType)
-	assert.instanceOf(outStream, WRITABLE_STREAMS)
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
-	let typeBuffer: ArrayBuffer
-	try { typeBuffer = type.toBuffer() }
-	catch (err) {
-		callback(err)
-		return outStream
+	const typeStream = new AppendableStream(outStream)
+	outStream.on('error', callback)
+	try {
+		type.addToBuffer(typeStream)
+		outStream.on('finish', () => callback!(null))
 	}
-	const typeStream = new BufferStream(typeBuffer)
-	return typeStream.pipe(outStream)
-		.on('error', function(this: typeof outStream, err: Error) {
-			this.end()
-			callback!(err)
-		})
-		.on('finish', () => callback!(null))
+	catch (err) { callback(err) }
+	typeStream.end()
+	return outStream
 }
 
 /**
  * Writes the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]])
- * followed by a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -122,29 +115,25 @@ export function writeType({type, outStream}: WriteParams<any>, callback?: ErrCal
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback) {
+export function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable {
 	assert.instanceOf(type, AbstractType)
-	assert.instanceOf(outStream, WRITABLE_STREAMS)
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
-	const valueBuffer = new GrowableBuffer
-	try { type.writeValue(valueBuffer, value) }
-	catch (err) {
-		callback(err)
-		return outStream
+	const valueStream = new AppendableStream(outStream)
+	outStream.on('error', callback)
+	try {
+		type.writeValue(valueStream, value)
+		outStream.on('finish', () => callback!(null))
 	}
-	return new BufferStream(valueBuffer).pipe(outStream)
-		.on('error', function(this: typeof outStream, err: Error) {
-			this.end()
-			callback!(err)
-		})
-		.on('finish', () => callback!(null))
-	}
+	catch (err) { callback(err) }
+	valueStream.end()
+	return outStream
+}
 
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]]),
  * followed by the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]]),
- * and then a null byte to a writable stream.
+ * to a writable stream and then closes the stream.
  * Calls `callback` when done.
  *
  * Example:
@@ -166,25 +155,19 @@ export function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>,
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export function writeTypeAndValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback) {
+export function writeTypeAndValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable {
 	assert.instanceOf(type, AbstractType)
-	assert.instanceOf(outStream, WRITABLE_STREAMS)
 	if (callback === undefined) callback = () => {}
 	assert.instanceOf(callback, Function)
-	let typeBuffer: ArrayBuffer
-	try { typeBuffer = type.toBuffer() }
-	catch (err) {
-		callback(err)
-		return outStream
+	const typeValueStream = new AppendableStream(outStream)
+	outStream.on('error', callback)
+	try {
+		type.addToBuffer(typeValueStream)
+		type.writeValue(typeValueStream, value)
+		outStream.on('finish', () => callback!(null))
 	}
-	const typeStream = new BufferStream(typeBuffer)
-	typeStream.pipe(outStream, {end: false})
-		.on('error', function(this: typeof outStream) {
-			this.end()
-		})
-	typeStream.on('bs-written', () => { //can't listen for finish because it is called on a pipe without an end
-		writeValue({type, value, outStream}, callback)
-	})
+	catch (err) { callback(err) }
+	typeValueStream.end()
 	return outStream
 }
 

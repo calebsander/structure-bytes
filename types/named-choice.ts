@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
-import GrowableBuffer from '../lib/growable-buffer'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import StructType from './struct'
@@ -100,7 +100,7 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 			this.constructorTypes[constructorIndex] = {nameBuffer: typeNameBuffer, type}
 		}
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.constructorTypes.length)
@@ -116,7 +116,7 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Examples:
 	 * ````javascript
@@ -142,8 +142,8 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Object)
 		let writeIndex: number | undefined
 		for (const [index, constructor] of this.indexConstructors) {

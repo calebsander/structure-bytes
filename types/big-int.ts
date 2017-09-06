@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import GrowableBuffer from '../lib/growable-buffer'
 import * as strint from '../lib/strint'
 import IntegerType from './integer'
 
@@ -19,7 +19,7 @@ export default class BigIntType extends IntegerType<string> {
 		return 0x05
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Examples:
 	 * ````javascript
@@ -33,8 +33,8 @@ export default class BigIntType extends IntegerType<string> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: string) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: string) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, String)
 		value = strint.normalize(value) //throws if value is invalid
 		const bytes: number[] = []

@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import UnsignedType from './unsigned';
 /**
  * A type storing an arbitrary precision unsigned integer.
@@ -13,7 +13,7 @@ import UnsignedType from './unsigned';
 export default class BigUnsignedIntType extends UnsignedType<string> {
     static readonly _value: number;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Examples:
      * ````javascript
@@ -27,5 +27,5 @@ export default class BigUnsignedIntType extends UnsignedType<string> {
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: string): void;
+    writeValue(buffer: AppendableBuffer, value: string): void;
 }

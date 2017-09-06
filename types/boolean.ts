@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import GrowableBuffer from '../lib/growable-buffer'
 import AbsoluteType from './absolute'
 
 /**
@@ -15,7 +15,7 @@ export default class BooleanType extends AbsoluteType<boolean> {
 		return 0x30
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -25,8 +25,8 @@ export default class BooleanType extends AbsoluteType<boolean> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: boolean) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: boolean) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Boolean)
 		buffer.add(value ? 0xFF : 0x00) //all bits are set for good measure
 	}

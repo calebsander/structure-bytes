@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import AbsoluteType from './absolute';
 /**
  * A type storing a variable-length array of bytes.
@@ -14,7 +14,7 @@ import AbsoluteType from './absolute';
 export default class OctetsType extends AbsoluteType<ArrayBuffer> {
     static readonly _value: number;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -25,5 +25,5 @@ export default class OctetsType extends AbsoluteType<ArrayBuffer> {
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: ArrayBuffer): void;
+    writeValue(buffer: AppendableBuffer, value: ArrayBuffer): void;
 }

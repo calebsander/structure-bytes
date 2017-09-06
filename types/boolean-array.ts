@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import GrowableBuffer from '../lib/growable-buffer'
 import writeBooleans from '../lib/write-booleans'
 import AbsoluteType from './absolute'
 
@@ -20,7 +20,7 @@ export default class BooleanArrayType extends AbsoluteType<boolean[]> {
 		return 0x32
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Examples:
 	 * ````javascript
@@ -34,7 +34,8 @@ export default class BooleanArrayType extends AbsoluteType<boolean[]> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: boolean[]) {
+	writeValue(buffer: AppendableBuffer, value: boolean[]) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		buffer.addAll(flexInt.makeValueBuffer(value.length))
 		writeBooleans(buffer, value)

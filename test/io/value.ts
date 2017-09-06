@@ -1,11 +1,9 @@
 import * as fs from 'fs'
 import assert from '../../dist/lib/assert'
-import BufferStream from '../../dist/lib/buffer-stream'
+import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
-
-const OUT_FILE = 'value-out'
 
 const type = new t.TupleType({
 	type:
@@ -15,9 +13,10 @@ const type = new t.TupleType({
 	length: 5
 })
 const value = ['a', null, 'b', null, 'c']
-const outStream = fs.createWriteStream(OUT_FILE)
 const VALUE_BUFFER = bufferFrom([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63])
 const writePromise = new Promise((resolve, reject) => {
+	const OUT_FILE = 'value-out'
+	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeValue({type, value, outStream}, err => {
 		try {
 			if (err) throw err
@@ -34,11 +33,10 @@ const writePromise = new Promise((resolve, reject) => {
 	})
 })
 const writeWithoutCallback = () => new Promise((resolve, reject) => {
-	const wait = setTimeout(() => {}, 1000000)
+	const OUT_FILE = 'value-out2'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeValue({type: new t.StringType, value: 'abc', outStream})
 	outStream.on('finish', () => {
-		clearTimeout(wait)
 		try {
 			fs.readFile(OUT_FILE, (err, data) => {
 				try {
@@ -53,6 +51,7 @@ const writeWithoutCallback = () => new Promise((resolve, reject) => {
 	})
 })
 const writeErrorPromise = () => new Promise((resolve, reject) => {
+	const OUT_FILE = 'value-out3'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeValue({type: new t.BooleanType, value: 0 as any, outStream}, err => {
 		try {

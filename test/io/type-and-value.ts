@@ -1,15 +1,12 @@
 import * as fs from 'fs'
 import assert from '../../dist/lib/assert'
-import BufferStream from '../../dist/lib/buffer-stream'
+import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom, concat} from '../test-common'
 
-const OUT_FILE = 'type-value-out'
-
 const type = new t.MapType(new t.StringType, new t.PointerType(new t.UnsignedIntType))
 const value = new Map().set('abc', 4560).set('def', 4560).set('—ݥ—', 4560)
-const outStream = fs.createWriteStream(OUT_FILE)
 const BUFFER = concat([
 	bufferFrom([0x54, 0x41, 0x70, 0x13]),
 	bufferFrom([
@@ -24,6 +21,8 @@ const BUFFER = concat([
 	])
 ])
 const writePromise = new Promise((resolve, reject) => {
+	const OUT_FILE = 'type-value-out'
+	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeTypeAndValue({type, value, outStream}, err => {
 		try {
 			if (err) throw err
@@ -40,11 +39,10 @@ const writePromise = new Promise((resolve, reject) => {
 	})
 })
 const writeWithoutCallback = () => new Promise((resolve, reject) => {
-	const wait = setTimeout(() => {}, 1000000)
+	const OUT_FILE = 'type-value-out2'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeTypeAndValue({type: new t.StringType, value: 'abc', outStream})
 	outStream.on('finish', () => {
-		clearTimeout(wait)
 		try {
 			fs.readFile(OUT_FILE, (err, data) => {
 				try {
@@ -59,6 +57,7 @@ const writeWithoutCallback = () => new Promise((resolve, reject) => {
 	})
 })
 const writeTypeErrorPromise = () => new Promise((resolve, reject) => {
+	const OUT_FILE = 'type-value-out3'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeTypeAndValue({type: new t.RecursiveType('no-such-type'), value: 0, outStream}, err => {
 		try {
@@ -69,6 +68,7 @@ const writeTypeErrorPromise = () => new Promise((resolve, reject) => {
 	})
 })
 const writeValueErrorPromise = () => new Promise((resolve, reject) => {
+	const OUT_FILE = 'type-value-out4'
 	const outStream = fs.createWriteStream(OUT_FILE)
 	io.writeTypeAndValue({type: new t.UnsignedIntType, value: -1, outStream}, err => {
 		try {

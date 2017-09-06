@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import assert from '../../dist/lib/assert'
-import BufferStream from '../../dist/lib/buffer-stream'
+import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom, concat} from '../test-common'

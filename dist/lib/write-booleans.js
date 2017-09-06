@@ -13,22 +13,20 @@ const bit_math_1 = require("./bit-math");
  */
 exports.default = (buffer, booleans) => {
     assert_1.default.instanceOf(booleans, Array);
-    const incompleteBytes = bit_math_1.modEight(booleans.length); //whether the booleans take up a partial byte
-    const bytes = bit_math_1.dividedByEight(booleans.length); //floored, so need to add one if incompleteBytes
-    let length;
-    if (incompleteBytes)
-        length = bytes + 1;
-    else
-        length = bytes;
-    const byteBuffer = new ArrayBuffer(length);
-    const castBuffer = new Uint8Array(byteBuffer);
-    for (let i = 0; i < booleans.length; i++) {
-        const bool = booleans[i];
-        assert_1.default.instanceOf(bool, Boolean);
-        const bit = bit_math_1.modEight(~bit_math_1.modEight(i)); //7 - (i % 8)
-        //Set desired bit, leaving the others unchanges
-        if (bool)
-            castBuffer[bit_math_1.dividedByEight(i)] |= 1 << bit;
+    byteLoop: for (let byteIndex = 0;; byteIndex++) {
+        let byteValue = 0;
+        for (let bit = 0; bit < 8; bit++) {
+            const booleanIndex = bit_math_1.timesEight(byteIndex) | bit;
+            if (booleanIndex === booleans.length) {
+                if (bit)
+                    buffer.add(byteValue);
+                break byteLoop;
+            }
+            const bool = booleans[booleanIndex];
+            assert_1.default.instanceOf(bool, Boolean);
+            if (bool)
+                byteValue |= 1 << (7 - bit); //go from most significant bit to least significant
+        }
+        buffer.add(byteValue);
     }
-    buffer.addAll(byteBuffer);
 };

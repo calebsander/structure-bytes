@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import GrowableBuffer from '../lib/growable-buffer'
 import writeIterable from '../lib/write-iterable'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -37,7 +37,7 @@ export default class SetType<E> extends AbsoluteType<Set<E>> {
 		assert.instanceOf(type, AbstractType)
 		this.type = type
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -47,7 +47,7 @@ export default class SetType<E> extends AbsoluteType<Set<E>> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -60,7 +60,8 @@ export default class SetType<E> extends AbsoluteType<Set<E>> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: Set<E>) {
+	writeValue(buffer: AppendableBuffer, value: Set<E>) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Set)
 		writeIterable({type: this.type, buffer, value, length: value.size})
 	}

@@ -48,7 +48,7 @@ class ArrayType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -62,6 +62,7 @@ class ArrayType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
+        this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Array);
         write_iterable_1.default({ type: this.type, buffer, value, length: value.length });
     }

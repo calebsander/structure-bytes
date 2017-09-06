@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
-const growable_buffer_1 = require("../lib/growable-buffer");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -73,7 +72,7 @@ class EnumType extends abstract_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -84,10 +83,9 @@ class EnumType extends abstract_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
-        const valueBuffer = new growable_buffer_1.default;
-        this.type.writeValue(valueBuffer, value);
-        const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer.toBuffer()));
+        this.isBuffer(buffer);
+        const valueBuffer = this.type.valueBuffer(value);
+        const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer));
         if (index === undefined)
             throw new Error('Not a valid enum value: ' + util_inspect_1.inspect(value));
         buffer.add(index); //write the index to the requested value in the values array

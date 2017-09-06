@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import Type from './type';
 /**
  * The superclass of all [[Type]] classes
@@ -14,13 +14,20 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
      * used to serialize the type
      */
     static readonly _value: number;
-    addToBuffer(buffer: GrowableBuffer): boolean;
+    addToBuffer(buffer: AppendableBuffer): boolean;
     toBuffer(): ArrayBuffer;
     getHash(): string;
     getSignature(): string;
-    abstract writeValue(buffer: GrowableBuffer, value: VALUE): void;
+    abstract writeValue(buffer: AppendableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
     equals(otherType: any): boolean;
+    /**
+     * Requires that the buffer be a [[GrowableBuffer]]
+     * or [[AppendableStream]]
+     * @private
+     * @param buffer The value to assert is an [[AppendableBuffer]]
+     */
+    protected isBuffer(buffer: AppendableBuffer): void;
     /**
      * Generates the type buffer, recomputed each time
      * @private

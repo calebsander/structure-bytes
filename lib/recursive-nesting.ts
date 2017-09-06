@@ -1,14 +1,14 @@
-import GrowableBuffer from './growable-buffer'
+import AppendableBuffer from './appendable'
 
 //Map of write buffers to the current number of levels deep in recursive types they are
-const recursiveNesting = new WeakMap<GrowableBuffer, number>()
+const recursiveNesting = new WeakMap<AppendableBuffer, number>()
 
 /**
  * Increments the number of levels the specified
  * value write buffer is currently deep in recursive types
  * @param buffer The buffer whose value to increment
  */
-export function increment(buffer: GrowableBuffer): void {
+export function increment(buffer: AppendableBuffer): void {
 	const lastValue = recursiveNesting.get(buffer) || 0
 	recursiveNesting.set(buffer, lastValue + 1)
 }
@@ -17,7 +17,7 @@ export function increment(buffer: GrowableBuffer): void {
  * value write buffer is currently deep in recursive types
  * @param buffer The buffer whose value to decrement
  */
-export function decrement(buffer: GrowableBuffer): void {
+export function decrement(buffer: AppendableBuffer): void {
 	const lastValue = recursiveNesting.get(buffer) as number
 	recursiveNesting.set(buffer, lastValue - 1)
 }
@@ -28,6 +28,6 @@ export function decrement(buffer: GrowableBuffer): void {
  * @return The number of [[increment]]s minus
  * the number of [[decrement]]s called on the buffer
  */
-export function get(buffer: GrowableBuffer): number | undefined {
+export function get(buffer: AppendableBuffer): number | undefined {
 	return recursiveNesting.get(buffer)
 }

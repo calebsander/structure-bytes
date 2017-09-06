@@ -1,18 +1,17 @@
-import assert from './assert'
+import AppendableBuffer from './appendable'
 import * as flexInt from './flex-int'
-import GrowableBuffer from './growable-buffer'
 import Type from '../types/type'
 
 export interface IterableWriteParams<E> {
 	type: Type<E>
-	buffer: GrowableBuffer
+	buffer: AppendableBuffer
 	value: Iterable<E>
 	length: number
 }
 /**
  * Writes any iterable value to the buffer.
  * Used by [[ArrayType]] and [[SetType]].
- * Appends value bytes to a [[GrowableBuffer]] according to the type.
+ * Appends value bytes to an [[AppendableBuffer]] according to the type.
  * @param type The type to use to write individual elements
  * @param buffer The buffer to which to append
  * @param value The value to write
@@ -20,7 +19,6 @@ export interface IterableWriteParams<E> {
  * @throws If the value doesn't match the type, e.g. `new sb.ArrayType().writeValue(buffer, 23)`
  */
 export default <E>({type, buffer, value, length}: IterableWriteParams<E>): void => {
-	assert.instanceOf(buffer, GrowableBuffer)
 	buffer.addAll(flexInt.makeValueBuffer(length))
 	for (const instance of value) type.writeValue(buffer, instance)
 }

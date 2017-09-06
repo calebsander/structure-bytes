@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import GrowableBuffer from '../lib/growable-buffer'
 import writeLong from '../lib/write-long'
 import ChronoType from './chrono'
 
@@ -17,7 +17,7 @@ export default class DateType extends ChronoType {
 		return 0x1A
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -27,7 +27,8 @@ export default class DateType extends ChronoType {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: Date) {
+	writeValue(buffer: AppendableBuffer, value: Date) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		writeLong(buffer, String(value.getTime()))
 	}

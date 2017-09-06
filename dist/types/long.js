@@ -17,7 +17,7 @@ class LongType extends integer_1.default {
         return 0x04;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -28,6 +28,7 @@ class LongType extends integer_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
+        this.isBuffer(buffer);
         write_long_1.default(buffer, value);
     }
 }

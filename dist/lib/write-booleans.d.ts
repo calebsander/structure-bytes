@@ -1,3 +1,3 @@
-import GrowableBuffer from './growable-buffer';
-declare const _default: (buffer: GrowableBuffer, booleans: boolean[]) => void;
+import AppendableBuffer from './appendable';
+declare const _default: (buffer: AppendableBuffer, booleans: boolean[]) => void;
 export default _default;

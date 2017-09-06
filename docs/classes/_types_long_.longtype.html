@@ -117,6 +117,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_long_.longtype.html#equals" class="tsd-kind-icon">equals</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_long_.longtype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_long_.longtype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external"><a href="_types_long_.longtype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_long_.longtype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_long_.longtype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_long_.longtype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
@@ -152,7 +153,7 @@
 					<a name="addtobuffer" class="tsd-anchor"></a>
 					<h3>add<wbr>ToBuffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>ToBuffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>ToBuffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -160,13 +161,13 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:28</li>
+									<li>Defined in types/abstract.ts:32</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>buffer: <a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a></h5>
+									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -185,7 +186,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:69</li>
+									<li>Defined in types/abstract.ts:73</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -210,7 +211,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:50</li>
+									<li>Defined in types/abstract.ts:54</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -229,10 +230,43 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external">
+					<a name="isbuffer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> is<wbr>Buffer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Buffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#isbuffer">isBuffer</a></p>
+								<ul>
+									<li>Defined in types/abstract.ts:87</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Requires that the buffer be a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>
+									or <a href="_lib_appendable_stream_.appendablestream.html">AppendableStream</a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The value to assert is an <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a></p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -248,7 +282,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:46</li>
+									<li>Defined in types/abstract.ts:50</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -266,7 +300,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:59</li>
+									<li>Defined in types/abstract.ts:63</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -283,7 +317,7 @@
 					<a name="writevalue" class="tsd-anchor"></a>
 					<h3>write<wbr>Value</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -295,7 +329,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Appends value bytes to a <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a> according to the type</p>
+									<p>Appends value bytes to an <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
 								</div>
 								<p>Example:</p>
 								<pre><code class="lang-javascript">type.writeValue(buffer, <span class="hljs-string">'-1234567890123456789'</span>)
@@ -309,7 +343,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>buffer: <a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a></h5>
+									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The buffer to which to append</p>
 									</div>
@@ -359,6 +393,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="_types_long_.longtype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external">
+								<a href="_types_long_.longtype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="_types_long_.longtype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>

@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import GrowableBuffer from '../lib/growable-buffer'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -58,7 +58,7 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 		this.type = type
 		this.length = length
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -69,7 +69,7 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -83,8 +83,8 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E[]) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E[]) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		assert(
 			value.length === this.length,

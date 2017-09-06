@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 /**
  * An interface representing an object that can serialize values of a certain type.
  * The object must also be able to serialize itself.
@@ -6,11 +6,11 @@ import GrowableBuffer from '../lib/growable-buffer';
  */
 export default interface Type<VALUE> {
     /**
-     * Appends the type information to a [[GrowableBuffer]]
+     * Appends the type information to an [[AppendableBuffer]]
      * @param buffer The buffer to append to
      * @return `false` if it wrote a pointer to a previous instance, `true` if it wrote the type byte. For internal use.
      */
-    addToBuffer(buffer: GrowableBuffer): boolean;
+    addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Gets the type in buffer form, using a cached value if present.
      * Since types are immutable, the result should never change from the cached value.
@@ -30,12 +30,12 @@ export default interface Type<VALUE> {
      */
     getSignature(): string;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      * @param buffer The buffer to which to append
      * @param value The value to write
-     * @throws If the value doesn't match the type, e.g. `sb.StringType().writeValue(buffer, 23)`
+     * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: VALUE): void;
+    writeValue(buffer: AppendableBuffer, value: VALUE): void;
     /**
      * Gets an `ArrayBuffer` containing the value in binary format.
      * See this type's [[writeValue]] documentation for examples of values.

@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import AbsoluteType from './absolute';
 import StructType from './struct';
 export interface NameAndType<E> {
@@ -71,9 +71,9 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
      * are written, not just those inherited from the superclass.
      */
     constructor(constructorTypes: Map<Function, StructType<E>>);
-    addToBuffer(buffer: GrowableBuffer): boolean;
+    addToBuffer(buffer: AppendableBuffer): boolean;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Examples:
      * ````javascript
@@ -99,6 +99,6 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: E): void;
+    writeValue(buffer: AppendableBuffer, value: E): void;
     equals(otherType: any): boolean;
 }

@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
-import GrowableBuffer from '../lib/growable-buffer'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -108,7 +108,7 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 			else return 0 //should never occur since names are distinct
 		})
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.add(this.fields.length)
@@ -125,7 +125,7 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -139,8 +139,8 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: GrowableBuffer, value: E) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E) {
+		this.isBuffer(buffer)
 		assert.instanceOf(value, Object)
 		for (const field of this.fields) {
 			const fieldValue = value[field.name]

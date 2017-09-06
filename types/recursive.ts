@@ -1,6 +1,6 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import GrowableBuffer from '../lib/growable-buffer'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import * as recursiveRegistry from '../recursive-registry'
 import {RegisterableType} from '../recursive-registry-type'
@@ -8,9 +8,9 @@ import AbsoluteType from './absolute'
 import Type from './type'
 
 //Map of write buffers to maps of objects to their first written locations in the buffer
-const recursiveLocations = new WeakMap<GrowableBuffer, Map<any, number>>()
+const recursiveLocations = new WeakMap<AppendableBuffer, Map<any, number>>()
 //Map of write buffers to maps of names to ids
-const recursiveIDs = new WeakMap<GrowableBuffer, Map<string, number>>()
+const recursiveIDs = new WeakMap<AppendableBuffer, Map<string, number>>()
 
 /**
  * A type that can refer recursively to itself.
@@ -97,7 +97,7 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 		const type = recursiveRegistry.getType(this.name)
 		return (type as RegisterableType & Type<E>)
 	}
-	addToBuffer(buffer: GrowableBuffer) {
+	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			let bufferRecursiveIDs = recursiveIDs.get(buffer)
@@ -115,8 +115,7 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 			if (firstOccurence) { //only define type if type has not already been defined
 				//Keep track of how far we are inside writing recursive types (see how this is used in AbstractType.addToBuffer())
 				recursiveNesting.increment(buffer)
-				const {type} = this
-				type.addToBuffer(buffer)
+				this.type.addToBuffer(buffer)
 				recursiveNesting.decrement(buffer)
 			}
 			return true
@@ -125,7 +124,7 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 		return false
 	}
 	/**
-	 * Appends value bytes to a [[GrowableBuffer]] according to the type
+	 * Appends value bytes to an [[AppendableBuffer]] according to the type
 	 *
 	 * Example:
 	 * ````javascript
@@ -160,8 +159,8 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`;
 	 * also throws if no type has been registered with this type's name
 	 */
-	writeValue(buffer: GrowableBuffer, value: E) {
-		assert.instanceOf(buffer, GrowableBuffer)
+	writeValue(buffer: AppendableBuffer, value: E) {
+		this.isBuffer(buffer)
 		let writeValue = true
 		let bufferRecursiveLocations = recursiveLocations.get(buffer)
 		if (bufferRecursiveLocations) {

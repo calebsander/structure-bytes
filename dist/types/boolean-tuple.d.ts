@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import AbsoluteType from './absolute';
 /**
  * A type storing a fixed-length array of `Boolean` values.
@@ -22,9 +22,9 @@ export default class BooleanTupleType extends AbsoluteType<boolean[]> {
      * @param length The number of `Boolean`s in each value of this type. Must be between 0 and 255.
      */
     constructor(length: number);
-    addToBuffer(buffer: GrowableBuffer): boolean;
+    addToBuffer(buffer: AppendableBuffer): boolean;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -34,6 +34,6 @@ export default class BooleanTupleType extends AbsoluteType<boolean[]> {
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: boolean[]): void;
+    writeValue(buffer: AppendableBuffer, value: boolean[]): void;
     equals(otherType: any): boolean;
 }

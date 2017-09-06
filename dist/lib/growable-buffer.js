@@ -63,13 +63,9 @@ class GrowableBuffer {
      * (must fit in an unsigned byte)
      */
     set(index, value) {
-        assert_1.default.integer(index);
-        assert_1.default.between(0, index, this.size, 'Index out of bounds: ' + String(index));
         assert_1.default.integer(value);
         assert_1.default.between(0, value, 0x100, 'Not a byte: ' + String(value));
-        const castBuffer = new Uint8Array(this.buffer);
-        castBuffer[index] = value;
-        return this;
+        return this.setAll(index, new Uint8Array([value]).buffer);
     }
     /**
      * Sets a set of contiguous bytes' values.
@@ -108,13 +104,7 @@ class GrowableBuffer {
     add(value) {
         assert_1.default.integer(value);
         assert_1.default.between(0, value, 0x100, 'Not a byte: ' + String(value));
-        const oldSize = this.size;
-        const newSize = oldSize + 1;
-        this.grow(newSize);
-        this.size = newSize;
-        const castBuffer = new Uint8Array(this.buffer);
-        castBuffer[oldSize] = value;
-        return this;
+        return this.addAll(new Uint8Array([value]).buffer);
     }
     /**
      * Adds a contiguous set of bytes after
@@ -122,7 +112,7 @@ class GrowableBuffer {
      * of the internal buffer
      * @param buffer The bytes to add.
      * The byte at position `i` in `buffer` will be written to
-     * position `this.length + i` of the [[GrowableBuffer]])
+     * position `this.length + i` of the [[GrowableBuffer]]).
      */
     addAll(buffer) {
         assert_1.default.instanceOf(buffer, ArrayBuffer);

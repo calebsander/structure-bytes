@@ -1,5 +1,5 @@
+import AppendableBuffer from '../lib/appendable'
 import assert from './assert'
-import GrowableBuffer from './growable-buffer'
 import * as strint from './strint'
 
 const LONG_MAX = '9223372036854775807',
@@ -9,8 +9,7 @@ const LONG_MAX = '9223372036854775807',
  * @param buffer The buffer to which to append
  * @param value The value to write (a numeric string)
  */
-export default (buffer: GrowableBuffer, value: string): void => {
-	assert.instanceOf(buffer, GrowableBuffer)
+export default (buffer: AppendableBuffer, value: string): void => {
 	assert.instanceOf(value, String)
 	assert(!(strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)), 'Value out of range')
 	const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int

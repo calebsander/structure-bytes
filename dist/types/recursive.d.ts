@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import { RegisterableType } from '../recursive-registry-type';
 import AbsoluteType from './absolute';
 import Type from './type';
@@ -78,9 +78,9 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
      */
     constructor(name: string);
     readonly type: RegisterableType & Type<E>;
-    addToBuffer(buffer: GrowableBuffer): boolean;
+    addToBuffer(buffer: AppendableBuffer): boolean;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -115,6 +115,6 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`;
      * also throws if no type has been registered with this type's name
      */
-    writeValue(buffer: GrowableBuffer, value: E): void;
+    writeValue(buffer: AppendableBuffer, value: E): void;
     equals(otherType: any): boolean;
 }

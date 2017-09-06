@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
-const growable_buffer_1 = require("../lib/growable-buffer");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -69,7 +68,7 @@ class ChoiceType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Examples:
      * ````javascript
@@ -88,21 +87,21 @@ class ChoiceType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
+        this.isBuffer(buffer);
         let success = false;
         //Try to write value using each type in order until no error is thrown
         for (let i = 0; i < this.types.length; i++) {
             const type = this.types[i];
-            const valueBuffer = new growable_buffer_1.default;
+            let valueBuffer;
             try {
-                type.writeValue(valueBuffer, value);
+                valueBuffer = type.valueBuffer(value);
             }
             catch (e) {
                 continue;
             }
             buffer
                 .add(i)
-                .addAll(valueBuffer.toBuffer());
+                .addAll(valueBuffer);
             success = true;
             break;
         }

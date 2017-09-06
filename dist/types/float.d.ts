@@ -1,4 +1,4 @@
-import GrowableBuffer from '../lib/growable-buffer';
+import AppendableBuffer from '../lib/appendable';
 import FloatingPointType from './floating';
 /**
  * A type storing a 4-byte [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point).
@@ -13,7 +13,7 @@ import FloatingPointType from './floating';
 export default class FloatType extends FloatingPointType {
     static readonly _value: number;
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Examples:
      * ````javascript
@@ -31,5 +31,5 @@ export default class FloatType extends FloatingPointType {
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: GrowableBuffer, value: number | string): void;
+    writeValue(buffer: AppendableBuffer, value: number | string): void;
 }

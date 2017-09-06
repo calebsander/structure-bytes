@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
-const growable_buffer_1 = require("../lib/growable-buffer");
 const recursiveNesting = require("../lib/recursive-nesting");
 const recursiveRegistry = require("../recursive-registry");
 const absolute_1 = require("./absolute");
@@ -109,8 +108,7 @@ class RecursiveType extends absolute_1.default {
             if (firstOccurence) {
                 //Keep track of how far we are inside writing recursive types (see how this is used in AbstractType.addToBuffer())
                 recursiveNesting.increment(buffer);
-                const { type } = this;
-                type.addToBuffer(buffer);
+                this.type.addToBuffer(buffer);
                 recursiveNesting.decrement(buffer);
             }
             return true;
@@ -119,7 +117,7 @@ class RecursiveType extends absolute_1.default {
         return false;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -155,7 +153,7 @@ class RecursiveType extends absolute_1.default {
      * also throws if no type has been registered with this type's name
      */
     writeValue(buffer, value) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
+        this.isBuffer(buffer);
         let writeValue = true;
         let bufferRecursiveLocations = recursiveLocations.get(buffer);
         if (bufferRecursiveLocations) {

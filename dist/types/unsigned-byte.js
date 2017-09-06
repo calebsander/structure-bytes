@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
-const growable_buffer_1 = require("../lib/growable-buffer");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
 /**
@@ -18,7 +17,7 @@ class UnsignedByteType extends unsigned_1.default {
         return 0x11;
     }
     /**
-     * Appends value bytes to a [[GrowableBuffer]] according to the type
+     * Appends value bytes to an [[AppendableBuffer]] according to the type
      *
      * Example:
      * ````javascript
@@ -29,15 +28,13 @@ class UnsignedByteType extends unsigned_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        assert_1.default.instanceOf(buffer, growable_buffer_1.default);
+        this.isBuffer(buffer);
         const convertedValue = str_to_num_1.default(value);
         if (convertedValue !== undefined)
             value = convertedValue;
         assert_1.default.integer(value);
         assert_1.default.between(0, value, 0x100, 'Value out of range');
-        const byteBuffer = new ArrayBuffer(1);
-        new Uint8Array(byteBuffer)[0] = value;
-        buffer.addAll(byteBuffer);
+        buffer.add(value);
     }
 }
 exports.default = UnsignedByteType;

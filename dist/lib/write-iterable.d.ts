@@ -1,8 +1,8 @@
-import GrowableBuffer from './growable-buffer';
+import AppendableBuffer from './appendable';
 import Type from '../types/type';
 export interface IterableWriteParams<E> {
     type: Type<E>;
-    buffer: GrowableBuffer;
+    buffer: AppendableBuffer;
     value: Iterable<E>;
     length: number;
 }

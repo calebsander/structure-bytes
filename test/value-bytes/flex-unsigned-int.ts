@@ -5,8 +5,7 @@ import {bufferFrom} from '../test-common'
 
 export = () => {
 	const type = new t.FlexUnsignedIntType
-	const TWO_7 = Math.pow(2, 7),
-		TWO_14 = Math.pow(2, 14)
+	const TWO_7 = 2 ** 7, TWO_14 = 2 ** 14
 	for (let value = 0; value < TWO_7; value++) {
 		const valueBuffer = type.valueBuffer(value)
 		assert.equal(valueBuffer, bufferFrom([value]))
