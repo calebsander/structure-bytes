@@ -74,10 +74,7 @@ exports.makeValueBuffer = makeValueBuffer;
  * @return The length of the `flexInt`
  */
 function getByteCount(firstByte) {
-    assert_1.default.byteUnsignedInteger(firstByte);
-    let leadingOnes;
-    for (leadingOnes = 0; firstByte & (1 << 7); leadingOnes++)
-        firstByte <<= 1;
+    const leadingOnes = Math.clz32(~firstByte << 24);
     const bytes = NUMBER_OF_BYTES.get(leadingOnes);
     assert_1.default(bytes !== undefined, 'Invalid number of bytes');
     return bytes;
