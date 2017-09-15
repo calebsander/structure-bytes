@@ -73,10 +73,112 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-external"><a href="../classes/_types_flex_int_.flexunsignedinttype.html" class="tsd-kind-icon">Flex<wbr>Unsigned<wbr>Int<wbr>Type</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-external"><a href="../classes/_types_flex_int_.flexinttype.html" class="tsd-kind-icon">Flex<wbr>Int<wbr>Type</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-external tsd-is-not-exported">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="_types_flex_int_.html#max_safe" class="tsd-kind-icon">MAX_<wbr>SAFE</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="_types_flex_int_.html#min_safe" class="tsd-kind-icon">MIN_<wbr>SAFE</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_types_flex_int_.html#fromunsigned" class="tsd-kind-icon">from<wbr>Unsigned</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="_types_flex_int_.html#tounsigned" class="tsd-kind-icon">to<wbr>Unsigned</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external tsd-is-not-exported">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+					<a name="max_safe" class="tsd-anchor"></a>
+					<h3>MAX_<wbr>SAFE</h3>
+					<div class="tsd-signature tsd-kind-icon">MAX_<wbr>SAFE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in types/flex-int.ts:27</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+					<a name="min_safe" class="tsd-anchor"></a>
+					<h3>MIN_<wbr>SAFE</h3>
+					<div class="tsd-signature tsd-kind-icon">MIN_<wbr>SAFE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;fromUnsigned(Number.MAX_SAFE_INTEGER)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in types/flex-int.ts:26</li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+					<a name="fromunsigned" class="tsd-anchor"></a>
+					<h3>from<wbr>Unsigned</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Unsigned<span class="tsd-signature-symbol">(</span>unsigned<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/flex-int.ts:22</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Converts an unsigned integer value
+										to a unique signed integer value.
+									The inverse of <a href="_types_flex_int_.html#tounsigned">toUnsigned</a>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>unsigned: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+					<a name="tounsigned" class="tsd-anchor"></a>
+					<h3>to<wbr>Unsigned</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Unsigned<span class="tsd-signature-symbol">(</span>signed<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/flex-int.ts:12</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Converts a signed integer value
+									to a unique unsigned integer value</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>signed: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The signed integer value</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -94,7 +196,19 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-external">
-						<a href="../classes/_types_flex_int_.flexunsignedinttype.html" class="tsd-kind-icon">Flex<wbr>Unsigned<wbr>Int<wbr>Type</a>
+						<a href="../classes/_types_flex_int_.flexinttype.html" class="tsd-kind-icon">Flex<wbr>Int<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="_types_flex_int_.html#max_safe" class="tsd-kind-icon">MAX_<wbr>SAFE</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="_types_flex_int_.html#min_safe" class="tsd-kind-icon">MIN_<wbr>SAFE</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<a href="_types_flex_int_.html#fromunsigned" class="tsd-kind-icon">from<wbr>Unsigned</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="_types_flex_int_.html#tounsigned" class="tsd-kind-icon">to<wbr>Unsigned</a>
 					</li>
 				</ul>
 			</nav>

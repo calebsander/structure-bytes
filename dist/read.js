@@ -13,6 +13,7 @@ const util_inspect_1 = require("./lib/util-inspect");
 const recursiveRegistry = require("./recursive-registry");
 const t = require("./types");
 const abstract_1 = require("./types/abstract");
+const flex_int_1 = require("./types/flex-int");
 const NOT_LONG_ENOUGH = 'Buffer is not long enough';
 function readFlexInt(buffer, offset) {
     assert_1.default(buffer.byteLength > offset, NOT_LONG_ENOUGH);
@@ -24,29 +25,17 @@ function readFlexInt(buffer, offset) {
     };
 }
 //Types whose type bytes are only 1 byte long (the type byte)
-const SINGLE_BYTE_TYPES = new Set([
-    t.ByteType,
-    t.ShortType,
-    t.IntType,
-    t.LongType,
-    t.BigIntType,
-    t.UnsignedByteType,
-    t.UnsignedShortType,
-    t.UnsignedIntType,
-    t.UnsignedLongType,
-    t.BigUnsignedIntType,
-    t.FlexUnsignedIntType,
-    t.DateType,
-    t.DayType,
-    t.TimeType,
-    t.FloatType,
-    t.DoubleType,
-    t.BooleanType,
-    t.BooleanArrayType,
-    t.CharType,
-    t.StringType,
-    t.OctetsType
-]);
+const SINGLE_BYTE_TYPES = new Set();
+{
+    const defaultAddToBuffer = abstract_1.default.prototype.addToBuffer;
+    const tTypes = t;
+    //tslint:disable-next-line:forin
+    for (const typeName in tTypes) {
+        const testType = tTypes[typeName];
+        if (testType.prototype.addToBuffer === defaultAddToBuffer)
+            SINGLE_BYTE_TYPES.add(testType);
+    }
+}
 //Mapping of type bytes to the corresponding types
 const SINGLE_BYTE_TYPE_BYTES = new Map();
 for (const singleByteType of SINGLE_BYTE_TYPES) {
@@ -178,6 +167,11 @@ function consumeValue({ buffer, offset, type: readType, baseValue }) {
             else
                 readValue = '0';
             length += bytes;
+            break;
+        }
+        case t.FlexIntType: {
+            ({ value: readValue, length } = readFlexInt(buffer, offset));
+            readValue = flex_int_1.fromUnsigned(readValue);
             break;
         }
         case t.UnsignedByteType: {

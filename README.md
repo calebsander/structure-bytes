@@ -20,6 +20,7 @@ A lot of data, especially data designed to be used in many different languages, 
 - Use when there is a lot of repetition in the data. If you don't have any arrays, sets, or maps, you can't really benefit from the cutdown on redundancy.
 
 ## Differences from Protocol Buffers
+- Types have binary serializations, not just values. (Protocol Buffers requires both the sender and receiver to have `.proto` definition files, which are not designed to be transmitted like values.) This makes storage of complex types much more compact and allows for sending values of types the receiver has not yet seen.
 - Types are generated programmatically rather than by reading `.proto` files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.
 - This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.
 - `structure-bytes` provides a larger set of primitive and recursive types.
@@ -31,12 +32,13 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `Int` (4-byte signed integer)
 	- `Long` (8-byte signed integer)
 	- `BigInt` (a signed integer with arbitrary precision)
+	- `FlexInt` (a signed integer from `-(2 ** 52)` to `2 ** 52` with a variable-length representation)
 	- `UnsignedByte` (1-byte unsigned integer)
 	- `UnsignedShort` (2-byte unsigned integer)
 	- `UnsignedInt` (4-byte unsigned integer)
 	- `UnsignedLong` (8-byte unsigned integer)
 	- `BigUnsignedInt` (an unsigned integer with arbitrary precision)
-	- `FlexUnsignedInt` (an unsigned integer below `2^53` with a variable-length representation)
+	- `FlexUnsignedInt` (an unsigned integer below `2 ** 53` with a variable-length representation)
 	- `Date` (8-byte unsigned integer representing number of milliseconds since Jan 1, 1970)
 	- `Day` (3-byte unsigned integer representing a specific day in history)
 	- `Time` (4-byte unsigned integer representing a specific time of day)
@@ -474,6 +476,7 @@ In the following definitions, `type` means the binary type format.
 - `IntType`: identifier `0x03`
 - `LongType`: identifier `0x04`
 - `BigIntType`: identifier `0x05`
+- `FlexIntType`: identifier `0x07`
 - `UnsignedByteType`: identifier `0x11`
 - `UnsignedShortType`: identifier `0x12`
 - `UnsignedIntType`: identifier `0x13`
@@ -541,6 +544,7 @@ In the following definitions, `type` means the binary type format.
 - `BigIntType`:
 	- `byteCount` - `flexInt`
 	- `number` - `byteCount`-byte integer
+- `FlexIntType`: `flexInt` of `value * 2` if `value` is non-negative, `-2 * value - 1` if `value` is negative
 - `UnsignedByteType`: 1-byte unsigned integer
 - `UnsignedShortType`: 2-byte unsigned integer
 - `UnsignedIntType`: 4-byte unsigned integer

@@ -12,10 +12,9 @@ const UPPER_BOUNDS = new Map<number, number>() //mapping of numbers of bytes to 
 {
 	let cumulativeValues = 0
 	let bytes = 1
-	while (true) {
+	while (cumulativeValues <= Number.MAX_SAFE_INTEGER) {
 		cumulativeValues += possibleValueCount(bytes)
 		UPPER_BOUNDS.set(bytes, cumulativeValues)
-		if (cumulativeValues > Number.MAX_SAFE_INTEGER) break
 		bytes++
 	}
 }
@@ -49,19 +48,18 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 		throw new Error('Cannot represent ' + String(value)) //should never occur
 	})()
 	const writeValue = value - (UPPER_BOUNDS.get(bytes - 1) || 0)
-	const buffer = new ArrayBuffer(bytes)
-	const castBuffer = new Uint8Array(buffer)
+	const buffer = new Uint8Array(bytes)
 	{
 		let shiftedValue = writeValue
 		for (let writeByte = bytes - 1; writeByte >= 0; writeByte--) {
-			castBuffer[writeByte] = shiftedValue & 0xFF //write least significant byte
+			buffer[writeByte] = shiftedValue & 0xFF //write least significant byte
 			//Move next least significant byte to least significant byte
 			//Can't use bitwise math here because number may not fit in 32 bits
 			shiftedValue = Math.floor(shiftedValue / 0x100)
 		}
 	}
-	castBuffer[0] |= BYTE_MASKS.get(bytes)!
-	return buffer
+	buffer[0] |= BYTE_MASKS.get(bytes)!
+	return buffer.buffer
 }
 /**
  * Gets the number of bytes taken up by a `flexInt`,

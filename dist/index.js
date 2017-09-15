@@ -25,6 +25,7 @@
  *     - [[IntType]]
  *     - [[LongType]]
  *     - [[BigIntType]]
+ *     - [[FlexIntType]]
  *   - Unsigned integer types
  *     - [[UnsignedByteType]]
  *     - [[UnsignedShortType]]

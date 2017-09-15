@@ -13,6 +13,7 @@ import * as recursiveRegistry from './recursive-registry'
 import {RegisterableType} from './recursive-registry-type'
 import * as t from './types'
 import AbstractType from './types/abstract'
+import {fromUnsigned} from './types/flex-int'
 
 export interface ReadResult<E> {
 	value: E
@@ -29,37 +30,28 @@ function readFlexInt(buffer: ArrayBuffer, offset: number): ReadResult<number> {
 		length
 	}
 }
+
 //Types whose type bytes are only 1 byte long (the type byte)
-const SINGLE_BYTE_TYPES = new Set([
-	t.ByteType,
-	t.ShortType,
-	t.IntType,
-	t.LongType,
-	t.BigIntType,
-	t.UnsignedByteType,
-	t.UnsignedShortType,
-	t.UnsignedIntType,
-	t.UnsignedLongType,
-	t.BigUnsignedIntType,
-	t.FlexUnsignedIntType,
-	t.DateType,
-	t.DayType,
-	t.TimeType,
-	t.FloatType,
-	t.DoubleType,
-	t.BooleanType,
-	t.BooleanArrayType,
-	t.CharType,
-	t.StringType,
-	t.OctetsType
-])
-interface TypeConstructor {
-	new (): t.Type<any>
+const SINGLE_BYTE_TYPES = new Set<typeof AbstractType>()
+interface Types {
+	[typeName: string]: typeof AbstractType
+}
+{
+	const defaultAddToBuffer = AbstractType.prototype.addToBuffer
+	const tTypes = t as any as Types
+	//tslint:disable-next-line:forin
+	for (const typeName in tTypes) {
+		const testType = tTypes[typeName]
+		if (testType.prototype.addToBuffer === defaultAddToBuffer) SINGLE_BYTE_TYPES.add(testType)
+	}
+}
+interface NoParamsType {
+	new(): t.Type<any>
 }
 //Mapping of type bytes to the corresponding types
-const SINGLE_BYTE_TYPE_BYTES = new Map<number, TypeConstructor>()
+const SINGLE_BYTE_TYPE_BYTES = new Map<number, NoParamsType>()
 for (const singleByteType of SINGLE_BYTE_TYPES) {
-	SINGLE_BYTE_TYPE_BYTES.set(singleByteType._value, singleByteType)
+	SINGLE_BYTE_TYPE_BYTES.set(singleByteType._value, singleByteType as any as NoParamsType)
 }
 //Pads a string with preceding 0s so that it has the desired length (for error messages)
 function pad(str: string, digits: number): string {
@@ -192,6 +184,11 @@ function consumeValue<E>({buffer, offset, type: readType, baseValue}: ValueReadP
 			}
 			else readValue = '0'
 			length += bytes
+			break
+		}
+		case t.FlexIntType: {
+			({value: readValue, length} = readFlexInt(buffer, offset))
+			readValue = fromUnsigned(readValue)
 			break
 		}
 		case t.UnsignedByteType: {

@@ -73,9 +73,10 @@
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_read_.noparamstype.html" class="tsd-kind-icon">No<wbr>Params<wbr>Type</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_read_.readbooleansparams.html" class="tsd-kind-icon">Read<wbr>Booleans<wbr>Params</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../interfaces/_read_.readresult.html" class="tsd-kind-icon">Read<wbr>Result</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_read_.typeconstructor.html" class="tsd-kind-icon">Type<wbr>Constructor</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported"><a href="../interfaces/_read_.types.html" class="tsd-kind-icon">Types</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../interfaces/_read_.valueparams.html" class="tsd-kind-icon">Value<wbr>Params</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported"><a href="../interfaces/_read_.valuereadparams.html" class="tsd-kind-icon">Value<wbr>Read<wbr>Params</a></li>
 							</ul>
@@ -87,9 +88,11 @@
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#recursive_name_length" class="tsd-kind-icon">RECURSIVE_<wbr>NAME_<wbr>LENGTH</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#single_byte_types" class="tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPES</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#single_byte_type_bytes" class="tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPE_<wbr>BYTES</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#defaultaddtobuffer" class="tsd-kind-icon">default<wbr>Add<wbr>ToBuffer</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#pointerreads" class="tsd-kind-icon">pointer<wbr>Reads</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#readrecursives" class="tsd-kind-icon">read<wbr>Recursives</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#recursivenames" class="tsd-kind-icon">recursive<wbr>Names</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_read_.html#ttypes" class="tsd-kind-icon">t<wbr>Types</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -117,7 +120,7 @@
 					<div class="tsd-signature tsd-kind-icon">NOT_<wbr>LONG_<wbr>ENOUGH<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Buffer is not long enough"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Buffer is not long enough&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:22</li>
+							<li>Defined in read.ts:23</li>
 						</ul>
 					</aside>
 				</section>
@@ -127,27 +130,37 @@
 					<div class="tsd-signature tsd-kind-icon">RECURSIVE_<wbr>NAME_<wbr>LENGTH<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">16</span><span class="tsd-signature-symbol"> =&nbsp;16</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:494</li>
+							<li>Defined in read.ts:491</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="single_byte_types" class="tsd-anchor"></a>
 					<h3>SINGLE_<wbr>BYTE_<wbr>TYPES</h3>
-					<div class="tsd-signature tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPES<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_types_byte_.bytetype.html" class="tsd-signature-type">ByteType</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_date_.datetype.html" class="tsd-signature-type">DateType</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_boolean_.booleantype.html" class="tsd-signature-type">BooleanType</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_boolean_array_.booleanarraytype.html" class="tsd-signature-type">BooleanArrayType</a><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_octets_.octetstype.html" class="tsd-signature-type">OctetsType</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set([t.ByteType,t.ShortType,t.IntType,t.LongType,t.BigIntType,t.UnsignedByteType,t.UnsignedShortType,t.UnsignedIntType,t.UnsignedLongType,t.BigUnsignedIntType,t.FlexUnsignedIntType,t.DateType,t.DayType,t.TimeType,t.FloatType,t.DoubleType,t.BooleanType,t.BooleanArrayType,t.CharType,t.StringType,t.OctetsType])</span></div>
+					<div class="tsd-signature tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPES<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_types_abstract_.abstracttype.html" class="tsd-signature-type">AbstractType</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Set&lt;typeof AbstractType&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:33</li>
+							<li>Defined in read.ts:35</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="single_byte_type_bytes" class="tsd-anchor"></a>
 					<h3>SINGLE_<wbr>BYTE_<wbr>TYPE_<wbr>BYTES</h3>
-					<div class="tsd-signature tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPE_<wbr>BYTES<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/_read_.typeconstructor.html" class="tsd-signature-type">TypeConstructor</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;number, TypeConstructor&gt;()</span></div>
+					<div class="tsd-signature tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPE_<wbr>BYTES<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/_read_.noparamstype.html" class="tsd-signature-type">NoParamsType</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;number, NoParamsType&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:60</li>
+							<li>Defined in read.ts:52</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="defaultaddtobuffer" class="tsd-anchor"></a>
+					<h3>default<wbr>Add<wbr>ToBuffer</h3>
+					<div class="tsd-signature tsd-kind-icon">default<wbr>Add<wbr>ToBuffer<span class="tsd-signature-symbol">:</span> <a href="../classes/_types_abstract_.abstracttype.html#addtobuffer" class="tsd-signature-type">addToBuffer</a><span class="tsd-signature-symbol"> =&nbsp;AbstractType.prototype.addToBuffer</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in read.ts:40</li>
 						</ul>
 					</aside>
 				</section>
@@ -157,7 +170,7 @@
 					<div class="tsd-signature tsd-kind-icon">pointer<wbr>Reads<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">WeakMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_types_pointer_.pointertype.html" class="tsd-signature-type">PointerType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new WeakMap&lt;ArrayBuffer, Map&lt;t.PointerType&lt;any&gt;, Map&lt;number, any&gt;&gt;&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:142</li>
+							<li>Defined in read.ts:134</li>
 						</ul>
 					</aside>
 				</section>
@@ -167,7 +180,7 @@
 					<div class="tsd-signature tsd-kind-icon">read<wbr>Recursives<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">WeakMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new WeakMap&lt;ArrayBuffer, Map&lt;number, any&gt;&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:134</li>
+							<li>Defined in read.ts:126</li>
 						</ul>
 					</aside>
 				</section>
@@ -177,7 +190,17 @@
 					<div class="tsd-signature tsd-kind-icon">recursive<wbr>Names<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">WeakMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new WeakMap&lt;ArrayBuffer, Map&lt;number, string&gt;&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in read.ts:496</li>
+							<li>Defined in read.ts:493</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="ttypes" class="tsd-anchor"></a>
+					<h3>t<wbr>Types</h3>
+					<div class="tsd-signature tsd-kind-icon">t<wbr>Types<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_read_.types.html" class="tsd-signature-type">Types</a><span class="tsd-signature-symbol"> =&nbsp;t as any as Types</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in read.ts:41</li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +217,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:499</li>
+									<li>Defined in read.ts:496</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -220,7 +243,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:147</li>
+									<li>Defined in read.ts:139</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -263,7 +286,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:71</li>
+									<li>Defined in read.ts:63</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -291,7 +314,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:65</li>
+									<li>Defined in read.ts:57</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -317,7 +340,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:119</li>
+									<li>Defined in read.ts:111</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -343,7 +366,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:99</li>
+									<li>Defined in read.ts:91</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -380,7 +403,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:23</li>
+									<li>Defined in read.ts:24</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -406,7 +429,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:702</li>
+									<li>Defined in read.ts:699</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -455,7 +478,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in read.ts:746</li>
+									<li>Defined in read.ts:743</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -511,13 +534,16 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_read_.noparamstype.html" class="tsd-kind-icon">No<wbr>Params<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_read_.readbooleansparams.html" class="tsd-kind-icon">Read<wbr>Booleans<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../interfaces/_read_.readresult.html" class="tsd-kind-icon">Read<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_read_.typeconstructor.html" class="tsd-kind-icon">Type<wbr>Constructor</a>
+						<a href="../interfaces/_read_.types.html" class="tsd-kind-icon">Types</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../interfaces/_read_.valueparams.html" class="tsd-kind-icon">Value<wbr>Params</a>
@@ -538,6 +564,9 @@
 						<a href="_read_.html#single_byte_type_bytes" class="tsd-kind-icon">SINGLE_<wbr>BYTE_<wbr>TYPE_<wbr>BYTES</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_read_.html#defaultaddtobuffer" class="tsd-kind-icon">default<wbr>Add<wbr>ToBuffer</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_read_.html#pointerreads" class="tsd-kind-icon">pointer<wbr>Reads</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
@@ -545,6 +574,9 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_read_.html#recursivenames" class="tsd-kind-icon">recursive<wbr>Names</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_read_.html#ttypes" class="tsd-kind-icon">t<wbr>Types</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_read_.html#consumetype" class="tsd-kind-icon">consume<wbr>Type</a>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IntegerType | structure-bytes</title>
+	<title>FlexIntType | structure-bytes</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_types_integer_.html">&quot;types/integer&quot;</a>
+					<a href="../modules/_types_flex_int_.html">&quot;types/flex-int&quot;</a>
 				</li>
 				<li>
-					<a href="_types_integer_.integertype.html">IntegerType</a>
+					<a href="_types_flex_int_.flexinttype.html">FlexIntType</a>
 				</li>
 			</ul>
-			<h1>Class IntegerType&lt;VALUE&gt;</h1>
+			<h1>Class FlexIntType</h1>
 		</div>
 	</div>
 </header>
@@ -72,46 +72,28 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A type storing an signed integer</p>
+						<p>Works like <a href="_types_flex_unsigned_int_.flexunsignedinttype.html">FlexUnsignedIntType</a>,
+							but allows for negative values as well.
+							Less efficient for storing positive values
+							than <a href="_types_flex_unsigned_int_.flexunsignedinttype.html">FlexUnsignedIntType</a>, so use that
+							instead if not storing negative values.
+							Also limited to values between
+							<code>-(2 ** 52)</code> and <code>2 ** 52 - 1</code>.
+						(Encodes <code>value</code> as approximately <code>2 * abs(value)</code>.)</p>
 					</div>
+					<p>Example:</p>
+					<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.FlexIntType
+</code></pre>
 				</div>
-			</section>
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>VALUE</h4>
-					</li>
-				</ul>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_types_absolute_.absolutetype.html" class="tsd-signature-type">AbsoluteType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="_types_integer_.integertype.html" class="tsd-signature-type">IntegerType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">IntegerType</span>
-								<ul class="tsd-hierarchy">
-									<li>
-										<a href="_types_byte_.bytetype.html" class="tsd-signature-type">ByteType</a>
-									</li>
-									<li>
-										<a href="_types_short_.shorttype.html" class="tsd-signature-type">ShortType</a>
-									</li>
-									<li>
-										<a href="_types_int_.inttype.html" class="tsd-signature-type">IntType</a>
-									</li>
-									<li>
-										<a href="_types_long_.longtype.html" class="tsd-signature-type">LongType</a>
-									</li>
-									<li>
-										<a href="_types_big_int_.biginttype.html" class="tsd-signature-type">BigIntType</a>
-									</li>
-									<li>
-										<a href="_types_flex_int_.flexinttype.html" class="tsd-signature-type">FlexIntType</a>
-									</li>
-								</ul>
+								<span class="target">FlexIntType</span>
 							</li>
 						</ul>
 					</li>
@@ -120,63 +102,57 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-inherited tsd-is-external">
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-external"><a href="_types_integer_.integertype.html#_value" class="tsd-kind-icon">_value</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external"><a href="_types_flex_int_.flexinttype.html#_value" class="tsd-kind-icon">_value</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited tsd-is-external">
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#equals" class="tsd-kind-icon">equals</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external"><a href="_types_integer_.integertype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_integer_.integertype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_flex_int_.flexinttype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_flex_int_.flexinttype.html#equals" class="tsd-kind-icon">equals</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_flex_int_.flexinttype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_flex_int_.flexinttype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external"><a href="_types_flex_int_.flexinttype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_flex_int_.flexinttype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_flex_int_.flexinttype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_flex_int_.flexinttype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited tsd-is-external">
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external">
 					<a name="_value" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> _value</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> _value<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
+								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:29</li>
+									<li>Defined in types/flex-int.ts:45</li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns an unsigned byte value unique to this type class;
-									used to serialize the type</p>
-								</div>
-							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited tsd-is-external">
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="addtobuffer" class="tsd-anchor"></a>
@@ -322,12 +298,11 @@
 					<a name="valuebuffer" class="tsd-anchor"></a>
 					<h3>value<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">value<wbr>Buffer<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+						<li class="tsd-signature tsd-kind-icon">value<wbr>Buffer<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
 									<li>Defined in types/abstract.ts:63</li>
@@ -336,35 +311,54 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">VALUE</span></h5>
+									<h5>value: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="writevalue" class="tsd-anchor"></a>
 					<h3>write<wbr>Value</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#writevalue">writeValue</a></p>
-								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
+								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:62</li>
+									<li>Defined in types/flex-int.ts:60</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Appends value bytes to an <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-comment">//Takes 4 bytes</span>
+type.writeValue(buffer, <span class="hljs-number">-2113664</span>) <span class="hljs-comment">//or '-2113664'</span>
+</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer to which to append</p>
+									</div>
 								</li>
 								<li>
-									<h5>value: <span class="tsd-signature-type">VALUE</span></h5>
+									<h5>value: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The value to write</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -380,7 +374,7 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module tsd-is-external">
-						<a href="../modules/_types_integer_.html">"types/integer"</a>
+						<a href="../modules/_types_flex_int_.html">"types/flex-<wbr>int"</a>
 					</li>
 				</ul>
 			</nav>
@@ -388,40 +382,52 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-private tsd-is-external">
-						<a href="_types_integer_.integertype.html" class="tsd-kind-icon">Integer<wbr>Type</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-external">
+						<a href="_types_flex_int_.flexinttype.html" class="tsd-kind-icon">Flex<wbr>Int<wbr>Type</a>
 						<ul>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-static tsd-is-external">
-								<a href="_types_integer_.integertype.html#_value" class="tsd-kind-icon">_value</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external">
+								<a href="_types_flex_int_.flexinttype.html#_value" class="tsd-kind-icon">_value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
+								<a href="_types_flex_int_.flexinttype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#equals" class="tsd-kind-icon">equals</a>
+								<a href="_types_flex_int_.flexinttype.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a>
+								<a href="_types_flex_int_.flexinttype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
+								<a href="_types_flex_int_.flexinttype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external">
-								<a href="_types_integer_.integertype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a>
+								<a href="_types_flex_int_.flexinttype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
+								<a href="_types_flex_int_.flexinttype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a>
+								<a href="_types_flex_int_.flexinttype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_integer_.integertype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
+								<a href="_types_flex_int_.flexinttype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="../modules/_types_flex_int_.html#max_safe" class="tsd-kind-icon">MAX_<wbr>SAFE</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="../modules/_types_flex_int_.html#min_safe" class="tsd-kind-icon">MIN_<wbr>SAFE</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<a href="../modules/_types_flex_int_.html#fromunsigned" class="tsd-kind-icon">from<wbr>Unsigned</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="../modules/_types_flex_int_.html#tounsigned" class="tsd-kind-icon">to<wbr>Unsigned</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

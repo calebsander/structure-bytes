@@ -1,52 +1,49 @@
+import assert from '../lib/assert'
 import AppendableBuffer from '../lib/appendable'
 import * as flexInt from '../lib/flex-int'
 import strToNum from '../lib/str-to-num'
-import UnsignedType from './unsigned'
+import IntegerType from './integer'
 
 /**
- * A type storing any unsigned integer
- * that can be represented precisely in a double
- * (from `0` to `9007199254740991` (`2 ** 53 - 1`)).
- * Rather than having a fixed-length value representation,
- * more bytes are needed to represent larger values.
- * This is inspired by the UTF-8 format:
- * large values can be stored, but since most values
- * are small, fewer bytes are used in the typical case.
- * If values are uniformly distributed rather than
- * concentrated among smaller values, you will likely get
- * more efficient serializations from a fixed-width integer.
- * For example, when writing outputs of a 32-bit hash function,
- * you should use [[UnsignedIntType]] instead.
- *
- * The number of bytes required for numbers are as follows:
- * <table>
- *   <thead>
- *     <tr>
- *       <th>Min</th>
- *       <th>Max</th>
- *       <th>Bytes</th>
- *     </tr>
- *   </thead>
- *   <tbody>
- *     <tr><td>0</td><td>127</td><td>1</td></tr>
- *     <tr><td>128</td><td>16511</td><td>2</td></tr>
- *     <tr><td>16512</td><td>2113663</td><td>3</td></tr>
- *     <tr><td>2113664</td><td>270549119</td><td>4</td></tr>
- *     <tr><td>270549120</td><td>34630287487</td><td>5</td></tr>
- *     <tr><td>34630287488</td><td>4432676798591</td><td>6</td></tr>
- *     <tr><td>4432676798592</td><td>567382630219903</td><td>7</td></tr>
- *     <tr><td>567382630219904</td><td>9007199254740991</td><td>8</td></tr>
- *   </tbody>
- * </table>
+ * Converts a signed integer value
+ * to a unique unsigned integer value
+ * @param signed The signed integer value
+ */
+function toUnsigned(signed: number): number {
+	if (signed < 0) return -2 * signed - 1
+	return 2 * signed
+}
+/**
+ * Converts an unsigned integer value
+ * to a unique signed integer value.
+ * The inverse of [[toUnsigned]].
+ * @param signed The unsigned integer value
+ */
+export function fromUnsigned(unsigned: number): number {
+	if (unsigned & 1) return (unsigned + 1) / -2
+	return unsigned / 2
+}
+const MIN_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER) //< 0; inclusive
+const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1 //> 0; exclusive
+
+/**
+ * Works like [[FlexUnsignedIntType]],
+ * but allows for negative values as well.
+ * Less efficient for storing positive values
+ * than [[FlexUnsignedIntType]], so use that
+ * instead if not storing negative values.
+ * Also limited to values between
+ * `-(2 ** 52)` and `2 ** 52 - 1`.
+ * (Encodes `value` as approximately `2 * abs(value)`.)
  *
  * Example:
  * ````javascript
- * let type = new sb.FlexUnsignedIntType
+ * let type = new sb.FlexIntType
  * ````
  */
-export default class FlexUnsignedIntType extends UnsignedType<number | string> {
+export default class FlexIntType extends IntegerType<number | string> {
 	static get _value() {
-		return 0x17
+		return 0x07
 	}
 	/**
 	 * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -54,7 +51,7 @@ export default class FlexUnsignedIntType extends UnsignedType<number | string> {
 	 * Example:
 	 * ````javascript
 	 * //Takes 4 bytes
-	 * type.writeValue(buffer, 2113664) //or '2113664'
+	 * type.writeValue(buffer, -2113664) //or '-2113664'
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
@@ -64,6 +61,8 @@ export default class FlexUnsignedIntType extends UnsignedType<number | string> {
 		this.isBuffer(buffer)
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue
-		buffer.addAll(flexInt.makeValueBuffer(value as number))
+		assert.integer(value)
+		assert.between(MIN_SAFE, value as number, MAX_SAFE)
+		buffer.addAll(flexInt.makeValueBuffer(toUnsigned(value as number)))
 	}
 }

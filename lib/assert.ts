@@ -53,7 +53,7 @@ function integer(instance: any): void {
 function between(lower: number, value: number, upper: number, message?: string): void {
 	if (value < lower || value >= upper) {
 		const outOfBoundsMessage =
-			inspect(value) +
+			String(value) +
 			' is not in [' +
 			String(lower) +
 			',' +
