@@ -12,22 +12,17 @@ const util_inspect_1 = require("./util-inspect");
 function instanceOf(instance, constructors) {
     if (!(constructors instanceof Array))
         constructors = [constructors];
-    let constructorMatched = false;
     for (const constructor of constructors) {
         if (instance instanceof constructor ||
             (!(instance === undefined || instance === null) && instance.constructor === constructor) //necessary for primitives
-        ) {
-            constructorMatched = true;
+        )
             return;
-        }
     }
-    if (!constructorMatched) {
-        throw new TypeError(util_inspect_1.inspect(instance) +
-            ' is not an instance of ' +
-            constructors
-                .map(({ name }) => name)
-                .join(' or '));
-    }
+    throw new TypeError(util_inspect_1.inspect(instance) +
+        ' is not an instance of ' +
+        constructors
+            .map(({ name }) => name)
+            .join(' or '));
 }
 /**
  * Throws an error if the given value is not an integer

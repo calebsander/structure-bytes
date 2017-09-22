@@ -11,25 +11,19 @@ import {inspect} from './util-inspect'
  */
 function instanceOf(instance: any, constructors: Function | Function[]): void {
 	if (!(constructors instanceof Array)) constructors = [constructors]
-	let constructorMatched = false
 	for (const constructor of constructors) {
 		if (
 			instance instanceof constructor ||
 			(!(instance === undefined || instance === null) && instance.constructor === constructor) //necessary for primitives
-		) {
-			constructorMatched = true
-			return
-		}
+		) return
 	}
-	if (!constructorMatched) {
-		throw new TypeError(
-			inspect(instance) +
-			' is not an instance of ' +
-			constructors
-				.map(({name}) => name)
-				.join(' or ')
-		)
-	}
+	throw new TypeError(
+		inspect(instance) +
+		' is not an instance of ' +
+		constructors
+			.map(({name}) => name)
+			.join(' or ')
+	)
 }
 /**
  * Throws an error if the given value is not an integer

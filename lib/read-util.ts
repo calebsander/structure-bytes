@@ -33,13 +33,13 @@ export interface ReadResult<E> {
  * This allows a reference to the read value to be used
  * before the read value is populated.
  * @param readType The [[Type]] reading a value
- * @param count If an [[ArrayType]], can pass in a length
+ * @param count If an [[ArrayType]], must pass in a length
  * to initialize the array value with
  * @return `[]`, `new Map`, `new Set`, or `{}`
  */
 export function makeBaseValue(readType: RegisterableType, count?: number): any {
 	switch (readType.constructor) {
-		case ArrayType: return count === undefined ? [] : new Array(count)
+		case ArrayType: return new Array(count)
 		case TupleType: return new Array((readType as TupleType<any>).length)
 		case MapType: return new Map
 		case SetType: return new Set

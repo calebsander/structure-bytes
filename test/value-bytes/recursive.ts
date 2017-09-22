@@ -86,4 +86,9 @@ export = () => {
 		0xff,
 			0x00, 1
 	]))
+
+	assert.throws(
+		() => selfReferenceType.readValue(bufferFrom([0xff, 0x00, 2])),
+		'Cannot find target at 0'
+	)
 }

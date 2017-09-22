@@ -33,6 +33,7 @@ export = () => {
 		]))
 		assert.equal(type.readValue(buffer), value)
 	}
+	assert.equal(type.valueBuffer('-12'), bufferFrom([23]))
 
 	assert.throws(
 		() => type.valueBuffer(true as any),

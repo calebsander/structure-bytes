@@ -20,7 +20,7 @@ export interface ReadResult<E> {
  * This allows a reference to the read value to be used
  * before the read value is populated.
  * @param readType The [[Type]] reading a value
- * @param count If an [[ArrayType]], can pass in a length
+ * @param count If an [[ArrayType]], must pass in a length
  * to initialize the array value with
  * @return `[]`, `new Map`, `new Set`, or `{}`
  */

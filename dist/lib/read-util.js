@@ -17,13 +17,13 @@ exports.NOT_LONG_ENOUGH = 'Buffer is not long enough';
  * This allows a reference to the read value to be used
  * before the read value is populated.
  * @param readType The [[Type]] reading a value
- * @param count If an [[ArrayType]], can pass in a length
+ * @param count If an [[ArrayType]], must pass in a length
  * to initialize the array value with
  * @return `[]`, `new Map`, `new Set`, or `{}`
  */
 function makeBaseValue(readType, count) {
     switch (readType.constructor) {
-        case array_1.default: return count === undefined ? [] : new Array(count);
+        case array_1.default: return new Array(count);
         case tuple_1.default: return new Array(readType.length);
         case map_1.default: return new Map;
         case set_1.default: return new Set;

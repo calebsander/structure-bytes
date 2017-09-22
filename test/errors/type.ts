@@ -1,6 +1,7 @@
 import assert from '../../dist/lib/assert'
 import * as t from '../../dist/types'
 import AbstractType from '../../dist/types/abstract'
+import {bufferFrom} from '../test-common'
 
 interface Types {
 	[typeName: string]: typeof AbstractType
@@ -23,4 +24,9 @@ export = () => {
 			'"abc" is not an instance of GrowableBuffer or AppendableStream'
 		)
 	}
+	assert.throws(
+		() => new t.ByteType().readValue(bufferFrom([1, 2])),
+		'Did not consume all of buffer'
+	)
+	new t.ByteType().readValue(bufferFrom([1, 2]), 1)
 }

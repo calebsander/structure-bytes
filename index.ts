@@ -61,6 +61,7 @@
  *     - [[OptionalType]]
  *     - [[PointerType]]
  */
+/*istanbul ignore next*/ //for TypeScript's auto-generated code
 
 /**
  */
