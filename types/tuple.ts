@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {makeBaseValue, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -9,9 +10,11 @@ import Type from './type'
  * and a number of elements in the tuple
  *
  * @param E The type of each element in the tuple
+ * @param READ_E The type of each element
+ * in the read tuple
  */
-export interface TupleParams<E> {
-	type: Type<E>
+export interface TupleParams<E, READ_E extends E> {
+	type: Type<E, READ_E>
 	length: number
 }
 /**
@@ -33,15 +36,17 @@ export interface TupleParams<E> {
  * ````
  *
  * @param E The type of each element in the tuple
+ * @param READ_E The type of each element
+ * in the read tuple
  */
-export default class TupleType<E> extends AbsoluteType<E[]> {
+export default class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
 	static get _value() {
 		return 0x50
 	}
 	/**
 	 * The [[Type]] passed to the constructor
 	 */
-	readonly type: Type<E>
+	readonly type: Type<E, READ_E>
 	/**
 	 * The length passed to the constructor
 	 */
@@ -51,7 +56,7 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 	 * @param length The number of elements in the tuple.
 	 * Must be at most 255.
 	 */
-	constructor({type, length}: TupleParams<E>) {
+	constructor({type, length}: TupleParams<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbstractType)
 		assert.byteUnsignedInteger(length)
@@ -91,6 +96,16 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
 			'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length)
 		)
 		for (const instance of value) this.type.writeValue(buffer, instance)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
+		let length = 0
+		const value: READ_E[] = baseValue || makeBaseValue(this) as READ_E[] //TypeScript complains if annotation is left off `value`
+		for (let i = 0; i < this.length; i++) {
+			const element = this.type.consumeValue(buffer, offset + length)
+			length += element.length
+			value[i] = element.value
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

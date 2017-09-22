@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const strint = require("../lib/strint");
 const integer_1 = require("./integer");
 /**
@@ -47,16 +48,31 @@ class BigIntType extends integer_1.default {
             }
             bytes.push(Number(value));
         }
-        const byteBuffer = new ArrayBuffer(bytes.length);
-        const dataView = new DataView(byteBuffer);
-        for (let i = bytes.length - 2, offset = 1; i >= 0; i--, offset++) {
-            dataView.setUint8(offset, bytes[i]);
+        const byteBuffer = new Uint8Array(bytes.length);
+        for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++) {
+            byteBuffer[offset] = bytes[i]; //signed highest byte can be cast to unsigned byte without issue
         }
-        if (bytes.length)
-            dataView.setInt8(0, bytes[bytes.length - 1]); //highest byte is signed so it must be treated separately
         buffer
             .addAll(flexInt.makeValueBuffer(bytes.length))
-            .addAll(byteBuffer);
+            .addAll(byteBuffer.buffer);
+    }
+    consumeValue(buffer, offset) {
+        const lengthInt = read_util_1.readFlexInt(buffer, offset);
+        const bytes = lengthInt.value;
+        let { length } = lengthInt;
+        assert_1.default(buffer.byteLength >= offset + length + bytes, read_util_1.NOT_LONG_ENOUGH);
+        const castBuffer = new Uint8Array(buffer, offset + length);
+        let value;
+        if (bytes) {
+            value = String(castBuffer[0] << 24 >> 24); //convert unsigned to signed
+            for (let byte = 1; byte < bytes; byte++) {
+                value = strint.add(strint.mul(value, strint.BYTE_SHIFT), String(castBuffer[byte]));
+            }
+        }
+        else
+            value = '0';
+        length += bytes;
+        return { value, length };
     }
 }
 exports.default = BigIntType;

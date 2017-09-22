@@ -7,6 +7,7 @@ import assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
 import * as flexInt from '../lib/flex-int'
 import GrowableBuffer from '../lib/growable-buffer'
+import {ReadResult} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import Type from './type'
 
@@ -16,7 +17,7 @@ const APPENDABLES = [GrowableBuffer, AppendableStream]
  * The superclass of all [[Type]] classes
  * in this package
  */
-export default abstract class AbstractType<VALUE> implements Type<VALUE> {
+export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VALUE> implements Type<VALUE, READ_VALUE> {
 	private cachedBuffer?: ArrayBuffer
 	private cachedHash?: string
 	private cachedSignature?: string
@@ -64,6 +65,14 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
 		const buffer = new GrowableBuffer
 		this.writeValue(buffer, value)
 		return buffer.toBuffer()
+	}
+	abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>
+	readValue(buffer: ArrayBuffer, offset = 0) {
+		assert.instanceOf(buffer, ArrayBuffer)
+		assert.instanceOf(offset, Number)
+		const {value, length} = this.consumeValue(buffer, offset)
+		if (offset + length !== buffer.byteLength) throw new Error('Did not consume all of buffer')
+		return value
 	}
 	/*
 		For types that don't take any parameters, this is a sufficient equality check

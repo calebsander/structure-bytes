@@ -61,6 +61,14 @@ class AbstractType {
         this.writeValue(buffer, value);
         return buffer.toBuffer();
     }
+    readValue(buffer, offset = 0) {
+        assert_1.default.instanceOf(buffer, ArrayBuffer);
+        assert_1.default.instanceOf(offset, Number);
+        const { value, length } = this.consumeValue(buffer, offset);
+        if (offset + length !== buffer.byteLength)
+            throw new Error('Did not consume all of buffer');
+        return value;
+    }
     /*
         For types that don't take any parameters, this is a sufficient equality check
         Could also implement this by checking whether the 2 types' binary representations match,

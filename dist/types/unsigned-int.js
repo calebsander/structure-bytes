@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
 /**
@@ -37,6 +38,14 @@ class UnsignedIntType extends unsigned_1.default {
         const byteBuffer = new ArrayBuffer(4);
         new DataView(byteBuffer).setUint32(0, value);
         buffer.addAll(byteBuffer);
+    }
+    consumeValue(buffer, offset) {
+        const length = 4;
+        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        return {
+            value: new DataView(buffer).getUint32(offset),
+            length
+        };
     }
 }
 exports.default = UnsignedIntType;

@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import * as flexInt from '../lib/flex-int'
+import {readFlexInt, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
 
@@ -44,7 +45,7 @@ import UnsignedType from './unsigned'
  * let type = new sb.FlexUnsignedIntType
  * ````
  */
-export default class FlexUnsignedIntType extends UnsignedType<number | string> {
+export default class FlexUnsignedIntType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x17
 	}
@@ -65,5 +66,8 @@ export default class FlexUnsignedIntType extends UnsignedType<number | string> {
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue
 		buffer.addAll(flexInt.makeValueBuffer(value as number))
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
+		return readFlexInt(buffer, offset)
 	}
 }

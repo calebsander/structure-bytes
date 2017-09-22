@@ -1,6 +1,5 @@
 import assert from '../../dist/lib/assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
@@ -33,6 +32,12 @@ export = () => {
 		'abcd'
 	]
 	type.writeValue(gb, VALUE)
-	assert.equal(gb.toBuffer(), bufferFrom([0, 0x61, 0, 0x61, 0x62, 0, 0x61, 0x62, 0x63, 0, 0x61, 0x62, 0x63, 0x64, 0]))
-	assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)
+	assert.equal(gb.toBuffer(), bufferFrom([
+		0,
+		0x61, 0,
+		0x61, 0x62, 0,
+		0x61, 0x62, 0x63, 0,
+		0x61, 0x62, 0x63, 0x64, 0
+	]))
+	assert.equal(type.readValue(gb.toBuffer()), VALUE)
 }

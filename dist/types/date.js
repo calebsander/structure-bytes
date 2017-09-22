@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const write_long_1 = require("../lib/write-long");
 const chrono_1 = require("./chrono");
 /**
@@ -31,6 +32,13 @@ class DateType extends chrono_1.default {
         this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Date);
         write_long_1.default(buffer, String(value.getTime()));
+    }
+    consumeValue(buffer, offset) {
+        const { value, length } = read_util_1.readLong(buffer, offset);
+        return {
+            value: new Date(Number(value)),
+            length
+        };
     }
 }
 exports.default = DateType;

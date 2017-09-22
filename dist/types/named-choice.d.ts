@@ -1,9 +1,10 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import StructType from './struct';
-export interface NameAndType<E> {
+export interface NameAndType<E, READ_E extends E> {
     nameBuffer: ArrayBuffer;
-    type: StructType<E>;
+    type: StructType<E, READ_E>;
 }
 /**
  * A type storing a value of one of several fixed classes.
@@ -40,18 +41,19 @@ export interface NameAndType<E> {
  * )
  * ````
  *
- * @param E The type of value this choice type can write.
+ * @param E The type of values this choice type can write.
  * If you provide, e.g. a `Type<A>` and a `Type<B>` and a `Type<C>`
  * to the constructor, `E` should be `A | B | C`.
  * In TypeScript, you have to declare this manually
  * unless all the value types are identical.
+ * @param READ_E The type of values this type will read
  */
-export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
+export default class NamedChoiceType<E extends object, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * The names of constructors and each's matching [[Type]]
      */
-    readonly constructorTypes: NameAndType<E>[];
+    readonly constructorTypes: NameAndType<E, READ_E>[];
     /**
      * A map of constructor indices to constructors.
      * Essentially an array.
@@ -70,7 +72,7 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
      * put the subclass first so that all its fields
      * are written, not just those inherited from the superclass.
      */
-    constructor(constructorTypes: Map<Function, StructType<E>>);
+    constructor(constructorTypes: Map<Function, StructType<E, READ_E>>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -100,5 +102,6 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
     equals(otherType: any): boolean;
 }

@@ -6,7 +6,7 @@ import {bufferFrom} from '../test-common'
 
 export = () => {
 	assert.throws(
-		() => r.value({type: new t.OctetsType, buffer: bufferFrom([0b10000000])}),
+		() => new t.OctetsType().readValue(bufferFrom([0b10000000])),
 		'Buffer is not long enough'
 	)
 	assert.throws(
@@ -14,8 +14,8 @@ export = () => {
 		'Buffer is not long enough'
 	)
 	assert.throws(
-		() => r.value({buffer: new ArrayBuffer(0), type: new (AbstractType as any)}),
-		'Not a structure type: AbstractType {}'
+		() => new (AbstractType as any)().readValue(new ArrayBuffer(0)),
+		'this.consumeValue is not a function'
 	)
 	assert.throws(
 		() => r.type(bufferFrom([0xaa])),

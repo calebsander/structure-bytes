@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
  * A type storing a variable-length array of `Boolean` values.
@@ -29,4 +30,5 @@ export default class BooleanArrayType extends AbsoluteType<boolean[]> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: boolean[]): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]>;
 }

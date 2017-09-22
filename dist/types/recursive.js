@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const recursiveNesting = require("../lib/recursive-nesting");
 const recursiveRegistry = require("../recursive-registry");
 const absolute_1 = require("./absolute");
@@ -9,6 +10,8 @@ const absolute_1 = require("./absolute");
 const recursiveLocations = new WeakMap();
 //Map of write buffers to maps of names to ids
 const recursiveIDs = new WeakMap();
+//Map of value buffers to maps of indices to read values for recursive types
+const readRecursives = new WeakMap();
 /**
  * A type that can refer recursively to itself.
  * This is not a type in its own right, but allows you
@@ -72,6 +75,7 @@ const recursiveIDs = new WeakMap();
  *
  * @param E The type of value this type can write
  * (presumably a recursive value)
+ * @param READ_E The type of value this type will read
  */
 class RecursiveType extends absolute_1.default {
     /**
@@ -175,6 +179,31 @@ class RecursiveType extends absolute_1.default {
             bufferRecursiveLocations.set(value, buffer.length);
             this.type.writeValue(buffer, value);
         }
+    }
+    consumeValue(buffer, offset) {
+        const explicit = read_util_1.readBooleanByte(buffer, offset);
+        let { length } = explicit;
+        let value;
+        if (explicit.value) {
+            value = read_util_1.makeBaseValue(this.type);
+            let bufferReadRecursives = readRecursives.get(buffer);
+            if (!bufferReadRecursives) {
+                bufferReadRecursives = new Map;
+                readRecursives.set(buffer, bufferReadRecursives);
+            }
+            bufferReadRecursives.set(offset + length, value);
+            length += this.type.consumeValue(buffer, offset + length, value).length;
+        }
+        else {
+            const indexOffset = read_util_1.readFlexInt(buffer, offset + length);
+            const target = offset + length - indexOffset.value;
+            const readValue = readRecursives.get(buffer).get(target);
+            if (!readValue)
+                throw new Error('Cannot find target at ' + String(target));
+            value = readValue;
+            length += indexOffset.length;
+        }
+        return { value, length };
     }
     equals(otherType) {
         return super.equals(otherType)

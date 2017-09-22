@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -22,6 +23,7 @@ const abstract_1 = require("./abstract");
  * ````
  *
  * @param E The type of non-`null` values
+ * @param READ_E The type of non-`null` read values
  */
 class OptionalType extends absolute_1.default {
     /**
@@ -77,6 +79,19 @@ class OptionalType extends absolute_1.default {
                 buffer.add(0xFF);
                 this.type.writeValue(buffer, value);
         }
+    }
+    consumeValue(buffer, offset) {
+        const nonNull = read_util_1.readBooleanByte(buffer, offset);
+        let { length } = nonNull;
+        let value;
+        if (nonNull.value) {
+            const subValue = this.type.consumeValue(buffer, offset + length);
+            ({ value } = subValue);
+            length += subValue.length;
+        }
+        else
+            value = null;
+        return { value, length };
     }
     equals(otherType) {
         return super.equals(otherType)

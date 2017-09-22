@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 /**
  * A type storing a single unicode character
@@ -31,6 +32,14 @@ class CharType extends absolute_1.default {
         assert_1.default.instanceOf(value, String);
         assert_1.default(value.length === 1, 'String must contain only 1 character');
         buffer.addAll(bufferString.fromString(value));
+    }
+    consumeValue(buffer, offset) {
+        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4)); //UTF-8 codepoint can't be more than 4 bytes
+        return {
+            value,
+            length: bufferString.fromString(value).byteLength
+        };
     }
 }
 exports.default = CharType;

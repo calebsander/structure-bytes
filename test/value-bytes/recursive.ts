@@ -1,5 +1,4 @@
 import assert from '../../dist/lib/assert'
-import {r} from '../../dist'
 import * as rec from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -50,7 +49,7 @@ export = () => {
 			0x00, 30, //node3
 			0x00, 22 //node1Second
 	]))
-	const readGraph = r.value({type: graphType, buffer})
+	const readGraph = graphType.readValue(buffer)
 	const VALUES = [1, 2, 3, 1]
 	for (const g of [graph, readGraph]) {
 		let i = 0

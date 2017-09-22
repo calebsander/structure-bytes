@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
 
@@ -12,7 +13,7 @@ import UnsignedType from './unsigned'
  * let type = new sb.UnsignedIntType
  * ````
  */
-export default class UnsignedIntType extends UnsignedType<number | string> {
+export default class UnsignedIntType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x13
 	}
@@ -36,5 +37,13 @@ export default class UnsignedIntType extends UnsignedType<number | string> {
 		const byteBuffer = new ArrayBuffer(4)
 		new DataView(byteBuffer).setUint32(0, value as number)
 		buffer.addAll(byteBuffer)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
+		const length = 4
+		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+		return {
+			value: new DataView(buffer).getUint32(offset),
+			length
+		}
 	}
 }

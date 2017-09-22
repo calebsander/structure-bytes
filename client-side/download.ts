@@ -65,7 +65,7 @@ export function download({name, url, options}: DownloadOptions): Promise<any> {
 			if (typeInCache && typeInCache.sig === sig) {
 				return response.arrayBuffer()
 					.then(buffer => {
-						const value = r.value({buffer, type: typeInCache.type})
+						const value = typeInCache.type.readValue(buffer)
 						return Promise.resolve(value)
 					})
 			}
@@ -74,7 +74,7 @@ export function download({name, url, options}: DownloadOptions): Promise<any> {
 					.then(buffer => {
 						const readType = r._consumeType(buffer, 0)
 						const type = readType.value
-						const value = r.value({buffer, offset: readType.length, type})
+						const value = type.readValue(buffer, readType.length)
 						typeCache[name] = {sig, type}
 						saveTypeCache()
 						return Promise.resolve(value)

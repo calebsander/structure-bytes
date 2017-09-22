@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
+const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -89,6 +90,17 @@ class EnumType extends abstract_1.default {
         if (index === undefined)
             throw new Error('Not a valid enum value: ' + util_inspect_1.inspect(value));
         buffer.add(index); //write the index to the requested value in the values array
+    }
+    consumeValue(buffer, offset) {
+        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        const valueIndex = new Uint8Array(buffer)[offset];
+        //Can't check for value === undefined since value could be undefined with OptionalType
+        const { values } = this;
+        assert_1.default(valueIndex in values, 'Index ' + String(valueIndex) + ' is invalid');
+        return {
+            value: values[valueIndex],
+            length: 1
+        };
     }
     equals(otherType) {
         if (!super.equals(otherType))

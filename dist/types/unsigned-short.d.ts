@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import UnsignedType from './unsigned';
 /**
  * A type storing a 2-byte unsigned integer (`0` to `65535`).
@@ -9,7 +10,7 @@ import UnsignedType from './unsigned';
  * let type = new sb.UnsignedShortType
  * ````
  */
-export default class UnsignedShortType extends UnsignedType<number | string> {
+export default class UnsignedShortType extends UnsignedType<number | string, number> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -23,4 +24,5 @@ export default class UnsignedShortType extends UnsignedType<number | string> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: number | string): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number>;
 }

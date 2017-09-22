@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
 
@@ -12,7 +13,7 @@ import UnsignedType from './unsigned'
  * let type = new sb.UnsignedByteType
  * ````
  */
-export default class UnsignedByteType extends UnsignedType<number | string> {
+export default class UnsignedByteType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x11
 	}
@@ -34,5 +35,12 @@ export default class UnsignedByteType extends UnsignedType<number | string> {
 		assert.integer(value)
 		assert.between(0, value as number, 0x100, 'Value out of range')
 		buffer.add(value as number)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
+		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		return {
+			value: new Uint8Array(buffer)[offset], //endianness doesn't matter because there is only 1 byte
+			length: 1
+		}
 	}
 }

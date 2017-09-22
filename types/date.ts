@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {readLong, ReadResult} from '../lib/read-util'
 import writeLong from '../lib/write-long'
 import ChronoType from './chrono'
 
@@ -31,5 +32,12 @@ export default class DateType extends ChronoType {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		writeLong(buffer, String(value.getTime()))
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {
+		const {value, length} = readLong(buffer, offset)
+		return {
+			value: new Date(Number(value)),
+			length
+		}
 	}
 }

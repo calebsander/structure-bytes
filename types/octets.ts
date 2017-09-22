@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
+import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 
 /**
@@ -36,5 +37,15 @@ export default class OctetsType extends AbsoluteType<ArrayBuffer> {
 		buffer
 			.addAll(flexInt.makeValueBuffer(value.byteLength))
 			.addAll(value)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<ArrayBuffer> {
+		const octetsLength = readFlexInt(buffer, offset)
+		const {length} = octetsLength
+		const finalLength = length + octetsLength.value
+		assert(buffer.byteLength >= offset + finalLength, NOT_LONG_ENOUGH)
+		return {
+			value: buffer.slice(offset + length, offset + finalLength),
+			length: finalLength
+		}
 	}
 }

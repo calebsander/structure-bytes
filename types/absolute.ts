@@ -4,4 +4,4 @@ import AbstractType from './abstract'
  * Used internally to disallow creating double pointers.
  * @private
  */
-export default abstract class AbsoluteType<VALUE> extends AbstractType<VALUE> {}
+export default abstract class AbsoluteType<VALUE, READ_VALUE extends VALUE = VALUE> extends AbstractType<VALUE, READ_VALUE> {}

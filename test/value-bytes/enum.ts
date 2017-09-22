@@ -1,5 +1,4 @@
 import assert from '../../dist/lib/assert'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
@@ -14,9 +13,9 @@ export = () => {
 	})
 	assert.equal(type.valueBuffer('AVAILABLE'), bufferFrom([0]))
 	assert.equal(type.valueBuffer('IN_USE'), bufferFrom([1]))
-	const valueBuffer = type.valueBuffer('MISSING')
-	assert.equal(valueBuffer, bufferFrom([2]))
-	assert.equal(r.value({buffer: valueBuffer, type}), 'MISSING')
+	const buffer = type.valueBuffer('MISSING')
+	assert.equal(buffer, bufferFrom([2]))
+	assert.equal(type.readValue(buffer), 'MISSING')
 
 	assert.throws(
 		() => type.valueBuffer('OTHER'),
@@ -27,7 +26,7 @@ export = () => {
 		'101 is not an instance of String'
 	)
 	assert.throws(
-		() => r.value({buffer: bufferFrom([3]), type}),
+		() => type.readValue(bufferFrom([type.values.length])),
 		'Index 3 is invalid'
 	)
 

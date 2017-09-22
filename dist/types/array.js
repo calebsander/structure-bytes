@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const write_iterable_1 = require("../lib/write-iterable");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -25,6 +26,8 @@ const abstract_1 = require("./abstract");
  * ````
  *
  * @param E The type of each element in the array
+ * @param READ_E The type of each element
+ * in the read array
  */
 class ArrayType extends absolute_1.default {
     /**
@@ -65,6 +68,18 @@ class ArrayType extends absolute_1.default {
         this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Array);
         write_iterable_1.default({ type: this.type, buffer, value, length: value.length });
+    }
+    consumeValue(buffer, offset, baseValue) {
+        const arrayLengthInt = read_util_1.readFlexInt(buffer, offset);
+        const arrayLength = arrayLengthInt.value;
+        let { length } = arrayLengthInt;
+        const value = baseValue || read_util_1.makeBaseValue(this, arrayLength);
+        for (let i = 0; i < arrayLength; i++) {
+            const element = this.type.consumeValue(buffer, offset + length);
+            length += element.length;
+            value[i] = element.value;
+        }
+        return { value, length };
     }
     equals(otherType) {
         return super.equals(otherType) && this.type.equals(otherType.type);

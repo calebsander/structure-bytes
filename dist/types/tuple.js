@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -22,6 +23,8 @@ const abstract_1 = require("./abstract");
  * ````
  *
  * @param E The type of each element in the tuple
+ * @param READ_E The type of each element
+ * in the read tuple
  */
 class TupleType extends absolute_1.default {
     /**
@@ -70,6 +73,16 @@ class TupleType extends absolute_1.default {
         assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length));
         for (const instance of value)
             this.type.writeValue(buffer, instance);
+    }
+    consumeValue(buffer, offset, baseValue) {
+        let length = 0;
+        const value = baseValue || read_util_1.makeBaseValue(this); //TypeScript complains if annotation is left off `value`
+        for (let i = 0; i < this.length; i++) {
+            const element = this.type.consumeValue(buffer, offset + length);
+            length += element.length;
+            value[i] = element.value;
+        }
+        return { value, length };
     }
     equals(otherType) {
         return super.equals(otherType)

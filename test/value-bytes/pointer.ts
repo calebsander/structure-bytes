@@ -1,7 +1,6 @@
 import assert from '../../dist/lib/assert'
 import * as flexInt from '../../dist/lib/flex-int'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom, concat} from '../test-common'
 
@@ -30,7 +29,7 @@ export = () => {
 			7,
 			1
 		]))
-		assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)
+		assert.equal(type.readValue(gb.toBuffer()), VALUE)
 	}
 
 	{
@@ -51,7 +50,7 @@ export = () => {
 				0, 0, 0, 0, 0, 0, 0, 2,
 			10
 		]))
-		assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE)
+		assert.equal(type.readValue(gb.toBuffer()), VALUE)
 	}
 
 	{
@@ -76,7 +75,7 @@ export = () => {
 			1,
 			1
 		]))
-		assert.equal(r.value({buffer: gb.toBuffer(), type}), tuple)
+		assert.equal(type.readValue(gb.toBuffer()), tuple)
 	}
 
 	{
@@ -92,7 +91,7 @@ export = () => {
 				0,
 					0, 123
 		]))
-		assert.equal(r.value({buffer: gb.toBuffer(), type}), 123)
+		assert.equal(type.readValue(gb.toBuffer()), 123)
 	}
 
 	{
@@ -113,12 +112,12 @@ export = () => {
 					0x64, 0x65, 0x66, 0,
 				7
 		]))
-		assert.equal(r.value({buffer: gb.toBuffer(), type}), map)
+		assert.equal(type.readValue(gb.toBuffer()), map)
 	}
 
 	//Reading a value being pointed to twice should always give the same value
 	const threeDVectorType = new t.PointerType(
-		new t.TupleType({
+		new t.TupleType<number>({
 			type: new t.FloatType,
 			length: 3
 		})
@@ -127,15 +126,15 @@ export = () => {
 		a: threeDVectorType,
 		b: threeDVectorType
 	})
-	const valueBuffer = duplicateType.valueBuffer({a: [2, 0, 1], b: [2, 0, 1]})
-	assert.equal(valueBuffer, bufferFrom([
+	const buffer = duplicateType.valueBuffer({a: [2, 0, 1], b: [2, 0, 1]})
+	assert.equal(buffer, bufferFrom([
 		0,
 			0x40, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00,
 			0x3f, 0x80, 0x00, 0x00,
 		13
 	]))
-	const valueReadBack = r.value({buffer: valueBuffer, type: duplicateType})
+	const valueReadBack = duplicateType.readValue(buffer)
 	assert(valueReadBack.a === valueReadBack.b)
 
 	//Different types should be able to use the same pointer location if value bytes are equivalent
@@ -154,7 +153,7 @@ export = () => {
 				0x61, 0,
 			3
 		]))
-		assert.equal(r.value({buffer, type}), value)
+		assert.equal(type.readValue(buffer), value)
 	}
 
 	//Test with offset requiring 2 flexInt bytes
@@ -179,6 +178,6 @@ export = () => {
 			flexInt.makeValueBuffer(100 * 2),
 			bufferFrom([2])
 		]))
-		assert.equal(r.value({buffer, type}), value)
+		assert.equal(type.readValue(buffer), value)
 	}
 }

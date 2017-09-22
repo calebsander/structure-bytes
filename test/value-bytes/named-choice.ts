@@ -40,7 +40,7 @@ export = () => {
 	const valueBuffer = type.valueBuffer(hashedQRCode)
 	assert.equal(valueBuffer, bufferFrom([0, 0x61, 0x62, 0x63, 0x64, 0x65, 0]))
 	const readType = r.type(type.toBuffer()) as t.NamedChoiceType<QRCode | UPC>
-	const readValue = r.value({type: readType, buffer: valueBuffer}) as QRCode
+	const readValue = readType.readValue(valueBuffer) as QRCode
 	const castValue = new QRCode(hashedQRCode.text)
 	assert.equal(readValue.constructor.name, castValue.constructor.name)
 	assert.equal(readValue.constructor.name, 'QRCode')
@@ -51,7 +51,7 @@ export = () => {
 	const upc = new UPC('123')
 	const valueBuffer2 = type.valueBuffer(upc)
 	assert.equal(valueBuffer2, bufferFrom([1, 0, 0, 0, 0, 0, 0, 0, 123]))
-	const readValue2 = r.value({type, buffer: valueBuffer2}) as UPC
+	const readValue2 = type.readValue(valueBuffer2) as UPC
 	assert.equal(readValue2.constructor.name, upc.constructor.name)
 	assert.equal(readValue2.constructor.name, 'UPC')
 	assert.equal(Object.keys(readValue2), Object.keys(upc))
@@ -71,10 +71,7 @@ export = () => {
 		'null is not an instance of Object'
 	)
 	assert.throws(
-		() => r.value({
-			buffer: bufferFrom([100]),
-			type
-		}),
+		() => type.readValue(bufferFrom([100])),
 		'Constructor index 100 is invalid'
 	)
 }

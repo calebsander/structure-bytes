@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import Type from './type';
 /**
@@ -28,13 +29,14 @@ import Type from './type';
  * to the constructor, `E` should be `A | B | C`.
  * In TypeScript, you have to declare this manually
  * unless all the value types are identical.
+ * @param READ_E The type of values this type will read
  */
-export default class ChoiceType<E> extends AbsoluteType<E> {
+export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * The array of types passed into the constructor
      */
-    readonly types: Type<E>[];
+    readonly types: Type<E, READ_E>[];
     /**
      * @param types The list of possible types.
      * Cannot contain more than 255 types.
@@ -42,7 +44,7 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
      * that successfully writes the value,
      * so place higher priority types earlier.
      */
-    constructor(types: Type<E>[]);
+    constructor(types: Type<E, READ_E>[]);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -64,5 +66,6 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
     equals(otherType: any): boolean;
 }

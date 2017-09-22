@@ -1,13 +1,15 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
+import * as constructorRegistry from '../lib/constructor-registry'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import StructType from './struct'
 
-export interface NameAndType<E> {
+export interface NameAndType<E, READ_E extends E> {
 	nameBuffer: ArrayBuffer
-	type: StructType<E>
+	type: StructType<E, READ_E>
 }
 /**
  * A type storing a value of one of several fixed classes.
@@ -44,20 +46,21 @@ export interface NameAndType<E> {
  * )
  * ````
  *
- * @param E The type of value this choice type can write.
+ * @param E The type of values this choice type can write.
  * If you provide, e.g. a `Type<A>` and a `Type<B>` and a `Type<C>`
  * to the constructor, `E` should be `A | B | C`.
  * In TypeScript, you have to declare this manually
  * unless all the value types are identical.
+ * @param READ_E The type of values this type will read
  */
-export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
+export default class NamedChoiceType<E extends object, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x58
 	}
 	/**
 	 * The names of constructors and each's matching [[Type]]
 	 */
-	readonly constructorTypes: NameAndType<E>[]
+	readonly constructorTypes: NameAndType<E, READ_E>[]
 	/**
 	 * A map of constructor indices to constructors.
 	 * Essentially an array.
@@ -76,7 +79,7 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 	 * put the subclass first so that all its fields
 	 * are written, not just those inherited from the superclass.
 	 */
-	constructor(constructorTypes: Map<Function, StructType<E>>) {
+	constructor(constructorTypes: Map<Function, StructType<E, READ_E>>) {
 		super()
 		assert.instanceOf(constructorTypes, Map)
 		try { assert.byteUnsignedInteger(constructorTypes.size) }
@@ -156,6 +159,21 @@ export default class NamedChoiceType<E extends object> extends AbsoluteType<E> {
 		buffer.add(writeIndex)
 		const {type} = this.constructorTypes[writeIndex]
 		type.writeValue(buffer, value)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
+		let length = 1
+		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		const typeIndex = new Uint8Array(buffer)[offset]
+		const typeConstructor = this.indexConstructors.get(typeIndex)
+		if (typeConstructor === undefined) throw new Error('Constructor index ' + String(typeIndex) + ' is invalid')
+		const constructor = constructorRegistry.get(typeConstructor.name)
+		const {value, length: subLength} = this.constructorTypes[typeIndex].type.consumeValue(
+			buffer,
+			offset + length,
+			new constructor
+		)
+		length += subLength
+		return {value, length}
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

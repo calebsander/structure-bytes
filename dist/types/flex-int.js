@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const integer_1 = require("./integer");
 /**
@@ -25,7 +26,6 @@ function fromUnsigned(unsigned) {
         return (unsigned + 1) / -2;
     return unsigned / 2;
 }
-exports.fromUnsigned = fromUnsigned;
 const MIN_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER); //< 0; inclusive
 const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1; //> 0; exclusive
 /**
@@ -67,6 +67,13 @@ class FlexIntType extends integer_1.default {
         assert_1.default.integer(value);
         assert_1.default.between(MIN_SAFE, value, MAX_SAFE);
         buffer.addAll(flexInt.makeValueBuffer(toUnsigned(value)));
+    }
+    consumeValue(buffer, offset) {
+        const { value, length } = read_util_1.readFlexInt(buffer, offset);
+        return {
+            value: fromUnsigned(value),
+            length
+        };
     }
 }
 exports.default = FlexIntType;

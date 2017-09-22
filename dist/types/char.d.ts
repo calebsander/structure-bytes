@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
  * A type storing a single unicode character
@@ -22,4 +23,5 @@ export default class CharType extends AbsoluteType<string> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: string): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string>;
 }

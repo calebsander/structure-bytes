@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -32,15 +33,16 @@ import Type from './type'
  * to the constructor, `E` should be `A | B | C`.
  * In TypeScript, you have to declare this manually
  * unless all the value types are identical.
+ * @param READ_E The type of values this type will read
  */
-export default class ChoiceType<E> extends AbsoluteType<E> {
+export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x56
 	}
 	/**
 	 * The array of types passed into the constructor
 	 */
-	readonly types: Type<E>[]
+	readonly types: Type<E, READ_E>[]
 	/**
 	 * @param types The list of possible types.
 	 * Cannot contain more than 255 types.
@@ -48,7 +50,7 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 	 * that successfully writes the value,
 	 * so place higher priority types earlier.
 	 */
-	constructor(types: Type<E>[]) {
+	constructor(types: Type<E, READ_E>[]) {
 		super()
 		assert.instanceOf(types, Array)
 		try { assert.byteUnsignedInteger(types.length) }
@@ -101,6 +103,14 @@ export default class ChoiceType<E> extends AbsoluteType<E> {
 			break
 		}
 		if (!success) assert.fail('No types matched: ' + inspect(value))
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
+		let length = 1
+		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		const typeIndex = new Uint8Array(buffer)[offset]
+		const {value, length: subLength} = this.types[typeIndex].consumeValue(buffer, offset + length)
+		length += subLength
+		return {value, length}
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

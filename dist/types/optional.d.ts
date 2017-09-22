@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import Type from './type';
 /**
@@ -20,18 +21,19 @@ import Type from './type';
  * ````
  *
  * @param E The type of non-`null` values
+ * @param READ_E The type of non-`null` read values
  */
-export default class OptionalType<E> extends AbsoluteType<E | null | undefined> {
+export default class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null | undefined, READ_E | null> {
     static readonly _value: number;
     /**
      * The [[Type]] passed into the constructor
      */
-    readonly type: Type<E>;
+    readonly type: Type<E, READ_E>;
     /**
      * @param type The [[Type]] used to write values
      * if they are not `null` or `undefined`
      */
-    constructor(type: Type<E>);
+    constructor(type: Type<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -55,5 +57,6 @@ export default class OptionalType<E> extends AbsoluteType<E | null | undefined> 
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E | null | undefined): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E | null>;
     equals(otherType: any): boolean;
 }

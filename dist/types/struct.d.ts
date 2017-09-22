@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import Type from './type';
 /**
@@ -8,17 +9,17 @@ import Type from './type';
 export interface StringIndexable {
     [key: string]: any;
 }
-export interface StructField<E> {
+export interface StructField {
     name: string;
-    type: Type<E>;
+    type: Type<any>;
     nameBuffer: ArrayBuffer;
 }
 /**
  * Maps each key in `E` to a type capable of writing
  * the type of value stored by that key in `E`
  */
-export declare type StructFields<E> = {
-    [key in keyof E]: Type<E[key]>;
+export declare type StructFields<E, READ_E extends E> = {
+    [key in keyof E]: Type<E[key], READ_E[key]>;
 };
 /**
  * A type storing up to 255 named fields.
@@ -50,8 +51,9 @@ export declare type StructFields<E> = {
  * ````
  *
  * @param E The type of object values this type can write
+ * @param READ_E The type of object values this type will read
  */
-export default class StructType<E extends StringIndexable> extends AbsoluteType<E> {
+export default class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * An array of the field names with their corresponding types.
@@ -60,13 +62,13 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
      * to the constructor always gives the same result.
      * Field names' UTF-8 representations are also cached.
      */
-    readonly fields: StructField<any>[];
+    readonly fields: StructField[];
     /**
      * @param fields A mapping of field names to their types.
      * There can be no more than 255 fields.
      * Each field name must be at most 255 bytes long in UTF-8.
      */
-    constructor(fields: StructFields<E>);
+    constructor(fields: StructFields<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -84,5 +86,6 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
+    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E>;
     equals(otherType: any): boolean;
 }

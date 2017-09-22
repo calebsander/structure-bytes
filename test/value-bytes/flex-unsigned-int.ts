@@ -1,5 +1,4 @@
 import assert from '../../dist/lib/assert'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
@@ -7,28 +6,28 @@ export = () => {
 	const type = new t.FlexUnsignedIntType
 	const TWO_7 = 2 ** 7, TWO_14 = 2 ** 14
 	for (let value = 0; value < TWO_7; value++) {
-		const valueBuffer = type.valueBuffer(value)
-		assert.equal(valueBuffer, bufferFrom([value]))
-		assert.equal(r.value({type, buffer: valueBuffer}), value)
+		const buffer = type.valueBuffer(value)
+		assert.equal(buffer, bufferFrom([value]))
+		assert.equal(type.readValue(buffer), value)
 	}
 	for (let value = TWO_7; value < TWO_7 + TWO_14; value++) {
 		const relativeValue = value - TWO_7
-		const valueBuffer = type.valueBuffer(value)
-		assert.equal(valueBuffer, bufferFrom([
+		const buffer = type.valueBuffer(value)
+		assert.equal(buffer, bufferFrom([
 			0b10000000 | (relativeValue >> 8),
 			relativeValue & 0xFF
 		]))
-		assert.equal(r.value({type, buffer: valueBuffer}), value)
+		assert.equal(type.readValue(buffer), value)
 	}
 	for (let value = TWO_7 + TWO_14; value < 50000; value++) {
 		const relativeValue = value - (TWO_7 + TWO_14)
-		const valueBuffer = type.valueBuffer(value)
-		assert.equal(valueBuffer, bufferFrom([
+		const buffer = type.valueBuffer(value)
+		assert.equal(buffer, bufferFrom([
 			0b11000000 | (relativeValue >> 16),
 			(relativeValue >> 8) & 0xFF,
 			relativeValue & 0xFF
 		]))
-		assert.equal(r.value({type, buffer: valueBuffer}), value)
+		assert.equal(type.readValue(buffer), value)
 	}
 
 	function makeMinBuffer(bytes: number): ArrayBuffer {
@@ -58,7 +57,7 @@ export = () => {
 	assert.equal(type.valueBuffer(567382630219903), makeMaxBuffer(7))
 	assert.equal(type.valueBuffer(567382630219904), makeMinBuffer(8))
 	assert.equal(type.valueBuffer(Number.MAX_SAFE_INTEGER), bufferFrom([0b11111110, 0b00011101, 0b11111011, 0b11110111, 0b11101111, 0b11011111, 0b10111111, 0b01111111]))
-	assert.equal(r.value({type, buffer: type.valueBuffer(Number.MAX_SAFE_INTEGER)}), Number.MAX_SAFE_INTEGER)
+	assert.equal(type.readValue(type.valueBuffer(Number.MAX_SAFE_INTEGER)), Number.MAX_SAFE_INTEGER)
 	assert.equal(type.valueBuffer('123'), bufferFrom([123]))
 
 	assert.throws(
@@ -78,15 +77,15 @@ export = () => {
 		'-1 is negative'
 	)
 	assert.throws(
-		() => r.value({type, buffer: bufferFrom([])}),
+		() => type.readValue(bufferFrom([])),
 		'Buffer is not long enough'
 	)
 	assert.throws(
-		() => r.value({type, buffer: bufferFrom([0b11111111])}),
+		() => type.readValue(bufferFrom([0b11111111])),
 		'Invalid number of bytes'
 	)
 	assert.throws(
-		() => r.value({type, buffer: bufferFrom([0b10000001])}),
+		() => type.readValue(bufferFrom([0b10000001])),
 		'Buffer is not long enough'
 	)
 }

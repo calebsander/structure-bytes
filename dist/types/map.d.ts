@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import Type from './type';
 /**
@@ -18,22 +19,24 @@ import Type from './type';
  *
  * @param K The type of values stored in keys of the map
  * @param V The type of values stored in values of the map
+ * @param READ_K The type of keys this type will read
+ * @param READ_V The type of values this type will read
  */
-export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
+export default class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends AbsoluteType<Map<K, V>, Map<READ_K, READ_V>> {
     static readonly _value: number;
     /**
      * The type used to serialize keys
      */
-    readonly keyType: Type<K>;
+    readonly keyType: Type<K, READ_K>;
     /**
      * The type used to serialize values
      */
-    readonly valueType: Type<V>;
+    readonly valueType: Type<V, READ_V>;
     /**
      * @param keyType The type of each key in the map
      * @param valueType The type of each value in the map
      */
-    constructor(keyType: Type<K>, valueType: Type<V>);
+    constructor(keyType: Type<K, READ_K>, valueType: Type<V, READ_V>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -59,5 +62,6 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: Map<K, V>): void;
+    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>>;
     equals(otherType: any): boolean;
 }

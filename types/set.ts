@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import writeIterable from '../lib/write-iterable'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -20,19 +21,21 @@ import Type from './type'
  * ````
  *
  * @param E The type of each element in the set
+ * @param READ_E The type of each element
+ * in the read set
  */
-export default class SetType<E> extends AbsoluteType<Set<E>> {
+export default class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
 	static get _value() {
 		return 0x53
 	}
 	/**
 	 * The [[Type]] passed to the constructor
 	 */
-	readonly type: Type<E>
+	readonly type: Type<E, READ_E>
 	/**
 	 * @param type A [[Type]] that can serialize each element in the set
 	 */
-	constructor(type: Type<E>) {
+	constructor(type: Type<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbstractType)
 		this.type = type
@@ -64,6 +67,17 @@ export default class SetType<E> extends AbsoluteType<Set<E>> {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Set)
 		writeIterable({type: this.type, buffer, value, length: value.size})
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>> {
+		const size = readFlexInt(buffer, offset)
+		let {length} = size
+		const value = baseValue || makeBaseValue(this) as Set<READ_E>
+		for (let i = 0; i < size.value; i++) {
+			const element = this.type.consumeValue(buffer, offset + length)
+			length += element.length
+			value.add(element.value)
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType) && this.type.equals((otherType as SetType<any>).type)

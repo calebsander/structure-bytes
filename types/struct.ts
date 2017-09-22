@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
+import {makeBaseValue, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -13,17 +14,17 @@ import Type from './type'
 export interface StringIndexable {
 	[key: string]: any
 }
-export interface StructField<E> {
+export interface StructField {
 	name: string
-	type: Type<E>
+	type: Type<any>
 	nameBuffer: ArrayBuffer
 }
 /**
  * Maps each key in `E` to a type capable of writing
  * the type of value stored by that key in `E`
  */
-export type StructFields<E> = {
-	[key in keyof E]: Type<E[key]>
+export type StructFields<E, READ_E extends E> = {
+	[key in keyof E]: Type<E[key], READ_E[key]>
 }
 /**
  * A type storing up to 255 named fields.
@@ -55,8 +56,9 @@ export type StructFields<E> = {
  * ````
  *
  * @param E The type of object values this type can write
+ * @param READ_E The type of object values this type will read
  */
-export default class StructType<E extends StringIndexable> extends AbsoluteType<E> {
+export default class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x51
 	}
@@ -67,13 +69,13 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 	 * to the constructor always gives the same result.
 	 * Field names' UTF-8 representations are also cached.
 	 */
-	readonly fields: StructField<any>[]
+	readonly fields: StructField[]
 	/**
 	 * @param fields A mapping of field names to their types.
 	 * There can be no more than 255 fields.
 	 * Each field name must be at most 255 bytes long in UTF-8.
 	 */
-	constructor(fields: StructFields<E>) {
+	constructor(fields: StructFields<E, READ_E>) {
 		super()
 		assert.instanceOf(fields, Object)
 		//Allow only 255 fields
@@ -152,6 +154,16 @@ export default class StructType<E extends StringIndexable> extends AbsoluteType<
 				throw writeError //throw original error if field is defined, but just invalid
 			}
 		}
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E> {
+		let length = 0
+		const value = (baseValue || makeBaseValue(this)) as READ_E
+		for (const field of this.fields) {
+			const readField = field.type.consumeValue(buffer, offset + length)
+			value[field.name] = readField.value
+			length += readField.length
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

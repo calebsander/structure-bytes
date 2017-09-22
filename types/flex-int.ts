@@ -1,6 +1,7 @@
 import assert from '../lib/assert'
 import AppendableBuffer from '../lib/appendable'
 import * as flexInt from '../lib/flex-int'
+import {readFlexInt, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import IntegerType from './integer'
 
@@ -19,7 +20,7 @@ function toUnsigned(signed: number): number {
  * The inverse of [[toUnsigned]].
  * @param signed The unsigned integer value
  */
-export function fromUnsigned(unsigned: number): number {
+function fromUnsigned(unsigned: number): number {
 	if (unsigned & 1) return (unsigned + 1) / -2
 	return unsigned / 2
 }
@@ -41,7 +42,7 @@ const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1 //> 0; exclusive
  * let type = new sb.FlexIntType
  * ````
  */
-export default class FlexIntType extends IntegerType<number | string> {
+export default class FlexIntType extends IntegerType<number | string, number> {
 	static get _value() {
 		return 0x07
 	}
@@ -64,5 +65,12 @@ export default class FlexIntType extends IntegerType<number | string> {
 		assert.integer(value)
 		assert.between(MIN_SAFE, value as number, MAX_SAFE)
 		buffer.addAll(flexInt.makeValueBuffer(toUnsigned(value as number)))
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
+		const {value, length} = readFlexInt(buffer, offset)
+		return {
+			value: fromUnsigned(value),
+			length
+		}
 	}
 }

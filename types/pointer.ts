@@ -2,12 +2,15 @@ import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import * as flexInt from '../lib/flex-int'
+import {readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
 
 //Map of write buffers to maps of binary strings to the location they were written
 const pointers = new WeakMap<AppendableBuffer, Map<string, number>>()
+//Map of read value buffers to maps of pointer types to maps of pointer values to read results
+const pointerReads = new WeakMap<ArrayBuffer, Map<PointerType<any>, Map<number, any>>>()
 
 /**
  * A type storing a value of another type through a pointer.
@@ -37,19 +40,20 @@ const pointers = new WeakMap<AppendableBuffer, Map<string, number>>()
  * ````
  *
  * @param E The type of values that can be written
+ * @param READ_E The type of values that will be read
  */
-export default class PointerType<E> extends AbstractType<E> {
+export default class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
 	static get _value() {
 		return 0x70
 	}
 	/**
 	 * The [[Type]] passed to the constructor
 	 */
-	readonly type: Type<E>
+	readonly type: Type<E, READ_E>
 	/**
 	 * @param type The [[Type]] used to write the values being pointed to
 	 */
-	constructor(type: Type<E>) {
+	constructor(type: Type<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbsoluteType)
 		this.type = type
@@ -113,6 +117,38 @@ export default class PointerType<E> extends AbstractType<E> {
 			const offset = buffer.length - index
 			buffer.addAll(flexInt.makeValueBuffer(offset))
 		}
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
+		let length = 1
+		let explicitValue = true
+		while (true) {
+			const offsetDiffInt = readFlexInt(buffer, offset)
+			const offsetDiff = offsetDiffInt.value
+			if (!offsetDiff) break
+			if (explicitValue) {
+				({length} = offsetDiffInt)
+				explicitValue = false
+			}
+			offset -= offsetDiff
+		}
+		let bufferPointerReads = pointerReads.get(buffer)
+		if (!bufferPointerReads) {
+			bufferPointerReads = new Map
+			pointerReads.set(buffer, bufferPointerReads)
+		}
+		let bufferTypePointerReads = bufferPointerReads.get(this)
+		if (!bufferTypePointerReads) {
+			bufferTypePointerReads = new Map
+			bufferPointerReads.set(this, bufferTypePointerReads)
+		}
+		let value = bufferTypePointerReads.get(offset) as READ_E | undefined
+		if (value === undefined) {
+			const explicitRead = this.type.consumeValue(buffer, offset + length) //skip the flexInt
+			;({value} = explicitRead)
+			if (explicitValue) length += explicitRead.length
+			bufferTypePointerReads.set(offset, value)
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

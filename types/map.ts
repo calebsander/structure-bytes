@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
+import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -22,24 +23,26 @@ import Type from './type'
  *
  * @param K The type of values stored in keys of the map
  * @param V The type of values stored in values of the map
+ * @param READ_K The type of keys this type will read
+ * @param READ_V The type of values this type will read
  */
-export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
+export default class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends AbsoluteType<Map<K, V>, Map<READ_K, READ_V>> {
 	static get _value() {
 		return 0x54
 	}
 	/**
 	 * The type used to serialize keys
 	 */
-	readonly keyType: Type<K>
+	readonly keyType: Type<K, READ_K>
 	/**
 	 * The type used to serialize values
 	 */
-	readonly valueType: Type<V>
+	readonly valueType: Type<V, READ_V>
 	/**
 	 * @param keyType The type of each key in the map
 	 * @param valueType The type of each value in the map
 	 */
-	constructor(keyType: Type<K>, valueType: Type<V>) {
+	constructor(keyType: Type<K, READ_K>, valueType: Type<V, READ_V>) {
 		super()
 		assert.instanceOf(keyType, AbstractType)
 		assert.instanceOf(valueType, AbstractType)
@@ -87,6 +90,19 @@ export default class MapType<K, V> extends AbsoluteType<Map<K, V>> {
 			this.keyType.writeValue(buffer, mapKey)
 			this.valueType.writeValue(buffer, mapValue)
 		}
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>> {
+		const size = readFlexInt(buffer, offset)
+		let {length} = size
+		const value = baseValue || makeBaseValue(this) as Map<READ_K, READ_V>
+		for (let i = 0; i < size.value; i++) {
+			const keyElement = this.keyType.consumeValue(buffer, offset + length)
+			length += keyElement.length
+			const valueElement = this.valueType.consumeValue(buffer, offset + length)
+			length += valueElement.length
+			value.set(keyElement.value, valueElement.value)
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

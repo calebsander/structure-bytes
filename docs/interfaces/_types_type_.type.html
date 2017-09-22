@@ -62,7 +62,7 @@
 					<a href="_types_type_.type.html">Type</a>
 				</li>
 			</ul>
-			<h1>Interface Type&lt;VALUE&gt;</h1>
+			<h1>Interface Type&lt;VALUE, READ_VALUE&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -85,6 +85,15 @@
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p>The type of values this object can serialize</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<h4>READ_VALUE<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of values this object deserializes.
+								Must be a subset of <code>VALUE</code>. Defaults to <code>VALUE</code>.</p>
 							</div>
 						</div>
 					</li>
@@ -151,9 +160,11 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#equals" class="tsd-kind-icon">equals</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="_types_type_.type.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
@@ -174,7 +185,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:14</li>
+									<li>Defined in types/type.ts:17</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -197,6 +208,54 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="consumevalue" class="tsd-anchor"></a>
+					<h3>consume<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">consume<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, baseValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_lib_read_util_.readresult.html" class="tsd-signature-type">ReadResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/type.ts:61</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Reads a value from the specified bytes
+										at the specified offset.
+										Returns the value that was read
+									and the number of bytes consumed.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer containing the value bytes</p>
+									</div>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The position in the buffer to read from</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> baseValue: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A value to mutate into the read value.
+										Used by <a href="../classes/_types_recursive_.recursivetype.html">RecursiveType</a>.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_lib_read_util_.readresult.html" class="tsd-signature-type">ReadResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>The read value and the number of bytes read</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 					<a name="equals" class="tsd-anchor"></a>
 					<h3>equals</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
@@ -206,7 +265,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:52</li>
+									<li>Defined in types/type.ts:93</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -238,7 +297,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:25</li>
+									<li>Defined in types/type.ts:28</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -261,7 +320,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:32</li>
+									<li>Defined in types/type.ts:35</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -277,6 +336,64 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="readvalue" class="tsd-anchor"></a>
+					<h3>read<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">READ_VALUE</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/type.ts:87</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Deserializes a value, i.e. takes
+										a buffer containing its binary form
+										and returns the value.
+										The inverse of <a href="_types_type_.type.html#valuebuffer">valueBuffer</a>.
+									Requires the type (<code>this</code>) to be known.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.ArrayType(
+  <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType
+)
+<span class="hljs-keyword">let</span> value = [<span class="hljs-number">0</span>, <span class="hljs-number">10</span>, <span class="hljs-number">100</span>, <span class="hljs-number">1000</span>, <span class="hljs-number">10000</span>]
+<span class="hljs-keyword">let</span> buffer = type.valueBuffer(value)
+<span class="hljs-keyword">let</span> readValue = type.readValue(buffer)
+<span class="hljs-built_in">console</span>.log(readValue) <span class="hljs-comment">// [ 0, 10, 100, 1000, 10000 ]</span>
+</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If the value does not occupy all of the buffer
+										from index <code>offset</code> to the end</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer containing the value bytes</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> offset: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The position in the buffer to read from
+										(defaults to <code>0</code>)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">READ_VALUE</span></h4>
+							<p>A value equivalent to the one that was written</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 					<a name="tobuffer" class="tsd-anchor"></a>
 					<h3>to<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
@@ -286,7 +403,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:20</li>
+									<li>Defined in types/type.ts:23</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -310,7 +427,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:46</li>
+									<li>Defined in types/type.ts:49</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -343,7 +460,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/type.ts:39</li>
+									<li>Defined in types/type.ts:42</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -399,6 +516,9 @@
 								<a href="_types_type_.type.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_types_type_.type.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 								<a href="_types_type_.type.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
@@ -406,6 +526,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 								<a href="_types_type_.type.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="_types_type_.type.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
 								<a href="_types_type_.type.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>

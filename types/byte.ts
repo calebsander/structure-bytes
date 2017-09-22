@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import IntegerType from './integer'
 
@@ -12,7 +13,7 @@ import IntegerType from './integer'
  * let type = new sb.ByteType
  * ````
  */
-export default class ByteType extends IntegerType<number | string> {
+export default class ByteType extends IntegerType<number | string, number> {
 	static get _value() {
 		return 0x01
 	}
@@ -34,5 +35,12 @@ export default class ByteType extends IntegerType<number | string> {
 		assert.integer(value)
 		assert.between(-128, value as number, 128, 'Value out of range')
 		buffer.addAll(new Int8Array([value as number]).buffer)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
+		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		return {
+			value: new Int8Array(buffer)[offset], //endianness doesn't matter because there is only 1 byte
+			length: 1
+		}
 	}
 }

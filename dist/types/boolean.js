@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 /**
  * A type storing a `Boolean` value (1 bit)
@@ -29,6 +30,9 @@ class BooleanType extends absolute_1.default {
         this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Boolean);
         buffer.add(value ? 0xFF : 0x00); //all bits are set for good measure
+    }
+    consumeValue(buffer, offset) {
+        return read_util_1.readBooleanByte(buffer, offset);
     }
 }
 exports.default = BooleanType;

@@ -62,7 +62,7 @@
 					<a href="_types_abstract_.abstracttype.html">AbstractType</a>
 				</li>
 			</ul>
-			<h1>Class AbstractType&lt;VALUE&gt;</h1>
+			<h1>Class AbstractType&lt;VALUE, READ_VALUE&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -82,6 +82,9 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>VALUE</h4>
+					</li>
+					<li>
+						<h4>READ_VALUE<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -107,7 +110,7 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -136,10 +139,12 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_types_abstract_.abstracttype.html#_getsignature" class="tsd-kind-icon">_get<wbr>Signature</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_types_abstract_.abstracttype.html#_tobuffer" class="tsd-kind-icon">_to<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#equals" class="tsd-kind-icon">equals</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_types_abstract_.abstracttype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_abstract_.abstracttype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
@@ -156,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Buffer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBuffer</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:20</li>
+							<li>Defined in types/abstract.ts:21</li>
 						</ul>
 					</aside>
 				</section>
@@ -166,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Hash<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:21</li>
+							<li>Defined in types/abstract.ts:22</li>
 						</ul>
 					</aside>
 				</section>
@@ -176,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:22</li>
+							<li>Defined in types/abstract.ts:23</li>
 						</ul>
 					</aside>
 				</section>
@@ -186,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">cached<wbr>Type<wbr>Locations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/abstract.ts:23</li>
+							<li>Defined in types/abstract.ts:24</li>
 						</ul>
 					</aside>
 				</section>
@@ -203,7 +208,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:29</li>
+									<li>Defined in types/abstract.ts:30</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -229,7 +234,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:105</li>
+									<li>Defined in types/abstract.ts:114</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -252,7 +257,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:115</li>
+									<li>Defined in types/abstract.ts:124</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -276,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:95</li>
+									<li>Defined in types/abstract.ts:104</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -300,7 +305,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:32</li>
+									<li>Defined in types/abstract.ts:33</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -310,6 +315,36 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="consumevalue" class="tsd-anchor"></a>
+					<h3>consume<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">consume<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, baseValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_read_util_.readresult.html" class="tsd-signature-type">ReadResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#consumevalue">consumeValue</a></p>
+								<ul>
+									<li>Defined in types/abstract.ts:69</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> baseValue: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_lib_read_util_.readresult.html" class="tsd-signature-type">ReadResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -324,7 +359,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:73</li>
+									<li>Defined in types/abstract.ts:82</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -348,7 +383,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:54</li>
+									<li>Defined in types/abstract.ts:55</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -366,7 +401,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:58</li>
+									<li>Defined in types/abstract.ts:59</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -383,7 +418,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/abstract.ts:87</li>
+									<li>Defined in types/abstract.ts:96</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -406,6 +441,32 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="readvalue" class="tsd-anchor"></a>
+					<h3>read<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">READ_VALUE</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/abstract.ts:70</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">READ_VALUE</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
 					<a name="tobuffer" class="tsd-anchor"></a>
 					<h3>to<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
@@ -416,7 +477,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:50</li>
+									<li>Defined in types/abstract.ts:51</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -434,7 +495,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:63</li>
+									<li>Defined in types/abstract.ts:64</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,7 +519,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:62</li>
+									<li>Defined in types/abstract.ts:63</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -522,6 +583,9 @@
 								<a href="_types_abstract_.abstracttype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_types_abstract_.abstracttype.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="_types_abstract_.abstracttype.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
@@ -532,6 +596,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_types_abstract_.abstracttype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_types_abstract_.abstracttype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="_types_abstract_.abstracttype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>

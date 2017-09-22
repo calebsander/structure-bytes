@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 /**
  * A type storing a variable-length array of bytes.
@@ -36,6 +37,16 @@ class OctetsType extends absolute_1.default {
         buffer
             .addAll(flexInt.makeValueBuffer(value.byteLength))
             .addAll(value);
+    }
+    consumeValue(buffer, offset) {
+        const octetsLength = read_util_1.readFlexInt(buffer, offset);
+        const { length } = octetsLength;
+        const finalLength = length + octetsLength.value;
+        assert_1.default(buffer.byteLength >= offset + finalLength, read_util_1.NOT_LONG_ENOUGH);
+        return {
+            value: buffer.slice(offset + length, offset + finalLength),
+            length: finalLength
+        };
     }
 }
 exports.default = OctetsType;

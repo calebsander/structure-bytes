@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
 import Type from './type';
 /**
@@ -29,17 +30,18 @@ import Type from './type';
  * ````
  *
  * @param E The type of values that can be written
+ * @param READ_E The type of values that will be read
  */
-export default class PointerType<E> extends AbstractType<E> {
+export default class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
     static readonly _value: number;
     /**
      * The [[Type]] passed to the constructor
      */
-    readonly type: Type<E>;
+    readonly type: Type<E, READ_E>;
     /**
      * @param type The [[Type]] used to write the values being pointed to
      */
-    constructor(type: Type<E>);
+    constructor(type: Type<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -72,5 +74,6 @@ export default class PointerType<E> extends AbstractType<E> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
     equals(otherType: any): boolean;
 }

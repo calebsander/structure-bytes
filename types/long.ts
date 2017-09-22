@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
+import {readLong, ReadResult} from '../lib/read-util'
 import writeLong from '../lib/write-long'
 import IntegerType from './integer'
 
@@ -12,7 +13,7 @@ import IntegerType from './integer'
  * let type = new sb.LongType
  * ````
  */
-export default class LongType extends IntegerType<string> {
+export default class LongType extends IntegerType<string, string> {
 	static get _value() {
 		return 0x04
 	}
@@ -30,5 +31,8 @@ export default class LongType extends IntegerType<string> {
 	writeValue(buffer: AppendableBuffer, value: string) {
 		this.isBuffer(buffer)
 		writeLong(buffer, value)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+		return readLong(buffer, offset)
 	}
 }

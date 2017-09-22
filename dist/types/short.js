@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const integer_1 = require("./integer");
 /**
@@ -37,6 +38,14 @@ class ShortType extends integer_1.default {
         const byteBuffer = new ArrayBuffer(2);
         new DataView(byteBuffer).setInt16(0, value);
         buffer.addAll(byteBuffer);
+    }
+    consumeValue(buffer, offset) {
+        const length = 2;
+        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        return {
+            value: new DataView(buffer).getInt16(offset),
+            length
+        };
     }
 }
 exports.default = ShortType;

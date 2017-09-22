@@ -1,10 +1,13 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 /**
  * An interface representing an object that can serialize values of a certain type.
  * The object must also be able to serialize itself.
  * @param VALUE The type of values this object can serialize
+ * @param READ_VALUE The type of values this object deserializes.
+ * Must be a subset of `VALUE`. Defaults to `VALUE`.
  */
-export default interface Type<VALUE> {
+export default interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
     /**
      * Appends the type information to an [[AppendableBuffer]]
      * @param buffer The buffer to append to
@@ -43,6 +46,44 @@ export default interface Type<VALUE> {
      * @return An `ArrayBuffer` storing the value
      */
     valueBuffer(value: VALUE): ArrayBuffer;
+    /**
+     * Reads a value from the specified bytes
+     * at the specified offset.
+     * Returns the value that was read
+     * and the number of bytes consumed.
+     * @param buffer The buffer containing the value bytes
+     * @param offset The position in the buffer to read from
+     * @param baseValue A value to mutate into the read value.
+     * Used by [[RecursiveType]].
+     * @return The read value and the number of bytes read
+     */
+    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>;
+    /**
+     * Deserializes a value, i.e. takes
+     * a buffer containing its binary form
+     * and returns the value.
+     * The inverse of [[valueBuffer]].
+     * Requires the type (`this`) to be known.
+     *
+     * Example:
+     * ````javascript
+     * let type = new sb.ArrayType(
+     *   new sb.FlexUnsignedIntType
+     * )
+     * let value = [0, 10, 100, 1000, 10000]
+     * let buffer = type.valueBuffer(value)
+     * let readValue = type.readValue(buffer)
+     * console.log(readValue) // [ 0, 10, 100, 1000, 10000 ]
+     * ````
+     *
+     * @param buffer The buffer containing the value bytes
+     * @param offset The position in the buffer to read from
+     * (defaults to `0`)
+     * @return A value equivalent to the one that was written
+     * @throws If the value does not occupy all of the buffer
+     * from index `offset` to the end
+     */
+    readValue(buffer: ArrayBuffer, offset?: number): READ_VALUE;
     /**
      * Returns whether this type object represents the same type as another object
      * @param otherType Another object to compare with

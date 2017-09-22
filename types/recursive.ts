@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
+import {makeBaseValue, readBooleanByte, readFlexInt, ReadResult} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import * as recursiveRegistry from '../recursive-registry'
 import {RegisterableType} from '../recursive-registry-type'
@@ -11,6 +12,8 @@ import Type from './type'
 const recursiveLocations = new WeakMap<AppendableBuffer, Map<any, number>>()
 //Map of write buffers to maps of names to ids
 const recursiveIDs = new WeakMap<AppendableBuffer, Map<string, number>>()
+//Map of value buffers to maps of indices to read values for recursive types
+const readRecursives = new WeakMap<ArrayBuffer, Map<number, any>>()
 
 /**
  * A type that can refer recursively to itself.
@@ -75,8 +78,9 @@ const recursiveIDs = new WeakMap<AppendableBuffer, Map<string, number>>()
  *
  * @param E The type of value this type can write
  * (presumably a recursive value)
+ * @param READ_E The type of value this type will read
  */
-export default class RecursiveType<E> extends AbsoluteType<E> {
+export default class RecursiveType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x57
 	}
@@ -93,9 +97,9 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 		assert.instanceOf(name, String)
 		this.name = name
 	}
-	get type(): RegisterableType & Type<E> {
+	get type(): RegisterableType & Type<E, READ_E> {
 		const type = recursiveRegistry.getType(this.name)
-		return (type as RegisterableType & Type<E>)
+		return (type as RegisterableType & Type<E, READ_E>)
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
@@ -182,6 +186,30 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
 			bufferRecursiveLocations.set(value, buffer.length)
 			this.type.writeValue(buffer, value)
 		}
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
+		const explicit = readBooleanByte(buffer, offset)
+		let {length} = explicit
+		let value: READ_E
+		if (explicit.value) {
+			value = makeBaseValue(this.type)
+			let bufferReadRecursives = readRecursives.get(buffer)
+			if (!bufferReadRecursives) {
+				bufferReadRecursives = new Map
+				readRecursives.set(buffer, bufferReadRecursives)
+			}
+			bufferReadRecursives.set(offset + length, value)
+			length += this.type.consumeValue(buffer, offset + length, value).length
+		}
+		else {
+			const indexOffset = readFlexInt(buffer, offset + length)
+			const target = offset + length - indexOffset.value
+			const readValue = readRecursives.get(buffer)!.get(target) as READ_E | undefined
+			if (!readValue) throw new Error('Cannot find target at ' + String(target))
+			value = readValue
+			length += indexOffset.length
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

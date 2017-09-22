@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import Type from './type';
 /**
@@ -6,9 +7,11 @@ import Type from './type';
  * and a number of elements in the tuple
  *
  * @param E The type of each element in the tuple
+ * @param READ_E The type of each element
+ * in the read tuple
  */
-export interface TupleParams<E> {
-    type: Type<E>;
+export interface TupleParams<E, READ_E extends E> {
+    type: Type<E, READ_E>;
     length: number;
 }
 /**
@@ -30,13 +33,15 @@ export interface TupleParams<E> {
  * ````
  *
  * @param E The type of each element in the tuple
+ * @param READ_E The type of each element
+ * in the read tuple
  */
-export default class TupleType<E> extends AbsoluteType<E[]> {
+export default class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
     static readonly _value: number;
     /**
      * The [[Type]] passed to the constructor
      */
-    readonly type: Type<E>;
+    readonly type: Type<E, READ_E>;
     /**
      * The length passed to the constructor
      */
@@ -46,7 +51,7 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
      * @param length The number of elements in the tuple.
      * Must be at most 255.
      */
-    constructor({type, length}: TupleParams<E>);
+    constructor({type, length}: TupleParams<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -64,5 +69,6 @@ export default class TupleType<E> extends AbsoluteType<E[]> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E[]): void;
+    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]>;
     equals(otherType: any): boolean;
 }

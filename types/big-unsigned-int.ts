@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
+import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
 import * as strint from '../lib/strint'
 import UnsignedType from './unsigned'
 
@@ -14,7 +15,7 @@ import UnsignedType from './unsigned'
  * let type = new sb.BigUnsignedIntType
  * ````
  */
-export default class BigUnsignedIntType extends UnsignedType<string> {
+export default class BigUnsignedIntType extends UnsignedType<string, string> {
 	static get _value() {
 		return 0x15
 	}
@@ -46,12 +47,26 @@ export default class BigUnsignedIntType extends UnsignedType<string> {
 			}
 			bytes.push(Number(value))
 		}
-		const byteBuffer = new ArrayBuffer(bytes.length)
-		const castBuffer = new Uint8Array(byteBuffer)
-		let offset = 0
-		for (let i = bytes.length - 1; i >= 0; i--, offset++) castBuffer[offset] = bytes[i] //write in reverse order to get BE
+		const byteBuffer = new Uint8Array(bytes.length)
+		for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++) byteBuffer[offset] = bytes[i] //write in reverse order to get BE
 		buffer
 			.addAll(flexInt.makeValueBuffer(bytes.length))
-			.addAll(byteBuffer)
+			.addAll(byteBuffer.buffer)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+		const lengthInt = readFlexInt(buffer, offset)
+		const bytes = lengthInt.value
+		let {length} = lengthInt
+		assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
+		const castBuffer = new Uint8Array(buffer, offset + length)
+		let value = '0'
+		for (let byte = 0; byte < bytes; byte++) {
+			value = strint.add(
+				strint.mul(value, strint.BYTE_SHIFT),
+				String(castBuffer[byte])
+			)
+		}
+		length += bytes
+		return {value, length}
 	}
 }

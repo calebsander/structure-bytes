@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
+const constructorRegistry = require("../lib/constructor-registry");
+const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const struct_1 = require("./struct");
@@ -40,11 +42,12 @@ const struct_1 = require("./struct");
  * )
  * ````
  *
- * @param E The type of value this choice type can write.
+ * @param E The type of values this choice type can write.
  * If you provide, e.g. a `Type<A>` and a `Type<B>` and a `Type<C>`
  * to the constructor, `E` should be `A | B | C`.
  * In TypeScript, you have to declare this manually
  * unless all the value types are identical.
+ * @param READ_E The type of values this type will read
  */
 class NamedChoiceType extends absolute_1.default {
     /**
@@ -152,6 +155,18 @@ class NamedChoiceType extends absolute_1.default {
         buffer.add(writeIndex);
         const { type } = this.constructorTypes[writeIndex];
         type.writeValue(buffer, value);
+    }
+    consumeValue(buffer, offset) {
+        let length = 1;
+        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        const typeIndex = new Uint8Array(buffer)[offset];
+        const typeConstructor = this.indexConstructors.get(typeIndex);
+        if (typeConstructor === undefined)
+            throw new Error('Constructor index ' + String(typeIndex) + ' is invalid');
+        const constructor = constructorRegistry.get(typeConstructor.name);
+        const { value, length: subLength } = this.constructorTypes[typeIndex].type.consumeValue(buffer, offset + length, new constructor);
+        length += subLength;
+        return { value, length };
     }
     equals(otherType) {
         if (!super.equals(otherType))

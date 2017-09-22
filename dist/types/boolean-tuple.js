@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const write_booleans_1 = require("../lib/write-booleans");
 const absolute_1 = require("./absolute");
 /**
@@ -52,6 +53,13 @@ class BooleanTupleType extends absolute_1.default {
         assert_1.default.instanceOf(value, Array);
         assert_1.default(value.length === this.length, 'Length does not match: expected ' + String(this.length) + ' but got ' + String(value.length));
         write_booleans_1.default(buffer, value);
+    }
+    consumeValue(buffer, offset) {
+        return read_util_1.readBooleans({
+            buffer,
+            offset,
+            count: this.length
+        });
     }
     equals(otherType) {
         return super.equals(otherType) && otherType.length === this.length;

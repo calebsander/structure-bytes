@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -95,6 +96,17 @@ export default class EnumType<E> extends AbstractType<E> {
 		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer))
 		if (index === undefined) throw new Error('Not a valid enum value: ' + inspect(value))
 		buffer.add(index) //write the index to the requested value in the values array
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<E> {
+		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		const valueIndex = new Uint8Array(buffer)[offset]
+		//Can't check for value === undefined since value could be undefined with OptionalType
+		const {values} = this
+		assert(valueIndex in values, 'Index ' + String(valueIndex) + ' is invalid')
+		return {
+			value: values[valueIndex],
+			length: 1
+		}
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false

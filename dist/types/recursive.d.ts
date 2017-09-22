@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import { RegisterableType } from '../recursive-registry-type';
 import AbsoluteType from './absolute';
 import Type from './type';
@@ -65,8 +66,9 @@ import Type from './type';
  *
  * @param E The type of value this type can write
  * (presumably a recursive value)
+ * @param READ_E The type of value this type will read
  */
-export default class RecursiveType<E> extends AbsoluteType<E> {
+export default class RecursiveType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * The name passed into the constructor
@@ -77,7 +79,7 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
      * as registered using [[registerType]]
      */
     constructor(name: string);
-    readonly type: RegisterableType & Type<E>;
+    readonly type: RegisterableType & Type<E, READ_E>;
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -116,5 +118,6 @@ export default class RecursiveType<E> extends AbsoluteType<E> {
      * also throws if no type has been registered with this type's name
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
     equals(otherType: any): boolean;
 }

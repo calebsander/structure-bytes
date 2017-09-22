@@ -3,10 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 //Map of write buffers to maps of binary strings to the location they were written
 const pointers = new WeakMap();
+//Map of read value buffers to maps of pointer types to maps of pointer values to read results
+const pointerReads = new WeakMap();
 /**
  * A type storing a value of another type through a pointer.
  * If you expect to have the same large value repeated many times,
@@ -35,6 +38,7 @@ const pointers = new WeakMap();
  * ````
  *
  * @param E The type of values that can be written
+ * @param READ_E The type of values that will be read
  */
 class PointerType extends abstract_1.default {
     /**
@@ -107,6 +111,41 @@ class PointerType extends abstract_1.default {
             const offset = buffer.length - index;
             buffer.addAll(flexInt.makeValueBuffer(offset));
         }
+    }
+    consumeValue(buffer, offset) {
+        let length = 1;
+        let explicitValue = true;
+        while (true) {
+            const offsetDiffInt = read_util_1.readFlexInt(buffer, offset);
+            const offsetDiff = offsetDiffInt.value;
+            if (!offsetDiff)
+                break;
+            if (explicitValue) {
+                ({ length } = offsetDiffInt);
+                explicitValue = false;
+            }
+            offset -= offsetDiff;
+        }
+        let bufferPointerReads = pointerReads.get(buffer);
+        if (!bufferPointerReads) {
+            bufferPointerReads = new Map;
+            pointerReads.set(buffer, bufferPointerReads);
+        }
+        let bufferTypePointerReads = bufferPointerReads.get(this);
+        if (!bufferTypePointerReads) {
+            bufferTypePointerReads = new Map;
+            bufferPointerReads.set(this, bufferTypePointerReads);
+        }
+        let value = bufferTypePointerReads.get(offset);
+        if (value === undefined) {
+            const explicitRead = this.type.consumeValue(buffer, offset + length) //skip the flexInt
+            ;
+            ({ value } = explicitRead);
+            if (explicitValue)
+                length += explicitRead.length;
+            bufferTypePointerReads.set(offset, value);
+        }
+        return { value, length };
     }
     equals(otherType) {
         return super.equals(otherType)

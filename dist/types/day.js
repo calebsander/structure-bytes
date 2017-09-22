@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const date = require("../lib/date");
+const read_util_1 = require("../lib/read-util");
 const chrono_1 = require("./chrono");
 /**
  * A type storing a specific day in time.
@@ -40,6 +41,16 @@ class DayType extends chrono_1.default {
         dataView.setInt16(0, day >> 8);
         dataView.setUint8(2, day /*& 0xFF*/); //DataView will only use last 8 bits anyways
         buffer.addAll(byteBuffer);
+    }
+    consumeValue(buffer, offset) {
+        const length = 3;
+        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        const dataView = new DataView(buffer, offset);
+        const day = (dataView.getInt16(0) << 8) | dataView.getUint8(2);
+        return {
+            value: date.fromUTC(day * date.MILLIS_PER_DAY),
+            length
+        };
     }
 }
 exports.default = DayType;

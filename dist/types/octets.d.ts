@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
  * A type storing a variable-length array of bytes.
@@ -26,4 +27,5 @@ export default class OctetsType extends AbsoluteType<ArrayBuffer> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: ArrayBuffer): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<ArrayBuffer>;
 }

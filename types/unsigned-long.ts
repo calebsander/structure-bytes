@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import * as strint from '../lib/strint'
 import UnsignedType from './unsigned'
 
@@ -14,7 +15,7 @@ const UNSIGNED_LONG_MAX = '18446744073709551615'
  * let type = new sb.UnsignedLongType
  * ````
  */
-export default class UnsignedLongType extends UnsignedType<string> {
+export default class UnsignedLongType extends UnsignedType<string, string> {
 	static get _value() {
 		return 0x14
 	}
@@ -40,5 +41,16 @@ export default class UnsignedLongType extends UnsignedType<string> {
 		dataView.setUint32(0, Number(upper))
 		dataView.setUint32(4, Number(lower))
 		buffer.addAll(byteBuffer)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+		const length = 8
+		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+		const dataView = new DataView(buffer, offset)
+		const upper = dataView.getUint32(0)
+		const lower = dataView.getUint32(4)
+		return {
+			value: strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower)),
+			length
+		}
 	}
 }

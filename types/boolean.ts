@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {readBooleanByte, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 
 /**
@@ -29,5 +30,8 @@ export default class BooleanType extends AbsoluteType<boolean> {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Boolean)
 		buffer.add(value ? 0xFF : 0x00) //all bits are set for good measure
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean> {
+		return readBooleanByte(buffer, offset)
 	}
 }

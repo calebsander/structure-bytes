@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -31,6 +32,7 @@ const abstract_1 = require("./abstract");
  * to the constructor, `E` should be `A | B | C`.
  * In TypeScript, you have to declare this manually
  * unless all the value types are identical.
+ * @param READ_E The type of values this type will read
  */
 class ChoiceType extends absolute_1.default {
     /**
@@ -107,6 +109,14 @@ class ChoiceType extends absolute_1.default {
         }
         if (!success)
             assert_1.default.fail('No types matched: ' + util_inspect_1.inspect(value));
+    }
+    consumeValue(buffer, offset) {
+        let length = 1;
+        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        const typeIndex = new Uint8Array(buffer)[offset];
+        const { value, length: subLength } = this.types[typeIndex].consumeValue(buffer, offset + length);
+        length += subLength;
+        return { value, length };
     }
     equals(otherType) {
         if (!super.equals(otherType))

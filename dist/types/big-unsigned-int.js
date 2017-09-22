@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const strint = require("../lib/strint");
 const unsigned_1 = require("./unsigned");
 /**
@@ -46,14 +47,25 @@ class BigUnsignedIntType extends unsigned_1.default {
             }
             bytes.push(Number(value));
         }
-        const byteBuffer = new ArrayBuffer(bytes.length);
-        const castBuffer = new Uint8Array(byteBuffer);
-        let offset = 0;
-        for (let i = bytes.length - 1; i >= 0; i--, offset++)
-            castBuffer[offset] = bytes[i]; //write in reverse order to get BE
+        const byteBuffer = new Uint8Array(bytes.length);
+        for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++)
+            byteBuffer[offset] = bytes[i]; //write in reverse order to get BE
         buffer
             .addAll(flexInt.makeValueBuffer(bytes.length))
-            .addAll(byteBuffer);
+            .addAll(byteBuffer.buffer);
+    }
+    consumeValue(buffer, offset) {
+        const lengthInt = read_util_1.readFlexInt(buffer, offset);
+        const bytes = lengthInt.value;
+        let { length } = lengthInt;
+        assert_1.default(buffer.byteLength >= offset + length + bytes, read_util_1.NOT_LONG_ENOUGH);
+        const castBuffer = new Uint8Array(buffer, offset + length);
+        let value = '0';
+        for (let byte = 0; byte < bytes; byte++) {
+            value = strint.add(strint.mul(value, strint.BYTE_SHIFT), String(castBuffer[byte]));
+        }
+        length += bytes;
+        return { value, length };
     }
 }
 exports.default = BigUnsignedIntType;

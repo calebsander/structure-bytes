@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
+import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
 import * as strint from '../lib/strint'
 import IntegerType from './integer'
 
@@ -14,7 +15,7 @@ import IntegerType from './integer'
  * let type = new sb.BigIntType
  * ````
  */
-export default class BigIntType extends IntegerType<string> {
+export default class BigIntType extends IntegerType<string, string> {
 	static get _value() {
 		return 0x05
 	}
@@ -47,14 +48,32 @@ export default class BigIntType extends IntegerType<string> {
 			}
 			bytes.push(Number(value))
 		}
-		const byteBuffer = new ArrayBuffer(bytes.length)
-		const dataView = new DataView(byteBuffer)
-		for (let i = bytes.length - 2, offset = 1; i >= 0; i--, offset++) { //write in reverse order to get BE
-			dataView.setUint8(offset, bytes[i])
+		const byteBuffer = new Uint8Array(bytes.length)
+		for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++) { //write in reverse order to get BE
+			byteBuffer[offset] = bytes[i] //signed highest byte can be cast to unsigned byte without issue
 		}
-		if (bytes.length) dataView.setInt8(0, bytes[bytes.length - 1]) //highest byte is signed so it must be treated separately
 		buffer
 			.addAll(flexInt.makeValueBuffer(bytes.length))
-			.addAll(byteBuffer)
+			.addAll(byteBuffer.buffer)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+		const lengthInt = readFlexInt(buffer, offset)
+		const bytes = lengthInt.value
+		let {length} = lengthInt
+		assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
+		const castBuffer = new Uint8Array(buffer, offset + length)
+		let value: string
+		if (bytes) {
+			value = String(castBuffer[0] << 24 >> 24) //convert unsigned to signed
+			for (let byte = 1; byte < bytes; byte++) {
+				value = strint.add(
+					strint.mul(value, strint.BYTE_SHIFT),
+					String(castBuffer[byte])
+				)
+			}
+		}
+		else value = '0'
+		length += bytes
+		return {value, length}
 	}
 }

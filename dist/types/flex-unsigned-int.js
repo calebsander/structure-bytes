@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
 /**
@@ -66,6 +67,9 @@ class FlexUnsignedIntType extends unsigned_1.default {
         if (convertedValue !== undefined)
             value = convertedValue;
         buffer.addAll(flexInt.makeValueBuffer(value));
+    }
+    consumeValue(buffer, offset) {
+        return read_util_1.readFlexInt(buffer, offset);
     }
 }
 exports.default = FlexUnsignedIntType;

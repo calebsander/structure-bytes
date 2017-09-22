@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {readBooleanByte, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import Type from './type'
@@ -23,20 +24,21 @@ import Type from './type'
  * ````
  *
  * @param E The type of non-`null` values
+ * @param READ_E The type of non-`null` read values
  */
-export default class OptionalType<E> extends AbsoluteType<E | null | undefined> {
+export default class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null | undefined, READ_E | null> {
 	static get _value() {
 		return 0x60
 	}
 	/**
 	 * The [[Type]] passed into the constructor
 	 */
-	readonly type: Type<E>
+	readonly type: Type<E, READ_E>
 	/**
 	 * @param type The [[Type]] used to write values
 	 * if they are not `null` or `undefined`
 	 */
-	constructor(type: Type<E>) {
+	constructor(type: Type<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbstractType)
 		this.type = type
@@ -82,6 +84,18 @@ export default class OptionalType<E> extends AbsoluteType<E | null | undefined> 
 				buffer.add(0xFF)
 				this.type.writeValue(buffer, value)
 		}
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E | null> {
+		const nonNull = readBooleanByte(buffer, offset)
+		let {length} = nonNull
+		let value: READ_E | null
+		if (nonNull.value) {
+			const subValue = this.type.consumeValue(buffer, offset + length)
+			;({value} = subValue)
+			length += subValue.length
+		}
+		else value = null
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType)

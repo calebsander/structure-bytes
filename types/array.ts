@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import writeIterable from '../lib/write-iterable'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -26,19 +27,21 @@ import Type from './type'
  * ````
  *
  * @param E The type of each element in the array
+ * @param READ_E The type of each element
+ * in the read array
  */
-export default class ArrayType<E> extends AbsoluteType<E[]> {
+export default class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
 	static get _value() {
 		return 0x52
 	}
 	/**
 	 * The [[Type]] passed into the constructor
 	 */
-	readonly type: Type<E>
+	readonly type: Type<E, READ_E>
 	/**
 	 * @param type A [[Type]] that can serialize each element in the array
 	 */
-	constructor(type: Type<E>) {
+	constructor(type: Type<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbstractType)
 		this.type = type
@@ -70,6 +73,18 @@ export default class ArrayType<E> extends AbsoluteType<E[]> {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		writeIterable({type: this.type, buffer, value, length: value.length})
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
+		const arrayLengthInt = readFlexInt(buffer, offset)
+		const arrayLength = arrayLengthInt.value
+		let {length} = arrayLengthInt
+		const value = baseValue || makeBaseValue(this, arrayLength) as READ_E[]
+		for (let i = 0; i < arrayLength; i++) {
+			const element = this.type.consumeValue(buffer, offset + length)
+			length += element.length
+			value[i] = element.value
+		}
+		return {value, length}
 	}
 	equals(otherType: any) {
 		return super.equals(otherType) && this.type.equals((otherType as ArrayType<any>).type)

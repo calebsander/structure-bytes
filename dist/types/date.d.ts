@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import ChronoType from './chrono';
 /**
  * A type storing a `Date` with millisecond precision.
@@ -23,4 +24,5 @@ export default class DateType extends ChronoType {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: Date): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date>;
 }

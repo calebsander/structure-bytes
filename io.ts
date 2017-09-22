@@ -244,7 +244,7 @@ export function readValue<E>({type, inStream}: ReadValueParams<E>, callback: Val
 		.on('end', () => {
 			const buffer = Buffer.concat(segments)
 			let value: E
-			try { value = r.value({buffer: toArrayBuffer(buffer), type}) }
+			try { value = type.readValue(toArrayBuffer(buffer)) }
 			catch (e) { return callback(e, null) }
 			callback(null, value) //if error occurred, don't callback with a null value
 		})
@@ -284,7 +284,7 @@ export function readTypeAndValue(inStream: Readable, callback: TypeAndValueCallb
 			try { type = r._consumeType(toArrayBuffer(buffer), 0) }
 			catch (e) { return callback(e, null, null) }
 			let value: any
-			try { value = r.value({buffer: toArrayBuffer(buffer), offset: type.length, type: type.value}) }
+			try { value = type.value.readValue(toArrayBuffer(buffer), type.length) }
 			catch (e) { return callback(e, null, null) }
 			callback(null, type.value, value) //if error occurred, don't callback with null value or type
 		})

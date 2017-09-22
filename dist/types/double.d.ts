@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import FloatingPointType from './floating';
 /**
  * A type storing an 8-byte [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point).
@@ -32,4 +33,5 @@ export default class DoubleType extends FloatingPointType {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: number | string): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number>;
 }

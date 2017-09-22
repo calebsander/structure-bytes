@@ -1,5 +1,6 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
+import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import FloatingPointType from './floating'
 
@@ -44,5 +45,13 @@ export default class FloatType extends FloatingPointType {
 		const byteBuffer = new ArrayBuffer(4)
 		new DataView(byteBuffer).setFloat32(0, value as number)
 		buffer.addAll(byteBuffer)
+	}
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
+		const length = 4
+		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+		return {
+			value: new DataView(buffer).getFloat32(offset),
+			length
+		}
 	}
 }

@@ -1,13 +1,12 @@
 import assert from '../../dist/lib/assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
 export = () => {
 	const type = new t.ArrayType(
 		new t.StructType({
-			a: new t.UnsignedShortType,
+			a: new t.UnsignedShortType as t.Type<string | number>,
 			b: new t.CharType
 		})
 	)
@@ -30,10 +29,10 @@ export = () => {
 	]
 	type.writeValue(gb, VALUE)
 	assert.equal(gb.toBuffer(), bufferFrom([2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
-	assert.equal(r.value({buffer: gb.toBuffer(), type}), VALUE.map(({a, b}) => ({a: Number(a), b})))
+	assert.equal(type.readValue(gb.toBuffer()), VALUE.map(({a, b}) => ({a: Number(a), b})))
 
 	const EMPTY_VALUE: {a: number, b: string}[] = []
 	const emptyBuffer = type.valueBuffer(EMPTY_VALUE)
 	assert.equal(emptyBuffer, bufferFrom([0]))
-	assert.equal(r.value({buffer: emptyBuffer, type}), EMPTY_VALUE)
+	assert.equal(type.readValue(emptyBuffer), EMPTY_VALUE)
 }

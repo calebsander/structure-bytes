@@ -1,4 +1,5 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import IntegerType from './integer';
 /**
  * A type storing a 2-byte signed integer (`-2147483648` to `2147483647`).
@@ -9,7 +10,7 @@ import IntegerType from './integer';
  * let type = new sb.IntType
  * ````
  */
-export default class IntType extends IntegerType<number | string> {
+export default class IntType extends IntegerType<number | string, number> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -23,4 +24,5 @@ export default class IntType extends IntegerType<number | string> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: number | string): void;
+    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number>;
 }

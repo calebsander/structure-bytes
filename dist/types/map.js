@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -21,6 +22,8 @@ const abstract_1 = require("./abstract");
  *
  * @param K The type of values stored in keys of the map
  * @param V The type of values stored in values of the map
+ * @param READ_K The type of keys this type will read
+ * @param READ_V The type of values this type will read
  */
 class MapType extends absolute_1.default {
     /**
@@ -78,6 +81,19 @@ class MapType extends absolute_1.default {
             this.keyType.writeValue(buffer, mapKey);
             this.valueType.writeValue(buffer, mapValue);
         }
+    }
+    consumeValue(buffer, offset, baseValue) {
+        const size = read_util_1.readFlexInt(buffer, offset);
+        let { length } = size;
+        const value = baseValue || read_util_1.makeBaseValue(this);
+        for (let i = 0; i < size.value; i++) {
+            const keyElement = this.keyType.consumeValue(buffer, offset + length);
+            length += keyElement.length;
+            const valueElement = this.valueType.consumeValue(buffer, offset + length);
+            length += valueElement.length;
+            value.set(keyElement.value, valueElement.value);
+        }
+        return { value, length };
     }
     equals(otherType) {
         return super.equals(otherType)

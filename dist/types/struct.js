@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
+const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -35,6 +36,7 @@ const abstract_1 = require("./abstract");
  * ````
  *
  * @param E The type of object values this type can write
+ * @param READ_E The type of object values this type will read
  */
 class StructType extends absolute_1.default {
     /**
@@ -141,6 +143,16 @@ class StructType extends absolute_1.default {
                 throw writeError; //throw original error if field is defined, but just invalid
             }
         }
+    }
+    consumeValue(buffer, offset, baseValue) {
+        let length = 0;
+        const value = (baseValue || read_util_1.makeBaseValue(this));
+        for (const field of this.fields) {
+            const readField = field.type.consumeValue(buffer, offset + length);
+            value[field.name] = readField.value;
+            length += readField.length;
+        }
+        return { value, length };
     }
     equals(otherType) {
         if (!super.equals(otherType))

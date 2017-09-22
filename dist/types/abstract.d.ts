@@ -1,10 +1,11 @@
 import AppendableBuffer from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import Type from './type';
 /**
  * The superclass of all [[Type]] classes
  * in this package
  */
-export default abstract class AbstractType<VALUE> implements Type<VALUE> {
+export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VALUE> implements Type<VALUE, READ_VALUE> {
     private cachedBuffer?;
     private cachedHash?;
     private cachedSignature?;
@@ -20,6 +21,8 @@ export default abstract class AbstractType<VALUE> implements Type<VALUE> {
     getSignature(): string;
     abstract writeValue(buffer: AppendableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
+    abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>;
+    readValue(buffer: ArrayBuffer, offset?: number): READ_VALUE;
     equals(otherType: any): boolean;
     /**
      * Requires that the buffer be a [[GrowableBuffer]]

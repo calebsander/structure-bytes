@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("../lib/assert");
+const read_util_1 = require("../lib/read-util");
 const strint = require("../lib/strint");
 const unsigned_1 = require("./unsigned");
 const UNSIGNED_LONG_MAX = '18446744073709551615';
@@ -40,6 +41,17 @@ class UnsignedLongType extends unsigned_1.default {
         dataView.setUint32(0, Number(upper));
         dataView.setUint32(4, Number(lower));
         buffer.addAll(byteBuffer);
+    }
+    consumeValue(buffer, offset) {
+        const length = 8;
+        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        const dataView = new DataView(buffer, offset);
+        const upper = dataView.getUint32(0);
+        const lower = dataView.getUint32(4);
+        return {
+            value: strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower)),
+            length
+        };
     }
 }
 exports.default = UnsignedLongType;

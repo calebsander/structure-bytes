@@ -1,6 +1,5 @@
 import assert from '../../dist/lib/assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
@@ -28,7 +27,7 @@ export = () => {
 	const gb2 = new GrowableBuffer
 	type.writeValue(gb2, new Set)
 	assert.equal(gb2.toBuffer(), bufferFrom([0]))
-	assert.equal(r.value({buffer: gb2.toBuffer(), type}), new Set)
+	assert.equal(type.readValue(gb2.toBuffer()), new Set)
 
 	const gb3 = new GrowableBuffer
 	const VALUE = new Set([
@@ -37,5 +36,5 @@ export = () => {
 	])
 	type.writeValue(gb3, VALUE)
 	assert.equal(gb3.toBuffer(), bufferFrom([2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]))
-	assert.equal(r.value({buffer: gb3.toBuffer(), type}), VALUE)
+	assert.equal(type.readValue(gb3.toBuffer()), VALUE)
 }

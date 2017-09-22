@@ -219,7 +219,7 @@ function readValue({ type, inStream }, callback) {
         const buffer = Buffer.concat(segments);
         let value;
         try {
-            value = r.value({ buffer: toArrayBuffer(buffer), type });
+            value = type.readValue(toArrayBuffer(buffer));
         }
         catch (e) {
             return callback(e, null);
@@ -267,7 +267,7 @@ function readTypeAndValue(inStream, callback) {
         }
         let value;
         try {
-            value = r.value({ buffer: toArrayBuffer(buffer), offset: type.length, type: type.value });
+            value = type.value.readValue(toArrayBuffer(buffer), type.length);
         }
         catch (e) {
             return callback(e, null, null);

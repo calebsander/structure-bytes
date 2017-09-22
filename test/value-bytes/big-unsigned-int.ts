@@ -1,5 +1,4 @@
 import assert from '../../dist/lib/assert'
-import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom, concat} from '../test-common'
 
@@ -10,14 +9,13 @@ export = () => {
 		const buffer = type.valueBuffer(VALUE)
 		const bytes = [0x3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01]
 		assert.equal(buffer, concat([bufferFrom([bytes.length]), bufferFrom(bytes)]))
-		assert.equal(r.value({buffer, type}), VALUE)
+		assert.equal(type.readValue(buffer), VALUE)
 	}
 	{
 		const buffer = type.valueBuffer('0')
 		assert.equal(buffer, bufferFrom([0]))
-		assert.equal(r.value({buffer, type}), '0')
+		assert.equal(type.readValue(buffer), '0')
 	}
-
 
 	assert.throws(
 		() => type.valueBuffer([true] as any),
