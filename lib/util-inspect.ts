@@ -22,6 +22,9 @@ function toObject(obj: StringIndexable) {
  * @return A string expressing the given value
  */
 export function inspect(obj: any): string {
+	return inspectWithSeen(obj, new Map)
+}
+function inspectWithSeen(obj: any, seen: Map<object, number>): string {
 	if (obj === undefined) return 'undefined'
 	if (obj === null || jsonTypes.has(obj.constructor)) return JSON.stringify(obj)
 	if (obj instanceof ArrayBuffer) {
@@ -39,15 +42,22 @@ export function inspect(obj: any): string {
 		for (const b of obj) result += ' ' + (b < 16 ? '0' : '') + b.toString(16)
 		return result + '>'
 	}
+	if (obj instanceof Function) {
+		return 'Function ' + (obj as Function).name
+	}
+	//obj might have circular references
+	if (seen.get(obj)) return '[Circular]'
+	else seen.set(obj, 1)
 	if (obj instanceof Set) {
 		let result = 'Set {'
 		const iterator = obj.values()
 		let value = iterator.next()
 		while (!value.done) {
-			result += inspect(value.value)
+			result += inspectWithSeen(value.value, seen)
 			value = iterator.next()
 			if (!value.done) result += ', '
 		}
+		seen.set(obj, seen.get(obj)! - 1)
 		return result + '}'
 	}
 	if (obj instanceof Map) {
@@ -55,12 +65,13 @@ export function inspect(obj: any): string {
 		const iterator = obj.entries()
 		let value = iterator.next()
 		while (!value.done) {
-			result += inspect(value.value[0])
+			result += inspectWithSeen(value.value[0], seen)
 			result += ' => '
-			result += inspect(value.value[1])
+			result += inspectWithSeen(value.value[1], seen)
 			value = iterator.next()
 			if (!value.done) result += ', '
 		}
+		seen.set(obj, seen.get(obj)! - 1)
 		return result + '}'
 	}
 	if (obj instanceof Array) {
@@ -68,14 +79,12 @@ export function inspect(obj: any): string {
 		const iterator = obj[Symbol.iterator]()
 		let value = iterator.next()
 		while (!value.done) {
-			result += inspect(value.value)
+			result += inspectWithSeen(value.value, seen)
 			value = iterator.next()
 			if (!value.done) result += ', '
 		}
+		seen.set(obj, seen.get(obj)! - 1)
 		return result + ']'
-	}
-	if (obj instanceof Function) {
-		return 'Function ' + (obj as Function).name
 	}
 	if (obj.constructor === Object) { //as opposed to a subclass of Object
 		let result = '{'
@@ -83,11 +92,14 @@ export function inspect(obj: any): string {
 			/*istanbul ignore else*/
 			if ({}.hasOwnProperty.call(obj, key)) {
 				if (result !== '{') result += ', '
-				result += key + ': ' + inspect(obj[key])
+				result += key + ': ' + inspectWithSeen(obj[key], seen)
 			}
 		}
+		seen.set(obj, seen.get(obj)! - 1)
 		return result + '}'
 	}
 	const {name} = (obj as object).constructor
-	return (name ? name + ' ' : '') + inspect(toObject(obj))
+	const genericResult = (name ? name + ' ' : '') + inspectWithSeen(toObject(obj), seen)
+	seen.set(obj, seen.get(obj)! - 1)
+	return genericResult
 }

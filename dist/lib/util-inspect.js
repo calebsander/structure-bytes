@@ -21,6 +21,10 @@ function toObject(obj) {
  * @return A string expressing the given value
  */
 function inspect(obj) {
+    return inspectWithSeen(obj, new Map);
+}
+exports.inspect = inspect;
+function inspectWithSeen(obj, seen) {
     if (obj === undefined)
         return 'undefined';
     if (obj === null || jsonTypes.has(obj.constructor))
@@ -42,16 +46,25 @@ function inspect(obj) {
             result += ' ' + (b < 16 ? '0' : '') + b.toString(16);
         return result + '>';
     }
+    if (obj instanceof Function) {
+        return 'Function ' + obj.name;
+    }
+    //obj might have circular references
+    if (seen.get(obj))
+        return '[Circular]';
+    else
+        seen.set(obj, 1);
     if (obj instanceof Set) {
         let result = 'Set {';
         const iterator = obj.values();
         let value = iterator.next();
         while (!value.done) {
-            result += inspect(value.value);
+            result += inspectWithSeen(value.value, seen);
             value = iterator.next();
             if (!value.done)
                 result += ', ';
         }
+        seen.set(obj, seen.get(obj) - 1);
         return result + '}';
     }
     if (obj instanceof Map) {
@@ -59,13 +72,14 @@ function inspect(obj) {
         const iterator = obj.entries();
         let value = iterator.next();
         while (!value.done) {
-            result += inspect(value.value[0]);
+            result += inspectWithSeen(value.value[0], seen);
             result += ' => ';
-            result += inspect(value.value[1]);
+            result += inspectWithSeen(value.value[1], seen);
             value = iterator.next();
             if (!value.done)
                 result += ', ';
         }
+        seen.set(obj, seen.get(obj) - 1);
         return result + '}';
     }
     if (obj instanceof Array) {
@@ -73,15 +87,13 @@ function inspect(obj) {
         const iterator = obj[Symbol.iterator]();
         let value = iterator.next();
         while (!value.done) {
-            result += inspect(value.value);
+            result += inspectWithSeen(value.value, seen);
             value = iterator.next();
             if (!value.done)
                 result += ', ';
         }
+        seen.set(obj, seen.get(obj) - 1);
         return result + ']';
-    }
-    if (obj instanceof Function) {
-        return 'Function ' + obj.name;
     }
     if (obj.constructor === Object) {
         let result = '{';
@@ -90,12 +102,14 @@ function inspect(obj) {
             if ({}.hasOwnProperty.call(obj, key)) {
                 if (result !== '{')
                     result += ', ';
-                result += key + ': ' + inspect(obj[key]);
+                result += key + ': ' + inspectWithSeen(obj[key], seen);
             }
         }
+        seen.set(obj, seen.get(obj) - 1);
         return result + '}';
     }
     const { name } = obj.constructor;
-    return (name ? name + ' ' : '') + inspect(toObject(obj));
+    const genericResult = (name ? name + ' ' : '') + inspectWithSeen(toObject(obj), seen);
+    seen.set(obj, seen.get(obj) - 1);
+    return genericResult;
 }
-exports.inspect = inspect;

@@ -32,4 +32,39 @@ export = () => {
 	}]
 	assert.equal(util.inspect(new B), '{one: 2}')
 	assert.equal(util.inspect(Buffer.from([0x01, 0x10])), '<Buffer 01 10>')
+	const circularArray: any[] = []
+	const arr = [2, circularArray]
+	circularArray.push(circularArray, 1, arr, arr)
+	assert.equal(util.inspect(circularArray), '[[Circular], 1, [2, [Circular]], [2, [Circular]]]')
+	assert.equal(util.inspect(circularArray), '[[Circular], 1, [2, [Circular]], [2, [Circular]]]') //ensure seen set is not persistent
+	const circularSet = new Set
+	const circularSet2 = new Set([circularSet])
+	circularSet2
+		.add(circularSet2)
+		.add(new Set([circularSet2]))
+	circularSet
+		.add('abc')
+		.add(circularSet)
+		.add(circularSet2)
+	assert.equal(util.inspect(circularSet), 'Set {"abc", [Circular], Set {[Circular], [Circular], Set {[Circular]}}}')
+	const circularMap = new Map
+	const obj = {}
+	circularMap
+		.set(1, obj)
+		.set(obj, {obj})
+		.set(3, circularMap)
+		.set(circularMap, 4)
+	assert.equal(util.inspect(circularMap), 'Map {1 => {}, {} => {obj: {}}, 3 => [Circular], [Circular] => 4}')
+	const circularObj: any = {}
+	circularObj.abc = circularObj
+	circularObj.def = [1, circularObj, 2]
+	circularObj.def2 = circularObj.def
+	circularObj.ghi = new Set([circularObj])
+	assert.equal(util.inspect(circularObj), '{abc: [Circular], def: [1, [Circular], 2], def2: [1, [Circular], 2], ghi: Set {[Circular]}}')
+	const circularInstance: any = new (class Abc {})()
+	circularInstance.abc = circularInstance
+	circularInstance.def = [1, circularInstance, 2]
+	circularInstance.def2 = circularInstance.def
+	circularInstance.ghi = new Set([circularInstance])
+	assert.equal(util.inspect(circularInstance), 'Abc {abc: [Circular], def: [1, [Circular], 2], def2: [1, [Circular], 2], ghi: Set {[Circular]}}')
 }
