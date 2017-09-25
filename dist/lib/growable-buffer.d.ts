@@ -10,6 +10,11 @@ export default class GrowableBuffer implements AppendableBuffer {
     private buffer;
     private size;
     /**
+     * The length of the buffer before the current pause,
+     * or `null` if not currently paused
+     */
+    private commitedSize;
+    /**
      * @param initialLength
      * The number of bytes in the internal buffer at start
      * (defaults to 10)
@@ -33,34 +38,6 @@ export default class GrowableBuffer implements AppendableBuffer {
      * in the internal buffer after the method returns
      */
     grow(size: number): this;
-    /**
-     * Sets a byte's value.
-     * The byte must lie in the occupied portion
-     * of the internal buffer.
-     * @param index The position of the byte (0-indexed)
-     * @param value The value to set the byte to
-     * (must fit in an unsigned byte)
-     */
-    set(index: number, value: number): this;
-    /**
-     * Sets a set of contiguous bytes' values.
-     * Each byte must lie in the occupied portion
-     * of the internal buffer.
-     * @param index The position of the first byte (0-indexed)
-     * @param buffer The values to write, starting at `index`
-     * (the byte at position `i` in `buffer` will be written to
-     * position `index + i` of the [[GrowableBuffer]])
-     */
-    setAll(index: number, buffer: ArrayBuffer): this;
-    /**
-     * Gets a byte's value.
-     * The byte must lie in the occupied portion
-     * of the internal buffer.
-     * @param index The position of the byte (0-indexed)
-     * @return The unsigned byte at the specified index
-     * of the internal buffer
-     */
-    get(index: number): number;
     /**
      * Adds a byte after the end of the
      * occupied portion of the internal buffer
@@ -86,4 +63,30 @@ export default class GrowableBuffer implements AppendableBuffer {
      * @return The internal buffer trimmed to `this.length`
      */
     toBuffer(): ArrayBuffer;
+    /**
+     * Pauses the writing process, i.e.
+     * bytes added are not written
+     * to the underlying output until
+     * [[resume]] is next called and
+     * can be cancelled from being written
+     * by calling [[reset]].
+     * @throws If paused earlier and never resumed
+     */
+    pause(): this;
+    /**
+     * See [[pause]].
+     * Flushes all paused data to the output
+     * and exits paused mode.
+     * @throws If not currently paused
+     */
+    resume(): this;
+    /**
+     * See [[pause]].
+     * Restores state to immediately after
+     * this [[AppendableBuffer]] was paused.
+     * Prevents paused data from ever
+     * being flushed to the output.
+     * @throws If not currently paused
+     */
+    reset(): this;
 }

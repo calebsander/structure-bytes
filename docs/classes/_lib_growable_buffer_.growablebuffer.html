@@ -108,6 +108,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#buffer" class="tsd-kind-icon">buffer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#commitedsize" class="tsd-kind-icon">commited<wbr>Size</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#size" class="tsd-kind-icon">size</a></li>
 							</ul>
 						</section>
@@ -123,10 +124,10 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#add" class="tsd-kind-icon">add</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#get" class="tsd-kind-icon">get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#grow" class="tsd-kind-icon">grow</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#set" class="tsd-kind-icon">set</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#setall" class="tsd-kind-icon">set<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#pause" class="tsd-kind-icon">pause</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#reset" class="tsd-kind-icon">reset</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#resume" class="tsd-kind-icon">resume</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
 							</ul>
 						</section>
@@ -145,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:15</li>
+									<li>Defined in lib/growable-buffer.ts:20</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -180,6 +181,22 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="commitedsize" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> commited<wbr>Size</h3>
+					<div class="tsd-signature tsd-kind-icon">commited<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/growable-buffer.ts:20</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The length of the buffer before the current pause,
+							or <code>null</code> if not currently paused</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 					<a name="size" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> size</h3>
 					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -202,7 +219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:36</li>
+									<li>Defined in lib/growable-buffer.ts:42</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -225,7 +242,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:133</li>
+									<li>Defined in lib/growable-buffer.ts:97</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -251,7 +268,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#add">add</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:107</li>
+									<li>Defined in lib/growable-buffer.ts:71</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -284,7 +301,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#addall">addAll</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:120</li>
+									<li>Defined in lib/growable-buffer.ts:84</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -310,41 +327,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="get" class="tsd-anchor"></a>
-					<h3>get</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in lib/growable-buffer.ts:97</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Gets a byte&#39;s value.
-										The byte must lie in the occupied portion
-									of the internal buffer.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>index: <span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The position of the byte (0-indexed)</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-							<p>The unsigned byte at the specified index
-							of the internal buffer</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
 					<a name="grow" class="tsd-anchor"></a>
 					<h3>grow</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
@@ -354,7 +336,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:51</li>
+									<li>Defined in lib/growable-buffer.ts:57</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -384,82 +366,96 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="set" class="tsd-anchor"></a>
-					<h3>set</h3>
+					<a name="pause" class="tsd-anchor"></a>
+					<h3>pause</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">set<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">pause<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#pause">pause</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:68</li>
+									<li>Defined in lib/growable-buffer.ts:119</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Sets a byte&#39;s value.
-										The byte must lie in the occupied portion
-									of the internal buffer.</p>
+									<p>Pauses the writing process, i.e.
+										bytes added are not written
+										to the underlying output until
+										<a href="_lib_growable_buffer_.growablebuffer.html#resume">resume</a> is next called and
+										can be cancelled from being written
+									by calling <a href="_lib_growable_buffer_.growablebuffer.html#reset">reset</a>.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If paused earlier and never resumed</p>
+									</dd>
+								</dl>
 							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>index: <span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The position of the byte (0-indexed)</p>
-									</div>
-								</li>
-								<li>
-									<h5>value: <span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The value to set the byte to
-										(must fit in an unsigned byte)</p>
-									</div>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="setall" class="tsd-anchor"></a>
-					<h3>set<wbr>All</h3>
+					<a name="reset" class="tsd-anchor"></a>
+					<h3>reset</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>All<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#reset">reset</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:82</li>
+									<li>Defined in lib/growable-buffer.ts:143</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Sets a set of contiguous bytes&#39; values.
-										Each byte must lie in the occupied portion
-									of the internal buffer.</p>
+									<p>See <a href="_lib_growable_buffer_.growablebuffer.html#pause">pause</a>.
+										Restores state to immediately after
+										this <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> was paused.
+										Prevents paused data from ever
+									being flushed to the output.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If not currently paused</p>
+									</dd>
+								</dl>
 							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>index: <span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The position of the first byte (0-indexed)</p>
-									</div>
-								</li>
-								<li>
-									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The values to write, starting at <code>index</code>
-											(the byte at position <code>i</code> in <code>buffer</code> will be written to
-										position <code>index + i</code> of the <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>)</p>
-									</div>
-								</li>
-							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="resume" class="tsd-anchor"></a>
+					<h3>resume</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">resume<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#resume">resume</a></p>
+								<ul>
+									<li>Defined in lib/growable-buffer.ts:130</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>See <a href="_lib_growable_buffer_.growablebuffer.html#pause">pause</a>.
+										Flushes all paused data to the output
+									and exits paused mode.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If not currently paused</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
 					</ul>
@@ -474,7 +470,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:140</li>
+									<li>Defined in lib/growable-buffer.ts:104</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -514,6 +510,9 @@
 								<a href="_lib_growable_buffer_.growablebuffer.html#buffer" class="tsd-kind-icon">buffer</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="_lib_growable_buffer_.growablebuffer.html#commitedsize" class="tsd-kind-icon">commited<wbr>Size</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_lib_growable_buffer_.growablebuffer.html#size" class="tsd-kind-icon">size</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
@@ -529,16 +528,16 @@
 								<a href="_lib_growable_buffer_.growablebuffer.html#addall" class="tsd-kind-icon">add<wbr>All</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="_lib_growable_buffer_.growablebuffer.html#get" class="tsd-kind-icon">get</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="_lib_growable_buffer_.growablebuffer.html#grow" class="tsd-kind-icon">grow</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="_lib_growable_buffer_.growablebuffer.html#set" class="tsd-kind-icon">set</a>
+								<a href="_lib_growable_buffer_.growablebuffer.html#pause" class="tsd-kind-icon">pause</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="_lib_growable_buffer_.growablebuffer.html#setall" class="tsd-kind-icon">set<wbr>All</a>
+								<a href="_lib_growable_buffer_.growablebuffer.html#reset" class="tsd-kind-icon">reset</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_lib_growable_buffer_.growablebuffer.html#resume" class="tsd-kind-icon">resume</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="_lib_growable_buffer_.growablebuffer.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>

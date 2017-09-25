@@ -1,4 +1,5 @@
 import assert from '../../dist/lib/assert'
+import {inspect} from '../../dist/lib/util-inspect'
 import * as rec from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -75,7 +76,7 @@ export = () => {
 	}
 	const selfReferenceType = new t.RecursiveType<SelfReference>('self-reference')
 	rec.registerType({
-		type: new t.StructType({
+		type: new t.StructType<SelfReference>({
 			self: selfReferenceType
 		}),
 		name: 'self-reference'
@@ -85,6 +86,139 @@ export = () => {
 	assert.equal(selfReferenceType.valueBuffer(selfReference), bufferFrom([
 		0xff,
 			0x00, 1
+	]))
+
+	const tupleType = new t.RecursiveType<any[]>('tuple-or-not')
+	rec.registerType({
+		type: new t.TupleType({
+			type: new t.OptionalType(tupleType),
+			length: 3
+		}),
+		name: 'tuple-or-not'
+	})
+	const tupleA: any[] = []
+	const tupleB: any[] = []
+	tupleA.push(null, tupleB, tupleA)
+	tupleB.push(tupleA, null, null)
+	const tupleBuffer = tupleType.valueBuffer(tupleA)
+	assert.equal(tupleBuffer, bufferFrom([
+		0xff,
+			0x00,
+			0xff,
+				0xff,
+					0xff,
+						0x00, 5,
+					0x00,
+					0x00,
+			0xff,
+				0x00, 10
+	]))
+	const readTupleA = tupleType.readValue(tupleBuffer)
+	assert.equal(readTupleA.length, tupleA.length)
+	assert.equal(readTupleA[0], null)
+	assert(readTupleA[2] === readTupleA)
+	const readTupleB = readTupleA[1]
+	assert.equal(readTupleB.length, tupleB.length)
+	assert(readTupleB[0] === readTupleA)
+	assert.equal(readTupleB[1], null)
+	assert.equal(readTupleB[2], null)
+
+	const arrayType = new t.RecursiveType<any[]>('num-or-array')
+	rec.registerType({
+		type: new t.ArrayType(
+			new t.ChoiceType<any>([
+				new t.UnsignedByteType,
+				arrayType
+			])
+		),
+		name: 'num-or-array'
+	})
+	const arr: any[] = [1, 2]
+	arr.push(arr, 3, 4, arr, 5)
+	const arrBuffer = arrayType.valueBuffer(arr)
+	assert.equal(arrBuffer, bufferFrom([
+		0xff,
+			7,
+			0,
+				1,
+			0,
+				2,
+			1,
+				0x00, 7,
+			0,
+				3,
+			0,
+				4,
+			1,
+				0x00, 14,
+			0,
+				5
+	]))
+	const readArr = arrayType.readValue(arrBuffer)
+	assert.equal(inspect(readArr), inspect(arr))
+
+	const setType = new t.RecursiveType<Set<any>>('num-or-set')
+	rec.registerType({
+		type: new t.SetType(
+			new t.ChoiceType<any>([
+				new t.UnsignedByteType,
+				setType
+			])
+		),
+		name: 'num-or-set'
+	})
+	const set: Set<any> = new Set([1, 2])
+	set
+		.add(3)
+		.add(4)
+		.add(set)
+		.add(5)
+	const setBuffer = setType.valueBuffer(set)
+	assert.equal(setBuffer, bufferFrom([
+		0xff,
+			6,
+			0,
+				1,
+			0,
+				2,
+			0,
+				3,
+			0,
+				4,
+			1,
+				0x00, 11,
+			0,
+				5
+	]))
+	const readSet = setType.readValue(setBuffer)
+	assert.equal(inspect(readSet), inspect(set))
+
+	const mapType = new t.RecursiveType<Map<number, any>>('recursive-map')
+	rec.registerType({
+		type: new t.MapType(
+			new t.FlexUnsignedIntType,
+			mapType
+		),
+		name: 'recursive-map'
+	})
+	const map = new Map<number, any>()
+	map.set(10, new Map)
+	map.set(50, new Map<number, any>().set(20, map))
+	map.set(100, map)
+	const mapBuffer = mapType.valueBuffer(map)
+	assert.equal(mapBuffer, bufferFrom([
+		0xff,
+			3,
+			10,
+				0xff,
+					0,
+			50,
+				0xff,
+					1,
+					20,
+						0x00, 9,
+			100,
+				0x00, 12
 	]))
 
 	assert.throws(

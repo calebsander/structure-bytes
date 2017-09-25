@@ -89,19 +89,23 @@ export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E,
 	 */
 	writeValue(buffer: AppendableBuffer, value: E) {
 		this.isBuffer(buffer)
+		buffer.pause()
 		let success = false
 		//Try to write value using each type in order until no error is thrown
 		for (let i = 0; i < this.types.length; i++) {
 			const type = this.types[i]
-			let valueBuffer: ArrayBuffer
-			try { valueBuffer = type.valueBuffer(value) }
-			catch (e) { continue }
-			buffer
-				.add(i)
-				.addAll(valueBuffer)
+			try {
+				buffer.add(i)
+				type.writeValue(buffer, value)
+			}
+			catch (e) {
+				buffer.reset()
+				continue
+			}
 			success = true
 			break
 		}
+		buffer.resume()
 		if (!success) assert.fail('No types matched: ' + inspect(value))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {

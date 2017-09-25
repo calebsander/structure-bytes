@@ -19,7 +19,7 @@ class CaptureStream extends Writable {
 	}
 }
 
-export = new Promise((resolve, reject) => {
+const testBasic = new Promise((resolve, reject) => {
 	assert.throws(
 		() => new AppendableStream(0 as any),
 		'0 is not an instance of Writable'
@@ -67,3 +67,49 @@ export = new Promise((resolve, reject) => {
 	assert.equal(stream.length, 7)
 	stream.end()
 })
+const testPause = new Promise((resolve, reject) => {
+	const outStream = new CaptureStream
+	outStream.on('finish', () => {
+		try {
+			assert.equal(outStream.getWritten(), Buffer.from([1, 2, 3, 6, 7, 8]))
+			resolve()
+		}
+		catch (e) { reject(e) }
+	})
+	const stream = new AppendableStream(outStream)
+	stream.add(1).add(2).add(3)
+	assert.equal(stream.length, 3)
+	assert.throws(
+		() => stream.resume(),
+		'Was not paused'
+	)
+	assert.throws(
+		() => stream.reset(),
+		'Was not paused'
+	)
+	stream.pause()
+	assert.throws(
+		() => stream.pause(),
+		'Already paused'
+	)
+	stream.add(4).add(5)
+	assert.equal(stream.length, 5)
+	stream.reset()
+	assert.equal(stream.length, 3)
+	stream.reset()
+	assert.equal(stream.length, 3)
+	stream
+		.add(6).add(7)
+	assert.equal(stream.length, 5)
+	stream
+		.resume()
+		.add(8)
+	assert.equal(stream.length, 6)
+	stream
+		.pause()
+		.add(9)
+	assert.equal(stream.length, 7)
+	stream.end()
+})
+
+export = Promise.all([testBasic, testPause])

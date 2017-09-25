@@ -13,6 +13,11 @@ const INITIAL_LENGTH = 10
 export default class GrowableBuffer implements AppendableBuffer {
 	private buffer: ArrayBuffer
 	private size: number
+	/**
+	 * The length of the buffer before the current pause,
+	 * or `null` if not currently paused
+	 */
+	private commitedSize: number | null
 
 	/**
 	 * @param initialLength
@@ -22,18 +27,19 @@ export default class GrowableBuffer implements AppendableBuffer {
 	constructor(initialLength = INITIAL_LENGTH) {
 		try {
 			assert.integer(initialLength)
-			assert.between(0, initialLength, Number.MAX_SAFE_INTEGER + 1)
+			assert(initialLength >= 0)
 		}
 		catch (e) { throw new RangeError(String(initialLength) + ' is not a valid buffer length') }
 		this.buffer = new ArrayBuffer(initialLength)
 		this.size = 0
+		this.commitedSize = null
 	}
 
 	/**
 	 * The current number of bytes being occupied.
 	 * Note that this is NOT the size of the internal buffer.
 	 */
-	get length(): number {
+	get length() {
 		return this.size
 	}
 	/**
@@ -58,53 +64,11 @@ export default class GrowableBuffer implements AppendableBuffer {
 		return this
 	}
 	/**
-	 * Sets a byte's value.
-	 * The byte must lie in the occupied portion
-	 * of the internal buffer.
-	 * @param index The position of the byte (0-indexed)
-	 * @param value The value to set the byte to
-	 * (must fit in an unsigned byte)
-	 */
-	set(index: number, value: number): this {
-		assert.integer(value)
-		assert.between(0, value, 0x100, 'Not a byte: ' + String(value))
-		return this.setAll(index, new Uint8Array([value]).buffer)
-	}
-	/**
-	 * Sets a set of contiguous bytes' values.
-	 * Each byte must lie in the occupied portion
-	 * of the internal buffer.
-	 * @param index The position of the first byte (0-indexed)
-	 * @param buffer The values to write, starting at `index`
-	 * (the byte at position `i` in `buffer` will be written to
-	 * position `index + i` of the [[GrowableBuffer]])
-	 */
-	setAll(index: number, buffer: ArrayBuffer): this {
-		assert.instanceOf(buffer, ArrayBuffer)
-		assert.integer(index)
-		assert.between(0, index, this.size - buffer.byteLength + 1, 'Index out of bounds: ' + String(index))
-		new Uint8Array(this.buffer).set(new Uint8Array(buffer), index)
-		return this
-	}
-	/**
-	 * Gets a byte's value.
-	 * The byte must lie in the occupied portion
-	 * of the internal buffer.
-	 * @param index The position of the byte (0-indexed)
-	 * @return The unsigned byte at the specified index
-	 * of the internal buffer
-	 */
-	get(index: number): number {
-		assert.integer(index)
-		assert.between(0, index, this.size, 'Index out of bounds: ' + String(index))
-		return new Uint8Array(this.buffer)[index]
-	}
-	/**
 	 * Adds a byte after the end of the
 	 * occupied portion of the internal buffer
 	 * @param value The unsigned byte value to add
 	 */
-	add(value: number): this {
+	add(value: number) {
 		assert.integer(value)
 		assert.between(0, value, 0x100, 'Not a byte: ' + String(value))
 		return this.addAll(new Uint8Array([value]).buffer)
@@ -117,7 +81,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * The byte at position `i` in `buffer` will be written to
 	 * position `this.length + i` of the [[GrowableBuffer]]).
 	 */
-	addAll(buffer: ArrayBuffer): this {
+	addAll(buffer: ArrayBuffer) {
 		assert.instanceOf(buffer, ArrayBuffer)
 		const oldSize = this.size
 		const newSize = this.size + buffer.byteLength
@@ -138,6 +102,47 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * @return The internal buffer trimmed to `this.length`
 	 */
 	toBuffer(): ArrayBuffer {
-		return this.buffer.slice(0, this.size)
+		let length: number
+		if (this.commitedSize === null) length = this.size
+		else length = this.commitedSize
+		return this.buffer.slice(0, length)
+	}
+	/**
+	 * Pauses the writing process, i.e.
+	 * bytes added are not written
+	 * to the underlying output until
+	 * [[resume]] is next called and
+	 * can be cancelled from being written
+	 * by calling [[reset]].
+	 * @throws If paused earlier and never resumed
+	 */
+	pause() {
+		assert(this.commitedSize === null, 'Already paused')
+		this.commitedSize = this.size
+		return this
+	}
+	/**
+	 * See [[pause]].
+	 * Flushes all paused data to the output
+	 * and exits paused mode.
+	 * @throws If not currently paused
+	 */
+	resume() {
+		assert(this.commitedSize !== null, 'Was not paused')
+		this.commitedSize = null
+		return this
+	}
+	/**
+	 * See [[pause]].
+	 * Restores state to immediately after
+	 * this [[AppendableBuffer]] was paused.
+	 * Prevents paused data from ever
+	 * being flushed to the output.
+	 * @throws If not currently paused
+	 */
+	reset() {
+		if (this.commitedSize === null) throw new Error('Was not paused')
+		this.size = this.commitedSize
+		return this
 	}
 }

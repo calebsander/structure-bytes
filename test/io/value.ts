@@ -61,6 +61,42 @@ const writeErrorPromise = () => new Promise((resolve, reject) => {
 		catch (e) { reject(e) }
 	})
 })
+const pauseWrite = () => new Promise((resolve, reject) => {
+	const OUT_FILE = 'value-out4'
+	const type = new t.ArrayType(
+		new t.ChoiceType<boolean | boolean[] | string>([
+			new t.BooleanType,
+			new t.BooleanArrayType,
+			new t.StringType
+		])
+	)
+	const value: (boolean | boolean[] | string)[] = [
+		[true, true, false],
+		'abc',
+		false
+	]
+	io.writeValue({type, value, outStream: fs.createWriteStream(OUT_FILE)}, err => {
+		try {
+			if (err) throw err
+			fs.readFile(OUT_FILE, (err, data) => {
+				try {
+					assert.equal(data, Buffer.from([
+						3,
+							1,
+								3, 0b11000000,
+							2,
+								0x61, 0x62, 0x63, 0,
+							0,
+								0x00
+					]))
+					fs.unlink(OUT_FILE, _ => resolve())
+				}
+				catch (e) { reject(e) }
+			})
+		}
+		catch (e) { reject(e) }
+	})
+})
 const readPromise = new Promise((resolve, reject) => {
 	io.readValue({type, inStream: new BufferStream(VALUE_BUFFER)}, (err, readValue) => {
 		try {
@@ -84,7 +120,8 @@ const readErrorPromise = new Promise((resolve, reject) => {
 export = Promise.all([
 	writePromise
 		.then(writeWithoutCallback)
-		.then(writeErrorPromise),
+		.then(writeErrorPromise)
+		.then(pauseWrite),
 	readPromise,
 	readErrorPromise
 ])

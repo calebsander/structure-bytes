@@ -75,8 +75,8 @@
 						<p>A wrapper around a writable stream
 							to implement <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.
 							The stream must be explicitly closed
-							by calling <a href="_lib_appendable_stream_.appendablestream.html#end">AppendableStream.end</a>
-						after all bytes have been written.</p>
+							by calling <a href="_lib_appendable_stream_.appendablestream.html#end">end</a> after all bytes
+						have been written.</p>
 					</div>
 				</div>
 			</section>
@@ -108,6 +108,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#outstream" class="tsd-kind-icon">out<wbr>Stream</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#paused" class="tsd-kind-icon">paused</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#writtenbytes" class="tsd-kind-icon">written<wbr>Bytes</a></li>
 							</ul>
 						</section>
@@ -123,6 +124,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#add" class="tsd-kind-icon">add</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#end" class="tsd-kind-icon">end</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#pause" class="tsd-kind-icon">pause</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#reset" class="tsd-kind-icon">reset</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#resume" class="tsd-kind-icon">resume</a></li>
 							</ul>
 						</section>
 					</div>
@@ -140,7 +144,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:17</li>
+									<li>Defined in lib/appendable-stream.ts:19</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -169,7 +173,17 @@
 					<div class="tsd-signature tsd-kind-icon">out<wbr>Stream<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Writable</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/appendable-stream.ts:16</li>
+							<li>Defined in lib/appendable-stream.ts:17</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="paused" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> paused</h3>
+					<div class="tsd-signature tsd-kind-icon">paused<span class="tsd-signature-symbol">:</span> <a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/appendable-stream.ts:19</li>
 						</ul>
 					</aside>
 				</section>
@@ -179,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">written<wbr>Bytes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/appendable-stream.ts:17</li>
+							<li>Defined in lib/appendable-stream.ts:18</li>
 						</ul>
 					</aside>
 				</section>
@@ -196,7 +210,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:60</li>
+									<li>Defined in lib/appendable-stream.ts:62</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -222,7 +236,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#add">add</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:33</li>
+									<li>Defined in lib/appendable-stream.ts:36</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -255,7 +269,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#addall">addAll</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:45</li>
+									<li>Defined in lib/appendable-stream.ts:46</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -287,7 +301,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:54</li>
+									<li>Defined in lib/appendable-stream.ts:56</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -296,6 +310,101 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="pause" class="tsd-anchor"></a>
+					<h3>pause</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">pause<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#pause">pause</a></p>
+								<ul>
+									<li>Defined in lib/appendable-stream.ts:74</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Pauses the writing process, i.e.
+										bytes added are not written
+										to the underlying output until
+										<a href="_lib_appendable_stream_.appendablestream.html#resume">resume</a> is next called and
+										can be cancelled from being written
+									by calling <a href="_lib_appendable_stream_.appendablestream.html#reset">reset</a>.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If paused earlier and never resumed</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="reset" class="tsd-anchor"></a>
+					<h3>reset</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#reset">reset</a></p>
+								<ul>
+									<li>Defined in lib/appendable-stream.ts:100</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>See <a href="_lib_appendable_stream_.appendablestream.html#pause">pause</a>.
+										Restores state to immediately after
+										this <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> was paused.
+										Prevents paused data from ever
+									being flushed to the output.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If not currently paused</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="resume" class="tsd-anchor"></a>
+					<h3>resume</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">resume<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#resume">resume</a></p>
+								<ul>
+									<li>Defined in lib/appendable-stream.ts:85</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>See <a href="_lib_appendable_stream_.appendablestream.html#pause">pause</a>.
+										Flushes all paused data to the output
+									and exits paused mode.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If not currently paused</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -326,6 +435,9 @@
 								<a href="_lib_appendable_stream_.appendablestream.html#outstream" class="tsd-kind-icon">out<wbr>Stream</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="_lib_appendable_stream_.appendablestream.html#paused" class="tsd-kind-icon">paused</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#writtenbytes" class="tsd-kind-icon">written<wbr>Bytes</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
@@ -339,6 +451,15 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#end" class="tsd-kind-icon">end</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_lib_appendable_stream_.appendablestream.html#pause" class="tsd-kind-icon">pause</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_lib_appendable_stream_.appendablestream.html#reset" class="tsd-kind-icon">reset</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_lib_appendable_stream_.appendablestream.html#resume" class="tsd-kind-icon">resume</a>
 							</li>
 						</ul>
 					</li>

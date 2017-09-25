@@ -90,23 +90,23 @@ class ChoiceType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
+        buffer.pause();
         let success = false;
         //Try to write value using each type in order until no error is thrown
         for (let i = 0; i < this.types.length; i++) {
             const type = this.types[i];
-            let valueBuffer;
             try {
-                valueBuffer = type.valueBuffer(value);
+                buffer.add(i);
+                type.writeValue(buffer, value);
             }
             catch (e) {
+                buffer.reset();
                 continue;
             }
-            buffer
-                .add(i)
-                .addAll(valueBuffer);
             success = true;
             break;
         }
+        buffer.resume();
         if (!success)
             assert_1.default.fail('No types matched: ' + util_inspect_1.inspect(value));
     }
