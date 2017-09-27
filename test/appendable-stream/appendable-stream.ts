@@ -71,14 +71,15 @@ const testPause = new Promise((resolve, reject) => {
 	const outStream = new CaptureStream
 	outStream.on('finish', () => {
 		try {
-			assert.equal(outStream.getWritten(), Buffer.from([1, 2, 3, 6, 7, 8]))
+			assert.equal(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 9, 10]))
 			resolve()
 		}
 		catch (e) { reject(e) }
 	})
 	const stream = new AppendableStream(outStream)
-	stream.add(1).add(2).add(3)
-	assert.equal(stream.length, 3)
+	stream
+		.add(1).add(2)
+	assert.equal(stream.length, 2)
 	assert.throws(
 		() => stream.resume(),
 		'Was not paused'
@@ -87,28 +88,42 @@ const testPause = new Promise((resolve, reject) => {
 		() => stream.reset(),
 		'Was not paused'
 	)
-	stream.pause()
-	assert.throws(
-		() => stream.pause(),
-		'Already paused'
-	)
-	stream.add(4).add(5)
-	assert.equal(stream.length, 5)
-	stream.reset()
-	assert.equal(stream.length, 3)
-	stream.reset()
-	assert.equal(stream.length, 3)
-	stream
-		.add(6).add(7)
-	assert.equal(stream.length, 5)
-	stream
-		.resume()
-		.add(8)
-	assert.equal(stream.length, 6)
 	stream
 		.pause()
-		.add(9)
-	assert.equal(stream.length, 7)
+			.add(3).add(4)
+	assert.equal(stream.length, 4)
+	stream
+			.pause()
+				.add(5).add(6)
+	assert.equal(stream.length, 6)
+	stream
+				.pause()
+					.add(7).add(8)
+	assert.equal(stream.length, 8)
+	stream
+				.resume()
+	assert.equal(stream.length, 8)
+	stream
+				.reset()
+	assert.equal(stream.length, 4)
+	stream
+				.add(9)
+			.resume()
+	assert.equal(stream.length, 5)
+	stream
+			.add(10)
+	assert.equal(stream.length, 6)
+	stream
+		.resume()
+	assert.equal(stream.length, 6)
+	assert.throws(
+		() => stream.resume(),
+		'Was not paused'
+	)
+	assert.throws(
+		() => stream.reset(),
+		'Was not paused'
+	)
 	stream.end()
 })
 

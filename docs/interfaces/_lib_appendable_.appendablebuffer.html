@@ -82,8 +82,8 @@ gb
   .add(<span class="hljs-number">1</span>).add(<span class="hljs-number">2</span>)
   .addAll(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]).buffer)
   .pause()
-  .add(<span class="hljs-number">0</span>)
-  .reset()
+    .add(<span class="hljs-number">0</span>)
+    .reset()
   .resume()
 <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3, 4, 5 ]</span>
 </code></pre>
@@ -224,7 +224,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable.ts:47</li>
+									<li>Defined in lib/appendable.ts:62</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -236,11 +236,20 @@ gb
 										can be cancelled from being written
 									by calling <a href="_lib_appendable_.appendablebuffer.html#reset">reset</a>.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p>If paused earlier and never resumed</p>
-									</dd>
-								</dl>
+								<p>If called multiple times, <a href="_lib_appendable_.appendablebuffer.html#resume">resume</a>
+									and <a href="_lib_appendable_.appendablebuffer.html#reset">reset</a> only act on bytes added
+								since the most recent pause. Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
+gb
+  .pause()
+    .add(<span class="hljs-number">1</span>).add(<span class="hljs-number">2</span>).add(<span class="hljs-number">3</span>)
+    .pause()
+      .add(<span class="hljs-number">4</span>).add(<span class="hljs-number">5</span>).add(<span class="hljs-number">6</span>)
+      .reset() <span class="hljs-comment">//cancels [4, 5, 6]</span>
+    .resume()
+  .resume() <span class="hljs-comment">//resumes [1, 2, 3]</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3 ]</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
@@ -256,7 +265,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable.ts:63</li>
+									<li>Defined in lib/appendable.ts:78</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -287,7 +296,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable.ts:54</li>
+									<li>Defined in lib/appendable.ts:69</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

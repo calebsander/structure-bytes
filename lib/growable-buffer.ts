@@ -13,11 +13,7 @@ const INITIAL_LENGTH = 10
 export default class GrowableBuffer implements AppendableBuffer {
 	private buffer: ArrayBuffer
 	private size: number
-	/**
-	 * The length of the buffer before the current pause,
-	 * or `null` if not currently paused
-	 */
-	private commitedSize: number | null
+	private readonly pausePoints: number[]
 
 	/**
 	 * @param initialLength
@@ -32,7 +28,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 		catch (e) { throw new RangeError(String(initialLength) + ' is not a valid buffer length') }
 		this.buffer = new ArrayBuffer(initialLength)
 		this.size = 0
-		this.commitedSize = null
+		this.pausePoints = []
 	}
 
 	/**
@@ -103,8 +99,8 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 */
 	toBuffer(): ArrayBuffer {
 		let length: number
-		if (this.commitedSize === null) length = this.size
-		else length = this.commitedSize
+		if (this.pausePoints.length) [length] = this.pausePoints //go up to first pause point
+		else length = this.size
 		return this.buffer.slice(0, length)
 	}
 	/**
@@ -114,11 +110,25 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * [[resume]] is next called and
 	 * can be cancelled from being written
 	 * by calling [[reset]].
-	 * @throws If paused earlier and never resumed
+	 *
+	 * If called multiple times, [[resume]]
+	 * and [[reset]] only act on bytes added
+	 * since the most recent pause. Example:
+	 * ````javascript
+	 * let gb = new GrowableBuffer
+	 * gb
+	 *   .pause()
+	 *     .add(1).add(2).add(3)
+	 *     .pause()
+	 *       .add(4).add(5).add(6)
+	 *       .reset() //cancels [4, 5, 6]
+	 *     .resume()
+	 *   .resume() //resumes [1, 2, 3]
+	 * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
+	 * ````
 	 */
 	pause() {
-		assert(this.commitedSize === null, 'Already paused')
-		this.commitedSize = this.size
+		this.pausePoints.push(this.size)
 		return this
 	}
 	/**
@@ -128,8 +138,8 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * @throws If not currently paused
 	 */
 	resume() {
-		assert(this.commitedSize !== null, 'Was not paused')
-		this.commitedSize = null
+		const pausePoint = this.pausePoints.pop()
+		if (pausePoint === undefined) throw new Error('Was not paused')
 		return this
 	}
 	/**
@@ -141,8 +151,9 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * @throws If not currently paused
 	 */
 	reset() {
-		if (this.commitedSize === null) throw new Error('Was not paused')
-		this.size = this.commitedSize
+		if (!this.pausePoints.length) throw new Error('Was not paused')
+		const pausePoint = this.pausePoints[this.pausePoints.length - 1]
+		this.size = pausePoint
 		return this
 	}
 }

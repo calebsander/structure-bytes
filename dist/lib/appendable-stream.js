@@ -20,7 +20,8 @@ class AppendableStream {
         assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
         this.outStream = outStream;
         this.writtenBytes = 0;
-        this.paused = null;
+        this.pauseCount = 0;
+        this.paused = new growable_buffer_1.default;
     }
     /**
      * Appends a byte to the end
@@ -39,7 +40,7 @@ class AppendableStream {
      */
     addAll(buffer) {
         assert_1.default.instanceOf(buffer, ArrayBuffer);
-        if (this.paused)
+        if (this.pauseCount)
             this.paused.addAll(buffer);
         else
             this.outStream.write(Buffer.from(buffer));
@@ -65,11 +66,26 @@ class AppendableStream {
      * [[resume]] is next called and
      * can be cancelled from being written
      * by calling [[reset]].
-     * @throws If paused earlier and never resumed
+     *
+     * If called multiple times, [[resume]]
+     * and [[reset]] only act on bytes added
+     * since the most recent pause. Example:
+     * ````javascript
+     * let gb = new GrowableBuffer
+     * gb
+     *   .pause()
+     *     .add(1).add(2).add(3)
+     *     .pause()
+     *       .add(4).add(5).add(6)
+     *       .reset() //cancels [4, 5, 6]
+     *     .resume()
+     *   .resume() //resumes [1, 2, 3]
+     * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
+     * ````
      */
     pause() {
-        assert_1.default(this.paused === null, 'Already paused');
-        this.paused = new growable_buffer_1.default;
+        this.paused.pause();
+        this.pauseCount++;
         return this;
     }
     /**
@@ -79,11 +95,15 @@ class AppendableStream {
      * @throws If not currently paused
      */
     resume() {
-        if (!this.paused)
+        if (!this.pauseCount)
             throw new Error('Was not paused');
-        const { length } = this.paused;
-        this.outStream.write(Buffer.from(this.paused.rawBuffer, 0, length));
-        this.paused = null;
+        this.pauseCount--;
+        if (this.pauseCount)
+            this.paused.resume(); //still in pause stack
+        else {
+            this.outStream.write(Buffer.from(this.paused.rawBuffer, 0, this.paused.length));
+            this.paused = new growable_buffer_1.default; //must use a new buffer to avoid overwriting data sent to outStream
+        }
         return this;
     }
     /**
@@ -95,10 +115,12 @@ class AppendableStream {
      * @throws If not currently paused
      */
     reset() {
-        if (!this.paused)
+        if (!this.pauseCount)
             throw new Error('Was not paused');
-        this.writtenBytes -= this.paused.length;
-        this.paused = new growable_buffer_1.default;
+        const lengthBeforeReset = this.paused.length;
+        this.paused.reset();
+        const lengthAfterReset = this.paused.length;
+        this.writtenBytes -= lengthBeforeReset - lengthAfterReset;
         return this;
     }
 }

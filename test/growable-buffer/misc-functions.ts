@@ -28,7 +28,7 @@ export = () => {
 		nums.push(i)
 	}
 	assert.equal(gb3.length, 100)
-	assert.equal(gb3.toBuffer(), new Uint8Array(nums).buffer)
+	assert.equal(gb3.toBuffer(), bufferFrom(nums))
 	assert.throws(
 		() => gb3.add(undefined as any),
 		'undefined is not an instance of Number'
@@ -45,10 +45,12 @@ export = () => {
 		() => gb3.addAll('abc' as any),
 		'"abc" is not an instance of ArrayBuffer'
 	)
-	assert.equal(gb3.toBuffer(), new Uint8Array(nums).buffer)
+	assert.equal(gb3.toBuffer(), bufferFrom(nums))
 
 	const gb4 = new GrowableBuffer
-	gb4.add(1).add(2)
+	gb4
+		.add(1).add(2)
+	assert.equal(gb4.length, 2)
 	assert.throws(
 		() => gb4.resume(),
 		'Was not paused'
@@ -57,11 +59,44 @@ export = () => {
 		() => gb4.reset(),
 		'Was not paused'
 	)
-	gb4.pause()
+	gb4
+		.pause()
+			.add(3).add(4)
+	assert.equal(gb4.length, 4)
+	gb4
+			.pause()
+				.add(5).add(6)
+	assert.equal(gb4.length, 6)
+	gb4
+				.pause()
+					.add(7).add(8)
+	assert.equal(gb4.toBuffer(), bufferFrom([1, 2]))
+	assert.equal(gb4.length, 8)
+	gb4
+				.resume()
+	assert.equal(gb4.toBuffer(), bufferFrom([1, 2]))
+	assert.equal(gb4.length, 8)
+	gb4
+				.reset()
+	assert.equal(gb4.length, 4)
+	gb4
+				.add(9)
+			.resume()
+	assert.equal(gb4.length, 5)
+	gb4
+			.add(10)
+	assert.equal(gb4.toBuffer(), bufferFrom([1, 2]))
+	assert.equal(gb4.length, 6)
+	gb4
+		.resume()
+	assert.equal(gb4.toBuffer(), bufferFrom([1, 2, 3, 4, 9, 10]))
+	assert.equal(gb4.length, 6)
 	assert.throws(
-		() => gb4.pause(),
-		'Already paused'
+		() => gb4.resume(),
+		'Was not paused'
 	)
-	gb4.add(3).add(4)
-	assert.equal(gb4.toBuffer(), new Uint8Array([1, 2]).buffer)
+	assert.throws(
+		() => gb4.reset(),
+		'Was not paused'
+	)
 }

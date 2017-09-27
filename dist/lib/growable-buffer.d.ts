@@ -9,11 +9,7 @@ import AppendableBuffer from './appendable';
 export default class GrowableBuffer implements AppendableBuffer {
     private buffer;
     private size;
-    /**
-     * The length of the buffer before the current pause,
-     * or `null` if not currently paused
-     */
-    private commitedSize;
+    private readonly pausePoints;
     /**
      * @param initialLength
      * The number of bytes in the internal buffer at start
@@ -70,7 +66,22 @@ export default class GrowableBuffer implements AppendableBuffer {
      * [[resume]] is next called and
      * can be cancelled from being written
      * by calling [[reset]].
-     * @throws If paused earlier and never resumed
+     *
+     * If called multiple times, [[resume]]
+     * and [[reset]] only act on bytes added
+     * since the most recent pause. Example:
+     * ````javascript
+     * let gb = new GrowableBuffer
+     * gb
+     *   .pause()
+     *     .add(1).add(2).add(3)
+     *     .pause()
+     *       .add(4).add(5).add(6)
+     *       .reset() //cancels [4, 5, 6]
+     *     .resume()
+     *   .resume() //resumes [1, 2, 3]
+     * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
+     * ````
      */
     pause(): this;
     /**

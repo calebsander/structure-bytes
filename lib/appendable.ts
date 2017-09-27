@@ -10,8 +10,8 @@
  *   .add(1).add(2)
  *   .addAll(new Uint8Array([3, 4, 5]).buffer)
  *   .pause()
- *   .add(0)
- *   .reset()
+ *     .add(0)
+ *     .reset()
  *   .resume()
  * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3, 4, 5 ]
  * ````
@@ -42,7 +42,22 @@ export default interface AppendableBuffer {
 	 * [[resume]] is next called and
 	 * can be cancelled from being written
 	 * by calling [[reset]].
-	 * @throws If paused earlier and never resumed
+	 *
+	 * If called multiple times, [[resume]]
+	 * and [[reset]] only act on bytes added
+	 * since the most recent pause. Example:
+	 * ````javascript
+	 * let gb = new GrowableBuffer
+	 * gb
+	 *   .pause()
+	 *     .add(1).add(2).add(3)
+	 *     .pause()
+	 *       .add(4).add(5).add(6)
+	 *       .reset() //cancels [4, 5, 6]
+	 *     .resume()
+	 *   .resume() //resumes [1, 2, 3]
+	 * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
+	 * ````
 	 */
 	pause(): this
 	/**

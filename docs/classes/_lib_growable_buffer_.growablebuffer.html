@@ -108,7 +108,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#buffer" class="tsd-kind-icon">buffer</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#commitedsize" class="tsd-kind-icon">commited<wbr>Size</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#pausepoints" class="tsd-kind-icon">pause<wbr>Points</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_growable_buffer_.growablebuffer.html#size" class="tsd-kind-icon">size</a></li>
 							</ul>
 						</section>
@@ -146,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:20</li>
+									<li>Defined in lib/growable-buffer.ts:16</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -181,20 +181,14 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="commitedsize" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> commited<wbr>Size</h3>
-					<div class="tsd-signature tsd-kind-icon">commited<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<a name="pausepoints" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pause<wbr>Points</h3>
+					<div class="tsd-signature tsd-kind-icon">pause<wbr>Points<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/growable-buffer.ts:20</li>
+							<li>Defined in lib/growable-buffer.ts:16</li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The length of the buffer before the current pause,
-							or <code>null</code> if not currently paused</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 					<a name="size" class="tsd-anchor"></a>
@@ -219,7 +213,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:42</li>
+									<li>Defined in lib/growable-buffer.ts:38</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -242,7 +236,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:97</li>
+									<li>Defined in lib/growable-buffer.ts:93</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -268,7 +262,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#add">add</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:71</li>
+									<li>Defined in lib/growable-buffer.ts:67</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -301,7 +295,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#addall">addAll</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:84</li>
+									<li>Defined in lib/growable-buffer.ts:80</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -336,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:57</li>
+									<li>Defined in lib/growable-buffer.ts:53</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -376,7 +370,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#pause">pause</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:119</li>
+									<li>Defined in lib/growable-buffer.ts:130</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -388,11 +382,20 @@
 										can be cancelled from being written
 									by calling <a href="_lib_growable_buffer_.growablebuffer.html#reset">reset</a>.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p>If paused earlier and never resumed</p>
-									</dd>
-								</dl>
+								<p>If called multiple times, <a href="_lib_growable_buffer_.growablebuffer.html#resume">resume</a>
+									and <a href="_lib_growable_buffer_.growablebuffer.html#reset">reset</a> only act on bytes added
+								since the most recent pause. Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
+gb
+  .pause()
+    .add(<span class="hljs-number">1</span>).add(<span class="hljs-number">2</span>).add(<span class="hljs-number">3</span>)
+    .pause()
+      .add(<span class="hljs-number">4</span>).add(<span class="hljs-number">5</span>).add(<span class="hljs-number">6</span>)
+      .reset() <span class="hljs-comment">//cancels [4, 5, 6]</span>
+    .resume()
+  .resume() <span class="hljs-comment">//resumes [1, 2, 3]</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3 ]</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
@@ -409,7 +412,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#reset">reset</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:143</li>
+									<li>Defined in lib/growable-buffer.ts:153</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -441,7 +444,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#resume">resume</a></p>
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:130</li>
+									<li>Defined in lib/growable-buffer.ts:140</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -470,7 +473,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/growable-buffer.ts:104</li>
+									<li>Defined in lib/growable-buffer.ts:100</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -510,7 +513,7 @@
 								<a href="_lib_growable_buffer_.growablebuffer.html#buffer" class="tsd-kind-icon">buffer</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="_lib_growable_buffer_.growablebuffer.html#commitedsize" class="tsd-kind-icon">commited<wbr>Size</a>
+								<a href="_lib_growable_buffer_.growablebuffer.html#pausepoints" class="tsd-kind-icon">pause<wbr>Points</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_lib_growable_buffer_.growablebuffer.html#size" class="tsd-kind-icon">size</a>

@@ -108,6 +108,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#outstream" class="tsd-kind-icon">out<wbr>Stream</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#pausecount" class="tsd-kind-icon">pause<wbr>Count</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#paused" class="tsd-kind-icon">paused</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#writtenbytes" class="tsd-kind-icon">written<wbr>Bytes</a></li>
 							</ul>
@@ -144,7 +145,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:19</li>
+									<li>Defined in lib/appendable-stream.ts:20</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -178,12 +179,22 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="paused" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> paused</h3>
-					<div class="tsd-signature tsd-kind-icon">paused<span class="tsd-signature-symbol">:</span> <a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<a name="pausecount" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pause<wbr>Count</h3>
+					<div class="tsd-signature tsd-kind-icon">pause<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in lib/appendable-stream.ts:19</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="paused" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> paused</h3>
+					<div class="tsd-signature tsd-kind-icon">paused<span class="tsd-signature-symbol">:</span> <a href="_lib_growable_buffer_.growablebuffer.html" class="tsd-signature-type">GrowableBuffer</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/appendable-stream.ts:20</li>
 						</ul>
 					</aside>
 				</section>
@@ -210,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:62</li>
+									<li>Defined in lib/appendable-stream.ts:64</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -236,7 +247,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#add">add</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:36</li>
+									<li>Defined in lib/appendable-stream.ts:38</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -269,7 +280,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#addall">addAll</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:46</li>
+									<li>Defined in lib/appendable-stream.ts:48</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -301,7 +312,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:56</li>
+									<li>Defined in lib/appendable-stream.ts:58</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -324,7 +335,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#pause">pause</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:74</li>
+									<li>Defined in lib/appendable-stream.ts:91</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -336,11 +347,20 @@
 										can be cancelled from being written
 									by calling <a href="_lib_appendable_stream_.appendablestream.html#reset">reset</a>.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p>If paused earlier and never resumed</p>
-									</dd>
-								</dl>
+								<p>If called multiple times, <a href="_lib_appendable_stream_.appendablestream.html#resume">resume</a>
+									and <a href="_lib_appendable_stream_.appendablestream.html#reset">reset</a> only act on bytes added
+								since the most recent pause. Example:</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
+gb
+  .pause()
+    .add(<span class="hljs-number">1</span>).add(<span class="hljs-number">2</span>).add(<span class="hljs-number">3</span>)
+    .pause()
+      .add(<span class="hljs-number">4</span>).add(<span class="hljs-number">5</span>).add(<span class="hljs-number">6</span>)
+      .reset() <span class="hljs-comment">//cancels [4, 5, 6]</span>
+    .resume()
+  .resume() <span class="hljs-comment">//resumes [1, 2, 3]</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3 ]</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
@@ -357,7 +377,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#reset">reset</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:100</li>
+									<li>Defined in lib/appendable-stream.ts:120</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -389,7 +409,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#resume">resume</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:85</li>
+									<li>Defined in lib/appendable-stream.ts:102</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -433,6 +453,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#outstream" class="tsd-kind-icon">out<wbr>Stream</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="_lib_appendable_stream_.appendablestream.html#pausecount" class="tsd-kind-icon">pause<wbr>Count</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#paused" class="tsd-kind-icon">paused</a>

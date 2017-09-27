@@ -24,4 +24,29 @@ export = () => {
 		() => type.writeValue(gb, true as any),
 		'No types matched: true'
 	)
+
+	const doubleChoiceType = new t.ChoiceType<(number | string)[] | Set<number | string>>([
+		new t.ArrayType(type),
+		new t.SetType(type)
+	])
+	assert.equal(doubleChoiceType.valueBuffer([0, '1000', '-1']), bufferFrom([
+		0,
+			3,
+				0,
+					0,
+				1,
+					0, 0, 1000 >> 8, 1000 & 0xFF,
+				2,
+					0x2d, 0x31, 0
+	]))
+	assert.equal(doubleChoiceType.valueBuffer(new Set([0, '1000', '-1'])), bufferFrom([
+		1,
+			3,
+				0,
+					0,
+				1,
+					0, 0, 1000 >> 8, 1000 & 0xFF,
+				2,
+					0x2d, 0x31, 0
+	]))
 }
