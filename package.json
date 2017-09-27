@@ -1,6 +1,6 @@
 {
 	"name": "structure-bytes",
-	"version": "16.0.1",
+	"version": "17.0.0",
 	"description": "A library for more efficient data transfers by separating the structure from the values and storing each as binary data",
 	"main": "dist/index.js",
 	"typings": "dist/index",
