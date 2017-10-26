@@ -99,7 +99,9 @@ class GrowableBuffer {
             [length] = this.pausePoints; //go up to first pause point
         else
             length = this.size;
-        return this.buffer.slice(0, length);
+        return length === this.buffer.byteLength
+            ? this.buffer
+            : this.buffer.slice(0, length);
     }
     /**
      * Pauses the writing process, i.e.
@@ -136,9 +138,9 @@ class GrowableBuffer {
      * @throws If not currently paused
      */
     resume() {
-        const pausePoint = this.pausePoints.pop();
-        if (pausePoint === undefined)
+        if (!this.pausePoints.length)
             throw new Error('Was not paused');
+        this.pausePoints.pop();
         return this;
     }
     /**

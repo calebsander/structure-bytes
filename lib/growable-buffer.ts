@@ -13,6 +13,7 @@ const INITIAL_LENGTH = 10
 export default class GrowableBuffer implements AppendableBuffer {
 	private buffer: ArrayBuffer
 	private size: number
+	//A stack, containing lengths when buffer was paused
 	private readonly pausePoints: number[]
 
 	/**
@@ -101,7 +102,9 @@ export default class GrowableBuffer implements AppendableBuffer {
 		let length: number
 		if (this.pausePoints.length) [length] = this.pausePoints //go up to first pause point
 		else length = this.size
-		return this.buffer.slice(0, length)
+		return length === this.buffer.byteLength
+			? this.buffer
+			: this.buffer.slice(0, length)
 	}
 	/**
 	 * Pauses the writing process, i.e.
@@ -138,8 +141,8 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * @throws If not currently paused
 	 */
 	resume() {
-		const pausePoint = this.pausePoints.pop()
-		if (pausePoint === undefined) throw new Error('Was not paused')
+		if (!this.pausePoints.length) throw new Error('Was not paused')
+		this.pausePoints.pop()
 		return this
 	}
 	/**

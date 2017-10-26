@@ -79,7 +79,7 @@ export = () => {
 	)
 	assert.throws(() => r.type(bufferFrom([0x57])), 'Buffer is not long enough')
 	assert.throws(() => r.type(bufferFrom([0x57, 0])), 'Buffer is not long enough')
-	assert.throws(() => rec.registerType(undefined as any), "Cannot match against 'undefined' or 'null'.")
+	assert.throws(() => rec.registerType(undefined as any), "Cannot destructure property `type` of 'undefined' or 'null'.")
 	assert.throws(
 		() => rec.registerType({name: 'some-type'} as any),
 		'undefined is not an instance of ArrayType or MapType or SetType or StructType or TupleType'

@@ -9,27 +9,24 @@ function possibleValueCount(bytes) {
     const usableBits = 7 * bytes;
     return Math.pow(2, usableBits); //can't bit-shift because this may not fit in 32-bit integer
 }
-const UPPER_BOUNDS = new Map(); //mapping of numbers of bytes to the exclusive upper bound on numbers in the range
-{
-    let cumulativeValues = 0;
-    let bytes = 1;
-    while (cumulativeValues <= Number.MAX_SAFE_INTEGER) {
-        cumulativeValues += possibleValueCount(bytes);
-        UPPER_BOUNDS.set(bytes, cumulativeValues);
-        bytes++;
-    }
-}
-//Mapping of the number of leading ones in the first byte's mask to the number of bytes
-const NUMBER_OF_BYTES = new Map();
+const UPPER_BOUNDS = new Map() //mapping of numbers of bytes to the exclusive upper bound on numbers in the range
+    .set(0, 0); //1-byte values are relative to 0
 //Mapping of numbers of bytes to the mask for the first byte
 //Goes 0b00000000, 0b10000000, 0b11000000, etc.
 const BYTE_MASKS = new Map();
+//Mapping of the number of leading ones in the first byte's mask to the number of bytes
+const NUMBER_OF_BYTES = new Map();
 {
-    let mask = -256; //0b111...100000000 in 2's complement
-    for (const bytes of UPPER_BOUNDS.keys()) {
+    let bytes = 1;
+    let cumulativeValues = 0;
+    let mask = ~0xFF; //0b111...100000000 in 2's complement
+    while (cumulativeValues <= Number.MAX_SAFE_INTEGER) {
+        cumulativeValues += possibleValueCount(bytes);
+        UPPER_BOUNDS.set(bytes, cumulativeValues);
         BYTE_MASKS.set(bytes, mask & 0xFF);
         NUMBER_OF_BYTES.set(bytes - 1, bytes);
         mask >>= 1; //converts the most significant 0 to a 1
+        bytes++;
     }
 }
 /**
@@ -42,22 +39,19 @@ function makeValueBuffer(value) {
     assert_1.default(value >= 0, String(value) + ' is negative');
     const bytes = (() => {
         for (const [byteCount, maxValue] of UPPER_BOUNDS) {
-            if (value < maxValue)
+            if (maxValue > value)
                 return byteCount;
         }
         /*istanbul ignore next*/
         throw new Error('Cannot represent ' + String(value)); //should never occur
     })();
-    const writeValue = value - (UPPER_BOUNDS.get(bytes - 1) || 0);
+    let writeValue = value - UPPER_BOUNDS.get(bytes - 1);
     const buffer = new Uint8Array(bytes);
-    {
-        let shiftedValue = writeValue;
-        for (let writeByte = bytes - 1; writeByte >= 0; writeByte--) {
-            buffer[writeByte] = shiftedValue & 0xFF; //write least significant byte
-            //Move next least significant byte to least significant byte
-            //Can't use bitwise math here because number may not fit in 32 bits
-            shiftedValue = Math.floor(shiftedValue / 0x100);
-        }
+    for (let writeByte = bytes - 1; writeByte >= 0; writeByte--) {
+        buffer[writeByte] = writeValue & 0xFF; //write least significant byte
+        //Move next least significant byte to least significant byte
+        //Can't use bitwise math here because number may not fit in 32 bits
+        writeValue = Math.floor(writeValue / 0x100);
     }
     buffer[0] |= BYTE_MASKS.get(bytes);
     return buffer.buffer;
@@ -89,15 +83,11 @@ function readValueBuffer(valueBuffer) {
     const bytes = valueBuffer.byteLength;
     assert_1.default(bytes > 0, 'Empty flex int buffer');
     const castBuffer = new Uint8Array(valueBuffer);
-    const valueOfPossible = (() => {
-        let value = castBuffer[0] ^ BYTE_MASKS.get(bytes);
-        for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
-            //Can't use bitwise math here because number may not fit in 32 bits
-            value *= 0x100;
-            value += castBuffer[byteIndex];
-        }
-        return value;
-    })();
-    return (UPPER_BOUNDS.get(bytes - 1) || 0) + valueOfPossible;
+    let relativeValue = castBuffer[0] ^ BYTE_MASKS.get(bytes);
+    for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
+        //Can't use bitwise math here because number may not fit in 32 bits
+        relativeValue = relativeValue * 0x100 + castBuffer[byteIndex];
+    }
+    return UPPER_BOUNDS.get(bytes - 1) + relativeValue;
 }
 exports.readValueBuffer = readValueBuffer;

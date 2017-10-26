@@ -140,8 +140,7 @@ export function toBinaryString(buffer: ArrayBuffer): string {
  */
 export function fromBinaryString(str: string): ArrayBuffer {
 	assert.instanceOf(str, String)
-	const buffer = new ArrayBuffer(str.length)
-	const castBuffer = new Uint8Array(buffer)
-	for (let i = 0; i < str.length; i++) castBuffer[i] = str[i].charCodeAt(0)
-	return buffer
+	const buffer = new Uint8Array(str.length)
+	for (let i = 0; i < str.length; i++) buffer[i] = str[i].charCodeAt(0)
+	return buffer.buffer
 }

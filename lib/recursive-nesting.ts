@@ -18,7 +18,7 @@ export function increment(buffer: AppendableBuffer): void {
  * @param buffer The buffer whose value to decrement
  */
 export function decrement(buffer: AppendableBuffer): void {
-	const lastValue = recursiveNesting.get(buffer) as number
+	const lastValue = recursiveNesting.get(buffer)!
 	recursiveNesting.set(buffer, lastValue - 1)
 }
 /**

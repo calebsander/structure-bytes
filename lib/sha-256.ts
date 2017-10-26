@@ -24,7 +24,7 @@ const rightRotate = (value: number, bits: number): number =>
 export default (input: ArrayBuffer): ArrayBuffer => {
 	const lBytes = input.byteLength
 	const l = lBytes * 8 //not using bitwise math in case this overflows a 32-bit integer
-	assert(l === new Uint32Array([l | 0])[0], 'Bit length does not fit in a 32-bit integer')
+	assert(l === new Uint32Array([l])[0], 'Bit length does not fit in a 32-bit integer')
 	const extraBytes = 64 - ((lBytes + 72) & 63)
 	const messageLength = lBytes + extraBytes + 8
 	const message = new ArrayBuffer(messageLength)

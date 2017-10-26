@@ -9,15 +9,13 @@ const registeredConstructors = new Map();
  * @return A function that can be used as a constructor and has the desired name
  */
 function get(constructorName) {
-    const constructor = registeredConstructors.get(constructorName);
-    if (constructor)
-        return constructor; //ensure same name always maps to same constructor
-    else {
+    let constructor = registeredConstructors.get(constructorName); //ensure same name always maps to same constructor
+    if (!constructor) {
         //Create a new function with the correct name
-        const newConstructor = { [constructorName]: class {
+        constructor = { [constructorName]: class {
             } }[constructorName];
-        registeredConstructors.set(constructorName, newConstructor);
-        return newConstructor;
+        registeredConstructors.set(constructorName, constructor);
     }
+    return constructor;
 }
 exports.get = get;

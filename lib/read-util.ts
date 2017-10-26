@@ -105,19 +105,17 @@ export interface ReadBooleansParams {
  */
 export function readBooleans({buffer, offset, count}: ReadBooleansParams): ReadResult<boolean[]> {
 	const value = new Array<boolean>(count)
-	const incompleteBytes = modEight(value.length)
-	const bytes = dividedByEight(value.length)
-	let length: number
-	if (incompleteBytes) length = bytes + 1
-	else length = bytes
+	const incompleteBytes = modEight(count)
+	const bytes = dividedByEight(count)
+	const length = incompleteBytes ? bytes + 1 : bytes
 	assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
 	const castBuffer = new Uint8Array(buffer, offset)
 	for (let i = 0; i < length; i++) {
 		const byte = castBuffer[i]
 		for (let bit = 0; bit < 8; bit++) {
-			const index = timesEight(i) + bit
-			if (index === value.length) break
-			value[index] = !!(byte & (1 << modEight(~modEight(bit))))
+			const index = timesEight(i) | bit
+			if (index === count) break
+			value[index] = Boolean(byte & (1 << (7 - bit)))
 		}
 	}
 	return {value, length}

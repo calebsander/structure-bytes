@@ -95,16 +95,15 @@ class ChoiceType extends absolute_1.default {
         //Try to write value using each type in order until no error is thrown
         for (let i = 0; i < this.types.length; i++) {
             const type = this.types[i];
+            buffer.add(i);
             try {
-                buffer.add(i);
                 type.writeValue(buffer, value);
+                success = true;
+                break;
             }
             catch (e) {
                 buffer.reset();
-                continue;
             }
-            success = true;
-            break;
         }
         buffer.resume();
         if (!success)

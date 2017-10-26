@@ -86,22 +86,18 @@ exports.readBooleanByte = readBooleanByte;
  */
 function readBooleans({ buffer, offset, count }) {
     const value = new Array(count);
-    const incompleteBytes = bit_math_1.modEight(value.length);
-    const bytes = bit_math_1.dividedByEight(value.length);
-    let length;
-    if (incompleteBytes)
-        length = bytes + 1;
-    else
-        length = bytes;
+    const incompleteBytes = bit_math_1.modEight(count);
+    const bytes = bit_math_1.dividedByEight(count);
+    const length = incompleteBytes ? bytes + 1 : bytes;
     assert_1.default(buffer.byteLength >= offset + length, exports.NOT_LONG_ENOUGH);
     const castBuffer = new Uint8Array(buffer, offset);
     for (let i = 0; i < length; i++) {
         const byte = castBuffer[i];
         for (let bit = 0; bit < 8; bit++) {
-            const index = bit_math_1.timesEight(i) + bit;
-            if (index === value.length)
+            const index = bit_math_1.timesEight(i) | bit;
+            if (index === count)
                 break;
-            value[index] = !!(byte & (1 << bit_math_1.modEight(~bit_math_1.modEight(bit))));
+            value[index] = Boolean(byte & (1 << (7 - bit)));
         }
     }
     return { value, length };
