@@ -4,6 +4,7 @@ const assert_1 = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const integer_1 = require("./integer");
+const readByte = read_util_1.readNumber({ type: Int8Array, func: 'getInt8' });
 /**
  * A type storing a 1-byte signed integer (`-128` to `127`).
  * Can specify values to write as numbers or strings.
@@ -38,11 +39,7 @@ class ByteType extends integer_1.default {
         buffer.addAll(new Int8Array([value]).buffer);
     }
     consumeValue(buffer, offset) {
-        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: new Int8Array(buffer)[offset],
-            length: 1
-        };
+        return readByte(buffer, offset);
     }
 }
 exports.default = ByteType;

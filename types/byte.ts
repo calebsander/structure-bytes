@@ -1,8 +1,10 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {readNumber, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import IntegerType from './integer'
+
+const readByte = readNumber({type: Int8Array, func: 'getInt8'})
 
 /**
  * A type storing a 1-byte signed integer (`-128` to `127`).
@@ -37,10 +39,6 @@ export default class ByteType extends IntegerType<number | string, number> {
 		buffer.addAll(new Int8Array([value as number]).buffer)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
-		return {
-			value: new Int8Array(buffer)[offset], //endianness doesn't matter because there is only 1 byte
-			length: 1
-		}
+		return readByte(buffer, offset)
 	}
 }

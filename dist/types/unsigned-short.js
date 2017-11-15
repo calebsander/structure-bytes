@@ -4,6 +4,7 @@ const assert_1 = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
+const readShort = read_util_1.readNumber({ type: Uint16Array, func: 'getUint16' });
 /**
  * A type storing a 2-byte unsigned integer (`0` to `65535`).
  * Can specify values to write as numbers or strings.
@@ -40,12 +41,7 @@ class UnsignedShortType extends unsigned_1.default {
         buffer.addAll(byteBuffer);
     }
     consumeValue(buffer, offset) {
-        const length = 2;
-        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: new DataView(buffer).getUint16(offset),
-            length
-        };
+        return readShort(buffer, offset);
     }
 }
 exports.default = UnsignedShortType;

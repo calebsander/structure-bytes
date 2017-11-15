@@ -4,6 +4,7 @@ const assert_1 = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
+const readByte = read_util_1.readNumber({ type: Uint8Array, func: 'getUint8' });
 /**
  * A type storing a 1-byte unsigned integer (`0` to `255`).
  * Can specify values to write as numbers or strings.
@@ -38,11 +39,7 @@ class UnsignedByteType extends unsigned_1.default {
         buffer.add(value);
     }
     consumeValue(buffer, offset) {
-        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: new Uint8Array(buffer)[offset],
-            length: 1
-        };
+        return readByte(buffer, offset);
     }
 }
 exports.default = UnsignedByteType;

@@ -1,8 +1,10 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {readNumber, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import FloatingPointType from './floating'
+
+const readFloat = readNumber({type: Float32Array, func: 'getFloat32'})
 
 /**
  * A type storing a 4-byte [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point).
@@ -47,11 +49,6 @@ export default class FloatType extends FloatingPointType {
 		buffer.addAll(byteBuffer)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		const length = 4
-		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-		return {
-			value: new DataView(buffer).getFloat32(offset),
-			length
-		}
+		return readFloat(buffer, offset)
 	}
 }

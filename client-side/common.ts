@@ -1,5 +1,5 @@
 import assert from '../lib/assert'
-import Type from '../types/Type'
+import Type from '../types/type'
 
 assert(typeof ArrayBuffer !== 'undefined', 'ArrayBuffer not supported')
 assert(typeof fetch !== 'undefined', 'fetch() not supported')

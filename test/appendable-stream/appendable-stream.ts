@@ -10,9 +10,9 @@ class CaptureStream extends Writable {
 		this.chunks = []
 	}
 
-	_write(chunk: Buffer, _: string, callback: (err: Error | null) => void) {
+	_write(chunk: Buffer, _: string, callback: (err?: Error) => void) {
 		this.chunks.push(chunk)
-		callback(null)
+		callback()
 	}
 	getWritten(): Buffer {
 		return Buffer.concat(this.chunks)

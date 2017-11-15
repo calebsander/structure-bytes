@@ -4,6 +4,7 @@ const assert_1 = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const floating_1 = require("./floating");
+const readFloat = read_util_1.readNumber({ type: Float32Array, func: 'getFloat32' });
 /**
  * A type storing a 4-byte [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point).
  * Can also represent `NaN`, `Infinity`, and `-Infinity`.
@@ -48,12 +49,7 @@ class FloatType extends floating_1.default {
         buffer.addAll(byteBuffer);
     }
     consumeValue(buffer, offset) {
-        const length = 4;
-        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: new DataView(buffer).getFloat32(offset),
-            length
-        };
+        return readFloat(buffer, offset);
     }
 }
 exports.default = FloatType;

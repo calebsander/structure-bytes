@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
 	if (req.url === '/no-callback') io.httpRespond({req, res, type, value: responseValue})
 	else {
 		io.httpRespond({req, res, type, value: responseValue}, err => {
-			if (throwError) assert.errorMessage(err, "Can't set headers after they are sent.")
+			if (throwError) assert.errorMessage(err, 'Cannot set headers after they are sent to the client')
 			else {
 				if (err) throw err
 			}
@@ -130,7 +130,7 @@ const noCallbackRequest = new Promise((resolve, reject) => {
 
 const port2 = port + 1
 const server2 = http.createServer((req, res) => {
-	io.httpRespond({req, res, type: new t.ByteType, value: '257'}, err => {
+	io.httpRespond<number | string>({req, res, type: new t.ByteType, value: '257'}, err => {
 		assert.errorMessage(err, 'Value out of range (257 is not in [-128,128))')
 		res.end()
 	})

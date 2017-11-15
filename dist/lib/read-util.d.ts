@@ -78,3 +78,33 @@ export declare function readFlexInt(buffer: ArrayBuffer, offset: number): ReadRe
  * starting at `offset`, in string form
  */
 export declare function readLong(buffer: ArrayBuffer, offset: number): ReadResult<string>;
+/**
+ * A `TypedArray` constructor, e.g. `Uint8Array`
+ */
+export declare type TypedArray = typeof Int8Array | typeof Int16Array | typeof Int32Array | typeof Uint8Array | typeof Uint16Array | typeof Uint32Array | typeof Float32Array | typeof Float64Array;
+/**
+ * The name of a `get*` method of `DataView`.
+ * Method has the signature `(offset: number) => number`,
+ * ignoring endianness.
+ */
+export declare type GetNumberFunction = 'getInt8' | 'getInt16' | 'getInt32' | 'getUint8' | 'getUint16' | 'getUint32' | 'getFloat32' | 'getFloat64';
+/**
+ * A `TypedArray` type and the name of the
+ * corresponding `DataView` `get*` method
+ */
+export interface TypeAndFunc {
+    func: GetNumberFunction;
+    type: TypedArray;
+}
+/**
+ * Creates an [[AbstractType.consumeValue]] method
+ * for a type corresponding to an element of a `TypedArray`.
+ * @param func The `DataView.get*` method,
+ * e.g. `'getUint8'`
+ * @param type The corresponding `TypedArray` constructor,
+ * e.g. `Uint8Array`
+ * @return A function that takes in an `ArrayBuffer`
+ * and an offset in the buffer and reads a `number`,
+ * much like [[AbstractType.consumeValue]]
+ */
+export declare function readNumber({func, type}: TypeAndFunc): (buffer: ArrayBuffer, offset: number) => ReadResult<number>;

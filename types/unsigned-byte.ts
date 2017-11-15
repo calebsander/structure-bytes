@@ -1,8 +1,10 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {readNumber, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
+
+const readByte = readNumber({type: Uint8Array, func: 'getUint8'})
 
 /**
  * A type storing a 1-byte unsigned integer (`0` to `255`).
@@ -37,10 +39,6 @@ export default class UnsignedByteType extends UnsignedType<number | string, numb
 		buffer.add(value as number)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
-		return {
-			value: new Uint8Array(buffer)[offset], //endianness doesn't matter because there is only 1 byte
-			length: 1
-		}
+		return readByte(buffer, offset)
 	}
 }

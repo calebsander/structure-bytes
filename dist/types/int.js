@@ -4,6 +4,7 @@ const assert_1 = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const integer_1 = require("./integer");
+const readInt = read_util_1.readNumber({ type: Int32Array, func: 'getInt32' });
 /**
  * A type storing a 2-byte signed integer (`-2147483648` to `2147483647`).
  * Can specify values to write as numbers or strings.
@@ -40,12 +41,7 @@ class IntType extends integer_1.default {
         buffer.addAll(byteBuffer);
     }
     consumeValue(buffer, offset) {
-        const length = 4;
-        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: new DataView(buffer).getInt32(offset),
-            length
-        };
+        return readInt(buffer, offset);
     }
 }
 exports.default = IntType;

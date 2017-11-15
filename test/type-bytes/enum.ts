@@ -82,7 +82,7 @@ export = () => {
 			values: [1, 2, 5]
 		})
 		assert(!type2.equals(type5))
-		const type6 = new t.EnumType({
+		const type6 = new t.EnumType<number | string>({
 			type: new t.UnsignedByteType,
 			values: ['1', '2', '3']
 		})

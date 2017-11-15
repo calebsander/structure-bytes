@@ -120,7 +120,8 @@ function throws(block, message) {
  * @param expected
  */
 function equal(actual, expected) {
-    const error = () => new RangeError('Expected ' + util_inspect_1.inspect(expected) + ' but got ' + util_inspect_1.inspect(actual));
+    const error = () => //lazily computed
+     new RangeError('Expected ' + util_inspect_1.inspect(expected) + ' but got ' + util_inspect_1.inspect(actual));
     if (expected) {
         let matchedSpecialCase = true;
         switch (expected.constructor) {

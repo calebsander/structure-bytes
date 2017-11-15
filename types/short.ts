@@ -1,8 +1,10 @@
 import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {readNumber, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import IntegerType from './integer'
+
+const readShort = readNumber({type: Int16Array, func: 'getInt16'})
 
 /**
  * A type storing a 2-byte signed integer (`-32768` to `32767`).
@@ -39,11 +41,6 @@ export default class ShortType extends IntegerType<number | string, number> {
 		buffer.addAll(byteBuffer)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		const length = 2
-		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
-		return {
-			value: new DataView(buffer).getInt16(offset),
-			length
-		}
+		return readShort(buffer, offset)
 	}
 }

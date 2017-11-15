@@ -330,7 +330,7 @@ export function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?
 			outStream = zlib.createGzip() //pipe into a zip stream to decrease size of response
 		}
 		else outStream = res
-		function writeEndCallback(err: Error) {
+		function writeEndCallback(err: Error | null) {
 			if (err) callback!(err)
 			else if (!acceptsGzip) callback!(null)
 		}

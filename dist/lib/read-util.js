@@ -140,3 +140,25 @@ function readLong(buffer, offset) {
     };
 }
 exports.readLong = readLong;
+/**
+ * Creates an [[AbstractType.consumeValue]] method
+ * for a type corresponding to an element of a `TypedArray`.
+ * @param func The `DataView.get*` method,
+ * e.g. `'getUint8'`
+ * @param type The corresponding `TypedArray` constructor,
+ * e.g. `Uint8Array`
+ * @return A function that takes in an `ArrayBuffer`
+ * and an offset in the buffer and reads a `number`,
+ * much like [[AbstractType.consumeValue]]
+ */
+function readNumber({ func, type }) {
+    const length = type.BYTES_PER_ELEMENT;
+    return (buffer, offset) => {
+        assert_1.default(buffer.byteLength >= offset + length, exports.NOT_LONG_ENOUGH);
+        return {
+            value: new DataView(buffer)[func](offset),
+            length
+        };
+    };
+}
+exports.readNumber = readNumber;
