@@ -48,7 +48,7 @@
 	"author": "Caleb Sander",
 	"license": "MIT",
 	"engines": {
-		"node": ">=8.0.0"
+		"node": ">=9.0.0"
 	},
 	"bugs": {
 		"url": "https://github.com/calebsander/structure-bytes/issues"
