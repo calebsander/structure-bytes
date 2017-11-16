@@ -3,13 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const base64 = require("base64-js");
 const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
-const appendable_stream_1 = require("../lib/appendable-stream");
+const appendable_1 = require("../lib/appendable");
 const assert_1 = require("../lib/assert");
 const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
 const growable_buffer_1 = require("../lib/growable-buffer");
 const recursiveNesting = require("../lib/recursive-nesting");
-const APPENDABLES = [growable_buffer_1.default, appendable_stream_1.default];
 /**
  * The superclass of all [[Type]] classes
  * in this package
@@ -94,7 +93,7 @@ class AbstractType {
      * @param buffer The value to assert is an [[AppendableBuffer]]
      */
     isBuffer(buffer) {
-        assert_1.default.instanceOf(buffer, APPENDABLES);
+        assert_1.default.instanceOf(buffer, appendable_1.default);
     }
     /**
      * Generates the type buffer, recomputed each time

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const appendable_1 = require("./appendable");
 const assert_1 = require("./assert");
 const INITIAL_LENGTH = 10;
 /**
@@ -9,13 +10,14 @@ const INITIAL_LENGTH = 10;
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-class GrowableBuffer {
+class GrowableBuffer extends appendable_1.default {
     /**
      * @param initialLength
      * The number of bytes in the internal buffer at start
      * (defaults to 10)
      */
     constructor(initialLength = INITIAL_LENGTH) {
+        super();
         try {
             assert_1.default.integer(initialLength);
             assert_1.default(initialLength >= 0);

@@ -6,7 +6,7 @@ import AppendableBuffer from './appendable';
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-export default class GrowableBuffer implements AppendableBuffer {
+export default class GrowableBuffer extends AppendableBuffer {
     private buffer;
     private size;
     private readonly pausePoints;

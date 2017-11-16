@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = require("http");
 const stream_1 = require("stream");
+const appendable_1 = require("./appendable");
 const assert_1 = require("./assert");
 const growable_buffer_1 = require("./growable-buffer");
 const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http_1.OutgoingMessage];
@@ -12,11 +13,12 @@ const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http_1.OutgoingMes
  * by calling [[end]] after all bytes
  * have been written.
  */
-class AppendableStream {
+class AppendableStream extends appendable_1.default {
     /**
      * @param outStream The underlying writable stream
      */
     constructor(outStream) {
+        super();
         assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
         this.outStream = outStream;
         this.writtenBytes = 0;

@@ -2,7 +2,6 @@ import * as base64 from 'base64-js'
 import sha256 from '../lib/sha-256'
 import {VERSION_STRING} from '../config'
 import AppendableBuffer from '../lib/appendable'
-import AppendableStream from '../lib/appendable-stream'
 import assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
 import * as flexInt from '../lib/flex-int'
@@ -10,8 +9,6 @@ import GrowableBuffer from '../lib/growable-buffer'
 import {ReadResult} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import Type from './type'
-
-const APPENDABLES = [GrowableBuffer, AppendableStream]
 
 /**
  * The superclass of all [[Type]] classes
@@ -94,7 +91,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	 * @param buffer The value to assert is an [[AppendableBuffer]]
 	 */
 	protected isBuffer(buffer: AppendableBuffer): void {
-		assert.instanceOf(buffer, APPENDABLES)
+		assert.instanceOf(buffer, AppendableBuffer)
 	}
 	/**
 	 * Generates the type buffer, recomputed each time

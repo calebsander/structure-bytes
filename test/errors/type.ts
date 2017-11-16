@@ -21,7 +21,7 @@ export = () => {
 		const typeConstructor = tTypes[typeName]
 		assert.throws( //make sure it warns about invalid buffer before invalid value
 			() => typeConstructor.prototype.writeValue('abc' as any, Symbol('def')),
-			'"abc" is not an instance of GrowableBuffer or AppendableStream'
+			'"abc" is not an instance of AppendableBuffer'
 		)
 	}
 	assert.throws(
