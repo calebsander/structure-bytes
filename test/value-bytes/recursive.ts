@@ -80,12 +80,9 @@ export = () => {
 		self: SelfReference
 	}
 	const selfReferenceType = new t.RecursiveType<SelfReference>('self-reference')
-	rec.registerType({
-		type: new t.StructType<SelfReference>({
-			self: selfReferenceType
-		}),
-		name: 'self-reference'
-	})
+	selfReferenceType.setType(new t.StructType<SelfReference>({
+		self: selfReferenceType
+	}))
 	const selfReference: SelfReference = {} as SelfReference
 	selfReference.self = selfReference
 	assert.equal(selfReferenceType.valueBuffer(selfReference), bufferFrom([

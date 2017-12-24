@@ -11,13 +11,10 @@ export = () => {
 		value: number
 	}
 	const nodeType = new t.RecursiveType<GraphNode>('graph-node')
-	rec.registerType({
-		type: new t.StructType<GraphNode>({
-			links: new t.SetType(nodeType),
-			value: new t.UnsignedIntType
-		}),
-		name: 'graph-node'
-	})
+	nodeType.setType(new t.StructType<GraphNode>({
+		links: new t.SetType(nodeType),
+		value: new t.UnsignedIntType
+	}))
 	const graphType = new t.SetType(nodeType)
 	const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
 	assert.equal(graphType.toBuffer(), GRAPH_BUFFER)
@@ -50,14 +47,11 @@ export = () => {
 		right: BinaryTree | null
 	}
 	const binaryTreeType = new t.RecursiveType<BinaryTree>('tree-node')
-	rec.registerType({
-		type: new t.StructType<BinaryTree>({
-			left: binaryTreeType,
-			value: nodeType,
-			right: binaryTreeType
-		}),
-		name: 'tree-node'
-	})
+	binaryTreeType.setType(new t.StructType<BinaryTree>({
+		left: binaryTreeType,
+		value: nodeType,
+		right: binaryTreeType
+	}))
 	assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
 	const readTreeType = r.type(binaryTreeType.toBuffer()) as typeof binaryTreeType
 	assert.instanceOf(readTreeType, t.RecursiveType)

@@ -22,6 +22,18 @@ const registeredTypes = new Map();
  * If you need to use a different type, wrap it
  * in a single-field [[StructType]].
  *
+ * THIS METHOD OF REGISTERING RECURSIVE TYPES HAS BEEN DEPRECATED.
+ * Instead, please use [[RecursiveType.setType]]:
+ * ````javascript
+ * //A binary tree of unsigned bytes
+ * let treeType = new sb.RecursiveType('tree-node')
+ * treeType.setType(new sb.StructType({
+ *   left: new sb.OptionalType(treeType),
+ *   value: new sb.UnsignedByteType,
+ *   right: new sb.OptionalType(treeType)
+ * }))
+ * ````
+ *
  * Example:
  * ````javascript
  * //A binary tree of unsigned bytes

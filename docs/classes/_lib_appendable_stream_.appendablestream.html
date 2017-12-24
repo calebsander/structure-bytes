@@ -73,7 +73,7 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>A wrapper around a writable stream
-							to implement <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.
+							to implement <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.
 							The stream must be explicitly closed
 							by calling <a href="_lib_appendable_stream_.appendablestream.html#end">end</a> after all bytes
 						have been written.</p>
@@ -84,14 +84,13 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">AppendableStream</span>
+						<a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">AppendableStream</span>
+							</li>
+						</ul>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -116,18 +115,18 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#length" class="tsd-kind-icon">length</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#length" class="tsd-kind-icon">length</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#add" class="tsd-kind-icon">add</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#add" class="tsd-kind-icon">add</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#end" class="tsd-kind-icon">end</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#pause" class="tsd-kind-icon">pause</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#reset" class="tsd-kind-icon">reset</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#resume" class="tsd-kind-icon">resume</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#pause" class="tsd-kind-icon">pause</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#reset" class="tsd-kind-icon">reset</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_lib_appendable_stream_.appendablestream.html#resume" class="tsd-kind-icon">resume</a></li>
 							</ul>
 						</section>
 					</div>
@@ -211,17 +210,18 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="length" class="tsd-anchor"></a>
 					<h3>length</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> length<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="_lib_appendable_.appendablebuffer.html#length">length</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:64</li>
+									<li>Defined in lib/appendable-stream.ts:65</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -236,18 +236,18 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="add" class="tsd-anchor"></a>
 					<h3>add</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#add">add</a></p>
+								<p>Overrides <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="_lib_appendable_.appendablebuffer.html#add">add</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:38</li>
+									<li>Defined in lib/appendable-stream.ts:39</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -269,18 +269,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="addall" class="tsd-anchor"></a>
 					<h3>add<wbr>All</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">add<wbr>All<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#addall">addAll</a></p>
+								<p>Overrides <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="_lib_appendable_.appendablebuffer.html#addall">addAll</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:48</li>
+									<li>Defined in lib/appendable-stream.ts:49</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -312,7 +312,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:58</li>
+									<li>Defined in lib/appendable-stream.ts:59</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -324,18 +324,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="pause" class="tsd-anchor"></a>
 					<h3>pause</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">pause<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#pause">pause</a></p>
+								<p>Overrides <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="_lib_appendable_.appendablebuffer.html#pause">pause</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:91</li>
+									<li>Defined in lib/appendable-stream.ts:92</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -366,25 +366,25 @@ gb
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="reset" class="tsd-anchor"></a>
 					<h3>reset</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#reset">reset</a></p>
+								<p>Overrides <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="_lib_appendable_.appendablebuffer.html#reset">reset</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:120</li>
+									<li>Defined in lib/appendable-stream.ts:121</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>See <a href="_lib_appendable_stream_.appendablestream.html#pause">pause</a>.
 										Restores state to immediately after
-										this <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> was paused.
+										this <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> was paused.
 										Prevents paused data from ever
 									being flushed to the output.</p>
 								</div>
@@ -398,18 +398,18 @@ gb
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 					<a name="resume" class="tsd-anchor"></a>
 					<h3>resume</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 						<li class="tsd-signature tsd-kind-icon">resume<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="../interfaces/_lib_appendable_.appendablebuffer.html#resume">resume</a></p>
+								<p>Overrides <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a>.<a href="_lib_appendable_.appendablebuffer.html#resume">resume</a></p>
 								<ul>
-									<li>Defined in lib/appendable-stream.ts:102</li>
+									<li>Defined in lib/appendable-stream.ts:103</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -463,25 +463,25 @@ gb
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#writtenbytes" class="tsd-kind-icon">written<wbr>Bytes</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#length" class="tsd-kind-icon">length</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#add" class="tsd-kind-icon">add</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#addall" class="tsd-kind-icon">add<wbr>All</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#end" class="tsd-kind-icon">end</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#pause" class="tsd-kind-icon">pause</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#reset" class="tsd-kind-icon">reset</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
 								<a href="_lib_appendable_stream_.appendablestream.html#resume" class="tsd-kind-icon">resume</a>
 							</li>
 						</ul>

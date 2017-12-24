@@ -213,5 +213,32 @@ class RecursiveType extends absolute_1.default {
         return super.equals(otherType)
             && this.name === otherType.name;
     }
+    /**
+     * An alternative to [[registerType]],
+     * to avoid writing the type's name twice.
+     * Please use this instead of [[registerType]].
+     *
+     * So this
+     * ````javascript
+     * let type = new sb.RecursiveType('abc')
+     * sb.registerType({
+     *   type: new sb.StructType({
+     *     //...
+     *   }),
+     *   name: 'abc'
+     * })
+     * ````
+     * becomes
+     * ````javascript
+     * let type = new sb.RecursiveType('abc')
+     * type.setType(new sb.StructType({
+     *   //...
+     * }))
+     * ````
+     * @param type The type to register
+     */
+    setType(type) {
+        recursiveRegistry.registerType({ type, name: this.name });
+    }
 }
 exports.default = RecursiveType;

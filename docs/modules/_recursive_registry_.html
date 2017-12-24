@@ -112,7 +112,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in recursive-registry.ts:63</li>
+									<li>Defined in recursive-registry.ts:75</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -150,7 +150,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in recursive-registry.ts:76</li>
+									<li>Defined in recursive-registry.ts:88</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -184,7 +184,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in recursive-registry.ts:44</li>
+									<li>Defined in recursive-registry.ts:56</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -203,6 +203,16 @@
 								</div>
 								<p>If you need to use a different type, wrap it
 								in a single-field <a href="../classes/_types_struct_.structtype.html">StructType</a>.</p>
+								<p>THIS METHOD OF REGISTERING RECURSIVE TYPES HAS BEEN DEPRECATED.
+								Instead, please use <a href="../classes/_types_recursive_.recursivetype.html#settype">RecursiveType.setType</a>:</p>
+								<pre><code class="lang-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
+<span class="hljs-keyword">let</span> treeType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'tree-node'</span>)
+treeType.setType(<span class="hljs-keyword">new</span> sb.StructType({
+  <span class="hljs-attr">left</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType),
+  <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
+  <span class="hljs-attr">right</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType)
+}))
+</code></pre>
 								<p>Example:</p>
 								<pre><code class="lang-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
 <span class="hljs-keyword">let</span> treeType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'tree-node'</span>)

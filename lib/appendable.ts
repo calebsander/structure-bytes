@@ -54,7 +54,7 @@ export default abstract class AppendableBuffer {
 	 *     .pause()
 	 *       .add(4).add(5).add(6)
 	 *       .reset() //cancels [4, 5, 6]
-	 *     .resume()
+	 *     .resume() //resumes []
 	 *   .resume() //resumes [1, 2, 3]
 	 * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
 	 * ````

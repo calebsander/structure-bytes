@@ -206,6 +206,7 @@ sb.registerType({
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_recursive_.recursivetype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external"><a href="_types_recursive_.recursivetype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_recursive_.recursivetype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="_types_recursive_.recursivetype.html#settype" class="tsd-kind-icon">set<wbr>Type</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_recursive_.recursivetype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_recursive_.recursivetype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_recursive_.recursivetype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
@@ -313,7 +314,7 @@ sb.registerType({
 					<a name="addtobuffer" class="tsd-anchor"></a>
 					<h3>add<wbr>ToBuffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>ToBuffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>ToBuffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -327,7 +328,7 @@ sb.registerType({
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
+									<h5>buffer: <a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -345,7 +346,7 @@ sb.registerType({
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#consumevalue">consumeValue</a></p>
 								<ul>
-									<li>Defined in types/recursive.ts:190</li>
+									<li>Defined in types/recursive.ts:193</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -373,7 +374,7 @@ sb.registerType({
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/recursive.ts:214</li>
+									<li>Defined in types/recursive.ts:217</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -398,7 +399,7 @@ sb.registerType({
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:55</li>
+									<li>Defined in types/abstract.ts:52</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -417,7 +418,7 @@ sb.registerType({
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:59</li>
+									<li>Defined in types/abstract.ts:56</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -428,14 +429,14 @@ sb.registerType({
 					<a name="isbuffer" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> is<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Buffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Buffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#isbuffer">isBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:96</li>
+									<li>Defined in types/abstract.ts:93</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -447,9 +448,9 @@ sb.registerType({
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
+									<h5>buffer: <a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The value to assert is an <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a></p>
+										<p>The value to assert is an <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a></p>
 									</div>
 								</li>
 							</ul>
@@ -468,7 +469,7 @@ sb.registerType({
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#readvalue">readValue</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:70</li>
+									<li>Defined in types/abstract.ts:67</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -484,6 +485,54 @@ sb.registerType({
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
+					<a name="settype" class="tsd-anchor"></a>
+					<h3>set<wbr>Type</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../modules/_recursive_registry_type_.html#registerabletype" class="tsd-signature-type">RegisterableType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/recursive.ts:245</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>An alternative to <a href="../modules/_recursive_registry_.html#registertype">registerType</a>,
+										to avoid writing the type&#39;s name twice.
+									Please use this instead of <a href="../modules/_recursive_registry_.html#registertype">registerType</a>.</p>
+								</div>
+								<p>So this</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'abc'</span>)
+sb.registerType({
+  <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-comment">//...</span>
+  }),
+  <span class="hljs-attr">name</span>: <span class="hljs-string">'abc'</span>
+})
+</code></pre>
+								<p>becomes</p>
+								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'abc'</span>)
+type.setType(<span class="hljs-keyword">new</span> sb.StructType({
+  <span class="hljs-comment">//...</span>
+}))
+</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>type: <a href="../modules/_recursive_registry_type_.html#registerabletype" class="tsd-signature-type">RegisterableType</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The type to register</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="tobuffer" class="tsd-anchor"></a>
 					<h3>to<wbr>Buffer</h3>
@@ -496,7 +545,7 @@ sb.registerType({
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:51</li>
+									<li>Defined in types/abstract.ts:48</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -515,7 +564,7 @@ sb.registerType({
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in types/abstract.ts:64</li>
+									<li>Defined in types/abstract.ts:61</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -532,7 +581,7 @@ sb.registerType({
 					<a name="writevalue" class="tsd-anchor"></a>
 					<h3>write<wbr>Value</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -545,7 +594,7 @@ sb.registerType({
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Appends value bytes to an <a href="../interfaces/_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
+									<p>Appends value bytes to an <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
 								</div>
 								<p>Example:</p>
 								<pre><code class="lang-javascript">treeType.writeValue(buffer, {
@@ -584,7 +633,7 @@ sb.registerType({
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>buffer: <a href="../interfaces/_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
+									<h5>buffer: <a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The buffer to which to append</p>
 									</div>
@@ -652,6 +701,9 @@ sb.registerType({
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="_types_recursive_.recursivetype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
+								<a href="_types_recursive_.recursivetype.html#settype" class="tsd-kind-icon">set<wbr>Type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="_types_recursive_.recursivetype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
