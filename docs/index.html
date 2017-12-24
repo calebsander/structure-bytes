@@ -431,17 +431,14 @@ that it requires the value to be of type:
 }
 
 <span class="hljs-keyword">let</span> recursiveType = <span class="hljs-keyword">new</span> sb.RecursiveType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;(<span class="hljs-string">'linked-list'</span>)
-sb.registerType({
-    <span class="hljs-keyword">type</span>: <span class="hljs-keyword">new</span> sb.StructType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
-        list: <span class="hljs-keyword">new</span> sb.OptionalType(
-            <span class="hljs-keyword">new</span> sb.StructType&lt;Cons&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
-                head: <span class="hljs-keyword">new</span> sb.StringType,
-                tail: recursiveType
-            })
-        )
-    }),
-    name: <span class="hljs-string">'linked-list'</span>
-})
+recursiveType.setType(<span class="hljs-keyword">new</span> sb.StructType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
+    list: <span class="hljs-keyword">new</span> sb.OptionalType(
+        <span class="hljs-keyword">new</span> sb.StructType&lt;Cons&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
+            head: <span class="hljs-keyword">new</span> sb.StringType,
+            tail: recursiveType
+        })
+    )
+}))
 recursiveType.valueBuffer({
     list: {
         head: <span class="hljs-string">'1'</span>,

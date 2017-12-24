@@ -379,17 +379,14 @@ interface List<A> {
 }
 
 let recursiveType = new sb.RecursiveType<List<string>>('linked-list')
-sb.registerType({
-	type: new sb.StructType<List<string>>({
-		list: new sb.OptionalType(
-			new sb.StructType<Cons<string>>({
-				head: new sb.StringType,
-				tail: recursiveType
-			})
-		)
-	}),
-	name: 'linked-list'
-})
+recursiveType.setType(new sb.StructType<List<string>>({
+	list: new sb.OptionalType(
+		new sb.StructType<Cons<string>>({
+			head: new sb.StringType,
+			tail: recursiveType
+		})
+	)
+}))
 recursiveType.valueBuffer({
 	list: {
 		head: '1',
