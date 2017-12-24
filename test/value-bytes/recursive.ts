@@ -4,6 +4,11 @@ import * as rec from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
+type Field = {a: Fields} | {b: boolean}
+interface Fields {
+	fields: Field[]
+}
+
 export = () => {
 	interface GraphNode {
 		links: Set<GraphNode>
@@ -220,6 +225,30 @@ export = () => {
 			100,
 				0x00, 12
 	]))
+
+	{
+		const fieldsType = new t.RecursiveType<Fields>('fields')
+		rec.registerType({
+			type: new t.StructType({
+				fields: new t.ArrayType(
+					new t.ChoiceType<Field>([
+						new t.StructType({a: fieldsType}),
+						new t.StructType({b: new t.BooleanType})
+					])
+				)
+			}),
+			name: 'fields'
+		})
+		assert.throws(
+			() => fieldsType.valueBuffer({
+				fields: [
+					{a: null as any, b: true}, //this will try to write null with fieldsType
+					{a: null as any, b: 1 as any} //ensure null is not considered already written by fieldsType
+				]
+			}),
+			'No types matched: {a: null, b: 1}'
+		)
+	}
 
 	assert.throws(
 		() => selfReferenceType.readValue(bufferFrom([0xff, 0x00, 2])),

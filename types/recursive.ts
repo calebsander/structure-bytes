@@ -165,26 +165,29 @@ export default class RecursiveType<E, READ_E extends E = E> extends AbsoluteType
 	 */
 	writeValue(buffer: AppendableBuffer, value: E) {
 		this.isBuffer(buffer)
-		let writeValue = true
 		let bufferRecursiveLocations = recursiveLocations.get(buffer)
 		if (bufferRecursiveLocations) {
 			const targetLocation = bufferRecursiveLocations.get(value)
 			if (targetLocation !== undefined) { //value has already been written to the buffer
-				writeValue = false
 				buffer.add(0x00)
 				const offset = buffer.length - targetLocation //calculate offset to previous location
 				buffer.addAll(flexInt.makeValueBuffer(offset))
+				return
 			}
 		}
 		else {
 			bufferRecursiveLocations = new Map
 			recursiveLocations.set(buffer, bufferRecursiveLocations)
 		}
-		if (writeValue) { //value has not yet been written to the buffer
-			buffer.add(0xFF)
-			//Keep track of the location before writing the data so that this location can be referenced by sub-values
-			bufferRecursiveLocations.set(value, buffer.length)
-			this.type.writeValue(buffer, value)
+
+		//Value has not yet been written to the buffer
+		buffer.add(0xFF)
+		//Keep track of the location before writing the data so that this location can be referenced by sub-values
+		bufferRecursiveLocations.set(value, buffer.length)
+		try { this.type.writeValue(buffer, value) }
+		catch (e) {
+			bufferRecursiveLocations.delete(value)
+			throw e
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {

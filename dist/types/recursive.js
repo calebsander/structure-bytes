@@ -158,26 +158,30 @@ class RecursiveType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        let writeValue = true;
         let bufferRecursiveLocations = recursiveLocations.get(buffer);
         if (bufferRecursiveLocations) {
             const targetLocation = bufferRecursiveLocations.get(value);
             if (targetLocation !== undefined) {
-                writeValue = false;
                 buffer.add(0x00);
                 const offset = buffer.length - targetLocation; //calculate offset to previous location
                 buffer.addAll(flexInt.makeValueBuffer(offset));
+                return;
             }
         }
         else {
             bufferRecursiveLocations = new Map;
             recursiveLocations.set(buffer, bufferRecursiveLocations);
         }
-        if (writeValue) {
-            buffer.add(0xFF);
-            //Keep track of the location before writing the data so that this location can be referenced by sub-values
-            bufferRecursiveLocations.set(value, buffer.length);
+        //Value has not yet been written to the buffer
+        buffer.add(0xFF);
+        //Keep track of the location before writing the data so that this location can be referenced by sub-values
+        bufferRecursiveLocations.set(value, buffer.length);
+        try {
             this.type.writeValue(buffer, value);
+        }
+        catch (e) {
+            bufferRecursiveLocations.delete(value);
+            throw e;
         }
     }
     consumeValue(buffer, offset) {
