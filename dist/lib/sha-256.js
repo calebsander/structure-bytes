@@ -22,7 +22,7 @@ const rightRotate = (value, bits) => (value >>> bits) | (value << (32 - bits));
 exports.default = (input) => {
     const lBytes = input.byteLength;
     const l = lBytes * 8; //not using bitwise math in case this overflows a 32-bit integer
-    assert_1.default(l === new Uint32Array([l])[0], 'Bit length does not fit in a 32-bit integer');
+    assert_1.default(l === l >>> 0, 'Bit length does not fit in a 32-bit integer');
     const extraBytes = 64 - ((lBytes + 72) & 63);
     const messageLength = lBytes + extraBytes + 8;
     const message = new ArrayBuffer(messageLength);
@@ -30,7 +30,7 @@ exports.default = (input) => {
     castMessage.set(new Uint8Array(input));
     castMessage[lBytes] = 128;
     new DataView(message).setUint32(messageLength - 4, l);
-    const h = new Uint32Array([
+    const hash = new Uint32Array([
         0x6a09e667,
         0xbb67ae85,
         0x3c6ef372,
@@ -52,32 +52,35 @@ exports.default = (input) => {
             const s1 = rightRotate(wMinus2, 17) ^ rightRotate(wMinus2, 19) ^ (wMinus2 >>> 10);
             w[i] = w[i - 16] + s0 + w[i - 7] + s1;
         }
-        const hIncrement = h.slice();
+        let [a, b, c, d, e, f, g, h] = hash;
         for (let i = 0; i < 64; i++) {
-            /*tslint:disable:indent*/
-            const a = hIncrement[0], b = hIncrement[1], c = hIncrement[2], e = hIncrement[4], f = hIncrement[5], g = hIncrement[6];
-            /*tslint:enable:indent*/
             const S1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
             const ch = (e & f) ^ (~e & g);
-            const temp1 = hIncrement[7] + S1 + ch + K[i] + w[i];
+            const temp1 = h + S1 + ch + K[i] + w[i];
             const S0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
             const maj = (a & b) ^ (a & c) ^ (b & c);
             const temp2 = S0 + maj;
-            hIncrement[7] = g;
-            hIncrement[6] = f;
-            hIncrement[5] = e;
-            hIncrement[4] = hIncrement[3] + temp1;
-            hIncrement[3] = c;
-            hIncrement[2] = b;
-            hIncrement[1] = a;
-            hIncrement[0] = temp1 + temp2;
+            h = g;
+            g = f;
+            f = e;
+            e = d + temp1;
+            d = c;
+            c = b;
+            b = a;
+            a = temp1 + temp2;
         }
-        for (let i = 0; i < 8; i++)
-            h[i] += hIncrement[i];
+        hash[0] += a;
+        hash[1] += b;
+        hash[2] += c;
+        hash[3] += d;
+        hash[4] += e;
+        hash[5] += f;
+        hash[6] += g;
+        hash[7] += h;
     }
     const result = new ArrayBuffer(32);
     const resultDataView = new DataView(result);
     for (let i = 0; i < 8; i++)
-        resultDataView.setUint32(i << 2, h[i]);
+        resultDataView.setUint32(i << 2, hash[i]);
     return result;
 };

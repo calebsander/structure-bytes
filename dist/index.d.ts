@@ -11,7 +11,6 @@
  *   - [[httpRespond]]
  * - **From** `read`
  *   - [type](_read_.html#type) as `r.type`
- *   - [value](_read_.html#value) as `r.value`
  * - **From** `recursive-registry`
  *   - [registerType](_recursive_registry_.html#registertype)
  *   - [getType](_recursive_registry_.html#gettype)
