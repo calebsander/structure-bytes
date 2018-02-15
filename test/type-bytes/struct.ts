@@ -36,7 +36,7 @@ export = () => {
 	)
 	assert.throws(
 		() => new t.StructType({
-			field: 'abc'
+			field: 'abc' as any
 		}),
 		'"abc" is not a valid field type'
 	)

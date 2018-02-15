@@ -6,5 +6,5 @@ export interface IterableWriteParams<E> {
     value: Iterable<E>;
     length: number;
 }
-declare const _default: <E>({type, buffer, value, length}: IterableWriteParams<E>) => void;
+declare const _default: <E>({ type, buffer, value, length }: IterableWriteParams<E>) => void;
 export default _default;
