@@ -40,7 +40,7 @@ class BigIntType extends integer_1.default {
         value = strint.normalize(value); //throws if value is invalid
         const bytes = [];
         if (!strint.eq(value, '0')) {
-            while (strint.gt(value, '127') || strint.lt(value, '-128')) {
+            while (strint.gt(value, '127') || strint.lt(value, '-128')) { //builds bytes in LE order
                 const quotient = strint.div(value, strint.BYTE_SHIFT, true);
                 const remainder = strint.sub(value, strint.mul(quotient, strint.BYTE_SHIFT));
                 bytes.push(Number(remainder));
@@ -49,7 +49,7 @@ class BigIntType extends integer_1.default {
             bytes.push(Number(value));
         }
         const byteBuffer = new Uint8Array(bytes.length);
-        for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++) {
+        for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++) { //write in reverse order to get BE
             byteBuffer[offset] = bytes[i]; //signed highest byte can be cast to unsigned byte without issue
         }
         buffer

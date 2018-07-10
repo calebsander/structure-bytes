@@ -62,7 +62,7 @@ export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> 
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export declare function writeType({type, outStream}: WriteParams<any>, callback?: ErrCallback): Writable;
+export declare function writeType({ type, outStream }: WriteParams<any>, callback?: ErrCallback): Writable;
 /**
  * Writes the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]])
  * to a writable stream and then closes the stream.
@@ -87,7 +87,7 @@ export declare function writeType({type, outStream}: WriteParams<any>, callback?
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export declare function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
+export declare function writeValue<E>({ type, value, outStream }: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]]),
  * followed by the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]]),
@@ -113,7 +113,7 @@ export declare function writeValue<E>({type, value, outStream}: WriteTypeValuePa
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export declare function writeTypeAndValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
+export declare function writeTypeAndValue<E>({ type, value, outStream }: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
 /**
  * Reads a type from a readable stream.
  * This should be used when reading from sources
@@ -156,7 +156,7 @@ export declare function readType(inStream: Readable, callback: TypeCallback<any>
  * @param inStream The stream to read from
  * @param callback The callback to call with the read result
  */
-export declare function readValue<E>({type, inStream}: ReadValueParams<E>, callback: ValueCallback<E>): void;
+export declare function readValue<E>({ type, inStream }: ReadValueParams<E>, callback: ValueCallback<E>): void;
 /**
  * Reads a type and a value from a readable stream.
  * This should be used when reading from sources
@@ -199,4 +199,4 @@ export declare function readTypeAndValue(inStream: Readable, callback: TypeAndVa
  * @param value The value to send
  * @param callback The optional callback to call when response ends
  */
-export declare function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?: ErrCallback): void;
+export declare function httpRespond<E>({ req, res, type, value }: HttpParams<E>, callback?: ErrCallback): void;

@@ -36,18 +36,18 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
      * @private
      * @return An `ArrayBuffer` containing the type bytes
      */
-    private _toBuffer();
+    private _toBuffer;
     /**
      * Gets an SHA256 hash of the type, recomputed each time
      * @private
      * @return A hash of the buffer given by [[toBuffer]]
      */
-    private _getHash();
+    private _getHash;
     /**
      * Gets a signature string for the type, recomputed each time,
      * based on the `structure-bytes` protocol version and the type hash
      * @private
      * @return A signature for the type
      */
-    private _getSignature();
+    private _getSignature;
 }

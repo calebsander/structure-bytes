@@ -39,8 +39,8 @@ class BigUnsignedIntType extends unsigned_1.default {
         assert_1.default.instanceOf(value, String);
         assert_1.default(!strint.isNegative(value), 'Value out of range');
         const bytes = [];
-        if (!strint.eq(value, '0')) {
-            while (strint.ge(value, strint.BYTE_SHIFT)) {
+        if (!strint.eq(value, '0')) { //if value is 0, avoid adding a 0 byte
+            while (strint.ge(value, strint.BYTE_SHIFT)) { //builds bytes in LE order
                 const [quotient, remainder] = strint.quotientRemainderPositive(value, strint.BYTE_SHIFT);
                 bytes.push(Number(remainder));
                 value = quotient;

@@ -199,7 +199,7 @@ function quotientRemainderPositive(dividend, divisor) {
         }
         dividend = digits + dividend.slice(dividend.length - remainingDigits);
         // Done already?
-        if (gt(divisor, dividend)) {
+        if (gt(divisor, dividend)) { // holds (at the lastest) at remainingDigits === 0
             quotient = shiftLeft(quotient, remainingDigits);
             return [quotient, normalize(dividend)];
         }

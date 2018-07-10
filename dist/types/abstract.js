@@ -23,10 +23,10 @@ class AbstractType {
     }
     addToBuffer(buffer) {
         this.isBuffer(buffer);
-        if (this.cachedTypeLocations) {
-            if (!recursiveNesting.get(buffer)) {
+        if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
+            if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
                 const location = this.cachedTypeLocations.get(buffer);
-                if (location !== undefined) {
+                if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
                     buffer
                         .add(constants_1.REPEATED_TYPE)
                         .addAll(flexInt.makeValueBuffer(buffer.length - location));

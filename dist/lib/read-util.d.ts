@@ -61,7 +61,7 @@ export interface ReadBooleansParams {
  * @param count The number of boolean values to read
  * @return The array of booleans read
  */
-export declare function readBooleans({buffer, offset, count}: ReadBooleansParams): ReadResult<boolean[]>;
+export declare function readBooleans({ buffer, offset, count }: ReadBooleansParams): ReadResult<boolean[]>;
 /**
  * Reads an unsigned integer in `flexInt` format
  * @param buffer The binary data to read from
@@ -107,4 +107,4 @@ export interface TypeAndFunc {
  * and an offset in the buffer and reads a `number`,
  * much like [[AbstractType.consumeValue]]
  */
-export declare function readNumber({func, type}: TypeAndFunc): (buffer: ArrayBuffer, offset: number) => ReadResult<number>;
+export declare function readNumber({ func, type }: TypeAndFunc): (buffer: ArrayBuffer, offset: number) => ReadResult<number>;

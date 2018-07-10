@@ -50,7 +50,7 @@ class GrowableBuffer extends appendable_1.default {
      */
     grow(size) {
         assert_1.default.integer(size);
-        if (size > this.buffer.byteLength) {
+        if (size > this.buffer.byteLength) { //if resizing is necessary
             const newBuffer = new ArrayBuffer(size << 1);
             new Uint8Array(newBuffer).set(new Uint8Array(this.buffer).subarray(0, this.size));
             this.buffer = newBuffer;

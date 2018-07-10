@@ -16,7 +16,7 @@
 		"ts-loader": "^3.5.0",
 		"tslint": "^5.9.1",
 		"typedoc": "^0.9.0",
-		"typescript": "^2.7.1",
+		"typescript": "^2.9.2",
 		"uglifyjs-webpack-plugin": "^1.1.8",
 		"webpack": "^3.11.0"
 	},
@@ -24,7 +24,9 @@
 		"test": "test"
 	},
 	"scripts": {
-		"build": "rm -rf dist && tsc",
+		"wabt": "bash -c '[[ -d wabt ]]' || (git clone --recursive https://github.com/WebAssembly/wabt && cd wabt && make gcc-release)",
+		"wat2wasm": "npm run wabt && wabt/bin/wat2wasm lib/sha256.wast -o lib/sha256.wasm && ./wasm2ts.js lib/sha256",
+		"build": "npm run wat2wasm && rm -rf dist && tsc",
 		"build-client": "rm -rf compiled && webpack",
 		"clientside": "(cat client-side/upload.ts | grep -v \"(window as any).sb = exports\"; echo ';'; cat client-side/download.ts | grep -v \"from './common'\") > client-side/upload-download.ts && npm run build-client",
 		"docs": "rm -rf docs && typedoc --out docs --name structure-bytes --readme README.md --listInvalidSymbolLinks *.ts typings/*.ts && touch docs/.nojekyll",

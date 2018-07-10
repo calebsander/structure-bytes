@@ -1,4 +1,14 @@
-import assert from './assert'
+import sha256Module from './sha256-load'
+
+interface WASMExports {
+	INPUT_START: number
+	memory: WebAssembly.Memory
+	fitInput(length: number): void
+	sha256(length: number, buffer: number): void
+}
+interface WASMInstance {
+	exports: WASMExports
+}
 
 const K = new Uint32Array([
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -14,24 +24,15 @@ const K = new Uint32Array([
 const rightRotate = (value: number, bits: number): number =>
 	(value >>> bits) | (value << (32 - bits))
 
-/**
- * Computes a SHA-256 hash of the binary data,
- * output as an `ArrayBuffer`.
- * Implementation details mostly copied from
- * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
- * @param input The input data
- */
-export default (input: ArrayBuffer): ArrayBuffer => {
+export function sha256JS(input: ArrayBuffer) {
 	const lBytes = input.byteLength
-	const l = lBytes * 8 //not using bitwise math in case this overflows a 32-bit integer
-	assert(l === l >>> 0, 'Bit length does not fit in a 32-bit integer')
 	const extraBytes = 64 - ((lBytes + 72) & 63)
 	const messageLength = lBytes + extraBytes + 8
 	const message = new ArrayBuffer(messageLength)
 	const castMessage = new Uint8Array(message)
 	castMessage.set(new Uint8Array(input))
 	castMessage[lBytes] = 128
-	new DataView(message).setUint32(messageLength - 4, l)
+	new DataView(message).setUint32(messageLength - 4, lBytes << 3)
 
 	const hash = new Uint32Array([
 		0x6a09e667,
@@ -75,3 +76,25 @@ export default (input: ArrayBuffer): ArrayBuffer => {
 	for (let i = 0; i < 8; i++) resultDataView.setUint32(i << 2, hash[i])
 	return result
 }
+export const sha256WASM: typeof sha256JS | undefined = (() => {
+	if (!sha256Module) return
+
+	const {exports} = sha256Module as WASMInstance
+	const {INPUT_START, fitInput, sha256, memory} = exports
+	return (input: ArrayBuffer) => {
+		const {byteLength} = input
+		fitInput(byteLength)
+		const {buffer} = memory
+		new Uint8Array(buffer).set(new Uint8Array(input), INPUT_START)
+		sha256(byteLength, INPUT_START)
+		return buffer.slice(0, 32)
+	}
+})()
+/**
+ * Computes a SHA-256 hash of the binary data,
+ * output as an `ArrayBuffer`.
+ * Implementation details mostly copied from
+ * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
+ * @param input The input data
+ */
+export default sha256WASM || sha256JS
