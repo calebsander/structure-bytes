@@ -60,7 +60,7 @@
 			(drop (grow_memory (get_local $needed)))
 		)
 	)
-	(func (export "sha256") (param $byteLength i32) (param $buf i32)
+	(func (export "sha256") (param $byteLength i32)
 		(local $messageLength i32)
 		(local $lengthIndex i32)
 		(local $h0 i32) (local $h1 i32) (local $h2 i32) (local $h3 i32)
@@ -86,19 +86,19 @@
 			)
 		)
 		(i32.store8 ;; buf[byteLength] = (i8)128
-			(i32.add (get_local $buf) (get_local $byteLength))
+			(i32.add (get_global $INPUT_START) (get_local $byteLength))
 			(i32.const 128)
 		)
 		(set_local $lengthIndex ;; lengthIndex = messageLength - 8
 			(i32.sub
-				(i32.add (get_local $buf) (get_local $messageLength))
+				(i32.add (get_global $INPUT_START) (get_local $messageLength))
 				(i32.const 8)
 			)
 		)
 		(set_local $i (i32.add (get_local $byteLength) (i32.const 1)))
 		(loop $zeroBytes
 			(i32.store8
-				(i32.add (get_local $buf) (get_local $i))
+				(i32.add (get_global $INPUT_START) (get_local $i))
 				(i32.const 0)
 			)
 			(br_if $zeroBytes ;; if (++i < lengthIndex) continue
@@ -128,7 +128,7 @@
 					(get_local $i4)
 					(call $load32BE
 						(i32.add
-							(get_local $buf)
+							(get_global $INPUT_START)
 							(i32.add (get_local $chunkStart) (get_local $i4))
 						)
 					)

@@ -4,7 +4,7 @@ interface WASMExports {
 	INPUT_START: number
 	memory: WebAssembly.Memory
 	fitInput(length: number): void
-	sha256(length: number, buffer: number): void
+	sha256(length: number): void
 }
 interface WASMInstance {
 	exports: WASMExports
@@ -86,7 +86,7 @@ export const sha256WASM: typeof sha256JS | undefined = (() => {
 		fitInput(byteLength)
 		const {buffer} = memory
 		new Uint8Array(buffer).set(new Uint8Array(input), INPUT_START)
-		sha256(byteLength, INPUT_START)
+		sha256(byteLength)
 		return buffer.slice(0, 32)
 	}
 })()

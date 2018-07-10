@@ -86,7 +86,7 @@ exports.sha256WASM = (() => {
         fitInput(byteLength);
         const { buffer } = memory;
         new Uint8Array(buffer).set(new Uint8Array(input), INPUT_START);
-        sha256(byteLength, INPUT_START);
+        sha256(byteLength);
         return buffer.slice(0, 32);
     };
 })();
