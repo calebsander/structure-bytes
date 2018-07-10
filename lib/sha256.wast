@@ -63,8 +63,8 @@
 	(func (export "sha256") (param $byteLength i32) (param $buf i32)
 		(local $messageLength i32)
 		(local $lengthIndex i32)
-		(local $ha i32) (local $hb i32) (local $hc i32) (local $hd i32)
-			(local $he i32) (local $hf i32) (local $hg i32) (local $hh i32)
+		(local $h0 i32) (local $h1 i32) (local $h2 i32) (local $h3 i32)
+			(local $h4 i32) (local $h5 i32) (local $h6 i32) (local $h7 i32)
 		(local $a i32) (local $b i32) (local $c i32) (local $d i32)
 			(local $e i32) (local $f i32) (local $g i32) (local $h i32)
 		(local $chunkStart i32)
@@ -109,14 +109,14 @@
 			(get_local $lengthIndex)
 			(i64.shl (i64.extend_u/i32 (get_local $byteLength)) (i64.const 3))
 		)
-		(set_local $ha (i32.const 0x6a09e667))
-		(set_local $hb (i32.const 0xbb67ae85))
-		(set_local $hc (i32.const 0x3c6ef372))
-		(set_local $hd (i32.const 0xa54ff53a))
-		(set_local $he (i32.const 0x510e527f))
-		(set_local $hf (i32.const 0x9b05688c))
-		(set_local $hg (i32.const 0x1f83d9ab))
-		(set_local $hh (i32.const 0x5be0cd19))
+		(set_local $h0 (i32.const 0x6a09e667))
+		(set_local $h1 (i32.const 0xbb67ae85))
+		(set_local $h2 (i32.const 0x3c6ef372))
+		(set_local $h3 (i32.const 0xa54ff53a))
+		(set_local $h4 (i32.const 0x510e527f))
+		(set_local $h5 (i32.const 0x9b05688c))
+		(set_local $h6 (i32.const 0x1f83d9ab))
+		(set_local $h7 (i32.const 0x5be0cd19))
 		;; for (chunkStart = 0; chunkStart < messageLength; chunkStart += 64)
 		(set_local $chunkStart (i32.const 0))
 		(loop $chunkLoop
@@ -184,14 +184,14 @@
 					)
 				)
 			)
-			(set_local $a (get_local $ha))
-			(set_local $b (get_local $hb))
-			(set_local $c (get_local $hc))
-			(set_local $d (get_local $hd))
-			(set_local $e (get_local $he))
-			(set_local $f (get_local $hf))
-			(set_local $g (get_local $hg))
-			(set_local $h (get_local $hh))
+			(set_local $a (get_local $h0))
+			(set_local $b (get_local $h1))
+			(set_local $c (get_local $h2))
+			(set_local $d (get_local $h3))
+			(set_local $e (get_local $h4))
+			(set_local $f (get_local $h5))
+			(set_local $g (get_local $h6))
+			(set_local $h (get_local $h7))
 			;; for (i = 0; i < 64; i++)
 			(set_local $i (i32.const 0))
 			(loop $updateHash
@@ -263,14 +263,14 @@
 					)
 				)
 			)
-			(set_local $ha (i32.add (get_local $ha) (get_local $a))) ;; ha += a
-			(set_local $hb (i32.add (get_local $hb) (get_local $b))) ;; hb += b
-			(set_local $hc (i32.add (get_local $hc) (get_local $c))) ;; hc += c
-			(set_local $hd (i32.add (get_local $hd) (get_local $d))) ;; hd += d
-			(set_local $he (i32.add (get_local $he) (get_local $e))) ;; he += e
-			(set_local $hf (i32.add (get_local $hf) (get_local $f))) ;; hf += f
-			(set_local $hg (i32.add (get_local $hg) (get_local $g))) ;; hg += g
-			(set_local $hh (i32.add (get_local $hh) (get_local $h))) ;; hh += h
+			(set_local $h0 (i32.add (get_local $h0) (get_local $a))) ;; h0 += a
+			(set_local $h1 (i32.add (get_local $h1) (get_local $b))) ;; h1 += b
+			(set_local $h2 (i32.add (get_local $h2) (get_local $c))) ;; h2 += c
+			(set_local $h3 (i32.add (get_local $h3) (get_local $d))) ;; h3 += d
+			(set_local $h4 (i32.add (get_local $h4) (get_local $e))) ;; h4 += e
+			(set_local $h5 (i32.add (get_local $h5) (get_local $f))) ;; h5 += f
+			(set_local $h6 (i32.add (get_local $h6) (get_local $g))) ;; h6 += g
+			(set_local $h7 (i32.add (get_local $h7) (get_local $h))) ;; h7 += h
 			(br_if $chunkLoop ;; if ((chunkStart += 64) < messageLength) continue
 				(i32.lt_u
 					(tee_local $chunkStart (i32.add (get_local $chunkStart) (i32.const 64)))
@@ -279,13 +279,13 @@
 			)
 		)
 		;; Write out result
-		(call $store32BE (i32.const  0) (get_local $ha))
-		(call $store32BE (i32.const  4) (get_local $hb))
-		(call $store32BE (i32.const  8) (get_local $hc))
-		(call $store32BE (i32.const 12) (get_local $hd))
-		(call $store32BE (i32.const 16) (get_local $he))
-		(call $store32BE (i32.const 20) (get_local $hf))
-		(call $store32BE (i32.const 24) (get_local $hg))
-		(call $store32BE (i32.const 28) (get_local $hh))
+		(call $store32BE (i32.const  0) (get_local $h0))
+		(call $store32BE (i32.const  4) (get_local $h1))
+		(call $store32BE (i32.const  8) (get_local $h2))
+		(call $store32BE (i32.const 12) (get_local $h3))
+		(call $store32BE (i32.const 16) (get_local $h4))
+		(call $store32BE (i32.const 20) (get_local $h5))
+		(call $store32BE (i32.const 24) (get_local $h6))
+		(call $store32BE (i32.const 28) (get_local $h7))
 	)
 )
