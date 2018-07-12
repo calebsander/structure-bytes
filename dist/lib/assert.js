@@ -128,7 +128,7 @@ function equal(actual, expected) {
             case Object: {
                 if (!(actual && actual.constructor === Object))
                     throw error();
-                for (const key in expected) {
+                for (const key in expected) { //actual is allowed to have fields that are not in expected
                     /*istanbul ignore else*/
                     if ({}.hasOwnProperty.call(expected, key)) {
                         try {
@@ -242,7 +242,7 @@ function equal(actual, expected) {
         if (matchedSpecialCase)
             return;
     }
-    if (!(expected === undefined || expected === null) && expected.equals instanceof Function) {
+    if (!(expected === undefined || expected === null) && expected.equals instanceof Function) { //if expected has an equals function, use it
         let equals;
         try {
             equals = expected.equals(actual);
@@ -253,7 +253,7 @@ function equal(actual, expected) {
         if (!equals)
             throw error();
     }
-    else {
+    else { //use primitive equality if nothing else matches
         if (expected !== actual)
             throw error();
     }

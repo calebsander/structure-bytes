@@ -102,7 +102,7 @@ class AppendableStream extends appendable_1.default {
         this.pauseCount--;
         if (this.pauseCount)
             this.paused.resume(); //still in pause stack
-        else {
+        else { //emptied pause stack
             this.outStream.write(Buffer.from(this.paused.rawBuffer, 0, this.paused.length));
             this.paused = new growable_buffer_1.default; //must use a new buffer to avoid overwriting data sent to outStream
         }

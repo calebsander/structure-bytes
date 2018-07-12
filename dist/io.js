@@ -388,12 +388,12 @@ function httpRespond({ req, res, type, value }, callback) {
             else if (!acceptsGzip)
                 callback(null);
         }
-        if (req.headers.sig && req.headers.sig === type.getSignature()) {
+        if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
             writeValue({ type, value, outStream }, writeEndCallback);
         }
         else
             writeTypeAndValue({ type, value, outStream }, writeEndCallback); //otherwise, type and value need to be sent
-        if (acceptsGzip) {
+        if (acceptsGzip) { //don't pipe until writing begins
             outStream.pipe(res)
                 .on('finish', () => callback(null));
         }

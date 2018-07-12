@@ -20,7 +20,7 @@ export default abstract class AppendableBuffer {
     /**
      * The number of bytes that have been written
      */
-    readonly abstract length: number;
+    abstract readonly length: number;
     /**
      * Adds a byte after the end
      * of the written data

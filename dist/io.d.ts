@@ -77,7 +77,7 @@ export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> 
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export declare function writeType({type, outStream}: WriteParams<any>, callback?: ErrCallback): Writable;
+export declare function writeType({ type, outStream }: WriteParams<any>, callback?: ErrCallback): Writable;
 export declare namespace writeType {
     function __promisify__(params: WriteParams<any>): Promise<void>;
 }
@@ -114,7 +114,7 @@ export declare namespace writeType {
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export declare function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
+export declare function writeValue<E>({ type, value, outStream }: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
 export declare namespace writeValue {
     function __promisify__<E>(params: WriteTypeValueParams<E>): Promise<void>;
 }
@@ -152,7 +152,7 @@ export declare namespace writeValue {
  * @param callback The optional callback to call when write ends
  * @return `outStream`
  */
-export declare function writeTypeAndValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
+export declare function writeTypeAndValue<E>({ type, value, outStream }: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
 export declare namespace writeTypeAndValue {
     function __promisify__<E>(params: WriteTypeValueParams<E>): Promise<void>;
 }
@@ -214,7 +214,7 @@ export declare namespace readType {
  * @param inStream The stream to read from
  * @param callback The callback to call with the read result
  */
-export declare function readValue<E>({type, inStream}: ReadValueParams<E>, callback: ValueCallback<E>): void;
+export declare function readValue<E>({ type, inStream }: ReadValueParams<E>, callback: ValueCallback<E>): void;
 export declare namespace readValue {
     function __promisify__<E>(params: ReadValueParams<E>): Promise<E>;
 }
@@ -268,7 +268,7 @@ export declare namespace readTypeAndValue {
  * @param value The value to send
  * @param callback The optional callback to call when response ends
  */
-export declare function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?: ErrCallback): void;
+export declare function httpRespond<E>({ req, res, type, value }: HttpParams<E>, callback?: ErrCallback): void;
 export declare namespace httpRespond {
     function __promisify__<E>(params: HttpParams<E>): Promise<void>;
 }

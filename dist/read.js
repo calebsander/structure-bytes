@@ -67,7 +67,7 @@ function consumeType(typeBuffer, offset) {
             const fieldCount = castBuffer[offset + length];
             length++;
             const fields = {};
-            for (let i = 0; i < fieldCount; i++) {
+            for (let i = 0; i < fieldCount; i++) { //read field information for each field
                 assert_1.default(typeBuffer.byteLength > offset + length, read_util_1.NOT_LONG_ENOUGH);
                 const nameLength = castBuffer[offset + length];
                 length++;
@@ -168,10 +168,10 @@ function consumeType(typeBuffer, offset) {
                 bufferRecursiveNames = new Map;
                 recursiveNames.set(typeBuffer, bufferRecursiveNames);
             }
-            if (recursiveName === undefined) {
+            if (recursiveName === undefined) { //if we have never read to type yet, the type def must lie here
                 do {
                     recursiveName = 'read-type';
-                    for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) {
+                    for (let charCount = 0; charCount < RECURSIVE_NAME_LENGTH; charCount++) { //add some hex chars
                         recursiveName += Math.floor(Math.random() * 16).toString(16);
                     }
                 } while (recursiveRegistry.isRegistered(recursiveName)); //make sure name doesn't conflict

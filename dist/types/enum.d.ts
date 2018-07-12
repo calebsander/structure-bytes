@@ -40,7 +40,7 @@ export default class EnumType<E> extends AbstractType<E> {
      * Cannot contain more than 255 values.
      * @throws If any value cannot be serialized by `type`
      */
-    constructor({type, values}: EnumParams<E>);
+    constructor({ type, values }: EnumParams<E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

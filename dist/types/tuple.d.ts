@@ -51,7 +51,7 @@ export default class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[]
      * @param length The number of elements in the tuple.
      * Must be at most 255.
      */
-    constructor({type, length}: TupleParams<E, READ_E>);
+    constructor({ type, length }: TupleParams<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

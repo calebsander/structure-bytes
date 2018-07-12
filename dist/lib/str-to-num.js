@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @param str The string to convert
  */
 exports.default = (str) => {
-    if (str) {
+    if (str) { //avoid errors with undefined.constructor and null.constructor; also '' is invalid
         if (str.constructor === String) {
             const converted = Number(str);
             if (!isNaN(converted) || str === 'NaN')

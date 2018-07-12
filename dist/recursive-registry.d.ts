@@ -43,7 +43,7 @@ import { RegisterableType, TypeAndName } from './recursive-registry-type';
  * @param name The name to associate it with
  * @throws If a type is already registered under the name
  */
-export declare function registerType({type, name}: TypeAndName): void;
+export declare function registerType({ type, name }: TypeAndName): void;
 /**
  * Gets the recursive type
  * registered with the specified name

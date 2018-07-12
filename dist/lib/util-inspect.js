@@ -95,7 +95,7 @@ function inspectWithSeen(obj, seen) {
         seen.set(obj, seen.get(obj) - 1);
         return result + ']';
     }
-    if (obj.constructor === Object) {
+    if (obj.constructor === Object) { //as opposed to a subclass of Object
         let result = '{';
         for (const key in obj) {
             /*istanbul ignore else*/

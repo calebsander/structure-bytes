@@ -77,7 +77,7 @@ class MapType extends absolute_1.default {
         this.isBuffer(buffer);
         assert_1.default.instanceOf(value, Map);
         buffer.addAll(flexInt.makeValueBuffer(value.size));
-        for (const [mapKey, mapValue] of value) {
+        for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
             this.keyType.writeValue(buffer, mapKey);
             this.valueType.writeValue(buffer, mapValue);
         }

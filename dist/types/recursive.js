@@ -109,7 +109,7 @@ class RecursiveType extends absolute_1.default {
                 bufferRecursiveIDs.set(this.name, recursiveID);
             }
             buffer.addAll(flexInt.makeValueBuffer(recursiveID));
-            if (firstOccurence) {
+            if (firstOccurence) { //only define type if type has not already been defined
                 //Keep track of how far we are inside writing recursive types (see how this is used in AbstractType.addToBuffer())
                 recursiveNesting.increment(buffer);
                 this.type.addToBuffer(buffer);
@@ -161,7 +161,7 @@ class RecursiveType extends absolute_1.default {
         let bufferRecursiveLocations = recursiveLocations.get(buffer);
         if (bufferRecursiveLocations) {
             const targetLocation = bufferRecursiveLocations.get(value);
-            if (targetLocation !== undefined) {
+            if (targetLocation !== undefined) { //value has already been written to the buffer
                 buffer.add(0x00);
                 const offset = buffer.length - targetLocation; //calculate offset to previous location
                 buffer.addAll(flexInt.makeValueBuffer(offset));
