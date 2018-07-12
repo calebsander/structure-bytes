@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>RecursiveRegistry | structure-bytes</title>
+	<title>TypeAndValue | structure-bytes</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,24 +56,32 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_recursive_registry_type_.html">&quot;recursive-registry-type&quot;</a>
+					<a href="../modules/_io_.html">&quot;io&quot;</a>
 				</li>
 				<li>
-					<a href="_recursive_registry_type_.recursiveregistry.html">RecursiveRegistry</a>
+					<a href="_io_.typeandvalue.html">TypeAndValue</a>
 				</li>
 			</ul>
-			<h1>Interface RecursiveRegistry</h1>
+			<h1>Interface TypeAndValue&lt;E&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>E</h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">RecursiveRegistry</span>
+						<span class="target">TypeAndValue</span>
 					</li>
 				</ul>
 			</section>
@@ -82,86 +90,36 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_recursive_registry_type_.recursiveregistry.html#gettype" class="tsd-kind-icon">get<wbr>Type</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_recursive_registry_type_.recursiveregistry.html#isregistered" class="tsd-kind-icon">is<wbr>Registered</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_recursive_registry_type_.recursiveregistry.html#registertype" class="tsd-kind-icon">register<wbr>Type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_io_.typeandvalue.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_io_.typeandvalue.html#value" class="tsd-kind-icon">value</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="gettype" class="tsd-anchor"></a>
-					<h3>get<wbr>Type</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Type<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_recursive_registry_type_.html#registerabletype" class="tsd-signature-type">RegisterableType</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/3a88e88/recursive-registry-type.ts#L17">recursive-registry-type.ts:17</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../modules/_recursive_registry_type_.html#registerabletype" class="tsd-signature-type">RegisterableType</a></h4>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/3a88e88/io.ts#L35">io.ts:35</a></li>
+						</ul>
+					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="isregistered" class="tsd-anchor"></a>
-					<h3>is<wbr>Registered</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Registered<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/3a88e88/recursive-registry-type.ts#L18">recursive-registry-type.ts:18</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="registertype" class="tsd-anchor"></a>
-					<h3>register<wbr>Type</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">register<wbr>Type<span class="tsd-signature-symbol">(</span>typeAndName<span class="tsd-signature-symbol">: </span><a href="_recursive_registry_type_.typeandname.html" class="tsd-signature-type">TypeAndName</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/3a88e88/recursive-registry-type.ts#L16">recursive-registry-type.ts:16</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>typeAndName: <a href="_recursive_registry_type_.typeandname.html" class="tsd-signature-type">TypeAndName</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="value" class="tsd-anchor"></a>
+					<h3>value</h3>
+					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">E</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/3a88e88/io.ts#L36">io.ts:36</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -172,35 +130,76 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_recursive_registry_type_.html">"recursive-<wbr>registry-<wbr>type"</a>
+						<a href="../modules/_io_.html">"io"</a>
+						<ul>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module tsd-has-type-parameter">
+								<a href="../modules/_io_.httprespond.html">http<wbr>Respond</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module tsd-has-type-parameter">
+								<a href="../modules/_io_.readtype.html">read<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module tsd-has-type-parameter">
+								<a href="../modules/_io_.readtypeandvalue.html">read<wbr>Type<wbr>And<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module tsd-has-type-parameter">
+								<a href="../modules/_io_.readvalue.html">read<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module">
+								<a href="../modules/_io_.writetype.html">write<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module tsd-has-type-parameter">
+								<a href="../modules/_io_.writetypeandvalue.html">write<wbr>Type<wbr>And<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-module tsd-parent-kind-external-module tsd-has-type-parameter">
+								<a href="../modules/_io_.writevalue.html">write<wbr>Value</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_io_.httpparams.html" class="tsd-kind-icon">Http<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_io_.readvalueparams.html" class="tsd-kind-icon">Read<wbr>Value<wbr>Params</a>
+					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_recursive_registry_type_.recursiveregistry.html" class="tsd-kind-icon">Recursive<wbr>Registry</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_io_.typeandvalue.html" class="tsd-kind-icon">Type<wbr>And<wbr>Value</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_recursive_registry_type_.recursiveregistry.html#gettype" class="tsd-kind-icon">get<wbr>Type</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_io_.typeandvalue.html#type" class="tsd-kind-icon">type</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_recursive_registry_type_.recursiveregistry.html#isregistered" class="tsd-kind-icon">is<wbr>Registered</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_recursive_registry_type_.recursiveregistry.html#registertype" class="tsd-kind-icon">register<wbr>Type</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_io_.typeandvalue.html#value" class="tsd-kind-icon">value</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_recursive_registry_type_.typeandname.html" class="tsd-kind-icon">Type<wbr>And<wbr>Name</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_io_.writeparams.html" class="tsd-kind-icon">Write<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_io_.writetypevalueparams.html" class="tsd-kind-icon">Write<wbr>Type<wbr>Value<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/_recursive_registry_type_.html#registerabletype" class="tsd-kind-icon">Registerable<wbr>Type</a>
+						<a href="../modules/_io_.html#errcallback" class="tsd-kind-icon">Err<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_io_.html#typeandvaluecallback" class="tsd-kind-icon">Type<wbr>And<wbr>Value<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_io_.html#typecallback" class="tsd-kind-icon">Type<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_io_.html#valuecallback" class="tsd-kind-icon">Value<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_io_.html#toarraybuffer" class="tsd-kind-icon">to<wbr>Array<wbr>Buffer</a>
 					</li>
 				</ul>
 			</nav>
