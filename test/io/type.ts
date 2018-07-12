@@ -1,11 +1,13 @@
 import * as fs from 'fs'
+import {promisify} from 'util'
 import assert from '../../dist/lib/assert'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
 
-const type = new t.ArrayType(
+type Value = {abc: string, def: number[]}[]
+const type: t.Type<Value> = new t.ArrayType(
 	new t.StructType({
 		abc: new t.StringType,
 		def: new t.ArrayType(
@@ -13,86 +15,59 @@ const type = new t.ArrayType(
 		)
 	})
 )
-const writePromise = new Promise((resolve, reject) => {
+const writePromise = (() => {
 	const OUT_FILE = 'type-out'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeType({type, outStream}, err => {
-		try {
-			if (err) throw err
-			fs.readFile(OUT_FILE, (err, data) => {
-				try {
-					if (err) throw err
-					assert.equal(data, Buffer.from([
-						0x52,
-							0x51, 2,
-								3, 0x61, 0x62, 0x63,
-									0x41,
-								3, 0x64, 0x65, 0x66,
-									0x52,
-										0x02
-					]))
-					fs.unlink(OUT_FILE, _ => resolve())
-				}
-				catch (e) { reject(e) }
-			})
-		}
-		catch (e) { reject(e) }
-	})
-})
-const writeWithoutCallback = () => new Promise((resolve, reject) => {
+	return promisify(io.writeType)({type, outStream})
+		.then(_ => promisify(fs.readFile)(OUT_FILE))
+		.then(data =>
+			assert.equal(data, Buffer.from([
+				0x52,
+					0x51, 2,
+						3, 0x61, 0x62, 0x63,
+							0x41,
+						3, 0x64, 0x65, 0x66,
+							0x52,
+								0x02
+			]))
+		)
+		.then(_ => promisify(fs.unlink)(OUT_FILE))
+})()
+const writeWithoutCallback = new Promise<void>((resolve, reject) => {
 	const OUT_FILE = 'type-out2'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeType({type: new t.StringType, outStream})
 	outStream.on('finish', () => {
 		try {
-			fs.readFile(OUT_FILE, (err, data) => {
-				try {
-					if (err) throw err
-					assert.equal(data, Buffer.from([0x41]))
-					fs.unlink(OUT_FILE, _ => resolve())
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(fs.readFile)(OUT_FILE)
+					.then(data => assert.equal(data, Buffer.from([0x41])))
+					.then(_ => promisify(fs.unlink)(OUT_FILE))
+			)
 		}
 		catch (e) { reject(e) }
 	})
+	io.writeType({type: new t.StringType, outStream})
 })
-const writeErrorPromise = () => new Promise((resolve, reject) => {
+const writeErrorPromise = (() => {
 	const OUT_FILE = 'type-out3'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeType({type: new t.RecursiveType('no-such-type'), outStream}, err => {
-		try {
-			assert.errorMessage(err, '"no-such-type" is not a registered type')
-			fs.unlink(OUT_FILE, _ => resolve())
-		}
-		catch (e) { reject(e) }
+	return promisify(io.writeType)({
+		type: new t.RecursiveType('no-such-type'),
+		outStream
 	})
-})
-const readPromise = new Promise((resolve, reject) => {
-	io.readType(new BufferStream(type.toBuffer()), (err, readType) => {
-		try {
-			if (err) throw err
-			assert.equal(err, null)
-			assert.equal(readType, type)
-			resolve()
-		}
-		catch (e) { reject(e) }
-	})
-})
-const readErrorPromise = new Promise((resolve, reject) => {
-	io.readType(new BufferStream(bufferFrom([0])), (err, readType) => {
-		try {
-			assert.errorMessage(err, 'No such type: 0x00')
-			assert.equal(readType, null)
-			resolve()
-		}
-		catch (e) { reject(e) }
-	})
-})
+		.then(_ => { throw new Error('Expected error to be thrown') })
+		.catch(err => assert.errorMessage(err, '"no-such-type" is not a registered type'))
+		.then(_ => promisify(fs.unlink)(OUT_FILE))
+})()
+const readPromise = promisify(io.readType)<Value>(new BufferStream(type.toBuffer()))
+	.then(readType => assert.equal(readType, type))
+const readErrorPromise = promisify(io.readType)(new BufferStream(bufferFrom([0])))
+	.then(_ => { throw new Error('Expected error to be thrown') })
+	.catch(err => assert.errorMessage(err, 'No such type: 0x00'))
 export = Promise.all([
-	writePromise
-		.then(writeWithoutCallback)
-		.then(writeErrorPromise),
+	writePromise,
+	writeWithoutCallback,
+	writeErrorPromise,
 	readPromise,
 	readErrorPromise
 ])

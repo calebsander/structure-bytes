@@ -19,7 +19,7 @@ class CaptureStream extends Writable {
 	}
 }
 
-const testBasic = new Promise((resolve, reject) => {
+const testBasic = new Promise<void>((resolve, reject) => {
 	assert.throws(
 		() => new AppendableStream(0 as any),
 		'0 is not an instance of Writable'
@@ -67,7 +67,7 @@ const testBasic = new Promise((resolve, reject) => {
 	assert.equal(stream.length, 7)
 	stream.end()
 })
-const testPause = new Promise((resolve, reject) => {
+const testPause = new Promise<void>((resolve, reject) => {
 	const outStream = new CaptureStream
 	outStream.on('finish', () => {
 		try {

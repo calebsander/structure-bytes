@@ -44,6 +44,7 @@
 		"no-empty": false,
 		"no-eval": true,
 		"no-for-in-array": true,
+		"no-namespace": [true, "allow-declarations"],
 		"no-sparse-arrays": true,
 		"no-string-literal": true,
 		"no-string-throw": true,

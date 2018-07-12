@@ -10,8 +10,12 @@ export interface WriteTypeValueParams<E> extends WriteParams<E> {
     value: E;
 }
 export interface ReadValueParams<E> {
-    type: Type<E>;
+    type: Type<any, E>;
     inStream: Readable;
+}
+export interface TypeAndValue<E> {
+    type: Type<E>;
+    value: E;
 }
 export interface HttpParams<E> {
     req: http.IncomingMessage;
@@ -45,6 +49,7 @@ export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> 
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.writeType({
  *   type: new sb.StructType({
  *     abc: new sb.ArrayType(new sb.StringType),
@@ -55,6 +60,16 @@ export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> 
  *   if (err) throw err
  *   console.log('Done')
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.writeType)({
+ *   type: new sb.StructType({
+ *     abc: new sb.ArrayType(new sb.StringType),
+ *     def: new sb.DateType
+ *   }),
+ *   outStream: fs.createWriteStream('out.sbt')
+ * })
+ *   .then(_ => console.log('Done'))
  * ````
  *
  * @param type The type to write
@@ -63,6 +78,9 @@ export declare type TypeAndValueCallback<E> = (err: Error | null, type: Type<E> 
  * @return `outStream`
  */
 export declare function writeType({type, outStream}: WriteParams<any>, callback?: ErrCallback): Writable;
+export declare namespace writeType {
+    function __promisify__(params: WriteParams<any>): Promise<void>;
+}
 /**
  * Writes the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]])
  * to a writable stream and then closes the stream.
@@ -70,6 +88,7 @@ export declare function writeType({type, outStream}: WriteParams<any>, callback?
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.writeValue({
  *   type: new sb.FlexUnsignedIntType,
  *   value: 1000,
@@ -78,6 +97,14 @@ export declare function writeType({type, outStream}: WriteParams<any>, callback?
  *   if (err) throw err
  *   console.log('Done')
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.writeValue)({
+ *   type: new sb.FlexUnsignedIntType,
+ *   value: 1000,
+ *   outStream: fs.createWriteStream('out.sbv')
+ * })
+ *   .then(_ => console.log('Done'))
  * ````
  *
  * @param E The type of value being written
@@ -88,6 +115,9 @@ export declare function writeType({type, outStream}: WriteParams<any>, callback?
  * @return `outStream`
  */
 export declare function writeValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
+export declare namespace writeValue {
+    function __promisify__<E>(params: WriteTypeValueParams<E>): Promise<void>;
+}
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]]),
  * followed by the contents of `type.valueBuffer(value)` ([[Type.valueBuffer]]),
@@ -96,6 +126,7 @@ export declare function writeValue<E>({type, value, outStream}: WriteTypeValuePa
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.writeTypeAndValue({
  *   type: new sb.FlexUnsignedIntType,
  *   value: 1000,
@@ -104,6 +135,14 @@ export declare function writeValue<E>({type, value, outStream}: WriteTypeValuePa
  *   if (err) throw err
  *   console.log('Done')
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.writeTypeAndValue)({
+ *   type: new sb.FlexUnsignedIntType,
+ *   value: 1000,
+ *   outStream: fs.createWriteStream('out.sbtv')
+ * })
+ *   .then(_ => console.log('Done'))
  * ````
  *
  * @param E The type of value being written
@@ -114,6 +153,9 @@ export declare function writeValue<E>({type, value, outStream}: WriteTypeValuePa
  * @return `outStream`
  */
 export declare function writeTypeAndValue<E>({type, value, outStream}: WriteTypeValueParams<E>, callback?: ErrCallback): Writable;
+export declare namespace writeTypeAndValue {
+    function __promisify__<E>(params: WriteTypeValueParams<E>): Promise<void>;
+}
 /**
  * Reads a type from a readable stream.
  * This should be used when reading from sources
@@ -122,16 +164,24 @@ export declare function writeTypeAndValue<E>({type, value, outStream}: WriteType
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.readType(fs.createReadStream('out.sbt'), (err, type) => {
  *   if (err) throw err
  *   console.log(type)
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.readType)(fs.createReadStream('out.sbt'))
+ *   .then(type => console.log(type))
  * ````
  *
  * @param inStream The stream to read from
  * @param callback The callback to call with the read result
  */
-export declare function readType(inStream: Readable, callback: TypeCallback<any>): void;
+export declare function readType<E>(inStream: Readable, callback: TypeCallback<E>): void;
+export declare namespace readType {
+    function __promisify__<E>(inStream: Readable): Promise<Type<E>>;
+}
 /**
  * Reads a value from a readable stream.
  * The [[Type]] used to write the value bytes must be known.
@@ -141,6 +191,7 @@ export declare function readType(inStream: Readable, callback: TypeCallback<any>
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.readValue({
  *   type: new sb.FlexUnsignedIntType,
  *   inStream: fs.createReadStream('out.sbv')
@@ -148,6 +199,13 @@ export declare function readType(inStream: Readable, callback: TypeCallback<any>
  *   if (err) throw err
  *   console.log(value)
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.readValue)({
+ *   type: new sb.FlexUnsignedIntType,
+ *   inStream: fs.createReadStream('out.sbv')
+ * })
+ *   .then(value => console.log(value))
  * ````
  *
  * @param E The type of value being read
@@ -157,6 +215,9 @@ export declare function readType(inStream: Readable, callback: TypeCallback<any>
  * @param callback The callback to call with the read result
  */
 export declare function readValue<E>({type, inStream}: ReadValueParams<E>, callback: ValueCallback<E>): void;
+export declare namespace readValue {
+    function __promisify__<E>(params: ReadValueParams<E>): Promise<E>;
+}
 /**
  * Reads a type and a value from a readable stream.
  * This should be used when reading from sources
@@ -165,16 +226,24 @@ export declare function readValue<E>({type, inStream}: ReadValueParams<E>, callb
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.readTypeAndValue(fs.createReadStream('out.sbtv'), (err, type, value) => {
  *   if (err) throw err
  *   console.log(type, value)
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.readTypeAndValue)(fs.createReadStream('out.sbtv'))
+ *   .then(({type, value}) => console.log(type, value))
  * ````
  *
  * @param inStream The stream to read from
  * @param callback The callback to call with the read result
  */
-export declare function readTypeAndValue(inStream: Readable, callback: TypeAndValueCallback<any>): void;
+export declare function readTypeAndValue<E>(inStream: Readable, callback: TypeAndValueCallback<E>): void;
+export declare namespace readTypeAndValue {
+    function __promisify__<E>(inStream: Readable): Promise<TypeAndValue<E>>;
+}
 /**
  * Responds to an HTTP(S) request for a value.
  * Will send both type and value if the `sig` header
@@ -200,3 +269,6 @@ export declare function readTypeAndValue(inStream: Readable, callback: TypeAndVa
  * @param callback The optional callback to call when response ends
  */
 export declare function httpRespond<E>({req, res, type, value}: HttpParams<E>, callback?: ErrCallback): void;
+export declare namespace httpRespond {
+    function __promisify__<E>(params: HttpParams<E>): Promise<void>;
+}

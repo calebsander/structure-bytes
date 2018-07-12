@@ -4,6 +4,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = require("http");
 const stream_1 = require("stream");
+const util_1 = require("util");
 const zlib = require("zlib");
 const accepts = require("accepts");
 const appendable_stream_1 = require("./lib/appendable-stream");
@@ -11,7 +12,10 @@ const assert_1 = require("./lib/assert");
 const r = require("./read");
 const abstract_1 = require("./types/abstract");
 function toArrayBuffer(buffer) {
-    return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+    const { buffer: arrayBuffer, byteOffset, byteLength } = buffer;
+    return !byteOffset && byteLength === arrayBuffer.byteLength
+        ? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
+        : arrayBuffer.slice(byteOffset, byteOffset + byteLength);
 }
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])
@@ -20,6 +24,7 @@ function toArrayBuffer(buffer) {
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.writeType({
  *   type: new sb.StructType({
  *     abc: new sb.ArrayType(new sb.StringType),
@@ -30,6 +35,16 @@ function toArrayBuffer(buffer) {
  *   if (err) throw err
  *   console.log('Done')
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.writeType)({
+ *   type: new sb.StructType({
+ *     abc: new sb.ArrayType(new sb.StringType),
+ *     def: new sb.DateType
+ *   }),
+ *   outStream: fs.createWriteStream('out.sbt')
+ * })
+ *   .then(_ => console.log('Done'))
  * ````
  *
  * @param type The type to write
@@ -40,18 +55,20 @@ function toArrayBuffer(buffer) {
 function writeType({ type, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = () => { };
+        callback = _ => { };
     assert_1.default.instanceOf(callback, Function);
+    let error = null;
+    outStream
+        .on('error', callback)
+        .on('finish', () => callback(error));
     const typeStream = new appendable_stream_1.default(outStream);
-    outStream.on('error', callback);
     try {
         type.addToBuffer(typeStream);
-        outStream.on('finish', () => callback(null));
     }
     catch (err) {
-        callback(err);
+        error = err;
     }
-    typeStream.end();
+    outStream.end();
     return outStream;
 }
 exports.writeType = writeType;
@@ -62,6 +79,7 @@ exports.writeType = writeType;
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.writeValue({
  *   type: new sb.FlexUnsignedIntType,
  *   value: 1000,
@@ -70,6 +88,14 @@ exports.writeType = writeType;
  *   if (err) throw err
  *   console.log('Done')
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.writeValue)({
+ *   type: new sb.FlexUnsignedIntType,
+ *   value: 1000,
+ *   outStream: fs.createWriteStream('out.sbv')
+ * })
+ *   .then(_ => console.log('Done'))
  * ````
  *
  * @param E The type of value being written
@@ -82,18 +108,20 @@ exports.writeType = writeType;
 function writeValue({ type, value, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = () => { };
+        callback = _ => { };
     assert_1.default.instanceOf(callback, Function);
+    let error = null;
+    outStream
+        .on('error', callback)
+        .on('finish', () => callback(error));
     const valueStream = new appendable_stream_1.default(outStream);
-    outStream.on('error', callback);
     try {
         type.writeValue(valueStream, value);
-        outStream.on('finish', () => callback(null));
     }
     catch (err) {
-        callback(err);
+        error = err;
     }
-    valueStream.end();
+    outStream.end();
     return outStream;
 }
 exports.writeValue = writeValue;
@@ -105,6 +133,7 @@ exports.writeValue = writeValue;
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.writeTypeAndValue({
  *   type: new sb.FlexUnsignedIntType,
  *   value: 1000,
@@ -113,6 +142,14 @@ exports.writeValue = writeValue;
  *   if (err) throw err
  *   console.log('Done')
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.writeTypeAndValue)({
+ *   type: new sb.FlexUnsignedIntType,
+ *   value: 1000,
+ *   outStream: fs.createWriteStream('out.sbtv')
+ * })
+ *   .then(_ => console.log('Done'))
  * ````
  *
  * @param E The type of value being written
@@ -125,19 +162,21 @@ exports.writeValue = writeValue;
 function writeTypeAndValue({ type, value, outStream }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = () => { };
+        callback = _ => { };
     assert_1.default.instanceOf(callback, Function);
+    let error = null;
+    outStream
+        .on('error', callback)
+        .on('finish', () => callback(error));
     const typeValueStream = new appendable_stream_1.default(outStream);
-    outStream.on('error', callback);
     try {
         type.addToBuffer(typeValueStream);
         type.writeValue(typeValueStream, value);
-        outStream.on('finish', () => callback(null));
     }
     catch (err) {
-        callback(err);
+        error = err;
     }
-    typeValueStream.end();
+    outStream.end();
     return outStream;
 }
 exports.writeTypeAndValue = writeTypeAndValue;
@@ -149,10 +188,15 @@ exports.writeTypeAndValue = writeTypeAndValue;
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.readType(fs.createReadStream('out.sbt'), (err, type) => {
  *   if (err) throw err
  *   console.log(type)
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.readType)(fs.createReadStream('out.sbt'))
+ *   .then(type => console.log(type))
  * ````
  *
  * @param inStream The stream to read from
@@ -163,7 +207,7 @@ function readType(inStream, callback) {
     assert_1.default.instanceOf(callback, Function);
     const segments = [];
     inStream
-        .on('data', chunk => segments.push(chunk))
+        .on('data', chunk => segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk)))
         .on('error', function (err) {
         this.destroy();
         callback(err, null);
@@ -177,7 +221,7 @@ function readType(inStream, callback) {
         catch (e) {
             return callback(e, null);
         }
-        callback(null, type); //if error occurred, don't callback with a null type
+        callback(null, type);
     });
 }
 exports.readType = readType;
@@ -190,6 +234,7 @@ exports.readType = readType;
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.readValue({
  *   type: new sb.FlexUnsignedIntType,
  *   inStream: fs.createReadStream('out.sbv')
@@ -197,6 +242,13 @@ exports.readType = readType;
  *   if (err) throw err
  *   console.log(value)
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.readValue)({
+ *   type: new sb.FlexUnsignedIntType,
+ *   inStream: fs.createReadStream('out.sbv')
+ * })
+ *   .then(value => console.log(value))
  * ````
  *
  * @param E The type of value being read
@@ -224,7 +276,7 @@ function readValue({ type, inStream }, callback) {
         catch (e) {
             return callback(e, null);
         }
-        callback(null, value); //if error occurred, don't callback with a null value
+        callback(null, value);
     });
 }
 exports.readValue = readValue;
@@ -236,10 +288,15 @@ exports.readValue = readValue;
  *
  * Example:
  * ````javascript
+ * //With a callback:
  * sb.readTypeAndValue(fs.createReadStream('out.sbtv'), (err, type, value) => {
  *   if (err) throw err
  *   console.log(type, value)
  * })
+ *
+ * //As a Promise:
+ * util.promisify(sb.readTypeAndValue)(fs.createReadStream('out.sbtv'))
+ *   .then(({type, value}) => console.log(type, value))
  * ````
  *
  * @param inStream The stream to read from
@@ -272,10 +329,17 @@ function readTypeAndValue(inStream, callback) {
         catch (e) {
             return callback(e, null, null);
         }
-        callback(null, type.value, value); //if error occurred, don't callback with null value or type
+        callback(null, type.value, value);
     });
 }
 exports.readTypeAndValue = readTypeAndValue;
+//Custom promisifiy function because Promise cannot resolve to 2 values
+readTypeAndValue[util_1.promisify.custom] = (inStream) => new Promise((resolve, reject) => readTypeAndValue(inStream, (err, type, value) => {
+    if (err)
+        reject(err);
+    else
+        resolve({ type: type, value: value });
+}));
 /**
  * Responds to an HTTP(S) request for a value.
  * Will send both type and value if the `sig` header
@@ -303,7 +367,7 @@ exports.readTypeAndValue = readTypeAndValue;
 function httpRespond({ req, res, type, value }, callback) {
     assert_1.default.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = () => { };
+        callback = _ => { };
     assert_1.default.instanceOf(callback, Function);
     assert_1.default.instanceOf(req, http.IncomingMessage);
     assert_1.default.instanceOf(res, http.OutgoingMessage);

@@ -1,4 +1,5 @@
 import * as http from 'http'
+import {promisify} from 'util'
 import * as zlib from 'zlib'
 import assert from '../../dist/lib/assert'
 import * as io from '../../dist'
@@ -29,73 +30,63 @@ const requestOptions = {
 	path: '/',
 	method: 'GET'
 }
-const requestDate = new Promise((resolve, reject) => {
+const requestDate = new Promise<void>((resolve, reject) => {
 	http.get(requestOptions, res => {
 		try {
 			assert.equal(res.headers.sig, type.getSignature())
-			io.readTypeAndValue(res, (err, type, value) => {
-				try {
-					if (err) throw err
-					assert.equal(type, new t.DateType)
-					assert.equal(value.getTime(), responseValue.getTime())
-					resolve()
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(io.readTypeAndValue)<Date>(res)
+					.then(({type, value}) => {
+						assert.equal(type, new t.DateType)
+						assert.equal(value.getTime(), responseValue.getTime())
+					})
+			)
 		}
 		catch (e) { reject(e) }
 	})
 })
-const requestGzip = new Promise((resolve, reject) => {
+const requestGzip = new Promise<void>((resolve, reject) => {
 	http.get({...requestOptions, headers: {'Accept-Encoding': '*'}}, res => {
 		try {
 			assert.equal(res.headers.sig, type.getSignature())
-			io.readTypeAndValue(res.pipe(zlib.createGunzip()), (err, type, value) => {
-				try {
-					if (err) throw err
-					assert.equal(type, new t.DateType)
-					assert.equal(value.getTime(), responseValue.getTime())
-					resolve()
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(io.readTypeAndValue)<Date>(res.pipe(zlib.createGunzip()))
+					.then(({type, value}) => {
+						assert.equal(type, new t.DateType)
+						assert.equal(value.getTime(), responseValue.getTime())
+					})
+			)
 		}
 		catch (e) { reject(e) }
 	})
 })
-const requestWithSignature = new Promise((resolve, reject) => {
+const requestWithSignature = new Promise<void>((resolve, reject) => {
 	http.get({...requestOptions, headers: {'Accept-Encoding': 'gzip;q=0.00', sig: type.getSignature()}}, res => {
 		try {
-			io.readValue({type, inStream: res}, (err, value) => {
-				try {
-					if (err) throw err
-					if (value === null) throw new Error('Missing value')
-					assert.equal(value.getTime(), responseValue.getTime())
-					resolve()
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(io.readValue)({type, inStream: res})
+					.then(value =>
+						assert.equal(value.getTime(), responseValue.getTime())
+					)
+			)
 		}
 		catch (e) { reject(e) }
 	})
 })
-const requestGzipWithSignature = new Promise((resolve, reject) => {
+const requestGzipWithSignature = new Promise<void>((resolve, reject) => {
 	http.get({...requestOptions, headers: {'Accept-Encoding': 'compress, gzip', sig: type.getSignature()}}, res => {
 		try {
-			io.readValue({type, inStream: res.pipe(zlib.createGunzip())}, (err, value) => {
-				try {
-					if (err) throw err
-					if (value === null) throw new Error('Missing value')
-					assert.equal(value.getTime(), responseValue.getTime())
-					resolve()
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(io.readValue)({type, inStream: res.pipe(zlib.createGunzip())})
+					.then(value =>
+						assert.equal(value.getTime(), responseValue.getTime())
+					)
+			)
 		}
 		catch (e) { reject(e) }
 	})
 })
-const errorRequest = new Promise((resolve, reject) => {
+const errorRequest = new Promise<void>((resolve, reject) => {
 	http.get({...requestOptions, path: '/error'}, res => {
 		const chunks: Buffer[] = []
 		res
@@ -110,19 +101,17 @@ const errorRequest = new Promise((resolve, reject) => {
 			.on('error', reject)
 	})
 })
-const noCallbackRequest = new Promise((resolve, reject) => {
+const noCallbackRequest = new Promise<void>((resolve, reject) => {
 	http.get({...requestOptions, path: '/no-callback'}, res => {
 		try {
 			assert.equal(res.headers.sig, type.getSignature())
-			io.readTypeAndValue(res, (err, type, value) => {
-				try {
-					if (err) throw err
-					assert.equal(type, new t.DateType)
-					assert.equal(value.getTime(), responseValue.getTime())
-					resolve()
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(io.readTypeAndValue)<Date>(res)
+					.then(({type, value}) => {
+						assert.equal(type, new t.DateType)
+						assert.equal(value.getTime(), responseValue.getTime())
+					})
+			)
 		}
 		catch (e) { reject(e) }
 	})
@@ -136,8 +125,8 @@ const server2 = http.createServer((req, res) => {
 	})
 })
 server2.listen(port2)
-const writeErrorRequest = new Promise((resolve, reject) => {
-	http.get({...requestOptions, port: port2}, res => {
+const writeErrorRequest = new Promise<void>((resolve, reject) => {
+	http.get({...requestOptions, port: port2}, _ => {
 		try {
 			server2.close()
 			resolve()
@@ -156,4 +145,7 @@ export = Promise.all([
 	writeErrorRequest
 ])
 	.then(() => server.close())
-	.catch(() => server.close())
+	.catch(err => {
+		server.close()
+		throw err
+	})

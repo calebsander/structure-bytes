@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import {promisify} from 'util'
 import assert from '../../dist/lib/assert'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
@@ -6,7 +7,7 @@ import * as t from '../../dist'
 import {bufferFrom, concat} from '../test-common'
 
 const type = new t.MapType(new t.StringType, new t.PointerType(new t.UnsignedIntType))
-const value = new Map().set('abc', 4560).set('def', 4560).set('—ݥ—', 4560)
+const value = new Map<string, number>().set('abc', 4560).set('def', 4560).set('—ݥ—', 4560)
 const BUFFER = concat([
 	bufferFrom([0x54, 0x41, 0x70, 0x13]),
 	bufferFrom([
@@ -20,79 +21,62 @@ const BUFFER = concat([
 				10
 	])
 ])
-const writePromise = new Promise((resolve, reject) => {
+const writePromise = (() => {
 	const OUT_FILE = 'type-value-out'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeTypeAndValue({type, value, outStream}, err => {
-		try {
-			if (err) throw err
-			fs.readFile(OUT_FILE, (err, data) => {
-				try {
-					if (err) throw err
-					assert.equal(data, Buffer.from(BUFFER))
-					fs.unlink(OUT_FILE, _ => resolve())
-				}
-				catch (e) { reject(e) }
-			})
-		}
-		catch (e) { reject(e) }
-	})
-})
-const writeWithoutCallback = () => new Promise((resolve, reject) => {
+	return promisify(io.writeTypeAndValue)({type, value, outStream})
+		.then(_ => promisify(fs.readFile)(OUT_FILE))
+		.then(data => assert.equal(data, Buffer.from(BUFFER)))
+		.then(_ => promisify(fs.unlink)(OUT_FILE))
+})()
+const writeWithoutCallback = new Promise<void>((resolve, reject) => {
 	const OUT_FILE = 'type-value-out2'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeTypeAndValue({type: new t.StringType, value: 'abc', outStream})
 	outStream.on('finish', () => {
 		try {
-			fs.readFile(OUT_FILE, (err, data) => {
-				try {
-					if (err) throw err
-					assert.equal(data, Buffer.from([0x41, 0x61, 0x62, 0x63, 0]))
-					fs.unlink(OUT_FILE, _ => resolve())
-				}
-				catch (e) { reject(e) }
-			})
+			resolve(
+				promisify(fs.readFile)(OUT_FILE)
+					.then(data =>
+						assert.equal(data, Buffer.from([0x41, 0x61, 0x62, 0x63, 0]))
+					)
+					.then(_ => promisify(fs.unlink)(OUT_FILE))
+			)
 		}
 		catch (e) { reject(e) }
 	})
+	io.writeTypeAndValue({type: new t.StringType, value: 'abc', outStream})
 })
-const writeTypeErrorPromise = () => new Promise((resolve, reject) => {
+const writeTypeErrorPromise = (() => {
 	const OUT_FILE = 'type-value-out3'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeTypeAndValue({type: new t.RecursiveType('no-such-type'), value: 0, outStream}, err => {
-		try {
-			assert.errorMessage(err, '"no-such-type" is not a registered type')
-			fs.unlink(OUT_FILE, _ => resolve())
-		}
-		catch (e) { reject(e) }
+	return promisify(io.writeTypeAndValue)<number>({
+		type: new t.RecursiveType('no-such-type'),
+		value: 0,
+		outStream
 	})
-})
-const writeValueErrorPromise = () => new Promise((resolve, reject) => {
+		.then(_ => { throw new Error('Expected error to be thrown') })
+		.catch(err => assert.errorMessage(err, '"no-such-type" is not a registered type'))
+		.then(_ => promisify(fs.unlink)(OUT_FILE))
+})()
+const writeValueErrorPromise = (() => {
 	const OUT_FILE = 'type-value-out4'
 	const outStream = fs.createWriteStream(OUT_FILE)
-	io.writeTypeAndValue({type: new t.UnsignedIntType, value: -1, outStream}, err => {
-		try {
+	return promisify(io.writeTypeAndValue)({type: new t.UnsignedIntType, value: -1, outStream})
+		.then(_ => { throw new Error('Expected error to be thrown') })
+		.catch(err =>
 			assert.errorMessage(err, 'Value out of range (-1 is not in [0,4294967296))')
-			fs.unlink(OUT_FILE, _ => resolve())
-		}
-		catch (e) { reject(e) }
+		)
+		.then(_ => promisify(fs.unlink)(OUT_FILE))
+})()
+const readPromise = promisify(io.readTypeAndValue)<Map<string, number>>(new BufferStream(BUFFER))
+	.then(({type: readType, value: readValue}) => {
+		assert.equal(readType, type)
+		assert.equal(readValue, value)
 	})
-})
-const readPromise = new Promise((resolve, reject) => {
-	io.readTypeAndValue(new BufferStream(BUFFER), (err, readType, readValue) => {
-		try {
-			assert.equal(err, null)
-			assert.equal(readType, type)
-			assert.equal(readValue, value)
-			resolve()
-		}
-		catch (e) { reject(e) }
-	})
-})
 export = Promise.all([
-	writePromise
-		.then(writeWithoutCallback)
-		.then(writeTypeErrorPromise)
-		.then(writeValueErrorPromise),
+	writePromise,
+	writeWithoutCallback,
+	writeTypeErrorPromise,
+	writeValueErrorPromise,
 	readPromise
 ])
