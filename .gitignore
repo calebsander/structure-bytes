@@ -4,6 +4,12 @@ client-side/upload-download.ts
 compiled/dist
 test/**/*.js
 typings/*.js
+lib/buffer-stream.js
+
+wabt
+lib/sha256.wasm
+lib/sha256-load.ts
 
 coverage
 .nyc_output
+.vscode

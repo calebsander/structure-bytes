@@ -1,4 +1,6 @@
-declare const _default: (input: ArrayBuffer) => ArrayBuffer;
+export declare function sha256JS(input: ArrayBuffer): ArrayBuffer;
+export declare const sha256Wasm: typeof sha256JS | undefined;
+declare const _default: typeof sha256JS;
 /**
  * Computes a SHA-256 hash of the binary data,
  * output as an `ArrayBuffer`.

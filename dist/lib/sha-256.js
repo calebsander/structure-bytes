@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("./assert");
+const sha256_load_1 = require("./sha256-load");
 const K = new Uint32Array([
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
     0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -12,24 +12,15 @@ const K = new Uint32Array([
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ]);
 const rightRotate = (value, bits) => (value >>> bits) | (value << (32 - bits));
-/**
- * Computes a SHA-256 hash of the binary data,
- * output as an `ArrayBuffer`.
- * Implementation details mostly copied from
- * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
- * @param input The input data
- */
-exports.default = (input) => {
+function sha256JS(input) {
     const lBytes = input.byteLength;
-    const l = lBytes * 8; //not using bitwise math in case this overflows a 32-bit integer
-    assert_1.default(l === l >>> 0, 'Bit length does not fit in a 32-bit integer');
     const extraBytes = 64 - ((lBytes + 72) & 63);
     const messageLength = lBytes + extraBytes + 8;
     const message = new ArrayBuffer(messageLength);
     const castMessage = new Uint8Array(message);
     castMessage.set(new Uint8Array(input));
-    castMessage[lBytes] = 128;
-    new DataView(message).setUint32(messageLength - 4, l);
+    castMessage[lBytes] = 1 << 7;
+    new DataView(message).setUint32(messageLength - 4, lBytes << 3);
     const hash = new Uint32Array([
         0x6a09e667,
         0xbb67ae85,
@@ -83,4 +74,27 @@ exports.default = (input) => {
     for (let i = 0; i < 8; i++)
         resultDataView.setUint32(i << 2, hash[i]);
     return result;
-};
+}
+exports.sha256JS = sha256JS;
+exports.sha256Wasm = (() => {
+    if (!sha256_load_1.default)
+        return;
+    const { exports } = sha256_load_1.default;
+    const { INPUT_START, fitInput, sha256, memory } = exports;
+    return (input) => {
+        const { byteLength } = input;
+        fitInput(byteLength);
+        const { buffer } = memory;
+        new Uint8Array(buffer).set(new Uint8Array(input), INPUT_START);
+        sha256(byteLength);
+        return buffer.slice(0, 32);
+    };
+})();
+/**
+ * Computes a SHA-256 hash of the binary data,
+ * output as an `ArrayBuffer`.
+ * Implementation details mostly copied from
+ * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
+ * @param input The input data
+ */
+exports.default = exports.sha256Wasm || sha256JS;
