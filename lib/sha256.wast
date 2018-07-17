@@ -26,14 +26,14 @@
 		(i32.store8 offset=3 (get_local $loc) (get_local $val))
 	)
 	(func $store64BE (param $loc i32) (param $val i64)
-		(i64.store8 offset=0 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 56)))
-		(i64.store8 offset=1 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 48)))
-		(i64.store8 offset=2 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 40)))
-		(i64.store8 offset=3 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 32)))
-		(i64.store8 offset=4 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 24)))
-		(i64.store8 offset=5 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 16)))
-		(i64.store8 offset=6 (get_local $loc) (i64.shr_u (get_local $val) (i64.const 8)))
-		(i64.store8 offset=7 (get_local $loc) (get_local $val))
+		(call $store32BE ;; store32BE(loc, val >>> 32)
+			(get_local $loc)
+			(i32.wrap/i64 (i64.shr_u (get_local $val) (i64.const 32)))
+		)
+		(call $store32BE ;; store32BE(loc + 4, val)
+			(i32.add (get_local $loc) (i32.const 4))
+			(i32.wrap/i64 (get_local $val))
+		)
 	)
 	(func (export "fitInput") (param $byteLength i32)
 		(local $needed i32)
@@ -43,14 +43,14 @@
 				(i32.add (get_local $byteLength) (i32.const 63)) ;; could use up to 63 extra bytes
 			)
 		)
-		(set_local $needed ;; needed = (needed >> 16) + (needed & 65535 ? 1 : 0) - memory.size
+		(set_local $needed ;; needed = (needed >> 16) + (needed % (1 << 16) ? 1 : 0) - memory.size
 			(i32.sub
 				(i32.add
 					(i32.shr_u (get_local $needed) (i32.const 16))
 					(select
 						(i32.const 1)
 						(i32.const 0)
-						(i32.and (get_local $needed) (i32.const 65535))
+						(i32.and (get_local $needed) (i32.const 0xffff))
 					)
 				)
 				(current_memory)
@@ -75,7 +75,7 @@
 			(i32.add
 				;; byteLength
 				(get_local $byteLength)
-				;; extraBytes (== 72 - ((lBytes + 72) & 63))
+				;; extraBytes (== 72 - ((lBytes + 72) % 64))
 				(i32.sub
 					(i32.const 72)
 					(i32.and
@@ -95,9 +95,10 @@
 				(i32.const 8)
 			)
 		)
+		;; for (i = byteLength + 1; i < lengthIndex; i++)
 		(set_local $i (i32.add (get_local $byteLength) (i32.const 1)))
 		(loop $zeroBytes
-			(i32.store8
+			(i32.store8 ;; buf[i] = 0
 				(i32.add (get_global $INPUT_START) (get_local $i))
 				(i32.const 0)
 			)
@@ -105,7 +106,7 @@
 				(i32.lt_u (tee_local $i (i32.add (get_local $i) (i32.const 1))) (get_local $lengthIndex))
 			)
 		)
-		(call $store64BE ;; buf[lengthIndex] = (i64)(byteLength << 3)
+		(call $store64BE ;; buf[lengthIndex] = (i64)byteLength << 3
 			(get_local $lengthIndex)
 			(i64.shl (i64.extend_u/i32 (get_local $byteLength)) (i64.const 3))
 		)
