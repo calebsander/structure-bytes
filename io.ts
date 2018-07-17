@@ -19,6 +19,21 @@ function toArrayBuffer(buffer: Buffer): ArrayBuffer {
 		? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
 		: arrayBuffer.slice(byteOffset, byteOffset + byteLength)
 }
+type ArrayBufferCallback = (err: Error | null, buffer: ArrayBuffer | null) => void
+function concatStream(stream: Readable, callback: ArrayBufferCallback) {
+	const segments: Buffer[] = []
+	stream
+		.on('data', chunk =>
+			segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk))
+		)
+		.on('error', function(this: typeof stream, err) {
+			this.destroy()
+			callback(err, null)
+		})
+		.on('end', () =>
+			callback(null, toArrayBuffer(Buffer.concat(segments)))
+		)
+}
 
 export interface WriteParams<E> {
 	type: Type<E>
@@ -245,22 +260,14 @@ export declare namespace writeTypeAndValue {
 export function readType<E>(inStream: Readable, callback: TypeCallback<E>) {
 	assert.instanceOf(inStream, Readable)
 	assert.instanceOf(callback, Function)
-	const segments: Buffer[] = []
-	inStream
-		.on('data', chunk =>
-			segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk))
-		)
-		.on('error', function(this: typeof inStream, err: Error) {
-			this.destroy()
-			callback(err, null)
-		})
-		.on('end', () => {
-			const buffer = Buffer.concat(segments)
-			let type: Type<E>
-			try { type = r.type(toArrayBuffer(buffer), false) }
-			catch (e) { return callback(e, null) }
-			callback(null, type)
-		})
+	concatStream(inStream, (err, buffer) => {
+		if (err) return callback(err, null)
+
+		let type: Type<E>
+		try { type = r.type(buffer!, false) }
+		catch (e) { return callback(e, null) }
+		callback(null, type)
+	})
 }
 export declare namespace readType {
 	function __promisify__<E>(inStream: Readable): Promise<Type<E>>
@@ -301,20 +308,14 @@ export declare namespace readType {
 export function readValue<E>({type, inStream}: ReadValueParams<E>, callback: ValueCallback<E>) {
 	assert.instanceOf(inStream, Readable)
 	assert.instanceOf(callback, Function)
-	const segments: Buffer[] = []
-	inStream
-		.on('data', chunk => segments.push(chunk as Buffer))
-		.on('error', function(this: typeof inStream, err: Error) {
-			this.destroy()
-			callback(err, null)
-		})
-		.on('end', () => {
-			const buffer = Buffer.concat(segments)
-			let value: E
-			try { value = type.readValue(toArrayBuffer(buffer)) }
-			catch (e) { return callback(e, null) }
-			callback(null, value)
-		})
+	concatStream(inStream, (err, buffer) => {
+		if (err) return callback(err, null)
+
+		let value: E
+		try { value = type.readValue(buffer!) }
+		catch (e) { return callback(e, null) }
+		callback(null, value)
+	})
 }
 export declare namespace readValue {
 	function __promisify__<E>(params: ReadValueParams<E>): Promise<E>
@@ -345,24 +346,18 @@ export declare namespace readValue {
 export function readTypeAndValue<E>(inStream: Readable, callback: TypeAndValueCallback<E>) {
 	assert.instanceOf(inStream, Readable)
 	assert.instanceOf(callback, Function)
-	const segments: Buffer[] = []
-	inStream
-		.on('data', chunk => segments.push(chunk as Buffer))
-		.on('error', function(this: typeof inStream, err: Error) {
-			this.destroy()
-			callback(err, null, null)
-		})
-		.on('end', () => {
-			const buffer = Buffer.concat(segments)
-			let type: ReadResult<Type<E>>
-			//Using consumeType() in order to get the length of the type (the start of the value)
-			try { type = r._consumeType(toArrayBuffer(buffer), 0) }
-			catch (e) { return callback(e, null, null) }
-			let value: E
-			try { value = type.value.readValue(toArrayBuffer(buffer), type.length) }
-			catch (e) { return callback(e, null, null) }
-			callback(null, type.value, value)
-		})
+	concatStream(inStream, (err, buffer) => {
+		if (err) return callback(err, null, null)
+
+		let type: ReadResult<Type<E>>
+		//Using consumeType() in order to get the length of the type (the start of the value)
+		try { type = r._consumeType(buffer!, 0) }
+		catch (e) { return callback(e, null, null) }
+		let value: E
+		try { value = type.value.readValue(buffer!, type.length) }
+		catch (e) { return callback(e, null, null) }
+		callback(null, type.value, value)
+	})
 }
 //Custom promisifiy function because Promise cannot resolve to 2 values
 (readTypeAndValue as any)[promisify.custom] = <E>(inStream: Readable) =>

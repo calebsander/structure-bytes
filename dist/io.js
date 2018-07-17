@@ -17,6 +17,16 @@ function toArrayBuffer(buffer) {
         ? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
         : arrayBuffer.slice(byteOffset, byteOffset + byteLength);
 }
+function concatStream(stream, callback) {
+    const segments = [];
+    stream
+        .on('data', chunk => segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk)))
+        .on('error', function (err) {
+        this.destroy();
+        callback(err, null);
+    })
+        .on('end', () => callback(null, toArrayBuffer(Buffer.concat(segments))));
+}
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])
  * to a writable stream and then closes the stream.
@@ -205,18 +215,12 @@ exports.writeTypeAndValue = writeTypeAndValue;
 function readType(inStream, callback) {
     assert_1.default.instanceOf(inStream, stream_1.Readable);
     assert_1.default.instanceOf(callback, Function);
-    const segments = [];
-    inStream
-        .on('data', chunk => segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk)))
-        .on('error', function (err) {
-        this.destroy();
-        callback(err, null);
-    })
-        .on('end', () => {
-        const buffer = Buffer.concat(segments);
+    concatStream(inStream, (err, buffer) => {
+        if (err)
+            return callback(err, null);
         let type;
         try {
-            type = r.type(toArrayBuffer(buffer), false);
+            type = r.type(buffer, false);
         }
         catch (e) {
             return callback(e, null);
@@ -260,18 +264,12 @@ exports.readType = readType;
 function readValue({ type, inStream }, callback) {
     assert_1.default.instanceOf(inStream, stream_1.Readable);
     assert_1.default.instanceOf(callback, Function);
-    const segments = [];
-    inStream
-        .on('data', chunk => segments.push(chunk))
-        .on('error', function (err) {
-        this.destroy();
-        callback(err, null);
-    })
-        .on('end', () => {
-        const buffer = Buffer.concat(segments);
+    concatStream(inStream, (err, buffer) => {
+        if (err)
+            return callback(err, null);
         let value;
         try {
-            value = type.readValue(toArrayBuffer(buffer));
+            value = type.readValue(buffer);
         }
         catch (e) {
             return callback(e, null);
@@ -305,26 +303,20 @@ exports.readValue = readValue;
 function readTypeAndValue(inStream, callback) {
     assert_1.default.instanceOf(inStream, stream_1.Readable);
     assert_1.default.instanceOf(callback, Function);
-    const segments = [];
-    inStream
-        .on('data', chunk => segments.push(chunk))
-        .on('error', function (err) {
-        this.destroy();
-        callback(err, null, null);
-    })
-        .on('end', () => {
-        const buffer = Buffer.concat(segments);
+    concatStream(inStream, (err, buffer) => {
+        if (err)
+            return callback(err, null, null);
         let type;
         //Using consumeType() in order to get the length of the type (the start of the value)
         try {
-            type = r._consumeType(toArrayBuffer(buffer), 0);
+            type = r._consumeType(buffer, 0);
         }
         catch (e) {
             return callback(e, null, null);
         }
         let value;
         try {
-            value = type.value.readValue(toArrayBuffer(buffer), type.length);
+            value = type.value.readValue(buffer, type.length);
         }
         catch (e) {
             return callback(e, null, null);

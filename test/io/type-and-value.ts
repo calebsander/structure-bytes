@@ -73,10 +73,16 @@ const readPromise = promisify(io.readTypeAndValue)<Map<string, number>>(new Buff
 		assert.equal(readType, type)
 		assert.equal(readValue, value)
 	})
+const readErrorPromise = promisify(io.readTypeAndValue)<string>(
+	new BufferStream(bufferFrom([0x41, 0x61, 0x62, 0x63]))
+)
+	.then(_ => { throw new Error('Expected error to be thrown') })
+	.catch(err => assert.errorMessage(err, 'Buffer is not long enough'))
 export = Promise.all([
 	writePromise,
 	writeWithoutCallback,
 	writeTypeErrorPromise,
 	writeValueErrorPromise,
-	readPromise
+	readPromise,
+	readErrorPromise
 ])
