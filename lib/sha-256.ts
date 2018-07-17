@@ -1,13 +1,10 @@
 import sha256Module from './sha256-load'
 
-interface WASMExports {
+interface WasmExports {
 	INPUT_START: number
 	memory: WebAssembly.Memory
 	fitInput(length: number): void
 	sha256(length: number): void
-}
-interface WASMInstance {
-	exports: WASMExports
 }
 
 const K = new Uint32Array([
@@ -31,7 +28,7 @@ export function sha256JS(input: ArrayBuffer) {
 	const message = new ArrayBuffer(messageLength)
 	const castMessage = new Uint8Array(message)
 	castMessage.set(new Uint8Array(input))
-	castMessage[lBytes] = 128
+	castMessage[lBytes] = 1 << 7
 	new DataView(message).setUint32(messageLength - 4, lBytes << 3)
 
 	const hash = new Uint32Array([
@@ -76,11 +73,11 @@ export function sha256JS(input: ArrayBuffer) {
 	for (let i = 0; i < 8; i++) resultDataView.setUint32(i << 2, hash[i])
 	return result
 }
-export const sha256WASM: typeof sha256JS | undefined = (() => {
+export const sha256Wasm: typeof sha256JS | undefined = (() => {
 	if (!sha256Module) return
 
-	const {exports} = sha256Module as WASMInstance
-	const {INPUT_START, fitInput, sha256, memory} = exports
+	const {exports} = sha256Module
+	const {INPUT_START, fitInput, sha256, memory} = exports as WasmExports
 	return (input: ArrayBuffer) => {
 		const {byteLength} = input
 		fitInput(byteLength)
@@ -97,4 +94,4 @@ export const sha256WASM: typeof sha256JS | undefined = (() => {
  * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
  * @param input The input data
  */
-export default sha256WASM || sha256JS
+export default sha256Wasm || sha256JS

@@ -19,7 +19,7 @@ function sha256JS(input) {
     const message = new ArrayBuffer(messageLength);
     const castMessage = new Uint8Array(message);
     castMessage.set(new Uint8Array(input));
-    castMessage[lBytes] = 128;
+    castMessage[lBytes] = 1 << 7;
     new DataView(message).setUint32(messageLength - 4, lBytes << 3);
     const hash = new Uint32Array([
         0x6a09e667,
@@ -76,7 +76,7 @@ function sha256JS(input) {
     return result;
 }
 exports.sha256JS = sha256JS;
-exports.sha256WASM = (() => {
+exports.sha256Wasm = (() => {
     if (!sha256_load_1.default)
         return;
     const { exports } = sha256_load_1.default;
@@ -97,4 +97,4 @@ exports.sha256WASM = (() => {
  * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
  * @param input The input data
  */
-exports.default = exports.sha256WASM || sha256JS;
+exports.default = exports.sha256Wasm || sha256JS;
