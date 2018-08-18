@@ -78,7 +78,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L99">io.ts:99</a></li>
+								<li>Defined in io.ts:114</li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -88,7 +88,7 @@
 								Calls <code>callback</code> when done.</p>
 							</div>
 							<p>Example:</p>
-							<pre><code class="lang-javascript"><span class="hljs-comment">//With a callback:</span>
+							<pre><code class="language-javascript"><span class="hljs-comment">//With a callback:</span>
 sb.writeType({
   <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
     <span class="hljs-attr">abc</span>: <span class="hljs-keyword">new</span> sb.ArrayType(<span class="hljs-keyword">new</span> sb.StringType),
@@ -108,8 +108,7 @@ util.promisify(sb.writeType)({
   }),
   <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'out.sbt'</span>)
 })
-  .then(<span class="hljs-function"><span class="hljs-params">_</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Done'</span>))
-</code></pre>
+  .then(<span class="hljs-function"><span class="hljs-params">_</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Done'</span>))</code></pre>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
@@ -167,7 +166,7 @@ util.promisify(sb.writeType)({
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L114">io.ts:114</a></li>
+									<li>Defined in io.ts:129</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

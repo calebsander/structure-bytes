@@ -77,7 +77,7 @@
 							Implemented by <a href="_lib_growable_buffer_.growablebuffer.html">GrowableBuffer</a>, as well as
 							<a href="_lib_appendable_stream_.appendablestream.html">AppendableStream</a> (a wrapper around a writable stream).
 						All methods can be chained, e.g.</p>
-						<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
+						<pre><code class="language-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
 gb
   .add(<span class="hljs-number">1</span>).add(<span class="hljs-number">2</span>)
   .addAll(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]).buffer)
@@ -85,8 +85,7 @@ gb
     .add(<span class="hljs-number">0</span>)
     .reset()
   .resume()
-<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3, 4, 5 ]</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3, 4, 5 ]</span></code></pre>
 					</div>
 				</div>
 			</section>
@@ -137,7 +136,7 @@ gb
 					<div class="tsd-signature tsd-kind-icon">length<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/appendable.ts#L23">lib/appendable.ts:23</a></li>
+							<li>Defined in lib/appendable.ts:23</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -159,7 +158,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/appendable.ts#L29">lib/appendable.ts:29</a></li>
+									<li>Defined in lib/appendable.ts:29</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -191,7 +190,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/appendable.ts#L37">lib/appendable.ts:37</a></li>
+									<li>Defined in lib/appendable.ts:37</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -225,7 +224,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/appendable.ts#L62">lib/appendable.ts:62</a></li>
+									<li>Defined in lib/appendable.ts:62</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -240,7 +239,7 @@ gb
 								<p>If called multiple times, <a href="_lib_appendable_.appendablebuffer.html#resume">resume</a>
 									and <a href="_lib_appendable_.appendablebuffer.html#reset">reset</a> only act on bytes added
 								since the most recent pause. Example:</p>
-								<pre><code class="lang-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
+								<pre><code class="language-javascript"><span class="hljs-keyword">let</span> gb = <span class="hljs-keyword">new</span> GrowableBuffer
 gb
   .pause()
     .add(<span class="hljs-number">1</span>).add(<span class="hljs-number">2</span>).add(<span class="hljs-number">3</span>)
@@ -249,8 +248,7 @@ gb
       .reset() <span class="hljs-comment">//cancels [4, 5, 6]</span>
     .resume() <span class="hljs-comment">//resumes []</span>
   .resume() <span class="hljs-comment">//resumes [1, 2, 3]</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3 ]</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(gb.toBuffer())) <span class="hljs-comment">//Uint8Array [ 1, 2, 3 ]</span></code></pre>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
 						</li>
@@ -266,7 +264,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/appendable.ts#L78">lib/appendable.ts:78</a></li>
+									<li>Defined in lib/appendable.ts:78</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -297,7 +295,7 @@ gb
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/appendable.ts#L69">lib/appendable.ts:69</a></li>
+									<li>Defined in lib/appendable.ts:69</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

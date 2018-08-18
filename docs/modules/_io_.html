@@ -95,6 +95,7 @@
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported"><a href="_io_.html#arraybuffercallback" class="tsd-kind-icon">Array<wbr>Buffer<wbr>Callback</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_io_.html#errcallback" class="tsd-kind-icon">Err<wbr>Callback</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_io_.html#typeandvaluecallback" class="tsd-kind-icon">Type<wbr>And<wbr>Value<wbr>Callback</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_io_.html#typecallback" class="tsd-kind-icon">Type<wbr>Callback</a></li>
@@ -104,6 +105,7 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_io_.html#concatstream" class="tsd-kind-icon">concat<wbr>Stream</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_io_.html#toarraybuffer" class="tsd-kind-icon">to<wbr>Array<wbr>Buffer</a></li>
 							</ul>
 						</section>
@@ -112,13 +114,47 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="arraybuffercallback" class="tsd-anchor"></a>
+					<h3>Array<wbr>Buffer<wbr>Callback</h3>
+					<div class="tsd-signature tsd-kind-icon">Array<wbr>Buffer<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in io.ts:22</li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>err<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>err: <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+											</li>
+											<li>
+												<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
 					<a name="errcallback" class="tsd-anchor"></a>
 					<h3>Err<wbr>Callback</h3>
 					<div class="tsd-signature tsd-kind-icon">Err<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L47">io.ts:47</a></li>
+							<li>Defined in io.ts:62</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -154,7 +190,7 @@
 					<div class="tsd-signature tsd-kind-icon">Type<wbr>And<wbr>Value<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L62">io.ts:62</a></li>
+							<li>Defined in io.ts:77</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -197,7 +233,7 @@
 					<div class="tsd-signature tsd-kind-icon">Type<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L52">io.ts:52</a></li>
+							<li>Defined in io.ts:67</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -237,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">Value<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L57">io.ts:57</a></li>
+							<li>Defined in io.ts:72</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -275,6 +311,32 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="concatstream" class="tsd-anchor"></a>
+					<h3>concat<wbr>Stream</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">concat<wbr>Stream<span class="tsd-signature-symbol">(</span>stream<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readable</span>, callback<span class="tsd-signature-symbol">: </span><a href="_io_.html#arraybuffercallback" class="tsd-signature-type">ArrayBufferCallback</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in io.ts:23</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>stream: <span class="tsd-signature-type">Readable</span></h5>
+								</li>
+								<li>
+									<h5>callback: <a href="_io_.html#arraybuffercallback" class="tsd-signature-type">ArrayBufferCallback</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="toarraybuffer" class="tsd-anchor"></a>
 					<h3>to<wbr>Array<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
@@ -284,7 +346,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L16">io.ts:16</a></li>
+									<li>Defined in io.ts:16</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -350,6 +412,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../interfaces/_io_.writetypevalueparams.html" class="tsd-kind-icon">Write<wbr>Type<wbr>Value<wbr>Params</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_io_.html#arraybuffercallback" class="tsd-kind-icon">Array<wbr>Buffer<wbr>Callback</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="_io_.html#errcallback" class="tsd-kind-icon">Err<wbr>Callback</a>
 					</li>
@@ -361,6 +426,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_io_.html#valuecallback" class="tsd-kind-icon">Value<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_io_.html#concatstream" class="tsd-kind-icon">concat<wbr>Stream</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_io_.html#toarraybuffer" class="tsd-kind-icon">to<wbr>Array<wbr>Buffer</a>

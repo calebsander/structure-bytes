@@ -78,7 +78,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L245">io.ts:245</a></li>
+								<li>Defined in io.ts:260</li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -89,7 +89,7 @@
 								Calls <code>callback</code> with the type when done.</p>
 							</div>
 							<p>Example:</p>
-							<pre><code class="lang-javascript"><span class="hljs-comment">//With a callback:</span>
+							<pre><code class="language-javascript"><span class="hljs-comment">//With a callback:</span>
 sb.readType(fs.createReadStream(<span class="hljs-string">'out.sbt'</span>), (err, type) =&gt; {
   <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
   <span class="hljs-built_in">console</span>.log(type)
@@ -97,8 +97,7 @@ sb.readType(fs.createReadStream(<span class="hljs-string">'out.sbt'</span>), (er
 
 <span class="hljs-comment">//As a Promise:</span>
 util.promisify(sb.readType)(fs.createReadStream(<span class="hljs-string">'out.sbt'</span>))
-  .then(<span class="hljs-function"><span class="hljs-params">type</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(type))
-</code></pre>
+  .then(<span class="hljs-function"><span class="hljs-params">type</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(type))</code></pre>
 						</div>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
@@ -150,7 +149,7 @@ util.promisify(sb.readType)(fs.createReadStream(<span class="hljs-string">'out.s
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L266">io.ts:266</a></li>
+									<li>Defined in io.ts:273</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>

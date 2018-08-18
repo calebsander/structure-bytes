@@ -82,20 +82,18 @@
 						the values to be written.
 						For example, to write <code>{a: 100, b: &#39;abc&#39;, c: false}</code>,
 					you could use:</p>
-					<pre><code class="lang-javascript"><span class="hljs-keyword">new</span> sb.StructType({
+					<pre><code class="language-javascript"><span class="hljs-keyword">new</span> sb.StructType({
   <span class="hljs-attr">a</span>: <span class="hljs-keyword">new</span> sb.UnsignedIntType,
   <span class="hljs-attr">b</span>: <span class="hljs-keyword">new</span> sb.StringType,
   <span class="hljs-attr">c</span>: <span class="hljs-keyword">new</span> sb.BooleanType
-})
-</code></pre>
+})</code></pre>
 					<p>Example:</p>
-					<pre><code class="lang-javascript"><span class="hljs-comment">//For storing a person's information</span>
+					<pre><code class="language-javascript"><span class="hljs-comment">//For storing a person's information</span>
 <span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.StructType({
   <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType,
   <span class="hljs-attr">age</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
   <span class="hljs-attr">netWorth</span>: <span class="hljs-keyword">new</span> sb.FloatType
-})
-</code></pre>
+})</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -190,7 +188,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L72">types/struct.ts:72</a></li>
+									<li>Defined in types/struct.ts:72</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -221,7 +219,7 @@
 					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_struct_.structfield.html" class="tsd-signature-type">StructField</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L72">types/struct.ts:72</a></li>
+							<li>Defined in types/struct.ts:72</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -248,7 +246,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L62">types/struct.ts:62</a></li>
+									<li>Defined in types/struct.ts:62</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -270,7 +268,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L113">types/struct.ts:113</a></li>
+									<li>Defined in types/struct.ts:113</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -294,7 +292,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#consumevalue">consumeValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L158">types/struct.ts:158</a></li>
+									<li>Defined in types/struct.ts:158</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -325,7 +323,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L168">types/struct.ts:168</a></li>
+									<li>Defined in types/struct.ts:168</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -350,7 +348,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#gethash">getHash</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#gethash">getHash</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/abstract.ts#L52">types/abstract.ts:52</a></li>
+									<li>Defined in types/abstract.ts:52</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -369,7 +367,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#getsignature">getSignature</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#getsignature">getSignature</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/abstract.ts#L56">types/abstract.ts:56</a></li>
+									<li>Defined in types/abstract.ts:56</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -387,7 +385,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#isbuffer">isBuffer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/abstract.ts#L93">types/abstract.ts:93</a></li>
+									<li>Defined in types/abstract.ts:93</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -420,7 +418,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#readvalue">readValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/abstract.ts#L67">types/abstract.ts:67</a></li>
+									<li>Defined in types/abstract.ts:67</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -448,7 +446,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#tobuffer">toBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#tobuffer">toBuffer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/abstract.ts#L48">types/abstract.ts:48</a></li>
+									<li>Defined in types/abstract.ts:48</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -466,7 +464,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/abstract.ts#L61">types/abstract.ts:61</a></li>
+									<li>Defined in types/abstract.ts:61</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -490,7 +488,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/types/struct.ts#L144">types/struct.ts:144</a></li>
+									<li>Defined in types/struct.ts:144</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -498,12 +496,11 @@
 									<p>Appends value bytes to an <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
 								</div>
 								<p>Example:</p>
-								<pre><code class="lang-javascript">type.writeValue(buffer, {
+								<pre><code class="language-javascript">type.writeValue(buffer, {
   <span class="hljs-attr">name</span>: <span class="hljs-string">'Gertrude'</span>,
   <span class="hljs-attr">age</span>: <span class="hljs-number">29</span>,
   <span class="hljs-attr">netWorth</span>: <span class="hljs-number">1.2e6</span>
-})
-</code></pre>
+})</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
 									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>

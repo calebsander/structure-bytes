@@ -78,7 +78,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L345">io.ts:345</a></li>
+								<li>Defined in io.ts:346</li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -89,7 +89,7 @@
 								Calls <code>callback</code> with the type and value when done.</p>
 							</div>
 							<p>Example:</p>
-							<pre><code class="lang-javascript"><span class="hljs-comment">//With a callback:</span>
+							<pre><code class="language-javascript"><span class="hljs-comment">//With a callback:</span>
 sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'out.sbtv'</span>), (err, type, value) =&gt; {
   <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> err
   <span class="hljs-built_in">console</span>.log(type, value)
@@ -97,8 +97,7 @@ sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'out.sbtv'</sp
 
 <span class="hljs-comment">//As a Promise:</span>
 util.promisify(sb.readTypeAndValue)(fs.createReadStream(<span class="hljs-string">'out.sbtv'</span>))
-  .then(<span class="hljs-function">(<span class="hljs-params">{type, value}</span>) =&gt;</span> <span class="hljs-built_in">console</span>.log(type, value))
-</code></pre>
+  .then(<span class="hljs-function">(<span class="hljs-params">{type, value}</span>) =&gt;</span> <span class="hljs-built_in">console</span>.log(type, value))</code></pre>
 						</div>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
@@ -150,7 +149,7 @@ util.promisify(sb.readTypeAndValue)(fs.createReadStream(<span class="hljs-string
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/io.ts#L376">io.ts:376</a></li>
+									<li>Defined in io.ts:371</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>

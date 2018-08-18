@@ -71,21 +71,29 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section tsd-is-external tsd-is-not-exported">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="../interfaces/_lib_sha_256_.wasmexports.html" class="tsd-kind-icon">Wasm<wbr>Exports</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="_lib_sha_256_.html#k" class="tsd-kind-icon">K</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-external"><a href="_lib_sha_256_.html#sha256wasm" class="tsd-kind-icon">sha256<wbr>Wasm</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-external tsd-is-not-exported">
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported"><a href="_lib_sha_256_.html#rightrotate" class="tsd-kind-icon">right<wbr>Rotate</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_sha_256_.html#sha256js" class="tsd-kind-icon">sha256JS</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-external tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
 					<a name="k" class="tsd-anchor"></a>
@@ -93,12 +101,22 @@
 					<div class="tsd-signature tsd-kind-icon">K<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint32Array</span><span class="tsd-signature-symbol"> =&nbsp;new Uint32Array([0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2])</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/sha-256.ts#L3">lib/sha-256.ts:3</a></li>
+							<li>Defined in lib/sha-256.ts:10</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-external">
+					<a name="sha256wasm" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> sha256<wbr>Wasm</h3>
+					<div class="tsd-signature tsd-kind-icon">sha256<wbr>Wasm<span class="tsd-signature-symbol">:</span> <a href="_lib_sha_256_.html#sha256js" class="tsd-signature-type">sha256JS</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;(() &#x3D;&gt; {if (!sha256Module) returnconst {exports} &#x3D; sha256Moduleconst {INPUT_START, fitInput, sha256, memory} &#x3D; exports as WasmExportsreturn (input: ArrayBuffer) &#x3D;&gt; {const {byteLength} &#x3D; inputfitInput(byteLength)const {buffer} &#x3D; memorynew Uint8Array(buffer).set(new Uint8Array(input), INPUT_START)sha256(byteLength)return buffer.slice(0, 32)}})()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/sha-256.ts:76</li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-external tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
 					<a name="rightrotate" class="tsd-anchor"></a>
@@ -110,7 +128,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/lib/sha-256.ts#L14">lib/sha-256.ts:14</a></li>
+									<li>Defined in lib/sha-256.ts:21</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -123,6 +141,29 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+					<a name="sha256js" class="tsd-anchor"></a>
+					<h3>sha256JS</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">sha256JS<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in lib/sha-256.ts:24</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -141,11 +182,20 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
+						<a href="../interfaces/_lib_sha_256_.wasmexports.html" class="tsd-kind-icon">Wasm<wbr>Exports</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
 						<a href="_lib_sha_256_.html#k" class="tsd-kind-icon">K</a>
 					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-external">
+						<a href="_lib_sha_256_.html#sha256wasm" class="tsd-kind-icon">sha256<wbr>Wasm</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external tsd-is-not-exported">
 						<a href="_lib_sha_256_.html#rightrotate" class="tsd-kind-icon">right<wbr>Rotate</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
+						<a href="_lib_sha_256_.html#sha256js" class="tsd-kind-icon">sha256JS</a>
 					</li>
 				</ul>
 			</nav>

@@ -95,7 +95,7 @@
 					<div class="tsd-signature tsd-kind-icon">registered<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../classes/_types_tuple_.tupletype.html" class="tsd-signature-type">TupleType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_array_.arraytype.html" class="tsd-signature-type">ArrayType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_set_.settype.html" class="tsd-signature-type">SetType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_map_.maptype.html" class="tsd-signature-type">MapType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_types_struct_.structtype.html" class="tsd-signature-type">StructType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map&lt;string, RegisterableType&gt;()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/recursive-registry.ts#L10">recursive-registry.ts:10</a></li>
+							<li>Defined in recursive-registry.ts:10</li>
 						</ul>
 					</aside>
 				</section>
@@ -112,7 +112,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/recursive-registry.ts#L75">recursive-registry.ts:75</a></li>
+									<li>Defined in recursive-registry.ts:75</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -150,7 +150,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/recursive-registry.ts#L88">recursive-registry.ts:88</a></li>
+									<li>Defined in recursive-registry.ts:88</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -184,7 +184,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/dbfc9c3/recursive-registry.ts#L56">recursive-registry.ts:56</a></li>
+									<li>Defined in recursive-registry.ts:56</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -205,16 +205,15 @@
 								in a single-field <a href="../classes/_types_struct_.structtype.html">StructType</a>.</p>
 								<p>THIS METHOD OF REGISTERING RECURSIVE TYPES HAS BEEN DEPRECATED.
 								Instead, please use <a href="../classes/_types_recursive_.recursivetype.html#settype">RecursiveType.setType</a>:</p>
-								<pre><code class="lang-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
+								<pre><code class="language-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
 <span class="hljs-keyword">let</span> treeType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'tree-node'</span>)
 treeType.setType(<span class="hljs-keyword">new</span> sb.StructType({
   <span class="hljs-attr">left</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType),
   <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
   <span class="hljs-attr">right</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType)
-}))
-</code></pre>
+}))</code></pre>
 								<p>Example:</p>
-								<pre><code class="lang-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
+								<pre><code class="language-javascript"><span class="hljs-comment">//A binary tree of unsigned bytes</span>
 <span class="hljs-keyword">let</span> treeType = <span class="hljs-keyword">new</span> sb.RecursiveType(<span class="hljs-string">'tree-node'</span>)
 sb.registerType({
   <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StructType({
@@ -223,8 +222,7 @@ sb.registerType({
     <span class="hljs-attr">right</span>: <span class="hljs-keyword">new</span> sb.OptionalType(treeType)
   }),
   <span class="hljs-attr">name</span>: <span class="hljs-string">'tree-node'</span> <span class="hljs-comment">//name must match name passed to RecursiveType constructor</span>
-})
-</code></pre>
+})</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
 									<dd><p>If a type is already registered under the name</p>
