@@ -1,5 +1,5 @@
 # structure-bytes
-A Node.js library for more efficient data transfers by separating the structure from the values and efficiently storing each as binary data.
+A TypeScript library for efficient data serialization, achieved by separating data structure from their values and storing each in compact binary formats.
 
 [![npm Version](https://img.shields.io/npm/v/structure-bytes.svg)](https://www.npmjs.com/package/structure-bytes)
 [![Build Status](https://travis-ci.org/calebsander/structure-bytes.svg?branch=master)](https://travis-ci.org/calebsander/structure-bytes)
@@ -8,24 +8,38 @@ A Node.js library for more efficient data transfers by separating the structure 
 [![Dev Dependencies](https://david-dm.org/calebsander/structure-bytes/dev-status.svg)](https://david-dm.org/calebsander/structure-bytes?type=dev)
 
 ## Concept
-A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google's [Protocol Buffers](https://developers.google.com/protocol-buffers/), but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:
+Most modern data serialization formats fall into one of two categories:
 
-- Types (user-created formats of data) are created by combining a wide variety of datatypes, both primitive and recursive. This allows for representations which accurately describe types (e.g. distinguishing between structs and mappings of strings to values, and numeric types, unlike JSON). Types are very customizable, so you can build any desired type formats.
-- Types are kept separate from values (instances of a type) because types are designed to be created once and used to store many different values. This allows for communications to cache the type format after the first use and only have to send the values in subsequent requests.
-- Redundancy in data storage is kept to a minimum. For example, in an array of structs, the field names are only specified once in the type spec rather than for each element in the array.
+- Formats like JSON which can represent a wide range of simple and compound data types. Serialized values in these formats implicitly serialize their type so the deserializer doesn't need knowledge of the type.
+- Formats like MP3 or PNG which represent one specific data type, such as a song or image. The serializer and deserializer must both know the file format in order to communicate.
+
+The aim of this project is to store values with the flexibility of JSON but the byte efficiency of dedicated formats.
+To accomplish this, custom "types" are constructed, implicitly defining binary serialization formats for specific categories of values.
+Types are defined from a rich set of primitive and compound types (see [Data Types](#data-types)).
+There is a fixed (universal) serialization format for types, and each type defines a serialization format for its values.
+`structure-bytes` reduces the number of bytes needed to serialize values in several ways in comparison to JSON:
+
+- Types and values are each serialized in binary formats with far less redundancy than JSON's text-based formats. For example, serializing a 32-bit signed integer in JSON can take up to 11 characters, whereas it requires only 4 bytes when serialized by `sb.IntType`.
+- JSON does not require each value in an array or dictionary to have the same type, which results in highly redundant serializations of collections. `structure-bytes` serializes the type of a collection's elements as part of the type rather than the value, so it isn't repeated.
+- One type can be used to serialize many different values. For example, when sending multiple values of the same type across a network, the type can sent along with the first value and only values need to be sent afterwards.
+
+This project is somewhat similar to Google's [Protocol Buffers](https://developers.google.com/protocol-buffers/), but was not designed to match its functionality.
 
 ## Use cases
-- Use when the structure of the data is complicated. For example, if you are just sending text to be interpreted as text, that can be done easily in almost any environment.
-- Use when you plan to have many different values for the type (either many different files storing the same sort of information, or many communications of the same sort of information). This will give you the benefit of being able to keep only a single copy of the type spec.
-- Use when there is a lot of repetition in the data. If you don't have any arrays, sets, or maps, you can't really benefit from the cutdown on redundancy.
+
+- Use when the structure of the data is complicated. For example, if you are serializing plaintext, this can easily be accomplished without redundancy by writing to files or sockets.
+- Use when there is a lot of repetition in the data. If you don't have any arrays, sets, or maps, there is less redundancy for `structure-bytes` to eliminate.
+- Use when serializing many values for the type (e.g. many files storing the same type of value, or many communications of the same type). This will give you the benefit of being able to keep only a single copy of the type spec.
 
 ## Differences from Protocol Buffers
-- Types have binary serializations, not just values. (Protocol Buffers requires both the sender and receiver to have `.proto` definition files, which are not designed to be transmitted like values.) This makes storage of complex types much more compact and allows for sending values of types the receiver has not yet seen.
-- Types are generated programmatically rather than by reading `.proto` files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.
-- This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.
-- `structure-bytes` provides a larger set of primitive and recursive types.
+
+- Types have binary serializations, not just values. (Protocol Buffers requires both the serializer and deserializer to have `.proto` definition files, which are not designed to be transmitted like values.) This compactly stores complex types and allows values to be written along with their types so they can be read without knowing their types beforehand.
+- Types are generated programmatically rather than by reading `.proto` files. This allows, for example, for a function which turns a type into another type that either contains an error message or an instance of the original type.
+- This project is designed with downloading data over HTTP in mind. If the client has already received values of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn't know the type, the server serializes it along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests to the same endpoint are very efficient.
+- `structure-bytes` provides a larger set of primitive and compound types.
 
 ## Data types
+
 - Primitive types
 	- `Byte` (1-byte signed integer)
 	- `Short` (2-byte signed integer)
@@ -48,11 +62,11 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `BooleanTuple` (a constant-length array of `Boolean`s)
 	- `BooleanArray` (a variable-length array of `Boolean`s)
 	- `Char` (a single UTF-8 character)
-	- `String` (an array of UTF-8 characters that also stores its total byte length)
+	- `String` (UTF-8-encoded text)
 	- `Octets` (an `ArrayBuffer` (raw binary data))
-- Recursive types
+- Compound/recursive types
 	- `Tuple<Type>` (a constant-length array of `Type`s)
-	- `Struct` (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)
+	- `Struct` (an object with up to 255 fields, each with a fixed name and type)
 	- `Array<Type>` (a variable-length array of `Type`s)
 	- `Set<Type>` (like an `Array`, except creates a set when read)
 	- `Map<KeyType, ValueType>` (a mapping of `KeyType` instances to `ValueType` instances)
@@ -60,107 +74,117 @@ A lot of data, especially data designed to be used in many different languages, 
 	- `Choice` (a fixed set of up to 255 types that values can take on)
 	- `NamedChoice` (a fixed set of up to 255 named types that values can take on, each associated with a constructor)
 	- `Recursive<Type>` (a type that can reference itself and be used to serialize circular data structures)
-	- `Optional<Type>` (either `null` or an instance of `Type`)
-	- `Pointer<Type>` (allows multiple long instances of `Type` with the same bytes to be stored only once)
+	- `Optional<Type>` (either `null` or `undefined` or an instance of `Type`)
+	- `Pointer<Type>` (allows multiple instances of `Type` with the same serialization to be stored only once)
 
 ## Documentation
 The `docs` folder is hosted at
 [https://calebsander.github.io/structure-bytes](https://calebsander.github.io/structure-bytes/modules/_index_.html).
 
 ## Examples
+
 ### Type creation
 ````javascript
-const sb = require('structure-bytes');
+const sb = require('structure-bytes')
 
-const personType = new sb.StructType({
-	dob: new sb.DateType,
-	id: new sb.UnsignedShortType,
-	name: new sb.StringType
-});
-const tribeType = new sb.StructType({
-	leader: personType,
-	members: new sb.SetType(personType),
-	money: new sb.MapType(personType, new sb.FloatType)
-});
+const colorType = new sb.TupleType({
+	type: new sb.UnsignedByteType,
+	length: 3
+})
+const routeAttributesType = new sb.StructType({
+	color: colorType,
+	description: new sb.PointerType(new sb.StringType),
+	direction_names: new sb.PointerType(
+		new sb.ArrayType(new sb.StringType)
+	),
+	long_name: new sb.StringType,
+	text_color: colorType,
+	type: new sb.UnsignedByteType
+})
+const routesType = new sb.ArrayType(
+	new sb.StructType({
+		id: new sb.StringType,
+		attributes: routeAttributesType
+	})
+)
 ````
+
 ### Converting types and values to binary data
 ````javascript
-const sb = require('structure-bytes');
+const sb = require('structure-bytes')
 
-const personType = new sb.StructType({
-	dob: new sb.DateType,
-	id: new sb.UnsignedShortType,
-	name: new sb.StringType
-});
-const tribeType = new sb.StructType({
-	leader: personType,
-	members: new sb.SetType(personType),
-	money: new sb.MapType(personType, new sb.FloatType)
-});
-let typeBuffer = tribeType.toBuffer(); //ArrayBuffer { byteLength: 47 }
-console.log(Buffer.from(typeBuffer));
-//<Buffer 51 03 06 6c 65 61 64 65 72 51 03 03 64 6f 62 1a 02 69 64 12 04 6e 61 6d 65 41 07 6d 65 6d 62 65 72 73 53 ff 1b 05 6d 6f 6e 65 79 54 ff 24 20>
+const colorType = new sb.TupleType({
+	type: new sb.UnsignedByteType,
+	length: 3
+})
+const routeAttributesType = new sb.StructType({
+	color: colorType,
+	description: new sb.PointerType(new sb.StringType),
+	direction_names: new sb.PointerType(
+		new sb.ArrayType(new sb.StringType)
+	),
+	long_name: new sb.StringType,
+	text_color: colorType,
+	type: new sb.UnsignedByteType
+})
+const routesType = new sb.ArrayType(
+	new sb.StructType({
+		id: new sb.StringType,
+		attributes: routeAttributesType
+	})
+)
+const typeBuffer = routesType.toBuffer()
+// ArrayBuffer { byteLength: 92 }
+console.log(Buffer.from(typeBuffer))
+// <Buffer 52 51 02 0a 61 74 74 72 69 62 75 74 65 73 51 06 05 63 6f 6c 6f 72 50 11 03 0b 64 65 73 63 72 69 70 74 69 6f 6e 70 41 0f 64 69 72 65 63 74 69 6f 6e 5f ... >
 
-let louis = {
-	dob: new Date(1437592284193),
-	id: 9,
-	name: 'Louis'
-},
-garfield = {
-	dob: new Date(1437592284194),
-	id: 17,
-	name: 'Garfield'
-};
-let value = {
-	leader: {
-		dob: new Date(1437592284192),
-		id: 10,
-		name: 'Joe'
-	},
-	members: new Set().add(louis).add(garfield),
-	money: new Map().set(louis, 23.05).set(garfield, -10.07)
-};
-let valueBuffer = tribeType.valueBuffer(value); //ArrayBuffer { byteLength: 94 }
-console.log(Buffer.from(valueBuffer));
-//<Buffer 00 00 01 4e b7 2d 6c 20 00 0a 4a 6f 65 00 02 00 00 01 4e b7 2d 6c 21 00 09 4c 6f 75 69 73 00 00 00 01 4e b7 2d 6c 22 00 11 47 61 72 66 69 65 6c 64 00 ... >
+const toRGB = hex => [
+	parseInt(hex.slice(0, 2), 16),
+	parseInt(hex.slice(2, 4), 16),
+	parseInt(hex.slice(4, 6), 16)
+]
+fetch('https://api-v3.mbta.com/routes?filter[type]=0,1')
+	.then(res => res.json())
+	.then(({data}) => {
+		const routes = data.map(({id, attributes}) => {
+			delete attributes.short_name
+			delete attributes.sort_order
+			attributes.color = toRGB(attributes.color)
+			attributes.text_color = toRGB(attributes.text_color)
+			return {id, attributes}
+		})
+		const valueBuffer = routesType.valueBuffer(routes)
+		// ArrayBuffer { byteLength: 306 }
+		// (for comparison, JSON.stringify(routes).length == 1498)
+	})
 ````
+
 ### Reading from type and value buffers
 ````javascript
-const sb = require('structure-bytes');
+const sb = require('structure-bytes')
 
-//Buffer obtained somehow
-let tribeBuffer = new Uint8Array([0x51, 0x03, 0x06, 0x6c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x51, 0x03, 0x03, 0x64, 0x6f, 0x62, 0x1a, 0x02, 0x69, 0x64, 0x12, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x41, 0x07, 0x6d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x73, 0x53, 0xff, 0x1b, 0x05, 0x6d, 0x6f, 0x6e, 0x65, 0x79, 0x54, 0xff, 0x24, 0x20]);
-let type = sb.r.type(tribeBuffer.buffer);
-console.log(type);
-/*
-StructType {
-  fields:
-   [ { name: 'leader', type: [Object] },
-     { name: 'members', type: [Object] },
-     { name: 'money', type: [Object] } ] }
-*/
+// Buffer obtained somehow
+const typeBuffer = new Uint8Array([0x50, 0x11, 0x03]).buffer
+const type = sb.r.type(typeBuffer)
+console.log(type)
+// TupleType { type: UnsignedByteType {}, length: 3 }
 
-//Buffer obtained somehow
-let valueBuffer = new Uint8Array([0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x20, 0x00, 0x0a, 0x4a, 0x6f, 0x65, 0x00, 0x02, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x21, 0x00, 0x09, 0x4c, 0x6f, 0x75, 0x69, 0x73, 0x00, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x22, 0x00, 0x11, 0x47, 0x61, 0x72, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x00, 0x02, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x21, 0x00, 0x09, 0x4c, 0x6f, 0x75, 0x69, 0x73, 0x00, 0x41, 0xb8, 0x66, 0x66, 0x00, 0x00, 0x01, 0x4e, 0xb7, 0x2d, 0x6c, 0x22, 0x00, 0x11, 0x47, 0x61, 0x72, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x00, 0xc1, 0x21, 0x1e, 0xb8]);
-console.log(type.readValue(valueBuffer.buffer));
-/*
-{ leader: { dob: 2015-07-22T19:11:24.192Z, id: 10, name: 'Joe' },
-  members:
-   Set {
-     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' },
-     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } },
-  money:
-   Map {
-     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' } => 23.05,
-     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } => -10.07 } }
-*/
+// Buffer obtained somehow
+const valueBuffer = new Uint8Array([0x00, 0x80, 0xFF]).buffer
+console.log(type.readValue(valueBuffer))
+// [ 0, 128, 255 ]
 ````
-### File I/O
-````javascript
-const fs = require('fs');
-const sb = require('structure-bytes');
 
-let type = new sb.EnumType({
+### File I/O
+The I/O functions are implemented with callbacks, but can all be used with [`util.promisify()`](https://nodejs.org/api/util.html#util_util_promisify_original) if you prefer to use `Promise`s instead.
+See the documentation for examples.
+
+I recommend the file extensions `.sbt` for a serialized type, `.sbv` for a serialized value, and `.sbtv` for a serialized type and value.
+````javascript
+const fs = require('fs')
+const sb = require('structure-bytes')
+
+const type = new sb.EnumType({
 	type: new sb.StringType,
 	values: [
 		'ON_TIME',
@@ -168,111 +192,118 @@ let type = new sb.EnumType({
 		'CANCELLED',
 		'UNKNOWN'
 	]
-});
+})
 sb.writeType({
 	type,
-	outStream: fs.createWriteStream('./type')
+	outStream: fs.createWriteStream('status.sbt')
 }, err => {
-	sb.readType(fs.createReadStream('./type'), (err, readType) => {
-		console.log(readType);
+	sb.readType(fs.createReadStream('status.sbt'), (err, readType) =>
+		console.log(readType)
 		/*
 		EnumType {
 			type: StringType {},
 			values: [ 'ON_TIME', 'LATE', 'CANCELLED', 'UNKNOWN' ] }
 		*/
-	});
-});
-let value = 'CANCELLED';
+	)
+})
+
+const value = 'CANCELLED'
 sb.writeValue({
 	type,
 	value,
-	outStream: fs.createWriteStream('./value')
+	outStream: fs.createWriteStream('status.sbv')
 }, err => {
 	sb.readValue({
 		type,
-		inStream: fs.createReadStream('./value')
-	}, (err, value) => {
-		console.log(value); //'CANCELLED'
-	});
-});
+		inStream: fs.createReadStream('status.sbv')
+	}, (err, value) =>
+		console.log(value)
+		// 'CANCELLED'
+	)
+})
+
 sb.writeTypeAndValue({
 	type,
 	value,
-	outStream: fs.createWriteStream('./type-value')
+	outStream: fs.createWriteStream('status.sbtv')
 }, err => {
-	sb.readTypeAndValue(fs.createReadStream('./type-value'), (err, type, value) => {
-		console.log(value); //'CANCELLED'
-	});
-});
+	sb.readTypeAndValue(fs.createReadStream('status.sbtv'), (err, type, value) =>
+		console.log(value)
+		// 'CANCELLED'
+	)
+})
 ````
+
 ### HTTP GET value
 Server-side:
 ````javascript
-const http = require('http');
-const sb = require('structure-bytes');
+const http = require('http')
+const sb = require('structure-bytes')
 
-let type = new sb.DateType;
+const type = new sb.DateType
 http.createServer((req, res) => {
-	sb.httpRespond({req, res, type, value: new Date}, err => {
-		console.log('Responded');
-	});
-}).listen(80);
+	sb.httpRespond({req, res, type, value: new Date}, err =>
+		console.log('Responded')
+	)
+}).listen(80)
 ````
 Client-side:
 ````html
 <script src = '/structure-bytes/compiled/download.js'></script>
 <script>
-	//'date' specifies the name of the type being transferred so it can be cached
+	// 'date' specifies the name of the type being transferred so it can be cached for future requests
 	sb.download({
 		name: 'date',
 		url: '/',
-		options: {} //optional options to pass to fetch() (e.g. cookies, headers, etc.)
+		options: {} // optional options to pass to fetch() (e.g. cookies, headers, etc.)
 	})
 		.then(value =>
-			console.log(value.getFullYear()) //2017
-		);
+			console.log(value.getFullYear())
+			// 2017
+		)
 </script>
 ````
+
 ### HTTP POST value
 Server-side:
 ````javascript
-const http = require('http');
-const sb = require('structure-bytes');
+const http = require('http')
+const sb = require('structure-bytes')
 
 http.createServer((req, res) => {
 	sb.readValue({type: new sb.FlexUnsignedIntType, inStream: req}, (err, value) => {
-		res.end(String(value));
-	});
-}).listen(80);
+		res.end(String(value))
+	})
+}).listen(80)
 ````
 Client-side:
 ````html
 <script src = '/structure-bytes/compiled/upload.js'></script>
 <button onclick = 'upload()'>Click me</button>
 <script>
-	var clickCount = 0;
+	let clickCount = 0
 	function upload() {
-		clickCount++;
+		clickCount++
 		sb.upload({
 			type: new sb.FlexUnsignedIntType,
 			value: clickCount,
 			url: '/click',
-			options: {method: 'POST'} //options to pass to fetch(); method 'POST' is required
+			options: {method: 'POST'} // options to pass to fetch(); method 'POST' is required
 		})
 			.then(response => response.text())
-			.then(alert);
+			.then(alert)
 	}
 </script>
 ````
 
 ## Using with TypeScript
-The entire project is written in TypeScript, and declaration files are automatically generated. That means that if you are using TypeScript, the compiler can automatically infer the type of the various values exported from `structure-bytes`. To import the package, use:
+The entire project is written in TypeScript and declaration files are automatically generated. That means that if you are using TypeScript, the compiler can automatically infer the type of the various values exported from `structure-bytes`. To import the package, use:
 ````javascript
 import * as sb from 'structure-bytes'
 ````
-One of the most useful parts of having typings is that the compiler can automatically infer what types of valus a `Type` can serialize. For example:
+The typings allow the compiler to automatically infer what types of values a `Type` can serialize. For example:
 ````javascript
-let type = new sb.StructType({
+const type = new sb.StructType({
 	abc: new sb.DoubleType,
 	def: new sb.MapType(
 		new sb.StringType,
@@ -286,12 +317,12 @@ that it requires the value to be of type:
 { abc: number | string, def: Map<string, Date> }
 */
 ````
-You can even add explicit `VALUE` generics to make the compiler check that your `Type` serializes the correct types of values.
+You can also add explicit `VALUE` generics to make the compiler check that your `Type` serializes the correct types of values.
 Many non-primitive types (e.g. `ArrayType`, `MapType`, `StructType`) can take either one or two generics.
-The first, `VALUE`, specifies the type of values the type can write.
-The second, `READ_VALUE`, specifies the type of values the type will read from written values and defaults to `VALUE` if omitted.
+The first, `VALUE`, specifies the type of values the type can serialize.
+The second, `READ_VALUE`, specifies the type of values the type will deserialize and defaults to `VALUE` if omitted.
+`READ_VALUE` must extend `VALUE`.
 Generally the two generics are the same, except in the case of numeric types (which write `number | string` but read `number`) and `OptionalType` (which writes `E | null | undefined` but reads `E | null`).
-`READ_VALUE` must be a subset of `VALUE`, so in most cases where you specify the generic it makes sense to restrict `VALUE` to the type of read values and let `READ_VALUE` default to `VALUE`.
 
 With `StructType`:
 ````typescript
@@ -302,14 +333,14 @@ class Car {
 		public year: number
 	) {}
 }
-let structType = new sb.StructType<Car>({
+const carType = new sb.StructType<Car>({
 	make: new sb.StringType,
 	model: new sb.StringType,
 	year: new sb.UnsignedShortType
 })
-//The compiler would have complained if one of the fields were missing
-//or one of the field's types didn't match the type of the field's values,
-//e.g. "make: new sb.BooleanType"
+// The compiler would have complained if one of the fields were missing
+// or one of the field's types didn't match the type of the field's values,
+// e.g. "make: new sb.BooleanType"
 ````
 If you have transient fields (i.e. they shouldn't be serialized), you can create a separate interface for the fields that should be serialized:
 ````typescript
@@ -319,12 +350,12 @@ interface SerializedCar {
 	year: number
 }
 class Car implements SerializedCar {
-	public id: number //transient field
+	public id: number // transient field
 	constructor(public make: string, public model: string, public year: number) {
-		this.id = Math.floor(Math.random() * 1000000)
+		this.id = Math.floor(Math.random() * 1e6)
 	}
 }
-let structType = new sb.StructType<SerializedCar>({
+const carType = new sb.StructType<SerializedCar>({
 	make: new sb.StringType,
 	model: new sb.StringType,
 	year: new sb.UnsignedShortType
@@ -333,7 +364,7 @@ let structType = new sb.StructType<SerializedCar>({
 
 With `ChoiceType` (and similarly for `NamedChoiceType`), you can let the type be inferred automatically if each of the possible types writes the same type of values:
 ````javascript
-let type = new sb.ChoiceType([ //Type<number | string, number>
+const choiceType = new sb.ChoiceType([ // Type<number | string, number>
 	new sb.ByteType,
 	new sb.ShortType,
 	new sb.IntType,
@@ -354,7 +385,7 @@ interface HSV {
 }
 type CSSColor = string
 
-let choiceType = new sb.ChoiceType<RGB | HSV | CSSColor>([
+const choiceType = new sb.ChoiceType<RGB | HSV | CSSColor>([
 	new sb.StructType<RGB>({
 		r: new sb.FloatType,
 		g: new sb.FloatType,
@@ -375,10 +406,10 @@ interface Cons<A> {
 	tail: List<A>
 }
 interface List<A> {
-	list: Cons<A> | null //null for empty list
+	list: Cons<A> | null // null for empty list
 }
 
-let recursiveType = new sb.RecursiveType<List<string>>('linked-list')
+const recursiveType = new sb.RecursiveType<List<string>>('linked-list')
 recursiveType.setType(new sb.StructType<List<string>>({
 	list: new sb.OptionalType(
 		new sb.StructType<Cons<string>>({
@@ -402,25 +433,25 @@ recursiveType.valueBuffer({
 When reading types from buffers and streams, they will be of type `Type<any>`.
 You should specify their value types before using them to write values:
 ````typescript
-let booleanType = new sb.BooleanType
-let readType = sb.r.type(booleanType.toBuffer()) //Type<any>
-//Will throw a runtime error
+const booleanType = new sb.BooleanType
+const readType = sb.r.type(booleanType.toBuffer()) // Type<any>
+// Will throw a runtime error
 readType.valueBuffer('abc')
 
 //vs.
 
-let castReadType: sb.Type<boolean> = sb.r.type(booleanType.toBuffer())
-//Will throw a compiler error
+const castReadType: sb.Type<boolean> = sb.r.type(booleanType.toBuffer())
+// Will throw a compiler error
 castReadType.valueBuffer('abc')
 ````
 
 It may also sometimes be useful to be more specific about what types of values you want to be able to serialize.
 For example, if you want to serialize integer values that will always be represented as numbers (and never in string form), you can force the compiler to error out if you try to serialize a string value with the following:
 ````typescript
-let intType: sb.Type<number> = new sb.IntType
-//Now this is valid:
+const intType: sb.Type<number> = new sb.IntType
+// Now this is valid:
 intType.valueBuffer(100)
-//But this is not, even though it would be if you omitted the type annotation on intType:
+// But this is not, even though it would be if you omitted the type annotation on intType:
 intType.valueBuffer('100')
 ````
 
@@ -434,7 +465,7 @@ In the following definitions, `uint8_t` means an 8-bit unsigned integer. `flexIn
 All numbers are stored in big-endian format.
 ### Type
 
-The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the specific instance of the type, if necesary.
+The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the type, if necessary.
 For example, `new sb.UnsignedIntType` translates into `[0x13]`, and `new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})` translates into:
 ````javascript
 [
@@ -459,7 +490,7 @@ const type = new sb.StructType({
 	one: someType,
 	two: someType
 })
-//type translates into
+// type serializes to
 [
 	0x51 /*StructType*/,
 		2 /*2 fields*/,
@@ -556,8 +587,8 @@ In the following definitions, `type` means the binary type format.
 	- `byteCount` - `flexInt`
 	- `number` - `byteCount`-byte unsigned integer
 - `FlexUnsignedIntType`: `flexInt`
-- `DateType`: 8-byte unsigned integer storing milliseconds in [Unix time](https://en.wikipedia.org/wiki/Unix_time)
-- `DayType`: 3-byte unsigned integer storing days since the [Unix time](https://en.wikipedia.org/wiki/Unix_time) epoch
+- `DateType`: 8-byte signed integer storing milliseconds in [Unix time](https://en.wikipedia.org/wiki/Unix_time)
+- `DayType`: 3-byte signed integer storing days since the [Unix time](https://en.wikipedia.org/wiki/Unix_time) epoch
 - `TimeType`: 4-byte unsigned integer storing milliseconds since the start of the day
 - `FloatType`: single precision (4-byte) [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point)
 - `DoubleType`: double precision (8-byte) [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point)

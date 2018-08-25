@@ -65,31 +65,41 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="structure-bytes">structure-bytes</h1>
-				<p>A Node.js library for more efficient data transfers by separating the structure from the values and efficiently storing each as binary data.</p>
+				<p>A TypeScript library for efficient data serialization, achieved by separating data structure from their values and storing each in compact binary formats.</p>
 				<p><a href="https://www.npmjs.com/package/structure-bytes"><img src="https://img.shields.io/npm/v/structure-bytes.svg" alt="npm Version"></a>
 					<a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
 					<a href="https://coveralls.io/github/calebsander/structure-bytes?branch=master"><img src="https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master" alt="Coverage Status"></a>
 					<a href="https://david-dm.org/calebsander/structure-bytes"><img src="https://david-dm.org/calebsander/structure-bytes/status.svg" alt="Dependencies"></a>
 				<a href="https://david-dm.org/calebsander/structure-bytes?type=dev"><img src="https://david-dm.org/calebsander/structure-bytes/dev-status.svg" alt="Dev Dependencies"></a></p>
 				<h2 id="concept">Concept</h2>
-				<p>A lot of data, especially data designed to be used in many different languages, is stored in files or transfered over HTTP as either text files which can represent a wide variety of data structures (e.g. JSON) or in a format created to represent only one specific sort of data (e.g. MP3). The idea with this project is to get the advantages of both sorts of formats. This project is somewhat similar to Google&#39;s <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>, but was not designed to match its functionality. To accomplish this, the project was designed with several principles in mind:</p>
+				<p>Most modern data serialization formats fall into one of two categories:</p>
 				<ul>
-					<li>Types (user-created formats of data) are created by combining a wide variety of datatypes, both primitive and recursive. This allows for representations which accurately describe types (e.g. distinguishing between structs and mappings of strings to values, and numeric types, unlike JSON). Types are very customizable, so you can build any desired type formats.</li>
-					<li>Types are kept separate from values (instances of a type) because types are designed to be created once and used to store many different values. This allows for communications to cache the type format after the first use and only have to send the values in subsequent requests.</li>
-					<li>Redundancy in data storage is kept to a minimum. For example, in an array of structs, the field names are only specified once in the type spec rather than for each element in the array.</li>
+					<li>Formats like JSON which can represent a wide range of simple and compound data types. Serialized values in these formats implicitly serialize their type so the deserializer doesn&#39;t need knowledge of the type.</li>
+					<li>Formats like MP3 or PNG which represent one specific data type, such as a song or image. The serializer and deserializer must both know the file format in order to communicate.</li>
 				</ul>
+				<p>The aim of this project is to store values with the flexibility of JSON but the byte efficiency of dedicated formats.
+					To accomplish this, custom &quot;types&quot; are constructed, implicitly defining binary serialization formats for specific categories of values.
+					Types are defined from a rich set of primitive and compound types (see <a href="#data-types">Data Types</a>).
+					There is a fixed (universal) serialization format for types, and each type defines a serialization format for its values.
+				<code>structure-bytes</code> reduces the number of bytes needed to serialize values in several ways in comparison to JSON:</p>
+				<ul>
+					<li>Types and values are each serialized in binary formats with far less redundancy than JSON&#39;s text-based formats. For example, serializing a 32-bit signed integer in JSON can take up to 11 characters, whereas it requires only 4 bytes when serialized by <code>sb.IntType</code>.</li>
+					<li>JSON does not require each value in an array or dictionary to have the same type, which results in highly redundant serializations of collections. <code>structure-bytes</code> serializes the type of a collection&#39;s elements as part of the type rather than the value, so it isn&#39;t repeated.</li>
+					<li>One type can be used to serialize many different values. For example, when sending multiple values of the same type across a network, the type can sent along with the first value and only values need to be sent afterwards.</li>
+				</ul>
+				<p>This project is somewhat similar to Google&#39;s <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>, but was not designed to match its functionality.</p>
 				<h2 id="use-cases">Use cases</h2>
 				<ul>
-					<li>Use when the structure of the data is complicated. For example, if you are just sending text to be interpreted as text, that can be done easily in almost any environment.</li>
-					<li>Use when you plan to have many different values for the type (either many different files storing the same sort of information, or many communications of the same sort of information). This will give you the benefit of being able to keep only a single copy of the type spec.</li>
-					<li>Use when there is a lot of repetition in the data. If you don&#39;t have any arrays, sets, or maps, you can&#39;t really benefit from the cutdown on redundancy.</li>
+					<li>Use when the structure of the data is complicated. For example, if you are serializing plaintext, this can easily be accomplished without redundancy by writing to files or sockets.</li>
+					<li>Use when there is a lot of repetition in the data. If you don&#39;t have any arrays, sets, or maps, there is less redundancy for <code>structure-bytes</code> to eliminate.</li>
+					<li>Use when serializing many values for the type (e.g. many files storing the same type of value, or many communications of the same type). This will give you the benefit of being able to keep only a single copy of the type spec.</li>
 				</ul>
 				<h2 id="differences-from-protocol-buffers">Differences from Protocol Buffers</h2>
 				<ul>
-					<li>Types have binary serializations, not just values. (Protocol Buffers requires both the sender and receiver to have <code>.proto</code> definition files, which are not designed to be transmitted like values.) This makes storage of complex types much more compact and allows for sending values of types the receiver has not yet seen.</li>
-					<li>Types are generated programmatically rather than by reading <code>.proto</code> files. This allows for functionality like a function which turns a type into another type that either contains an error message or an instance of the original type.</li>
-					<li>This project is designed with downloading data of known types from servers over HTTP in mind. If the client has already received data of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn&#39;t know what the type looks like, the server sends it in byte form along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests are very efficient.</li>
-					<li><code>structure-bytes</code> provides a larger set of primitive and recursive types.</li>
+					<li>Types have binary serializations, not just values. (Protocol Buffers requires both the serializer and deserializer to have <code>.proto</code> definition files, which are not designed to be transmitted like values.) This compactly stores complex types and allows values to be written along with their types so they can be read without knowing their types beforehand.</li>
+					<li>Types are generated programmatically rather than by reading <code>.proto</code> files. This allows, for example, for a function which turns a type into another type that either contains an error message or an instance of the original type.</li>
+					<li>This project is designed with downloading data over HTTP in mind. If the client has already received values of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn&#39;t know the type, the server serializes it along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests to the same endpoint are very efficient.</li>
+					<li><code>structure-bytes</code> provides a larger set of primitive and compound types.</li>
 				</ul>
 				<h2 id="data-types">Data types</h2>
 				<ul>
@@ -115,13 +125,13 @@
 							<li><code>BooleanTuple</code> (a constant-length array of <code>Boolean</code>s)</li>
 							<li><code>BooleanArray</code> (a variable-length array of <code>Boolean</code>s)</li>
 							<li><code>Char</code> (a single UTF-8 character)</li>
-							<li><code>String</code> (an array of UTF-8 characters that also stores its total byte length)</li>
+							<li><code>String</code> (UTF-8-encoded text)</li>
 							<li><code>Octets</code> (an <code>ArrayBuffer</code> (raw binary data))</li>
 						</ul>
 					</li>
-					<li>Recursive types<ul>
+					<li>Compound/recursive types<ul>
 							<li><code>Tuple&lt;Type&gt;</code> (a constant-length array of <code>Type</code>s)</li>
-							<li><code>Struct</code> (a fixed collection of up to 255 fields, each with a name (up to 255 bytes long) and a type)</li>
+							<li><code>Struct</code> (an object with up to 255 fields, each with a fixed name and type)</li>
 							<li><code>Array&lt;Type&gt;</code> (a variable-length array of <code>Type</code>s)</li>
 							<li><code>Set&lt;Type&gt;</code> (like an <code>Array</code>, except creates a set when read)</li>
 							<li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
@@ -129,8 +139,8 @@
 							<li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
 							<li><code>NamedChoice</code> (a fixed set of up to 255 named types that values can take on, each associated with a constructor)</li>
 							<li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
-							<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or an instance of <code>Type</code>)</li>
-							<li><code>Pointer&lt;Type&gt;</code> (allows multiple long instances of <code>Type</code> with the same bytes to be stored only once)</li>
+							<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or <code>undefined</code> or an instance of <code>Type</code>)</li>
+							<li><code>Pointer&lt;Type&gt;</code> (allows multiple instances of <code>Type</code> with the same serialization to be stored only once)</li>
 						</ul>
 					</li>
 				</ul>
@@ -139,91 +149,96 @@
 				<a href="https://calebsander.github.io/structure-bytes/modules/_index_.html">https://calebsander.github.io/structure-bytes</a>.</p>
 				<h2 id="examples">Examples</h2>
 				<h3 id="type-creation">Type creation</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
 
-<span class="hljs-keyword">const</span> personType = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> sb.DateType,
-    <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.UnsignedShortType,
-    <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType
-});
-<span class="hljs-keyword">const</span> tribeType = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">leader</span>: personType,
-    <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> sb.SetType(personType),
-    <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> sb.MapType(personType, <span class="hljs-keyword">new</span> sb.FloatType)
-});</code></pre>
+<span class="hljs-keyword">const</span> colorType = <span class="hljs-keyword">new</span> sb.TupleType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
+    <span class="hljs-attr">length</span>: <span class="hljs-number">3</span>
+})
+<span class="hljs-keyword">const</span> routeAttributesType = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">color</span>: colorType,
+    <span class="hljs-attr">description</span>: <span class="hljs-keyword">new</span> sb.PointerType(<span class="hljs-keyword">new</span> sb.StringType),
+    <span class="hljs-attr">direction_names</span>: <span class="hljs-keyword">new</span> sb.PointerType(
+        <span class="hljs-keyword">new</span> sb.ArrayType(<span class="hljs-keyword">new</span> sb.StringType)
+    ),
+    <span class="hljs-attr">long_name</span>: <span class="hljs-keyword">new</span> sb.StringType,
+    <span class="hljs-attr">text_color</span>: colorType,
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType
+})
+<span class="hljs-keyword">const</span> routesType = <span class="hljs-keyword">new</span> sb.ArrayType(
+    <span class="hljs-keyword">new</span> sb.StructType({
+        <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.StringType,
+        <span class="hljs-attr">attributes</span>: routeAttributesType
+    })
+)</code></pre>
 				<h3 id="converting-types-and-values-to-binary-data">Converting types and values to binary data</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
 
-<span class="hljs-keyword">const</span> personType = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> sb.DateType,
-    <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.UnsignedShortType,
-    <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType
-});
-<span class="hljs-keyword">const</span> tribeType = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">leader</span>: personType,
-    <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> sb.SetType(personType),
-    <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> sb.MapType(personType, <span class="hljs-keyword">new</span> sb.FloatType)
-});
-<span class="hljs-keyword">let</span> typeBuffer = tribeType.toBuffer(); <span class="hljs-comment">//ArrayBuffer { byteLength: 47 }</span>
-<span class="hljs-built_in">console</span>.log(Buffer.from(typeBuffer));
-<span class="hljs-comment">//&lt;Buffer 51 03 06 6c 65 61 64 65 72 51 03 03 64 6f 62 1a 02 69 64 12 04 6e 61 6d 65 41 07 6d 65 6d 62 65 72 73 53 ff 1b 05 6d 6f 6e 65 79 54 ff 24 20&gt;</span>
+<span class="hljs-keyword">const</span> colorType = <span class="hljs-keyword">new</span> sb.TupleType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
+    <span class="hljs-attr">length</span>: <span class="hljs-number">3</span>
+})
+<span class="hljs-keyword">const</span> routeAttributesType = <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">color</span>: colorType,
+    <span class="hljs-attr">description</span>: <span class="hljs-keyword">new</span> sb.PointerType(<span class="hljs-keyword">new</span> sb.StringType),
+    <span class="hljs-attr">direction_names</span>: <span class="hljs-keyword">new</span> sb.PointerType(
+        <span class="hljs-keyword">new</span> sb.ArrayType(<span class="hljs-keyword">new</span> sb.StringType)
+    ),
+    <span class="hljs-attr">long_name</span>: <span class="hljs-keyword">new</span> sb.StringType,
+    <span class="hljs-attr">text_color</span>: colorType,
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType
+})
+<span class="hljs-keyword">const</span> routesType = <span class="hljs-keyword">new</span> sb.ArrayType(
+    <span class="hljs-keyword">new</span> sb.StructType({
+        <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.StringType,
+        <span class="hljs-attr">attributes</span>: routeAttributesType
+    })
+)
+<span class="hljs-keyword">const</span> typeBuffer = routesType.toBuffer()
+<span class="hljs-comment">// ArrayBuffer { byteLength: 92 }</span>
+<span class="hljs-built_in">console</span>.log(Buffer.from(typeBuffer))
+<span class="hljs-comment">// &lt;Buffer 52 51 02 0a 61 74 74 72 69 62 75 74 65 73 51 06 05 63 6f 6c 6f 72 50 11 03 0b 64 65 73 63 72 69 70 74 69 6f 6e 70 41 0f 64 69 72 65 63 74 69 6f 6e 5f ... &gt;</span>
 
-<span class="hljs-keyword">let</span> louis = {
-    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284193</span>),
-    <span class="hljs-attr">id</span>: <span class="hljs-number">9</span>,
-    <span class="hljs-attr">name</span>: <span class="hljs-string">'Louis'</span>
-},
-garfield = {
-    <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284194</span>),
-    <span class="hljs-attr">id</span>: <span class="hljs-number">17</span>,
-    <span class="hljs-attr">name</span>: <span class="hljs-string">'Garfield'</span>
-};
-<span class="hljs-keyword">let</span> value = {
-    <span class="hljs-attr">leader</span>: {
-        <span class="hljs-attr">dob</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1437592284192</span>),
-        <span class="hljs-attr">id</span>: <span class="hljs-number">10</span>,
-        <span class="hljs-attr">name</span>: <span class="hljs-string">'Joe'</span>
-    },
-    <span class="hljs-attr">members</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>().add(louis).add(garfield),
-    <span class="hljs-attr">money</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>().set(louis, <span class="hljs-number">23.05</span>).set(garfield, <span class="hljs-number">-10.07</span>)
-};
-<span class="hljs-keyword">let</span> valueBuffer = tribeType.valueBuffer(value); <span class="hljs-comment">//ArrayBuffer { byteLength: 94 }</span>
-<span class="hljs-built_in">console</span>.log(Buffer.from(valueBuffer));
-<span class="hljs-comment">//&lt;Buffer 00 00 01 4e b7 2d 6c 20 00 0a 4a 6f 65 00 02 00 00 01 4e b7 2d 6c 21 00 09 4c 6f 75 69 73 00 00 00 01 4e b7 2d 6c 22 00 11 47 61 72 66 69 65 6c 64 00 ... &gt;</span></code></pre>
+<span class="hljs-keyword">const</span> toRGB = <span class="hljs-function"><span class="hljs-params">hex</span> =&gt;</span> [
+    <span class="hljs-built_in">parseInt</span>(hex.slice(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>), <span class="hljs-number">16</span>),
+    <span class="hljs-built_in">parseInt</span>(hex.slice(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>), <span class="hljs-number">16</span>),
+    <span class="hljs-built_in">parseInt</span>(hex.slice(<span class="hljs-number">4</span>, <span class="hljs-number">6</span>), <span class="hljs-number">16</span>)
+]
+fetch(<span class="hljs-string">'https://api-v3.mbta.com/routes?filter[type]=0,1'</span>)
+    .then(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> res.json())
+    .then(<span class="hljs-function">(<span class="hljs-params">{data}</span>) =&gt;</span> {
+        <span class="hljs-keyword">const</span> routes = data.map(<span class="hljs-function">(<span class="hljs-params">{id, attributes}</span>) =&gt;</span> {
+            <span class="hljs-keyword">delete</span> attributes.short_name
+            <span class="hljs-keyword">delete</span> attributes.sort_order
+            attributes.color = toRGB(attributes.color)
+            attributes.text_color = toRGB(attributes.text_color)
+            <span class="hljs-keyword">return</span> {id, attributes}
+        })
+        <span class="hljs-keyword">const</span> valueBuffer = routesType.valueBuffer(routes)
+        <span class="hljs-comment">// ArrayBuffer { byteLength: 306 }</span>
+        <span class="hljs-comment">// (for comparison, JSON.stringify(routes).length == 1498)</span>
+    })</code></pre>
 				<h3 id="reading-from-type-and-value-buffers">Reading from type and value buffers</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
 
-<span class="hljs-comment">//Buffer obtained somehow</span>
-<span class="hljs-keyword">let</span> tribeBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x51</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x06</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x51</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x62</span>, <span class="hljs-number">0x1a</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x12</span>, <span class="hljs-number">0x04</span>, <span class="hljs-number">0x6e</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x41</span>, <span class="hljs-number">0x07</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x62</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x73</span>, <span class="hljs-number">0x53</span>, <span class="hljs-number">0xff</span>, <span class="hljs-number">0x1b</span>, <span class="hljs-number">0x05</span>, <span class="hljs-number">0x6d</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x6e</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x79</span>, <span class="hljs-number">0x54</span>, <span class="hljs-number">0xff</span>, <span class="hljs-number">0x24</span>, <span class="hljs-number">0x20</span>]);
-<span class="hljs-keyword">let</span> type = sb.r.type(tribeBuffer.buffer);
-<span class="hljs-built_in">console</span>.log(type);
-<span class="hljs-comment">/*
-StructType {
-  fields:
-   [ { name: 'leader', type: [Object] },
-     { name: 'members', type: [Object] },
-     { name: 'money', type: [Object] } ] }
-*/</span>
+<span class="hljs-comment">// Buffer obtained somehow</span>
+<span class="hljs-keyword">const</span> typeBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x50</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x03</span>]).buffer
+<span class="hljs-keyword">const</span> type = sb.r.type(typeBuffer)
+<span class="hljs-built_in">console</span>.log(type)
+<span class="hljs-comment">// TupleType { type: UnsignedByteType {}, length: 3 }</span>
 
-<span class="hljs-comment">//Buffer obtained somehow</span>
-<span class="hljs-keyword">let</span> valueBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x0a</span>, <span class="hljs-number">0x4a</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x09</span>, <span class="hljs-number">0x4c</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x75</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x73</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x22</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x47</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x09</span>, <span class="hljs-number">0x4c</span>, <span class="hljs-number">0x6f</span>, <span class="hljs-number">0x75</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x73</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x41</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x4e</span>, <span class="hljs-number">0xb7</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x22</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x47</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x6c</span>, <span class="hljs-number">0x64</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0xc1</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x1e</span>, <span class="hljs-number">0xb8</span>]);
-<span class="hljs-built_in">console</span>.log(type.readValue(valueBuffer.buffer));
-<span class="hljs-comment">/*
-{ leader: { dob: 2015-07-22T19:11:24.192Z, id: 10, name: 'Joe' },
-  members:
-   Set {
-     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' },
-     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } },
-  money:
-   Map {
-     { dob: 2015-07-22T19:11:24.193Z, id: 9, name: 'Louis' } =&gt; 23.05,
-     { dob: 2015-07-22T19:11:24.194Z, id: 17, name: 'Garfield' } =&gt; -10.07 } }
-*/</span></code></pre>
+<span class="hljs-comment">// Buffer obtained somehow</span>
+<span class="hljs-keyword">const</span> valueBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x00</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>]).buffer
+<span class="hljs-built_in">console</span>.log(type.readValue(valueBuffer))
+<span class="hljs-comment">// [ 0, 128, 255 ]</span></code></pre>
 				<h3 id="file-i-o">File I/O</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
-<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
+				<p>The I/O functions are implemented with callbacks, but can all be used with <a href="https://nodejs.org/api/util.html#util_util_promisify_original"><code>util.promisify()</code></a> if you prefer to use <code>Promise</code>s instead.
+				See the documentation for examples.</p>
+				<p>I recommend the file extensions <code>.sbt</code> for a serialized type, <code>.sbv</code> for a serialized value, and <code>.sbtv</code> for a serialized type and value.</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>)
+<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
 
-<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.EnumType({
+<span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.EnumType({
     <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StringType,
     <span class="hljs-attr">values</span>: [
         <span class="hljs-string">'ON_TIME'</span>,
@@ -231,98 +246,103 @@ StructType {
         <span class="hljs-string">'CANCELLED'</span>,
         <span class="hljs-string">'UNKNOWN'</span>
     ]
-});
+})
 sb.writeType({
     type,
-    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'./type'</span>)
+    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'status.sbt'</span>)
 }, err =&gt; {
-    sb.readType(fs.createReadStream(<span class="hljs-string">'./type'</span>), (err, readType) =&gt; {
-        <span class="hljs-built_in">console</span>.log(readType);
+    sb.readType(fs.createReadStream(<span class="hljs-string">'status.sbt'</span>), (err, readType) =&gt;
+        <span class="hljs-built_in">console</span>.log(readType)
         <span class="hljs-comment">/*
         EnumType {
             type: StringType {},
             values: [ 'ON_TIME', 'LATE', 'CANCELLED', 'UNKNOWN' ] }
         */</span>
-    });
-});
-<span class="hljs-keyword">let</span> value = <span class="hljs-string">'CANCELLED'</span>;
+    )
+})
+
+<span class="hljs-keyword">const</span> value = <span class="hljs-string">'CANCELLED'</span>
 sb.writeValue({
     type,
     value,
-    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'./value'</span>)
+    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'status.sbv'</span>)
 }, err =&gt; {
     sb.readValue({
         type,
-        <span class="hljs-attr">inStream</span>: fs.createReadStream(<span class="hljs-string">'./value'</span>)
-    }, (err, value) =&gt; {
-        <span class="hljs-built_in">console</span>.log(value); <span class="hljs-comment">//'CANCELLED'</span>
-    });
-});
+        <span class="hljs-attr">inStream</span>: fs.createReadStream(<span class="hljs-string">'status.sbv'</span>)
+    }, (err, value) =&gt;
+        <span class="hljs-built_in">console</span>.log(value)
+        <span class="hljs-comment">// 'CANCELLED'</span>
+    )
+})
+
 sb.writeTypeAndValue({
     type,
     value,
-    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'./type-value'</span>)
+    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'status.sbtv'</span>)
 }, err =&gt; {
-    sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'./type-value'</span>), (err, type, value) =&gt; {
-        <span class="hljs-built_in">console</span>.log(value); <span class="hljs-comment">//'CANCELLED'</span>
-    });
-});</code></pre>
+    sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'status.sbtv'</span>), (err, type, value) =&gt;
+        <span class="hljs-built_in">console</span>.log(value)
+        <span class="hljs-comment">// 'CANCELLED'</span>
+    )
+})</code></pre>
 				<h3 id="http-get-value">HTTP GET value</h3>
 				<p>Server-side:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);
-<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>)
+<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
 
-<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.DateType;
+<span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.DateType
 http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
-    sb.httpRespond({req, res, type, <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>}, err =&gt; {
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Responded'</span>);
-    });
-}).listen(<span class="hljs-number">80</span>);</code></pre>
+    sb.httpRespond({req, res, type, <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>}, err =&gt;
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Responded'</span>)
+    )
+}).listen(<span class="hljs-number">80</span>)</code></pre>
 				<p>Client-side:</p>
 				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/download.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
-    <span class="hljs-comment">//'date' specifies the name of the type being transferred so it can be cached</span>
+    <span class="hljs-comment">// 'date' specifies the name of the type being transferred so it can be cached for future requests</span>
     sb.download({
         <span class="hljs-attr">name</span>: <span class="hljs-string">'date'</span>,
         <span class="hljs-attr">url</span>: <span class="hljs-string">'/'</span>,
-        <span class="hljs-attr">options</span>: {} <span class="hljs-comment">//optional options to pass to fetch() (e.g. cookies, headers, etc.)</span>
+        <span class="hljs-attr">options</span>: {} <span class="hljs-comment">// optional options to pass to fetch() (e.g. cookies, headers, etc.)</span>
     })
         .then(<span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span>
-            <span class="hljs-built_in">console</span>.log(value.getFullYear()) <span class="hljs-comment">//2017</span>
-        );
+            <span class="hljs-built_in">console</span>.log(value.getFullYear())
+            <span class="hljs-comment">// 2017</span>
+        )
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
 				<h3 id="http-post-value">HTTP POST value</h3>
 				<p>Server-side:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);
-<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>)
+<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
 
 http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
     sb.readValue({<span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType, <span class="hljs-attr">inStream</span>: req}, (err, value) =&gt; {
-        res.end(<span class="hljs-built_in">String</span>(value));
-    });
-}).listen(<span class="hljs-number">80</span>);</code></pre>
+        res.end(<span class="hljs-built_in">String</span>(value))
+    })
+}).listen(<span class="hljs-number">80</span>)</code></pre>
 				<p>Client-side:</p>
 				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/upload.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span> = <span class="hljs-string">'upload()'</span>&gt;</span>Click me<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
-    <span class="hljs-keyword">var</span> clickCount = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> clickCount = <span class="hljs-number">0</span>
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload</span>(<span class="hljs-params"></span>) </span>{
-        clickCount++;
+        clickCount++
         sb.upload({
             <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType,
             <span class="hljs-attr">value</span>: clickCount,
             <span class="hljs-attr">url</span>: <span class="hljs-string">'/click'</span>,
-            <span class="hljs-attr">options</span>: {<span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>} <span class="hljs-comment">//options to pass to fetch(); method 'POST' is required</span>
+            <span class="hljs-attr">options</span>: {<span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>} <span class="hljs-comment">// options to pass to fetch(); method 'POST' is required</span>
         })
             .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> response.text())
-            .then(alert);
+            .then(alert)
     }
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
 				<h2 id="using-with-typescript">Using with TypeScript</h2>
-				<p>The entire project is written in TypeScript, and declaration files are automatically generated. That means that if you are using TypeScript, the compiler can automatically infer the type of the various values exported from <code>structure-bytes</code>. To import the package, use:</p>
+				<p>The entire project is written in TypeScript and declaration files are automatically generated. That means that if you are using TypeScript, the compiler can automatically infer the type of the various values exported from <code>structure-bytes</code>. To import the package, use:</p>
 				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> sb <span class="hljs-keyword">from</span> <span class="hljs-string">'structure-bytes'</span></code></pre>
-				<p>One of the most useful parts of having typings is that the compiler can automatically infer what types of valus a <code>Type</code> can serialize. For example:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.StructType({
+				<p>The typings allow the compiler to automatically infer what types of values a <code>Type</code> can serialize. For example:</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.StructType({
     <span class="hljs-attr">abc</span>: <span class="hljs-keyword">new</span> sb.DoubleType,
     <span class="hljs-attr">def</span>: <span class="hljs-keyword">new</span> sb.MapType(
         <span class="hljs-keyword">new</span> sb.StringType,
@@ -335,12 +355,12 @@ If you hover over "valueBuffer", you can see
 that it requires the value to be of type:
 { abc: number | string, def: Map&lt;string, Date&gt; }
 */</span></code></pre>
-				<p>You can even add explicit <code>VALUE</code> generics to make the compiler check that your <code>Type</code> serializes the correct types of values.
+				<p>You can also add explicit <code>VALUE</code> generics to make the compiler check that your <code>Type</code> serializes the correct types of values.
 					Many non-primitive types (e.g. <code>ArrayType</code>, <code>MapType</code>, <code>StructType</code>) can take either one or two generics.
-					The first, <code>VALUE</code>, specifies the type of values the type can write.
-					The second, <code>READ_VALUE</code>, specifies the type of values the type will read from written values and defaults to <code>VALUE</code> if omitted.
-					Generally the two generics are the same, except in the case of numeric types (which write <code>number | string</code> but read <code>number</code>) and <code>OptionalType</code> (which writes <code>E | null | undefined</code> but reads <code>E | null</code>).
-				<code>READ_VALUE</code> must be a subset of <code>VALUE</code>, so in most cases where you specify the generic it makes sense to restrict <code>VALUE</code> to the type of read values and let <code>READ_VALUE</code> default to <code>VALUE</code>.</p>
+					The first, <code>VALUE</code>, specifies the type of values the type can serialize.
+					The second, <code>READ_VALUE</code>, specifies the type of values the type will deserialize and defaults to <code>VALUE</code> if omitted.
+					<code>READ_VALUE</code> must extend <code>VALUE</code>.
+				Generally the two generics are the same, except in the case of numeric types (which write <code>number | string</code> but read <code>number</code>) and <code>OptionalType</code> (which writes <code>E | null | undefined</code> but reads <code>E | null</code>).</p>
 				<p>With <code>StructType</code>:</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">class</span> Car {
     <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
@@ -349,14 +369,14 @@ that it requires the value to be of type:
         <span class="hljs-keyword">public</span> year: <span class="hljs-built_in">number</span>
     </span>) {}
 }
-<span class="hljs-keyword">let</span> structType = <span class="hljs-keyword">new</span> sb.StructType&lt;Car&gt;({
+<span class="hljs-keyword">const</span> carType = <span class="hljs-keyword">new</span> sb.StructType&lt;Car&gt;({
     make: <span class="hljs-keyword">new</span> sb.StringType,
     model: <span class="hljs-keyword">new</span> sb.StringType,
     year: <span class="hljs-keyword">new</span> sb.UnsignedShortType
 })
-<span class="hljs-comment">//The compiler would have complained if one of the fields were missing</span>
-<span class="hljs-comment">//or one of the field's types didn't match the type of the field's values,</span>
-<span class="hljs-comment">//e.g. "make: new sb.BooleanType"</span></code></pre>
+<span class="hljs-comment">// The compiler would have complained if one of the fields were missing</span>
+<span class="hljs-comment">// or one of the field's types didn't match the type of the field's values,</span>
+<span class="hljs-comment">// e.g. "make: new sb.BooleanType"</span></code></pre>
 				<p>If you have transient fields (i.e. they shouldn&#39;t be serialized), you can create a separate interface for the fields that should be serialized:</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> SerializedCar {
     make: <span class="hljs-built_in">string</span>
@@ -364,18 +384,18 @@ that it requires the value to be of type:
     year: <span class="hljs-built_in">number</span>
 }
 <span class="hljs-keyword">class</span> Car <span class="hljs-keyword">implements</span> SerializedCar {
-    <span class="hljs-keyword">public</span> id: <span class="hljs-built_in">number</span> <span class="hljs-comment">//transient field</span>
+    <span class="hljs-keyword">public</span> id: <span class="hljs-built_in">number</span> <span class="hljs-comment">// transient field</span>
     <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">public</span> make: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">public</span> model: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">public</span> year: <span class="hljs-built_in">number</span></span>) {
-        <span class="hljs-keyword">this</span>.id = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">1000000</span>)
+        <span class="hljs-keyword">this</span>.id = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">1e6</span>)
     }
 }
-<span class="hljs-keyword">let</span> structType = <span class="hljs-keyword">new</span> sb.StructType&lt;SerializedCar&gt;({
+<span class="hljs-keyword">const</span> carType = <span class="hljs-keyword">new</span> sb.StructType&lt;SerializedCar&gt;({
     make: <span class="hljs-keyword">new</span> sb.StringType,
     model: <span class="hljs-keyword">new</span> sb.StringType,
     year: <span class="hljs-keyword">new</span> sb.UnsignedShortType
 })</code></pre>
 				<p>With <code>ChoiceType</code> (and similarly for <code>NamedChoiceType</code>), you can let the type be inferred automatically if each of the possible types writes the same type of values:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.ChoiceType([ <span class="hljs-comment">//Type&lt;number | string, number&gt;</span>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> choiceType = <span class="hljs-keyword">new</span> sb.ChoiceType([ <span class="hljs-comment">// Type&lt;number | string, number&gt;</span>
     <span class="hljs-keyword">new</span> sb.ByteType,
     <span class="hljs-keyword">new</span> sb.ShortType,
     <span class="hljs-keyword">new</span> sb.IntType,
@@ -394,7 +414,7 @@ that it requires the value to be of type:
 }
 <span class="hljs-keyword">type</span> CSSColor = <span class="hljs-built_in">string</span>
 
-<span class="hljs-keyword">let</span> choiceType = <span class="hljs-keyword">new</span> sb.ChoiceType&lt;RGB | HSV | CSSColor&gt;([
+<span class="hljs-keyword">const</span> choiceType = <span class="hljs-keyword">new</span> sb.ChoiceType&lt;RGB | HSV | CSSColor&gt;([
     <span class="hljs-keyword">new</span> sb.StructType&lt;RGB&gt;({
         r: <span class="hljs-keyword">new</span> sb.FloatType,
         g: <span class="hljs-keyword">new</span> sb.FloatType,
@@ -413,10 +433,10 @@ that it requires the value to be of type:
     tail: List&lt;A&gt;
 }
 <span class="hljs-keyword">interface</span> List&lt;A&gt; {
-    list: Cons&lt;A&gt; | <span class="hljs-literal">null</span> <span class="hljs-comment">//null for empty list</span>
+    list: Cons&lt;A&gt; | <span class="hljs-literal">null</span> <span class="hljs-comment">// null for empty list</span>
 }
 
-<span class="hljs-keyword">let</span> recursiveType = <span class="hljs-keyword">new</span> sb.RecursiveType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;(<span class="hljs-string">'linked-list'</span>)
+<span class="hljs-keyword">const</span> recursiveType = <span class="hljs-keyword">new</span> sb.RecursiveType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;(<span class="hljs-string">'linked-list'</span>)
 recursiveType.setType(<span class="hljs-keyword">new</span> sb.StructType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
     list: <span class="hljs-keyword">new</span> sb.OptionalType(
         <span class="hljs-keyword">new</span> sb.StructType&lt;Cons&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
@@ -438,22 +458,22 @@ recursiveType.valueBuffer({
 })</code></pre>
 				<p>When reading types from buffers and streams, they will be of type <code>Type&lt;any&gt;</code>.
 				You should specify their value types before using them to write values:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">let</span> booleanType = <span class="hljs-keyword">new</span> sb.BooleanType
-<span class="hljs-keyword">let</span> readType = sb.r.type(booleanType.toBuffer()) <span class="hljs-comment">//Type&lt;any&gt;</span>
-<span class="hljs-comment">//Will throw a runtime error</span>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> booleanType = <span class="hljs-keyword">new</span> sb.BooleanType
+<span class="hljs-keyword">const</span> readType = sb.r.type(booleanType.toBuffer()) <span class="hljs-comment">// Type&lt;any&gt;</span>
+<span class="hljs-comment">// Will throw a runtime error</span>
 readType.valueBuffer(<span class="hljs-string">'abc'</span>)
 
 <span class="hljs-comment">//vs.</span>
 
-<span class="hljs-keyword">let</span> castReadType: sb.Type&lt;<span class="hljs-built_in">boolean</span>&gt; = sb.r.type(booleanType.toBuffer())
-<span class="hljs-comment">//Will throw a compiler error</span>
+<span class="hljs-keyword">const</span> castReadType: sb.Type&lt;<span class="hljs-built_in">boolean</span>&gt; = sb.r.type(booleanType.toBuffer())
+<span class="hljs-comment">// Will throw a compiler error</span>
 castReadType.valueBuffer(<span class="hljs-string">'abc'</span>)</code></pre>
 				<p>It may also sometimes be useful to be more specific about what types of values you want to be able to serialize.
 				For example, if you want to serialize integer values that will always be represented as numbers (and never in string form), you can force the compiler to error out if you try to serialize a string value with the following:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">let</span> intType: sb.Type&lt;<span class="hljs-built_in">number</span>&gt; = <span class="hljs-keyword">new</span> sb.IntType
-<span class="hljs-comment">//Now this is valid:</span>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> intType: sb.Type&lt;<span class="hljs-built_in">number</span>&gt; = <span class="hljs-keyword">new</span> sb.IntType
+<span class="hljs-comment">// Now this is valid:</span>
 intType.valueBuffer(<span class="hljs-number">100</span>)
-<span class="hljs-comment">//But this is not, even though it would be if you omitted the type annotation on intType:</span>
+<span class="hljs-comment">// But this is not, even though it would be if you omitted the type annotation on intType:</span>
 intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 				<h2 id="binary-formats">Binary formats</h2>
 				<p>In the following definitions, <code>uint8_t</code> means an 8-bit unsigned integer. <code>flexInt</code> means a variable-length unsigned integer with the following format, where <code>X</code> represents either <code>0</code> or <code>1</code>:</p>
@@ -465,7 +485,7 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 				</ul>
 				<p>All numbers are stored in big-endian format.</p>
 				<h3 id="type">Type</h3>
-				<p>The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the specific instance of the type, if necesary.
+				<p>The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the type, if necessary.
 				For example, <code>new sb.UnsignedIntType</code> translates into <code>[0x13]</code>, and <code>new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})</code> translates into:</p>
 				<pre><code class="language-javascript">[
     <span class="hljs-number">0x51</span> <span class="hljs-comment">/*StructType*/</span>,
@@ -487,7 +507,7 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
     <span class="hljs-attr">one</span>: someType,
     <span class="hljs-attr">two</span>: someType
 })
-<span class="hljs-comment">//type translates into</span>
+<span class="hljs-comment">// type serializes to</span>
 [
     <span class="hljs-number">0x51</span> <span class="hljs-comment">/*StructType*/</span>,
         <span class="hljs-number">2</span> <span class="hljs-comment">/*2 fields*/</span>,
@@ -621,8 +641,8 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 						</ul>
 					</li>
 					<li><code>FlexUnsignedIntType</code>: <code>flexInt</code></li>
-					<li><code>DateType</code>: 8-byte unsigned integer storing milliseconds in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a></li>
-					<li><code>DayType</code>: 3-byte unsigned integer storing days since the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a> epoch</li>
+					<li><code>DateType</code>: 8-byte signed integer storing milliseconds in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a></li>
+					<li><code>DayType</code>: 3-byte signed integer storing days since the <a href="https://en.wikipedia.org/wiki/Unix_time">Unix time</a> epoch</li>
 					<li><code>TimeType</code>: 4-byte unsigned integer storing milliseconds since the start of the day</li>
 					<li><code>FloatType</code>: single precision (4-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
 					<li><code>DoubleType</code>: double precision (8-byte) <a href="https://en.wikipedia.org/wiki/IEEE_floating_point">IEEE floating point</a></li>
