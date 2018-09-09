@@ -43,20 +43,23 @@
 				(i32.add (get_local $byteLength) (i32.const 63)) ;; could use up to 63 extra bytes
 			)
 		)
-		(set_local $needed ;; needed = (needed >> 16) + (needed % (1 << 16) ? 1 : 0) - memory.size
-			(i32.sub
-				(i32.add
-					(i32.shr_u (get_local $needed) (i32.const 16))
-					(select
-						(i32.const 1)
-						(i32.const 0)
-						(i32.and (get_local $needed) (i32.const 0xffff))
+		(if ;; if (needed > 0) memory.grow(needed)
+			(i32.gt_s
+				(tee_local $needed ;; needed = (needed >> 16) + (needed % (1 << 16) ? 1 : 0) - memory.size
+					(i32.sub
+						(i32.add
+							(i32.shr_u (get_local $needed) (i32.const 16))
+							(select
+								(i32.const 1)
+								(i32.const 0)
+								(i32.and (get_local $needed) (i32.const 0xffff))
+							)
+						)
+						(current_memory)
 					)
 				)
-				(current_memory)
+				(i32.const 0)
 			)
-		)
-		(if (i32.gt_s (get_local $needed) (i32.const 0)) ;; if (needed > 0) memory.grow(needed)
 			(drop (grow_memory (get_local $needed)))
 		)
 	)
