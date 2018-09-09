@@ -34,12 +34,9 @@ const readRecursives = new WeakMap();
  * For example, say the value was created with the following code:
  * ````javascript
  * let selfType = new sb.RecursiveType('self-type')
- * sb.registerType({
- *   type: new sb.StructType({
- *     self: selfType
- *   }),
- *   name: 'self-type'
- * })
+ * selfType.setType(new sb.StructType({
+ *   self: selfType
+ * }))
  * let self = {} //note that we had to give self a "base value" of {}
  * self.self = self
  * ````
@@ -63,14 +60,11 @@ const readRecursives = new WeakMap();
  * ````javascript
  * //A binary tree of unsigned bytes
  * let treeType = new sb.RecursiveType('tree-node')
- * sb.registerType({
- *   type: new sb.StructType({
- *     left: new sb.OptionalType(treeType),
- *     value: new sb.UnsignedByteType,
- *     right: new sb.OptionalType(treeType)
- *   }),
- *   name: 'tree-node' //name must match name passed to RecursiveType constructor
- * })
+ * treeType.setType(new sb.StructType({
+ *   left: new sb.OptionalType(treeType),
+ *   value: new sb.UnsignedByteType,
+ *   right: new sb.OptionalType(treeType)
+ * }))
  * ````
  *
  * @param E The type of value this type can write
@@ -127,27 +121,14 @@ class RecursiveType extends absolute_1.default {
      * ````javascript
      * treeType.writeValue(buffer, {
      *   left: {
-     *     left: {
-     *       left: null,
-     *       value: 1,
-     *       right: null
-     *     },
+     *     left: {value: 1},
      *     value: 2,
-     *     right: {
-     *       left: null,
-     *       value: 3,
-     *       right: null
-     *     }
+     *     right: {value: 3}
      *   },
      *   value: 4,
      *   right: {
-     *     left: null,
      *     value: 5,
-     *     right: {
-     *       left: null,
-     *       value: 6,
-     *       right: null
-     *     }
+     *     right: {value: 6}
      *   }
      * })
      * ````
