@@ -15,7 +15,14 @@ const server = http.createServer((req, res) => {
 	if (req.url === '/no-callback') io.httpRespond({req, res, type, value: responseValue})
 	else {
 		io.httpRespond({req, res, type, value: responseValue}, err => {
-			if (throwError) assert.errorMessage(err, 'Cannot set headers after they are sent to the client')
+			if (throwError) {
+				assert.instanceOf(err, Error)
+				const {message} = err!
+				assert(
+					message === "Can't set headers after they are sent." || //Node 8 and before
+					message === 'Cannot set headers after they are sent to the client' //Node 9 and after
+				)
+			}
 			else {
 				if (err) throw err
 			}
