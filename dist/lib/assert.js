@@ -126,7 +126,7 @@ function equal(actual, expected) {
                         try {
                             equal(actual[key], expected[key]);
                         }
-                        catch (e) {
+                        catch (_a) {
                             throw error();
                         }
                     }
@@ -136,17 +136,13 @@ function equal(actual, expected) {
             case Array: {
                 if (!(actual && actual.constructor === Array))
                     throw error();
-                try {
-                    equal(actual.length, expected.length);
-                }
-                catch (e) {
+                if (actual.length !== expected.length)
                     throw error();
-                }
                 for (let i = 0; i < expected.length; i++) {
                     try {
                         equal(actual[i], expected[i]);
                     }
-                    catch (e) {
+                    catch (_b) {
                         throw error();
                     }
                 }
@@ -155,12 +151,8 @@ function equal(actual, expected) {
             case Map: {
                 if (!(actual && actual.constructor === Map))
                     throw error();
-                try {
-                    equal(actual.size, expected.size);
-                }
-                catch (e) {
+                if (actual.size !== expected.size)
                     throw error();
-                }
                 const expectedIterator = expected.entries();
                 const actualIterator = actual.entries();
                 let entry;
@@ -168,7 +160,7 @@ function equal(actual, expected) {
                     try {
                         equal(entry.value, actualIterator.next().value);
                     }
-                    catch (e) {
+                    catch (_c) {
                         throw error();
                     }
                 }
@@ -177,12 +169,8 @@ function equal(actual, expected) {
             case Set: {
                 if (!(actual && actual.constructor === Set))
                     throw error();
-                try {
-                    equal(actual.size, expected.size);
-                }
-                catch (e) {
+                if (actual.size !== expected.size)
                     throw error();
-                }
                 const expectedIterator = expected.values();
                 const actualIterator = actual.values();
                 let entry;
@@ -190,7 +178,7 @@ function equal(actual, expected) {
                     try {
                         equal(entry.value, actualIterator.next().value);
                     }
-                    catch (e) {
+                    catch (_d) {
                         throw error();
                     }
                 }
@@ -199,37 +187,24 @@ function equal(actual, expected) {
             case ArrayBuffer: {
                 if (!(actual && actual.constructor === ArrayBuffer))
                     throw error();
-                try {
-                    equal(actual.byteLength, expected.byteLength);
-                }
-                catch (e) {
+                if (actual.byteLength !== expected.byteLength)
                     throw error();
-                }
                 const castActual = new Uint8Array(actual);
                 const castExpected = new Uint8Array(expected);
-                try {
-                    for (let i = 0; i < castExpected.length; i++)
-                        equal(castActual[i], castExpected[i]);
-                }
-                catch (e) {
-                    throw error();
+                for (let i = 0; i < castExpected.length; i++) {
+                    if (castActual[i] !== castExpected[i])
+                        throw error();
                 }
                 break;
             }
-            case Function: {
+            case Function:
                 if (!(actual && actual.constructor === Function))
                     throw error();
-                try {
-                    equal(actual.name, expected.name);
-                }
-                catch (e) {
+                if (actual.name !== expected.name)
                     throw error();
-                }
                 break;
-            }
-            default: {
+            default:
                 matchedSpecialCase = false;
-            }
         }
         if (matchedSpecialCase)
             return;
@@ -239,7 +214,7 @@ function equal(actual, expected) {
         try {
             equals = expected.equals(actual);
         }
-        catch (e) {
+        catch (_e) {
             throw new Error('equals() is not implemented for ' + util_inspect_1.inspect(expected));
         }
         if (!equals)

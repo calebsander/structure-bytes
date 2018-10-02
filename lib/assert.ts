@@ -122,75 +122,67 @@ function equal(actual: any, expected: any): void {
 					/*istanbul ignore else*/
 					if ({}.hasOwnProperty.call(expected, key)) {
 						try { equal(actual[key], expected[key]) }
-						catch (e) { throw error() }
+						catch { throw error() }
 					}
 				}
 				break
 			}
 			case Array: {
 				if (!(actual && actual.constructor === Array)) throw error()
-				try { equal(actual.length, expected.length) }
-				catch (e) { throw error() }
+				if (actual.length !== expected.length) throw error()
 				for (let i = 0; i < expected.length; i++) {
 					try { equal(actual[i], expected[i]) }
-					catch (e) { throw error() }
+					catch { throw error() }
 				}
 				break
 			}
 			case Map: {
 				if (!(actual && actual.constructor === Map)) throw error()
-				try { equal(actual.size, expected.size) }
-				catch (e) { throw error() }
+				if (actual.size !== expected.size) throw error()
 				const expectedIterator = expected.entries()
 				const actualIterator = actual.entries()
 				let entry
 				while (!(entry = expectedIterator.next()).done) {
 					try { equal(entry.value, actualIterator.next().value) }
-					catch (e) { throw error() }
+					catch { throw error() }
 				}
 				break
 			}
 			case Set: {
 				if (!(actual && actual.constructor === Set)) throw error()
-				try { equal(actual.size, expected.size) }
-				catch (e) { throw error() }
+				if (actual.size !== expected.size) throw error()
 				const expectedIterator = expected.values()
 				const actualIterator = actual.values()
 				let entry
 				while (!(entry = expectedIterator.next()).done) {
 					try { equal(entry.value, actualIterator.next().value) }
-					catch (e) { throw error() }
+					catch { throw error() }
 				}
 				break
 			}
 			case ArrayBuffer: {
 				if (!(actual && actual.constructor === ArrayBuffer)) throw error()
-				try { equal(actual.byteLength, expected.byteLength) }
-				catch (e) { throw error() }
+				if (actual.byteLength !== expected.byteLength) throw error()
 				const castActual = new Uint8Array(actual)
 				const castExpected = new Uint8Array(expected)
-				try {
-					for (let i = 0; i < castExpected.length; i++) equal(castActual[i], castExpected[i])
+				for (let i = 0; i < castExpected.length; i++) {
+					if (castActual[i] !== castExpected[i]) throw error()
 				}
-				catch (e) { throw error() }
 				break
 			}
-			case Function: {
+			case Function:
 				if (!(actual && actual.constructor === Function)) throw error()
-				try { equal(actual.name, expected.name) }
-				catch (e) { throw error() }
+				if (actual.name !== expected.name) throw error()
 				break
-			}
-			default: {
+			default:
 				matchedSpecialCase = false
-			}
 		}
 		if (matchedSpecialCase) return
 	}
 	if (!(expected === undefined || expected === null) && expected.equals instanceof Function) { //if expected has an equals function, use it
 		let equals: boolean
 		try { equals = expected.equals(actual) }
-		catch (e) { throw new Error('equals() is not implemented for ' + inspect(expected)) }
+		catch { throw new Error('equals() is not implemented for ' + inspect(expected)) }
 		if (!equals) throw error()
 	}
 	else { //use primitive equality if nothing else matches
