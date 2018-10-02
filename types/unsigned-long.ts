@@ -49,7 +49,7 @@ export default class UnsignedLongType extends UnsignedType<string, string> {
 		const upper = dataView.getUint32(0)
 		const lower = dataView.getUint32(4)
 		return {
-			value: strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower)),
+			value: strint.add(strint.mul(`${upper}`, strint.LONG_UPPER_SHIFT), `${lower}`),
 			length
 		}
 	}

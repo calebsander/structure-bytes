@@ -1,19 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonTypes = new Set([String, Number, Boolean, Date]);
-function toObject(obj) {
-    const result = {};
-    for (const key in obj) {
-        /*istanbul ignore else*/
-        if ({}.hasOwnProperty.call(obj, key))
-            result[key] = obj[key];
-    }
-    return result;
-}
+/**
+ * Converts a byte to a 2-digit hexadecimal string
+ * @param n The byte value
+ * @return `n` with a possible leading 0
+ */
+exports.hexByte = (n) => (n < 16 ? '0' : '') + n.toString(16);
 /**
  * A simple replacement for `util.inspect()`.
- * Makes little effort at readability,
- * and cannot handle circular values.
+ * Makes little effort at readability.
  * Useful for generating more detailed
  * error messages, and so that the client-side
  * code doesn't need to pack `util` as a dependency.
@@ -21,7 +17,7 @@ function toObject(obj) {
  * @return A string expressing the given value
  */
 function inspect(obj) {
-    return inspectWithSeen(obj, new Map);
+    return inspectWithSeen(obj, new Set);
 }
 exports.inspect = inspect;
 function inspectWithSeen(obj, seen) {
@@ -32,10 +28,10 @@ function inspectWithSeen(obj, seen) {
     if (obj instanceof ArrayBuffer) {
         const castBuffer = new Uint8Array(obj);
         let result = '[';
-        for (const b of castBuffer) {
-            if (result !== '[')
+        for (let i = 0; i < castBuffer.length; i++) {
+            if (i)
                 result += ', ';
-            result += '0x' + (b < 16 ? '0' : '') + b.toString(16);
+            result += '0x' + exports.hexByte(castBuffer[i]);
         }
         return result + ']';
     }
@@ -43,73 +39,58 @@ function inspectWithSeen(obj, seen) {
     if (typeof Buffer !== 'undefined' && obj instanceof Buffer) {
         let result = '<Buffer';
         for (const b of obj)
-            result += ' ' + (b < 16 ? '0' : '') + b.toString(16);
+            result += ' ' + exports.hexByte(b);
         return result + '>';
     }
     if (obj instanceof Function) {
         return 'Function ' + obj.name;
     }
     //obj might have circular references
-    if (seen.get(obj))
+    if (seen.has(obj))
         return '[Circular]';
-    else
-        seen.set(obj, 1);
+    seen.add(obj);
+    let firstElement = true;
     if (obj instanceof Set) {
         let result = 'Set {';
-        const iterator = obj.values();
-        let value = iterator.next();
-        while (!value.done) {
-            result += inspectWithSeen(value.value, seen);
-            value = iterator.next();
-            if (!value.done)
+        for (const value of obj) {
+            if (firstElement)
+                firstElement = false;
+            else
                 result += ', ';
+            result += inspectWithSeen(value, seen);
         }
-        seen.set(obj, seen.get(obj) - 1);
+        seen.delete(obj);
         return result + '}';
     }
     if (obj instanceof Map) {
         let result = 'Map {';
-        const iterator = obj.entries();
-        let value = iterator.next();
-        while (!value.done) {
-            result += inspectWithSeen(value.value[0], seen);
-            result += ' => ';
-            result += inspectWithSeen(value.value[1], seen);
-            value = iterator.next();
-            if (!value.done)
+        for (const [key, value] of obj) {
+            if (firstElement)
+                firstElement = false;
+            else
                 result += ', ';
+            result += inspectWithSeen(key, seen) + ' => ' + inspectWithSeen(value, seen);
         }
-        seen.set(obj, seen.get(obj) - 1);
+        seen.delete(obj);
         return result + '}';
     }
     if (obj instanceof Array) {
-        let result = '[';
-        const iterator = obj[Symbol.iterator]();
-        let value = iterator.next();
-        while (!value.done) {
-            result += inspectWithSeen(value.value, seen);
-            value = iterator.next();
-            if (!value.done)
-                result += ', ';
-        }
-        seen.set(obj, seen.get(obj) - 1);
-        return result + ']';
-    }
-    if (obj.constructor === Object) { //as opposed to a subclass of Object
-        let result = '{';
-        for (const key in obj) {
-            /*istanbul ignore else*/
-            if ({}.hasOwnProperty.call(obj, key)) {
-                if (result !== '{')
-                    result += ', ';
-                result += key + ': ' + inspectWithSeen(obj[key], seen);
-            }
-        }
-        seen.set(obj, seen.get(obj) - 1);
-        return result + '}';
+        const result = `[${obj.map(item => inspectWithSeen(item, seen)).join(', ')}]`;
+        seen.delete(obj);
+        return result;
     }
     const { name } = obj.constructor;
-    const genericResult = (name ? name + ' ' : '') + inspectWithSeen(toObject(obj), seen);
-    seen.set(obj, seen.get(obj) - 1);
-    return genericResult;
+    let objectResult = `${name && name !== 'Object' ? name + ' ' : ''}{`;
+    for (const key in obj) {
+        /*istanbul ignore else*/
+        if ({}.hasOwnProperty.call(obj, key)) {
+            if (firstElement)
+                firstElement = false;
+            else
+                objectResult += ', ';
+            objectResult += key + ': ' + inspectWithSeen(obj[key], seen);
+        }
+    }
+    seen.delete(obj);
+    return objectResult + '}';
 }

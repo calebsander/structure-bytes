@@ -64,11 +64,11 @@ export default class BigIntType extends IntegerType<string, string> {
 		const castBuffer = new Uint8Array(buffer, offset + length)
 		let value: string
 		if (bytes) {
-			value = String(castBuffer[0] << 24 >> 24) //convert unsigned to signed
+			value = `${new Int8Array(castBuffer)[0]}`
 			for (let byte = 1; byte < bytes; byte++) {
 				value = strint.add(
 					strint.mul(value, strint.BYTE_SHIFT),
-					String(castBuffer[byte])
+					`${castBuffer[byte]}`
 				)
 			}
 		}

@@ -63,7 +63,7 @@ export default class BigUnsignedIntType extends UnsignedType<string, string> {
 		for (let byte = 0; byte < bytes; byte++) {
 			value = strint.add(
 				strint.mul(value, strint.BYTE_SHIFT),
-				String(castBuffer[byte])
+				`${castBuffer[byte]}`
 			)
 		}
 		length += bytes

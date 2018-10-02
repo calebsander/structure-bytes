@@ -184,7 +184,7 @@ class RecursiveType extends absolute_1.default {
             const target = offset + length - indexOffset.value;
             const readValue = readRecursives.get(buffer).get(target);
             if (!readValue)
-                throw new Error('Cannot find target at ' + String(target));
+                throw new Error(`Cannot find target at ${target}`);
             value = readValue;
             length += indexOffset.length;
         }

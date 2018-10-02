@@ -42,7 +42,7 @@ class EnumType extends abstract_1.default {
             assert_1.default.byteUnsignedInteger(values.length);
         }
         catch (e) {
-            assert_1.default.fail(String(values.length) + ' values is too many');
+            assert_1.default.fail(`${values.length} values is too many`);
         }
         this.type = type;
         this.values = values; //used when reading to get constant-time lookup of value index into value
@@ -101,7 +101,7 @@ class EnumType extends abstract_1.default {
         const valueIndex = new Uint8Array(buffer)[offset];
         const value = this.values[valueIndex];
         if (value === undefined)
-            throw new Error('Index ' + String(valueIndex) + ' is invalid');
+            throw new Error(`Index ${valueIndex} is invalid`);
         return { value, length: 1 };
     }
     equals(otherType) {

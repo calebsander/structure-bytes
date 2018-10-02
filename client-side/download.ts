@@ -60,7 +60,7 @@ export function download({name, url, options}: DownloadOptions): Promise<any> {
 	}
 	return fetch(url, options)
 		.then(response => {
-			if (!response.ok) throw new Error('Received status of ' + String(response.status))
+			if (!response.ok) throw new Error(`Received status of ${response.status}`)
 			const sig = response.headers.get('sig')!
 			if (typeInCache && typeInCache.sig === sig) {
 				return response.arrayBuffer()

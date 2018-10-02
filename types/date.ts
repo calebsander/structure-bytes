@@ -31,7 +31,7 @@ export default class DateType extends ChronoType {
 	writeValue(buffer: AppendableBuffer, value: Date) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
-		writeLong(buffer, String(value.getTime()))
+		writeLong(buffer, `${value.getTime()}`)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {
 		const {value, length} = readLong(buffer, offset)

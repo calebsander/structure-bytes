@@ -61,7 +61,7 @@ function registerType({ type, name }) {
         tuple_1.default
     ]);
     assert_1.default.instanceOf(name, String);
-    assert_1.default(!isRegistered(name), '"' + name + '" is already a registered type');
+    assert_1.default(!isRegistered(name), `"${name}" is already a registered type`);
     registeredTypes.set(name, type);
 }
 exports.registerType = registerType;
@@ -76,7 +76,7 @@ function getType(name) {
     assert_1.default.instanceOf(name, String);
     const type = registeredTypes.get(name);
     if (!type)
-        throw new Error('"' + name + '" is not a registered type');
+        throw new Error(`"${name}" is not a registered type`);
     return type;
 }
 exports.getType = getType;

@@ -62,7 +62,7 @@ class BigUnsignedIntType extends unsigned_1.default {
         const castBuffer = new Uint8Array(buffer, offset + length);
         let value = '0';
         for (let byte = 0; byte < bytes; byte++) {
-            value = strint.add(strint.mul(value, strint.BYTE_SHIFT), String(castBuffer[byte]));
+            value = strint.add(strint.mul(value, strint.BYTE_SHIFT), `${castBuffer[byte]}`);
         }
         length += bytes;
         return { value, length };

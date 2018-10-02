@@ -62,7 +62,7 @@ export function registerType({type, name}: TypeAndName): void {
 		TupleType
 	])
 	assert.instanceOf(name, String)
-	assert(!isRegistered(name), '"' + name + '" is already a registered type')
+	assert(!isRegistered(name), `"${name}" is already a registered type`)
 	registeredTypes.set(name, type)
 }
 /**
@@ -75,7 +75,7 @@ export function registerType({type, name}: TypeAndName): void {
 export function getType(name: string): RegisterableType {
 	assert.instanceOf(name, String)
 	const type = registeredTypes.get(name)
-	if (!type) throw new Error('"' + name + '" is not a registered type')
+	if (!type) throw new Error(`"${name}" is not a registered type`)
 	return type
 }
 /**

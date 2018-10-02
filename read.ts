@@ -4,8 +4,8 @@ import assert from './lib/assert'
 import * as bufferString from './lib/buffer-string'
 import {REPEATED_TYPE} from './lib/constants'
 import * as constructorRegistry from './lib/constructor-registry'
-import {NOT_LONG_ENOUGH, pad, readFlexInt, ReadResult} from './lib/read-util'
-import {inspect} from './lib/util-inspect'
+import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from './lib/read-util'
+import {hexByte, inspect} from './lib/util-inspect'
 import * as recursiveRegistry from './recursive-registry'
 import {RegisterableType} from './recursive-registry-type'
 import * as t from './types'
@@ -40,7 +40,7 @@ const recursiveNames = new WeakMap<ArrayBuffer, Map<number, string>>()
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<any>> {
-	assert(offset >= 0, 'Offset is negative: ' + String(offset))
+	assert(offset >= 0, `Offset is negative: ${offset}`)
 	const castBuffer = new Uint8Array(typeBuffer)
 	assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH) //make sure there is a type byte
 	const typeByte = castBuffer[offset]
@@ -211,7 +211,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			break
 		}
 		default:
-			throw new Error('No such type: 0x' + pad(castBuffer[offset].toString(16), 2))
+			throw new Error(`No such type: 0x${hexByte(castBuffer[offset])}`)
 	}
 	return {value: readType, length}
 }

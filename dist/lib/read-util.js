@@ -34,23 +34,6 @@ function makeBaseValue(readType, count) {
 }
 exports.makeBaseValue = makeBaseValue;
 /**
- * Pads a string with preceding `0` characters
- * so it has the desired length
- * (for readability)
- * @param str The numeric string
- * @param digits The target number of digits
- * @return `str` if str has at least enough digits,
- * otherwise `str` with enough zeros in front to have
- * the desired number of digits
- */
-function pad(str, digits) {
-    if (str.length < digits)
-        return '0'.repeat(digits - str.length) + str;
-    else
-        return str;
-}
-exports.pad = pad;
-/**
  * Reads a byte from the buffer,
  * requires it to be `0x00` or `0xFF`,
  * and returns its boolean value
@@ -62,17 +45,17 @@ exports.pad = pad;
  */
 function readBooleanByte(buffer, offset) {
     assert_1.default(buffer.byteLength > offset, exports.NOT_LONG_ENOUGH);
-    let readValue;
+    let value;
     const readByte = new Uint8Array(buffer)[offset];
     switch (readByte) {
         case 0x00:
         case 0xFF:
-            readValue = Boolean(readByte);
+            value = !!readByte;
             break;
         default:
-            throw new Error('0x' + pad(readByte.toString(16), 2) + ' is an invalid Boolean value');
+            throw new Error(`0x${util_inspect_1.hexByte(readByte)} is an invalid Boolean value`);
     }
-    return { value: readValue, length: 1 };
+    return { value, length: 1 };
 }
 exports.readBooleanByte = readBooleanByte;
 /**
@@ -135,7 +118,7 @@ function readLong(buffer, offset) {
     const upper = dataView.getInt32(0);
     const lower = dataView.getUint32(4);
     return {
-        value: strint.add(strint.mul(String(upper), strint.LONG_UPPER_SHIFT), String(lower)),
+        value: strint.add(strint.mul(`${upper}`, strint.LONG_UPPER_SHIFT), `${lower}`),
         length
     };
 }

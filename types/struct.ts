@@ -81,7 +81,7 @@ export default class StructType<E extends StringIndexable, READ_E extends E = E>
 		//Allow only 255 fields
 		const fieldCount = Object.keys(fields).length
 		try { assert.byteUnsignedInteger(fieldCount) }
-		catch (e) { assert.fail(String(fieldCount) + ' fields is too many') }
+		catch (e) { assert.fail(`${fieldCount} fields is too many`) }
 
 		this.fields = new Array(fieldCount) //really a set, but we want ordering to be fixed so that type bytes are consistent
 		let fieldIndex = 0
@@ -90,7 +90,7 @@ export default class StructType<E extends StringIndexable, READ_E extends E = E>
 			//Name must fit in 255 UTF-8 bytes
 			const fieldNameBuffer = bufferString.fromString(fieldName)
 			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength) }
-			catch (e) { assert.fail('Field name ' + (fieldName as string) + ' is too long') }
+			catch (e) { assert.fail(`Field name ${fieldName} is too long`) }
 			//Type must be a Type
 			const fieldType = fields[fieldName]
 			try { assert.instanceOf(fieldType, AbstractType) }
@@ -150,8 +150,9 @@ export default class StructType<E extends StringIndexable, READ_E extends E = E>
 			catch (writeError) {
 				//Reporting that field is missing is more useful than, for example,
 				//Saying "undefined is not an instance of Number"
-				assert(fieldValue !== undefined, 'Value for field "' + field.name + '" missing')
-				throw writeError //throw original error if field is defined, but just invalid
+				throw fieldValue === undefined
+					? new Error(`Value for field "${field.name}" missing`)
+					: writeError //throw original error if field is defined, but just invalid
 			}
 		}
 	}

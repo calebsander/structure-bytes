@@ -70,7 +70,7 @@ class NamedChoiceType extends absolute_1.default {
             assert_1.default.byteUnsignedInteger(constructorTypes.size);
         }
         catch (e) {
-            assert_1.default.fail(String(constructorTypes.size) + ' types is too many');
+            assert_1.default.fail(`${constructorTypes.size} types is too many`);
         }
         this.indexConstructors = new Map;
         this.constructorTypes = new Array(constructorTypes.size);
@@ -79,7 +79,7 @@ class NamedChoiceType extends absolute_1.default {
             assert_1.default.instanceOf(constructor, Function);
             const { name } = constructor;
             assert_1.default(name !== '', 'Function does not have a name');
-            assert_1.default(!usedNames.has(name), 'Function name "' + name + '" is repeated');
+            assert_1.default(!usedNames.has(name), `Function name "${name}" is repeated`);
             usedNames.add(name);
             //Name must fit in 255 UTF-8 bytes
             const typeNameBuffer = bufferString.fromString(name);
@@ -87,7 +87,7 @@ class NamedChoiceType extends absolute_1.default {
                 assert_1.default.byteUnsignedInteger(typeNameBuffer.byteLength);
             }
             catch (e) {
-                assert_1.default.fail('Function name "' + name + '" is too long');
+                assert_1.default.fail(`Function name "${name}" is too long`);
             }
             assert_1.default.instanceOf(type, struct_1.default);
             const constructorIndex = this.indexConstructors.size;
@@ -161,8 +161,8 @@ class NamedChoiceType extends absolute_1.default {
         assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
         const typeIndex = new Uint8Array(buffer)[offset];
         const typeConstructor = this.indexConstructors.get(typeIndex);
-        if (typeConstructor === undefined)
-            throw new Error('Constructor index ' + String(typeIndex) + ' is invalid');
+        if (!typeConstructor)
+            throw new Error(`Constructor index ${typeIndex} is invalid`);
         const constructor = constructorRegistry.get(typeConstructor.name);
         const { value, length: subLength } = this.constructorTypes[typeIndex].type.consumeValue(buffer, offset + length, new constructor);
         length += subLength;

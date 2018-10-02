@@ -27,7 +27,7 @@ export default class GrowableBuffer extends AppendableBuffer {
 			assert.integer(initialLength)
 			assert(initialLength >= 0)
 		}
-		catch (e) { throw new RangeError(String(initialLength) + ' is not a valid buffer length') }
+		catch (e) { throw new RangeError(`${initialLength} is not a valid buffer length`) }
 		this.buffer = new ArrayBuffer(initialLength)
 		this.size = 0
 		this.pausePoints = []
@@ -68,7 +68,7 @@ export default class GrowableBuffer extends AppendableBuffer {
 	 */
 	add(value: number) {
 		assert.integer(value)
-		assert.between(0, value, 0x100, 'Not a byte: ' + String(value))
+		assert.between(0, value, 0x100, `Not a byte: ${value}`)
 		return this.addAll(new Uint8Array([value]).buffer)
 	}
 	/**

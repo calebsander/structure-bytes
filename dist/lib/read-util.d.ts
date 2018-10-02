@@ -26,17 +26,6 @@ export interface ReadResult<E> {
  */
 export declare function makeBaseValue(readType: RegisterableType, count?: number): any;
 /**
- * Pads a string with preceding `0` characters
- * so it has the desired length
- * (for readability)
- * @param str The numeric string
- * @param digits The target number of digits
- * @return `str` if str has at least enough digits,
- * otherwise `str` with enough zeros in front to have
- * the desired number of digits
- */
-export declare function pad(str: string, digits: number): string;
-/**
  * Reads a byte from the buffer,
  * requires it to be `0x00` or `0xFF`,
  * and returns its boolean value

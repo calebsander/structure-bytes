@@ -189,7 +189,7 @@ export default class RecursiveType<E, READ_E extends E = E> extends AbsoluteType
 			const indexOffset = readFlexInt(buffer, offset + length)
 			const target = offset + length - indexOffset.value
 			const readValue = readRecursives.get(buffer)!.get(target) as READ_E | undefined
-			if (!readValue) throw new Error('Cannot find target at ' + String(target))
+			if (!readValue) throw new Error(`Cannot find target at ${target}`)
 			value = readValue
 			length += indexOffset.length
 		}

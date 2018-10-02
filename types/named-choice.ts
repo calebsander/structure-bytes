@@ -83,7 +83,7 @@ export default class NamedChoiceType<E extends object, READ_E extends E = E> ext
 		super()
 		assert.instanceOf(constructorTypes, Map)
 		try { assert.byteUnsignedInteger(constructorTypes.size) }
-		catch (e) { assert.fail(String(constructorTypes.size) + ' types is too many') }
+		catch (e) { assert.fail(`${constructorTypes.size} types is too many`) }
 		this.indexConstructors = new Map
 		this.constructorTypes = new Array(constructorTypes.size)
 		const usedNames = new Set<string>()
@@ -91,12 +91,12 @@ export default class NamedChoiceType<E extends object, READ_E extends E = E> ext
 			assert.instanceOf(constructor, Function)
 			const {name} = constructor
 			assert(name !== '', 'Function does not have a name')
-			assert(!usedNames.has(name), 'Function name "' + name + '" is repeated')
+			assert(!usedNames.has(name), `Function name "${name}" is repeated`)
 			usedNames.add(name)
 			//Name must fit in 255 UTF-8 bytes
 			const typeNameBuffer = bufferString.fromString(name)
 			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
-			catch (e) { assert.fail('Function name "' + name + '" is too long') }
+			catch (e) { assert.fail(`Function name "${name}" is too long`) }
 			assert.instanceOf(type, StructType)
 			const constructorIndex = this.indexConstructors.size
 			this.indexConstructors.set(constructorIndex, constructor)
@@ -165,7 +165,7 @@ export default class NamedChoiceType<E extends object, READ_E extends E = E> ext
 		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 		const typeIndex = new Uint8Array(buffer)[offset]
 		const typeConstructor = this.indexConstructors.get(typeIndex)
-		if (typeConstructor === undefined) throw new Error('Constructor index ' + String(typeIndex) + ' is invalid')
+		if (!typeConstructor) throw new Error(`Constructor index ${typeIndex} is invalid`)
 		const constructor = constructorRegistry.get(typeConstructor.name)
 		const {value, length: subLength} = this.constructorTypes[typeIndex].type.consumeValue(
 			buffer,

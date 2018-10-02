@@ -32,7 +32,7 @@ class AppendableStream extends appendable_1.default {
      */
     add(value) {
         assert_1.default.integer(value);
-        assert_1.default.between(0, value, 0x100, 'Not a byte: ' + String(value));
+        assert_1.default.between(0, value, 0x100, `Not a byte: ${value}`);
         return this.addAll(new Uint8Array([value]).buffer);
     }
     /**

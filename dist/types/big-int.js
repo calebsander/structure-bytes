@@ -64,9 +64,9 @@ class BigIntType extends integer_1.default {
         const castBuffer = new Uint8Array(buffer, offset + length);
         let value;
         if (bytes) {
-            value = String(castBuffer[0] << 24 >> 24); //convert unsigned to signed
+            value = `${new Int8Array(castBuffer)[0]}`;
             for (let byte = 1; byte < bytes; byte++) {
-                value = strint.add(strint.mul(value, strint.BYTE_SHIFT), String(castBuffer[byte]));
+                value = strint.add(strint.mul(value, strint.BYTE_SHIFT), `${castBuffer[byte]}`);
             }
         }
         else

@@ -45,16 +45,8 @@ function integer(instance) {
  */
 function between(lower, value, upper, message) {
     if (value < lower || value >= upper) {
-        const outOfBoundsMessage = String(value) +
-            ' is not in [' +
-            String(lower) +
-            ',' +
-            String(upper) +
-            ')';
-        if (message)
-            throw new RangeError(message + ' (' + outOfBoundsMessage + ')');
-        else
-            throw new RangeError(outOfBoundsMessage);
+        const outOfBoundsMessage = `${value} is not in [${lower},${upper})`;
+        throw new RangeError(message ? `${message} (${outOfBoundsMessage})` : outOfBoundsMessage);
     }
 }
 /**
@@ -121,7 +113,7 @@ function throws(block, message) {
  */
 function equal(actual, expected) {
     const error = () => //lazily computed
-     new RangeError('Expected ' + util_inspect_1.inspect(expected) + ' but got ' + util_inspect_1.inspect(actual));
+     new RangeError(`Expected ${util_inspect_1.inspect(expected)} but got ${util_inspect_1.inspect(actual)}`);
     if (expected) {
         let matchedSpecialCase = true;
         switch (expected.constructor) {
@@ -266,7 +258,7 @@ function equal(actual, expected) {
  */
 function errorMessage(err, message) {
     instanceOf(message, String);
-    assert(err !== null && err.message.startsWith(message), 'Message "' + (err ? err.message : 'No error thrown') + '" does not start with "' + message + '"');
+    assert(err !== null && err.message.startsWith(message), `Message "${err ? err.message : 'No error thrown'}" does not start with "${message}"`);
 }
 //tslint:disable-next-line:prefer-object-spread
 exports.default = Object.assign(assert, {

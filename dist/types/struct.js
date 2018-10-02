@@ -53,7 +53,7 @@ class StructType extends absolute_1.default {
             assert_1.default.byteUnsignedInteger(fieldCount);
         }
         catch (e) {
-            assert_1.default.fail(String(fieldCount) + ' fields is too many');
+            assert_1.default.fail(`${fieldCount} fields is too many`);
         }
         this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
         let fieldIndex = 0;
@@ -66,7 +66,7 @@ class StructType extends absolute_1.default {
                 assert_1.default.byteUnsignedInteger(fieldNameBuffer.byteLength);
             }
             catch (e) {
-                assert_1.default.fail('Field name ' + fieldName + ' is too long');
+                assert_1.default.fail(`Field name ${fieldName} is too long`);
             }
             //Type must be a Type
             const fieldType = fields[fieldName];
@@ -139,8 +139,9 @@ class StructType extends absolute_1.default {
             catch (writeError) {
                 //Reporting that field is missing is more useful than, for example,
                 //Saying "undefined is not an instance of Number"
-                assert_1.default(fieldValue !== undefined, 'Value for field "' + field.name + '" missing');
-                throw writeError; //throw original error if field is defined, but just invalid
+                throw fieldValue === undefined
+                    ? new Error(`Value for field "${field.name}" missing`)
+                    : writeError; //throw original error if field is defined, but just invalid
             }
         }
     }

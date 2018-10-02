@@ -46,15 +46,8 @@ function integer(instance: any): void {
  */
 function between(lower: number, value: number, upper: number, message?: string): void {
 	if (value < lower || value >= upper) {
-		const outOfBoundsMessage =
-			String(value) +
-			' is not in [' +
-			String(lower) +
-			',' +
-			String(upper) +
-			')'
-		if (message) throw new RangeError(message + ' (' + outOfBoundsMessage + ')')
-		else throw new RangeError(outOfBoundsMessage)
+		const outOfBoundsMessage = `${value} is not in [${lower},${upper})`
+		throw new RangeError(message ? `${message} (${outOfBoundsMessage})` : outOfBoundsMessage)
 	}
 }
 /**
@@ -119,7 +112,7 @@ function throws(block: () => void, message?: string) {
  */
 function equal(actual: any, expected: any): void {
 	const error = () => //lazily computed
-		new RangeError('Expected ' + inspect(expected) + ' but got ' + inspect(actual))
+		new RangeError(`Expected ${inspect(expected)} but got ${inspect(actual)}`)
 	if (expected) {
 		let matchedSpecialCase = true
 		switch (expected.constructor) {
@@ -214,7 +207,7 @@ function errorMessage(err: Error | null, message: string): void {
 	instanceOf(message, String)
 	assert(
 		err !== null && err.message.startsWith(message),
-		'Message "' + (err ? err.message : 'No error thrown') + '" does not start with "' + message + '"'
+		`Message "${err ? err.message : 'No error thrown'}" does not start with "${message}"`
 	)
 }
 //tslint:disable-next-line:prefer-object-spread

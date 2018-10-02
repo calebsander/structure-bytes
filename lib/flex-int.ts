@@ -36,13 +36,13 @@ const NUMBER_OF_BYTES = new Map<number, number>()
  */
 export function makeValueBuffer(value: number): ArrayBuffer {
 	assert.integer(value)
-	assert(value >= 0, String(value) + ' is negative')
+	assert(value >= 0, `${value} is negative`)
 	const bytes = (() => {
 		for (const [byteCount, maxValue] of UPPER_BOUNDS) {
 			if (maxValue > value) return byteCount
 		}
 		/*istanbul ignore next*/
-		throw new Error('Cannot represent ' + String(value)) //should never occur
+		throw new Error(`Cannot represent ${value}`) //should never occur
 	})()
 	let writeValue = value - UPPER_BOUNDS.get(bytes - 1)!
 	const buffer = new Uint8Array(bytes)

@@ -53,7 +53,7 @@ export default class EnumType<E> extends AbstractType<E> {
 		assert.instanceOf(values, Array)
 		//At most 255 values allowed
 		try { assert.byteUnsignedInteger(values.length) }
-		catch (e) { assert.fail(String(values.length) + ' values is too many') }
+		catch (e) { assert.fail(`${values.length} values is too many`) }
 
 		this.type = type
 		this.values = values //used when reading to get constant-time lookup of value index into value
@@ -106,7 +106,7 @@ export default class EnumType<E> extends AbstractType<E> {
 		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 		const valueIndex = new Uint8Array(buffer)[offset]
 		const value = this.values[valueIndex] as E | undefined
-		if (value === undefined) throw new Error('Index ' + String(valueIndex) + ' is invalid')
+		if (value === undefined) throw new Error(`Index ${valueIndex} is invalid`)
 		return {value, length: 1}
 	}
 	equals(otherType: any) {

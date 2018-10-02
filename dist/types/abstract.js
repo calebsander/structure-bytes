@@ -78,13 +78,7 @@ class AbstractType {
         if (!otherType)
             return false;
         //Other type must have the same constructor
-        try {
-            assert_1.default.equal(otherType.constructor, this.constructor);
-        }
-        catch (e) {
-            return false;
-        }
-        return true;
+        return otherType.constructor === this.constructor;
     }
     /**
      * Requires that the buffer be a [[GrowableBuffer]]

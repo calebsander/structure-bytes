@@ -15,12 +15,7 @@ process
 	})
 	.on('exit', _ => {
 		console.log(
-			String(passed) +
-			' tests out of ' +
-			String(total) +
-			' passed (' +
-			Math.round(passed / total * 100) +
-			'%)'
+			`${passed} tests out of ${total} passed (${Math.round(passed / total * 100)}%)`
 		)
 		process.exitCode = (total - passed) + asyncErrors
 	})

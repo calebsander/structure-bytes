@@ -34,7 +34,7 @@ const recursiveNames = new WeakMap();
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
-    assert_1.default(offset >= 0, 'Offset is negative: ' + String(offset));
+    assert_1.default(offset >= 0, `Offset is negative: ${offset}`);
     const castBuffer = new Uint8Array(typeBuffer);
     assert_1.default(typeBuffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH); //make sure there is a type byte
     const typeByte = castBuffer[offset];
@@ -208,7 +208,7 @@ function consumeType(typeBuffer, offset) {
             break;
         }
         default:
-            throw new Error('No such type: 0x' + read_util_1.pad(castBuffer[offset].toString(16), 2));
+            throw new Error(`No such type: 0x${util_inspect_1.hexByte(castBuffer[offset])}`);
     }
     return { value: readType, length };
 }

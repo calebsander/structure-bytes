@@ -38,7 +38,7 @@ export default class AppendableStream extends AppendableBuffer {
 	 */
 	add(value: number) {
 		assert.integer(value)
-		assert.between(0, value, 0x100, 'Not a byte: ' + String(value))
+		assert.between(0, value, 0x100, `Not a byte: ${value}`)
 		return this.addAll(new Uint8Array([value]).buffer)
 	}
 	/**

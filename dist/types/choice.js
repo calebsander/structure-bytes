@@ -49,7 +49,7 @@ class ChoiceType extends absolute_1.default {
             assert_1.default.byteUnsignedInteger(types.length);
         }
         catch (e) {
-            assert_1.default.fail(String(types.length) + ' types is too many');
+            assert_1.default.fail(`${types.length} types is too many`);
         }
         for (const type of types)
             assert_1.default.instanceOf(type, abstract_1.default);
