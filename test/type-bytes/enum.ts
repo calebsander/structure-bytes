@@ -16,12 +16,10 @@ export = () => {
 		[tooManyValues, '256 values is too many']
 	]) {
 		assert.throws(
-			() => {
-				new t.EnumType({
-					type: new t.StringType,
-					values: invalidValues as any
-				})
-			},
+			() => new t.EnumType({
+				type: new t.StringType,
+				values: invalidValues as any
+			}).toBuffer(),
 			message as string
 		)
 	}

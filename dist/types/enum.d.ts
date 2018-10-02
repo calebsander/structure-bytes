@@ -33,7 +33,7 @@ export default class EnumType<E> extends AbstractType<E> {
      */
     readonly values: E[];
     private readonly type;
-    private readonly valueIndices;
+    private cachedValueIndices;
     /**
      * @param type The type of each element in the tuple
      * @param values The possible distinct values.
@@ -41,6 +41,7 @@ export default class EnumType<E> extends AbstractType<E> {
      * @throws If any value cannot be serialized by `type`
      */
     constructor({ type, values }: EnumParams<E>);
+    private readonly valueIndices;
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

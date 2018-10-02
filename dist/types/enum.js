@@ -44,6 +44,16 @@ class EnumType extends abstract_1.default {
         catch (e) {
             assert_1.default.fail(String(values.length) + ' values is too many');
         }
+        this.type = type;
+        this.values = values; //used when reading to get constant-time lookup of value index into value
+    }
+    static get _value() {
+        return 0x55;
+    }
+    get valueIndices() {
+        const { type, values, cachedValueIndices } = this;
+        if (cachedValueIndices)
+            return cachedValueIndices;
         const valueIndices = new Map();
         for (let i = 0; i < values.length; i++) {
             const value = values[i];
@@ -52,18 +62,13 @@ class EnumType extends abstract_1.default {
                 assert_1.default.fail('Value is repeated: ' + util_inspect_1.inspect(value));
             valueIndices.set(valueString, i); //so writing a value has constant-time lookup into the values array
         }
-        this.type = type;
-        this.values = values; //used when reading to get constant-time lookup of value index into value
-        this.valueIndices = valueIndices;
-    }
-    static get _value() {
-        return 0x55;
+        return this.cachedValueIndices = valueIndices;
     }
     addToBuffer(buffer) {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
-            buffer.add(this.valueIndices.size);
+            buffer.add(this.values.length);
             for (const valueBuffer of this.valueIndices.keys()) {
                 buffer.addAll(bufferString.fromBinaryString(valueBuffer));
             }
@@ -94,13 +99,10 @@ class EnumType extends abstract_1.default {
     consumeValue(buffer, offset) {
         assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
         const valueIndex = new Uint8Array(buffer)[offset];
-        //Can't check for value === undefined since value could be undefined with OptionalType
-        const { values } = this;
-        assert_1.default(valueIndex in values, 'Index ' + String(valueIndex) + ' is invalid');
-        return {
-            value: values[valueIndex],
-            length: 1
-        };
+        const value = this.values[valueIndex];
+        if (value === undefined)
+            throw new Error('Index ' + String(valueIndex) + ' is invalid');
+        return { value, length: 1 };
     }
     equals(otherType) {
         if (!super.equals(otherType))

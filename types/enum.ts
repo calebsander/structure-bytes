@@ -40,7 +40,7 @@ export default class EnumType<E> extends AbstractType<E> {
 	 */
 	readonly values: E[]
 	private readonly type: Type<E>
-	private readonly valueIndices: Map<string, number>
+	private cachedValueIndices: Map<string, number> | undefined
 	/**
 	 * @param type The type of each element in the tuple
 	 * @param values The possible distinct values.
@@ -55,6 +55,13 @@ export default class EnumType<E> extends AbstractType<E> {
 		try { assert.byteUnsignedInteger(values.length) }
 		catch (e) { assert.fail(String(values.length) + ' values is too many') }
 
+		this.type = type
+		this.values = values //used when reading to get constant-time lookup of value index into value
+	}
+	private get valueIndices() {
+		const {type, values, cachedValueIndices} = this
+		if (cachedValueIndices) return cachedValueIndices
+
 		const valueIndices = new Map<string, number>()
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i]
@@ -62,15 +69,13 @@ export default class EnumType<E> extends AbstractType<E> {
 			if (valueIndices.has(valueString)) assert.fail('Value is repeated: ' + inspect(value))
 			valueIndices.set(valueString, i) //so writing a value has constant-time lookup into the values array
 		}
-		this.type = type
-		this.values = values //used when reading to get constant-time lookup of value index into value
-		this.valueIndices = valueIndices
+		return this.cachedValueIndices = valueIndices
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
-			buffer.add(this.valueIndices.size)
+			buffer.add(this.values.length)
 			for (const valueBuffer of this.valueIndices.keys()) {
 				buffer.addAll(bufferString.fromBinaryString(valueBuffer))
 			}
@@ -100,13 +105,9 @@ export default class EnumType<E> extends AbstractType<E> {
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<E> {
 		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
 		const valueIndex = new Uint8Array(buffer)[offset]
-		//Can't check for value === undefined since value could be undefined with OptionalType
-		const {values} = this
-		assert(valueIndex in values, 'Index ' + String(valueIndex) + ' is invalid')
-		return {
-			value: values[valueIndex],
-			length: 1
-		}
+		const value = this.values[valueIndex] as E | undefined
+		if (value === undefined) throw new Error('Index ' + String(valueIndex) + ' is invalid')
+		return {value, length: 1}
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false
