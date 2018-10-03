@@ -2,7 +2,7 @@ import AppendableBuffer from '../lib/appendable'
 import assert from '../lib/assert'
 import {inspect} from '../lib/util-inspect'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 export interface SingletonParams<E> {
 	type: Type<E, any>
@@ -44,7 +44,7 @@ export interface SingletonParams<E> {
  *
  * @param E The type of the value
  */
-export default class SingletonType<E> extends AbstractType<E> {
+export class SingletonType<E> extends AbstractType<E> {
 	static get _value() {
 		return 0x59
 	}

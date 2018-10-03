@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import Type from './type';
+import { Type } from './type';
 /**
  * A type storing a value of one of several fixed types.
  * The list of possible types must contain at most 255 types.
@@ -31,7 +31,7 @@ import Type from './type';
  * unless all the value types are identical.
  * @param READ_E The type of values this type will read
  */
-export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export declare class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * The array of types passed into the constructor

@@ -50,4 +50,4 @@ class TimeType extends chrono_1.default {
         };
     }
 }
-exports.default = TimeType;
+exports.TimeType = TimeType;

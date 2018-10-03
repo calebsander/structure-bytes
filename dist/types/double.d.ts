@@ -11,7 +11,7 @@ import FloatingPointType from './floating';
  * let type = new sb.DoubleType
  * ````
  */
-export default class DoubleType extends FloatingPointType {
+export declare class DoubleType extends FloatingPointType {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

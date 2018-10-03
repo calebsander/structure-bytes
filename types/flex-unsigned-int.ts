@@ -45,7 +45,7 @@ import UnsignedType from './unsigned'
  * let type = new sb.FlexUnsignedIntType
  * ````
  */
-export default class FlexUnsignedIntType extends UnsignedType<number | string, number> {
+export class FlexUnsignedIntType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x17
 	}

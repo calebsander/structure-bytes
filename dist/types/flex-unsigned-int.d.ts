@@ -42,7 +42,7 @@ import UnsignedType from './unsigned';
  * let type = new sb.FlexUnsignedIntType
  * ````
  */
-export default class FlexUnsignedIntType extends UnsignedType<number | string, number> {
+export declare class FlexUnsignedIntType extends UnsignedType<number | string, number> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

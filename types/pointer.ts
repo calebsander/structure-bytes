@@ -5,7 +5,7 @@ import * as flexInt from '../lib/flex-int'
 import {readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 //Map of write buffers to maps of binary strings to the location they were written
 const pointers = new WeakMap<AppendableBuffer, Map<string, number>>()
@@ -42,7 +42,7 @@ const pointerReads = new WeakMap<ArrayBuffer, Map<PointerType<any>, Map<number, 
  * @param E The type of values that can be written
  * @param READ_E The type of values that will be read
  */
-export default class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
+export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
 	static get _value() {
 		return 0x70
 	}

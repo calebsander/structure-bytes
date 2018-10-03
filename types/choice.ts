@@ -4,7 +4,7 @@ import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * A type storing a value of one of several fixed types.
@@ -35,7 +35,7 @@ import Type from './type'
  * unless all the value types are identical.
  * @param READ_E The type of values this type will read
  */
-export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x56
 	}

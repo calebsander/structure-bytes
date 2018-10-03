@@ -12,7 +12,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.OctetsType
  * ````
  */
-export default class OctetsType extends AbsoluteType<ArrayBuffer> {
+export declare class OctetsType extends AbsoluteType<ArrayBuffer> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

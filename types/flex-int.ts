@@ -42,7 +42,7 @@ const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1 //> 0; exclusive
  * let type = new sb.FlexIntType
  * ````
  */
-export default class FlexIntType extends IntegerType<number | string, number> {
+export class FlexIntType extends IntegerType<number | string, number> {
 	static get _value() {
 		return 0x07
 	}

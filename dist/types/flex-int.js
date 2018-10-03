@@ -76,4 +76,4 @@ class FlexIntType extends integer_1.default {
         };
     }
 }
-exports.default = FlexIntType;
+exports.FlexIntType = FlexIntType;

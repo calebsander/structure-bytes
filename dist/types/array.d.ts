@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import Type from './type';
+import { Type } from './type';
 /**
  * A type storing a variable-length array of values of the same type
  *
@@ -26,7 +26,7 @@ import Type from './type';
  * @param READ_E The type of each element
  * in the read array
  */
-export default class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
+export declare class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
     static readonly _value: number;
     /**
      * The [[Type]] passed into the constructor

@@ -11,7 +11,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.StringType
  * ````
  */
-export default class StringType extends AbsoluteType<string> {
+export declare class StringType extends AbsoluteType<string> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

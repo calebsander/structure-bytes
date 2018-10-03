@@ -10,7 +10,7 @@ import IntegerType from './integer';
  * let type = new sb.ByteType
  * ````
  */
-export default class ByteType extends IntegerType<number | string, number> {
+export declare class ByteType extends IntegerType<number | string, number> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

@@ -4,7 +4,7 @@ import * as flexInt from '../lib/flex-int'
 import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * A type storing a variable-size mapping of keys of one type to values of another
@@ -26,7 +26,7 @@ import Type from './type'
  * @param READ_K The type of keys this type will read
  * @param READ_V The type of values this type will read
  */
-export default class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends AbsoluteType<Map<K, V>, Map<READ_K, READ_V>> {
+export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends AbsoluteType<Map<K, V>, Map<READ_K, READ_V>> {
 	static get _value() {
 		return 0x54
 	}

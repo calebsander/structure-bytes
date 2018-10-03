@@ -54,4 +54,4 @@ class UnsignedLongType extends unsigned_1.default {
         };
     }
 }
-exports.default = UnsignedLongType;
+exports.UnsignedLongType = UnsignedLongType;

@@ -3,7 +3,7 @@ import assert from '../lib/assert'
 import {readBooleanByte, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * A type storing a value of another type or `null` or `undefined`.
@@ -26,7 +26,7 @@ import Type from './type'
  * @param E The type of non-`null` values
  * @param READ_E The type of non-`null` read values
  */
-export default class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null | undefined, READ_E | null> {
+export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null | undefined, READ_E | null> {
 	static get _value() {
 		return 0x60
 	}

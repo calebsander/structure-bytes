@@ -5,13 +5,13 @@ import * as http from 'http'
 import {Readable, Writable} from 'stream'
 import {promisify} from 'util'
 import * as zlib from 'zlib'
-import accepts = require('accepts')
+import * as accepts from 'accepts'
 import AppendableStream from './lib/appendable-stream'
 import assert from './lib/assert'
 import {ReadResult} from './lib/read-util'
 import * as r from './read'
 import AbstractType from './types/abstract'
-import Type from './types/type'
+import {Type} from './types'
 
 function toArrayBuffer(buffer: Buffer): ArrayBuffer {
 	const {buffer: arrayBuffer, byteOffset, byteLength} = buffer

@@ -15,7 +15,7 @@ const readByte = readNumber({type: Uint8Array, func: 'getUint8'})
  * let type = new sb.UnsignedByteType
  * ````
  */
-export default class UnsignedByteType extends UnsignedType<number | string, number> {
+export class UnsignedByteType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x11
 	}

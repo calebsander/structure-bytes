@@ -107,4 +107,4 @@ class SingletonType extends abstract_1.default {
         return true;
     }
 }
-exports.default = SingletonType;
+exports.SingletonType = SingletonType;

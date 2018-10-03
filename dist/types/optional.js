@@ -98,4 +98,4 @@ class OptionalType extends absolute_1.default {
             && this.type.equals(otherType.type);
     }
 }
-exports.default = OptionalType;
+exports.OptionalType = OptionalType;

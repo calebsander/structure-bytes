@@ -1,10 +1,6 @@
 import assert from './lib/assert'
 import {RegisterableType, TypeAndName} from './recursive-registry-type'
-import ArrayType from './types/array'
-import MapType from './types/map'
-import SetType from './types/set'
-import StructType from './types/struct'
-import TupleType from './types/tuple'
+import {ArrayType, MapType, SetType, StructType, TupleType} from './types'
 
 //A map of names of recursive types to their types
 const registeredTypes = new Map<string, RegisterableType>()

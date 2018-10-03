@@ -5,7 +5,7 @@ import {makeBaseValue, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * An object whose keys are strings,
@@ -58,7 +58,7 @@ export type StructFields<E, READ_E extends E> = {
  * @param E The type of object values this type can write
  * @param READ_E The type of object values this type will read
  */
-export default class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x51
 	}

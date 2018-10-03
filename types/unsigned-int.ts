@@ -15,7 +15,7 @@ const readInt = readNumber({type: Uint32Array, func: 'getUint32'})
  * let type = new sb.UnsignedIntType
  * ````
  */
-export default class UnsignedIntType extends UnsignedType<number | string, number> {
+export class UnsignedIntType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x13
 	}

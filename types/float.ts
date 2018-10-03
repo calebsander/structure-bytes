@@ -16,7 +16,7 @@ const readFloat = readNumber({type: Float32Array, func: 'getFloat32'})
  * let type = new sb.FloatType
  * ````
  */
-export default class FloatType extends FloatingPointType {
+export class FloatType extends FloatingPointType {
 	static get _value() {
 		return 0x20
 	}

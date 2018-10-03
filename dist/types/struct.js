@@ -172,4 +172,4 @@ class StructType extends absolute_1.default {
         return true;
     }
 }
-exports.default = StructType;
+exports.StructType = StructType;

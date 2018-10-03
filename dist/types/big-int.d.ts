@@ -11,7 +11,7 @@ import IntegerType from './integer';
  * let type = new sb.BigIntType
  * ````
  */
-export default class BigIntType extends IntegerType<string, string> {
+export declare class BigIntType extends IntegerType<string, string> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

@@ -50,4 +50,4 @@ class BooleanArrayType extends absolute_1.default {
         return { value, length };
     }
 }
-exports.default = BooleanArrayType;
+exports.BooleanArrayType = BooleanArrayType;

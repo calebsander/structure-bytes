@@ -42,4 +42,4 @@ class UnsignedByteType extends unsigned_1.default {
         return readByte(buffer, offset);
     }
 }
-exports.default = UnsignedByteType;
+exports.UnsignedByteType = UnsignedByteType;

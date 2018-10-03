@@ -11,7 +11,7 @@ import UnsignedType from './unsigned';
  * let type = new sb.UnsignedLongType
  * ````
  */
-export default class UnsignedLongType extends UnsignedType<string, string> {
+export declare class UnsignedLongType extends UnsignedType<string, string> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

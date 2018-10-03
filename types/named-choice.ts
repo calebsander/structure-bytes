@@ -5,7 +5,7 @@ import * as constructorRegistry from '../lib/constructor-registry'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
-import StructType from './struct'
+import {StructType} from './struct'
 
 export interface NameAndType<E, READ_E extends E> {
 	nameBuffer: ArrayBuffer
@@ -53,7 +53,7 @@ export interface NameAndType<E, READ_E extends E> {
  * unless all the value types are identical.
  * @param READ_E The type of values this type will read
  */
-export default class NamedChoiceType<E extends object, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export class NamedChoiceType<E extends object, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x58
 	}

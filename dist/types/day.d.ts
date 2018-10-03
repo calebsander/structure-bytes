@@ -10,7 +10,7 @@ import ChronoType from './chrono';
  * let type = new sb.DayType
  * ````
  */
-export default class DayType extends ChronoType {
+export declare class DayType extends ChronoType {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type.

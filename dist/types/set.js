@@ -78,4 +78,4 @@ class SetType extends absolute_1.default {
         return super.equals(otherType) && this.type.equals(otherType.type);
     }
 }
-exports.default = SetType;
+exports.SetType = SetType;

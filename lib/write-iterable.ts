@@ -1,6 +1,6 @@
 import AppendableBuffer from './appendable'
 import * as flexInt from './flex-int'
-import Type from '../types/type'
+import {Type} from '../types'
 
 export interface IterableWriteParams<E> {
 	type: Type<E>

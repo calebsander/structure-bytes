@@ -3,7 +3,7 @@ import assert from '../lib/assert'
 import {makeBaseValue, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * A [[Type]] for writing values of type `E`
@@ -39,7 +39,7 @@ export interface TupleParams<E, READ_E extends E> {
  * @param READ_E The type of each element
  * in the read tuple
  */
-export default class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
+export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
 	static get _value() {
 		return 0x50
 	}

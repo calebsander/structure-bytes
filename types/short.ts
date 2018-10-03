@@ -15,7 +15,7 @@ const readShort = readNumber({type: Int16Array, func: 'getInt16'})
  * let type = new sb.ShortType
  * ````
  */
-export default class ShortType extends IntegerType<number | string, number> {
+export class ShortType extends IntegerType<number | string, number> {
 	static get _value() {
 		return 0x02
 	}

@@ -1,11 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = require("./lib/assert");
-const array_1 = require("./types/array");
-const map_1 = require("./types/map");
-const set_1 = require("./types/set");
-const struct_1 = require("./types/struct");
-const tuple_1 = require("./types/tuple");
+const types_1 = require("./types");
 //A map of names of recursive types to their types
 const registeredTypes = new Map();
 /**
@@ -54,11 +50,11 @@ const registeredTypes = new Map();
  */
 function registerType({ type, name }) {
     assert_1.default.instanceOf(type, [
-        array_1.default,
-        map_1.default,
-        set_1.default,
-        struct_1.default,
-        tuple_1.default
+        types_1.ArrayType,
+        types_1.MapType,
+        types_1.SetType,
+        types_1.StructType,
+        types_1.TupleType
     ]);
     assert_1.default.instanceOf(name, String);
     assert_1.default(!isRegistered(name), `"${name}" is already a registered type`);

@@ -1,6 +1,6 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
-import Type from './type';
+import { Type } from './type';
 /**
  * The superclass of all [[Type]] classes
  * in this package

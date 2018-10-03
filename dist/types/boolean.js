@@ -35,4 +35,4 @@ class BooleanType extends absolute_1.default {
         return read_util_1.readBooleanByte(buffer, offset);
     }
 }
-exports.default = BooleanType;
+exports.BooleanType = BooleanType;

@@ -15,7 +15,7 @@ const readShort = readNumber({type: Uint16Array, func: 'getUint16'})
  * let type = new sb.UnsignedShortType
  * ````
  */
-export default class UnsignedShortType extends UnsignedType<number | string, number> {
+export class UnsignedShortType extends UnsignedType<number | string, number> {
 	static get _value() {
 		return 0x12
 	}

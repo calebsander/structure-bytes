@@ -75,4 +75,4 @@ class BigIntType extends integer_1.default {
         return { value, length };
     }
 }
-exports.default = BigIntType;
+exports.BigIntType = BigIntType;

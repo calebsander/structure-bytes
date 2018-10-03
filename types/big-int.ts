@@ -15,7 +15,7 @@ import IntegerType from './integer'
  * let type = new sb.BigIntType
  * ````
  */
-export default class BigIntType extends IntegerType<string, string> {
+export class BigIntType extends IntegerType<string, string> {
 	static get _value() {
 		return 0x05
 	}

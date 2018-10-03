@@ -44,4 +44,4 @@ class ShortType extends integer_1.default {
         return readShort(buffer, offset);
     }
 }
-exports.default = ShortType;
+exports.ShortType = ShortType;

@@ -16,7 +16,7 @@ import ChronoType from './chrono';
  * let type = new sb.TimeType
  * ````
  */
-export default class TimeType extends ChronoType {
+export declare class TimeType extends ChronoType {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

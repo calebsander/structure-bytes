@@ -89,7 +89,7 @@ class NamedChoiceType extends absolute_1.default {
             catch (_b) {
                 assert_1.default.fail(`Function name "${name}" is too long`);
             }
-            assert_1.default.instanceOf(type, struct_1.default);
+            assert_1.default.instanceOf(type, struct_1.StructType);
             const constructorIndex = this.indexConstructors.size;
             this.indexConstructors.set(constructorIndex, constructor);
             this.constructorTypes[constructorIndex] = { nameBuffer: typeNameBuffer, type };
@@ -189,4 +189,4 @@ class NamedChoiceType extends absolute_1.default {
         return true;
     }
 }
-exports.default = NamedChoiceType;
+exports.NamedChoiceType = NamedChoiceType;

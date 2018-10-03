@@ -41,4 +41,4 @@ class DateType extends chrono_1.default {
         };
     }
 }
-exports.default = DateType;
+exports.DateType = DateType;

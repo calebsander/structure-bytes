@@ -44,4 +44,4 @@ class UnsignedShortType extends unsigned_1.default {
         return readShort(buffer, offset);
     }
 }
-exports.default = UnsignedShortType;
+exports.UnsignedShortType = UnsignedShortType;

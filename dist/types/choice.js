@@ -130,4 +130,4 @@ class ChoiceType extends absolute_1.default {
         return true;
     }
 }
-exports.default = ChoiceType;
+exports.ChoiceType = ChoiceType;

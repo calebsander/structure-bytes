@@ -101,4 +101,4 @@ class MapType extends absolute_1.default {
             && this.valueType.equals(otherType.valueType);
     }
 }
-exports.default = MapType;
+exports.MapType = MapType;

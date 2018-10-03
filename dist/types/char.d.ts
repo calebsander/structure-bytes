@@ -9,7 +9,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.CharType
  * ````
  */
-export default class CharType extends AbsoluteType<string> {
+export declare class CharType extends AbsoluteType<string> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

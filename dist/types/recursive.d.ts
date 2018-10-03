@@ -2,7 +2,7 @@ import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import { RegisterableType } from '../recursive-registry-type';
 import AbsoluteType from './absolute';
-import Type from './type';
+import { Type } from './type';
 /**
  * A type that can refer recursively to itself.
  * This is not a type in its own right, but allows you
@@ -62,7 +62,7 @@ import Type from './type';
  * (presumably a recursive value)
  * @param READ_E The type of value this type will read
  */
-export default class RecursiveType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export declare class RecursiveType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * The name passed into the constructor

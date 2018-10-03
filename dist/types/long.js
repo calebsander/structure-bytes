@@ -36,4 +36,4 @@ class LongType extends integer_1.default {
         return read_util_1.readLong(buffer, offset);
     }
 }
-exports.default = LongType;
+exports.LongType = LongType;

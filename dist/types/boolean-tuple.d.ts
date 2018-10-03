@@ -13,7 +13,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.BooleanTupleType(100)
  * ````
  */
-export default class BooleanTupleType extends AbsoluteType<boolean[]> {
+export declare class BooleanTupleType extends AbsoluteType<boolean[]> {
     static readonly _value: number;
     /**
      * The length of `boolean[]`s that this type can serialize

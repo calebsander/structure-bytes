@@ -13,7 +13,7 @@ import IntegerType from './integer'
  * let type = new sb.LongType
  * ````
  */
-export default class LongType extends IntegerType<string, string> {
+export class LongType extends IntegerType<string, string> {
 	static get _value() {
 		return 0x04
 	}

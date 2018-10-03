@@ -8,7 +8,7 @@ import * as flexInt from '../lib/flex-int'
 import GrowableBuffer from '../lib/growable-buffer'
 import {ReadResult} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * The superclass of all [[Type]] classes

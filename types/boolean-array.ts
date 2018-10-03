@@ -16,7 +16,7 @@ import AbsoluteType from './absolute'
  * let type = new sb.BooleanArrayType
  * ````
  */
-export default class BooleanArrayType extends AbsoluteType<boolean[]> {
+export class BooleanArrayType extends AbsoluteType<boolean[]> {
 	static get _value() {
 		return 0x32
 	}

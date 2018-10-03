@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import Type from './type';
+import { Type } from './type';
 /**
  * A type storing a variable-size set of values of the same type.
  * Works much like [[ArrayType]] except all values are `Set`s.
@@ -20,7 +20,7 @@ import Type from './type';
  * @param READ_E The type of each element
  * in the read set
  */
-export default class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
+export declare class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
     static readonly _value: number;
     /**
      * The [[Type]] passed to the constructor

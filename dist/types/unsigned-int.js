@@ -44,4 +44,4 @@ class UnsignedIntType extends unsigned_1.default {
         return readInt(buffer, offset);
     }
 }
-exports.default = UnsignedIntType;
+exports.UnsignedIntType = UnsignedIntType;

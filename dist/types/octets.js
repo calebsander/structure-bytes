@@ -49,4 +49,4 @@ class OctetsType extends absolute_1.default {
         };
     }
 }
-exports.default = OctetsType;
+exports.OctetsType = OctetsType;

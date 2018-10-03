@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
-import Type from './type';
+import { Type } from './type';
 export interface EnumParams<E> {
     type: Type<E>;
     values: E[];
@@ -26,7 +26,7 @@ export interface EnumParams<E> {
  *
  * @param E The type of each value in the enum
  */
-export default class EnumType<E> extends AbstractType<E> {
+export declare class EnumType<E> extends AbstractType<E> {
     static readonly _value: number;
     /** The list of possible values */
     readonly values: E[];

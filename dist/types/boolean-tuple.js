@@ -65,4 +65,4 @@ class BooleanTupleType extends absolute_1.default {
         return super.equals(otherType) && otherType.length === this.length;
     }
 }
-exports.default = BooleanTupleType;
+exports.BooleanTupleType = BooleanTupleType;

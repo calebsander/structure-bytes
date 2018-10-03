@@ -42,4 +42,4 @@ class ByteType extends integer_1.default {
         return readByte(buffer, offset);
     }
 }
-exports.default = ByteType;
+exports.ByteType = ByteType;

@@ -72,4 +72,4 @@ class FlexUnsignedIntType extends unsigned_1.default {
         return read_util_1.readFlexInt(buffer, offset);
     }
 }
-exports.default = FlexUnsignedIntType;
+exports.FlexUnsignedIntType = FlexUnsignedIntType;

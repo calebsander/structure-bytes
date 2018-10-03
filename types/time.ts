@@ -19,7 +19,7 @@ import ChronoType from './chrono'
  * let type = new sb.TimeType
  * ````
  */
-export default class TimeType extends ChronoType {
+export class TimeType extends ChronoType {
 	static get _value() {
 		return 0x1C
 	}

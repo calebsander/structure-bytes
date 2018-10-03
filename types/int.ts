@@ -15,7 +15,7 @@ const readInt = readNumber({type: Int32Array, func: 'getInt32'})
  * let type = new sb.IntType
  * ````
  */
-export default class IntType extends IntegerType<number | string, number> {
+export class IntType extends IntegerType<number | string, number> {
 	static get _value() {
 		return 0x03
 	}

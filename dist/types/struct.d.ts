@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import Type from './type';
+import { Type } from './type';
 /**
  * An object whose keys are strings,
  * i.e. any object
@@ -53,7 +53,7 @@ export declare type StructFields<E, READ_E extends E> = {
  * @param E The type of object values this type can write
  * @param READ_E The type of object values this type will read
  */
-export default class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export declare class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * An array of the field names with their corresponding types.

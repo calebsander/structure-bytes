@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import StructType from './struct';
+import { StructType } from './struct';
 export interface NameAndType<E, READ_E extends E> {
     nameBuffer: ArrayBuffer;
     type: StructType<E, READ_E>;
@@ -48,7 +48,7 @@ export interface NameAndType<E, READ_E extends E> {
  * unless all the value types are identical.
  * @param READ_E The type of values this type will read
  */
-export default class NamedChoiceType<E extends object, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export declare class NamedChoiceType<E extends object, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
     static readonly _value: number;
     /**
      * The names of constructors and each's matching [[Type]]

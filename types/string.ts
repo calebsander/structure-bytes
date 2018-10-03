@@ -14,7 +14,7 @@ import AbsoluteType from './absolute'
  * let type = new sb.StringType
  * ````
  */
-export default class StringType extends AbsoluteType<string> {
+export class StringType extends AbsoluteType<string> {
 	static get _value() {
 		return 0x41
 	}

@@ -52,4 +52,4 @@ class DoubleType extends floating_1.default {
         return readDouble(buffer, offset);
     }
 }
-exports.default = DoubleType;
+exports.DoubleType = DoubleType;

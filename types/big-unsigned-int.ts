@@ -15,7 +15,7 @@ import UnsignedType from './unsigned'
  * let type = new sb.BigUnsignedIntType
  * ````
  */
-export default class BigUnsignedIntType extends UnsignedType<string, string> {
+export class BigUnsignedIntType extends UnsignedType<string, string> {
 	static get _value() {
 		return 0x15
 	}

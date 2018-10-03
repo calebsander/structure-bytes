@@ -15,7 +15,7 @@ const UNSIGNED_LONG_MAX = '18446744073709551615'
  * let type = new sb.UnsignedLongType
  * ````
  */
-export default class UnsignedLongType extends UnsignedType<string, string> {
+export class UnsignedLongType extends UnsignedType<string, string> {
 	static get _value() {
 		return 0x14
 	}

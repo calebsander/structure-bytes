@@ -1,5 +1,5 @@
 import AppendableBuffer from './appendable';
-import Type from '../types/type';
+import { Type } from '../types';
 export interface IterableWriteParams<E> {
     type: Type<E>;
     buffer: AppendableBuffer;

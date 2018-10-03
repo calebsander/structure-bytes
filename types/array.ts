@@ -4,7 +4,7 @@ import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import writeIterable from '../lib/write-iterable'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * A type storing a variable-length array of values of the same type
@@ -30,7 +30,7 @@ import Type from './type'
  * @param READ_E The type of each element
  * in the read array
  */
-export default class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
+export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
 	static get _value() {
 		return 0x52
 	}

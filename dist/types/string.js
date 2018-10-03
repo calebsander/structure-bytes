@@ -49,4 +49,4 @@ class StringType extends absolute_1.default {
         return { value, length };
     }
 }
-exports.default = StringType;
+exports.StringType = StringType;

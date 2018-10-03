@@ -15,7 +15,7 @@ import AbsoluteType from './absolute'
  * let type = new sb.OctetsType
  * ````
  */
-export default class OctetsType extends AbsoluteType<ArrayBuffer> {
+export class OctetsType extends AbsoluteType<ArrayBuffer> {
 	static get _value() {
 		return 0x42
 	}

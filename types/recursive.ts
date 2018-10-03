@@ -6,7 +6,7 @@ import * as recursiveNesting from '../lib/recursive-nesting'
 import * as recursiveRegistry from '../recursive-registry'
 import {RegisterableType} from '../recursive-registry-type'
 import AbsoluteType from './absolute'
-import Type from './type'
+import {Type} from './type'
 
 //Map of write buffers to maps of objects to their first written locations in the buffer
 const recursiveLocations = new WeakMap<AppendableBuffer, Map<any, number>>()
@@ -74,7 +74,7 @@ const readRecursives = new WeakMap<ArrayBuffer, Map<number, any>>()
  * (presumably a recursive value)
  * @param READ_E The type of value this type will read
  */
-export default class RecursiveType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export class RecursiveType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x57
 	}

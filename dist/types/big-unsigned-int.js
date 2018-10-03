@@ -68,4 +68,4 @@ class BigUnsignedIntType extends unsigned_1.default {
         return { value, length };
     }
 }
-exports.default = BigUnsignedIntType;
+exports.BigUnsignedIntType = BigUnsignedIntType;

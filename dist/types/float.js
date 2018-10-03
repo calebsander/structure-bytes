@@ -52,4 +52,4 @@ class FloatType extends floating_1.default {
         return readFloat(buffer, offset);
     }
 }
-exports.default = FloatType;
+exports.FloatType = FloatType;

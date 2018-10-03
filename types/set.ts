@@ -4,7 +4,7 @@ import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import writeIterable from '../lib/write-iterable'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 /**
  * A type storing a variable-size set of values of the same type.
@@ -24,7 +24,7 @@ import Type from './type'
  * @param READ_E The type of each element
  * in the read set
  */
-export default class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
+export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
 	static get _value() {
 		return 0x53
 	}

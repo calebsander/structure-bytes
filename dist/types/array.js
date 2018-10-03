@@ -85,4 +85,4 @@ class ArrayType extends absolute_1.default {
         return super.equals(otherType) && this.type.equals(otherType.type);
     }
 }
-exports.default = ArrayType;
+exports.ArrayType = ArrayType;

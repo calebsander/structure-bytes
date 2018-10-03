@@ -12,7 +12,7 @@ import AbsoluteType from './absolute'
  * let type = new sb.CharType
  * ````
  */
-export default class CharType extends AbsoluteType<string> {
+export class CharType extends AbsoluteType<string> {
 	static get _value() {
 		return 0x40
 	}

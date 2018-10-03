@@ -12,7 +12,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.BooleanArrayType
  * ````
  */
-export default class BooleanArrayType extends AbsoluteType<boolean[]> {
+export declare class BooleanArrayType extends AbsoluteType<boolean[]> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

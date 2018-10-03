@@ -23,11 +23,11 @@ exports.NOT_LONG_ENOUGH = 'Buffer is not long enough';
  */
 function makeBaseValue(readType, count) {
     switch (readType.constructor) {
-        case array_1.default: return new Array(count);
-        case tuple_1.default: return new Array(readType.length);
-        case map_1.default: return new Map;
-        case set_1.default: return new Set;
-        case struct_1.default: return {};
+        case array_1.ArrayType: return new Array(count);
+        case tuple_1.TupleType: return new Array(readType.length);
+        case map_1.MapType: return new Map;
+        case set_1.SetType: return new Set;
+        case struct_1.StructType: return {};
         /*istanbul ignore next*/
         default: throw new Error('Invalid type for base value: ' + util_inspect_1.inspect(readType));
     }

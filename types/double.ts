@@ -16,7 +16,7 @@ const readDouble = readNumber({type: Float64Array, func: 'getFloat64'})
  * let type = new sb.DoubleType
  * ````
  */
-export default class DoubleType extends FloatingPointType {
+export class DoubleType extends FloatingPointType {
 	static get _value() {
 		return 0x21
 	}

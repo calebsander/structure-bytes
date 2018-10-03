@@ -222,4 +222,4 @@ class RecursiveType extends absolute_1.default {
         recursiveRegistry.registerType({ type, name: this.name });
     }
 }
-exports.default = RecursiveType;
+exports.RecursiveType = RecursiveType;

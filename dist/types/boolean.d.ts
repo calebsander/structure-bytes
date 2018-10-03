@@ -9,7 +9,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.BooleanType
  * ````
  */
-export default class BooleanType extends AbsoluteType<boolean> {
+export declare class BooleanType extends AbsoluteType<boolean> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

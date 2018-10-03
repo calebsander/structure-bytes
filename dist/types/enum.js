@@ -121,4 +121,4 @@ class EnumType extends abstract_1.default {
         return true;
     }
 }
-exports.default = EnumType;
+exports.EnumType = EnumType;

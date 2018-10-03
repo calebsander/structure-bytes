@@ -5,7 +5,7 @@ import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import Type from './type'
+import {Type} from './type'
 
 export interface EnumParams<E> {
 	type: Type<E>
@@ -31,7 +31,7 @@ export interface EnumParams<E> {
  *
  * @param E The type of each value in the enum
  */
-export default class EnumType<E> extends AbstractType<E> {
+export class EnumType<E> extends AbstractType<E> {
 	static get _value() {
 		return 0x55
 	}

@@ -11,7 +11,7 @@ import AbsoluteType from './absolute'
  * let type = new sb.BooleanType
  * ````
  */
-export default class BooleanType extends AbsoluteType<boolean> {
+export class BooleanType extends AbsoluteType<boolean> {
 	static get _value() {
 		return 0x30
 	}

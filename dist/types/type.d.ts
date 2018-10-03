@@ -7,7 +7,7 @@ import { ReadResult } from '../lib/read-util';
  * @param READ_VALUE The type of values this object deserializes.
  * Must be a subset of `VALUE`. Defaults to `VALUE`.
  */
-export default interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
+export interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
     /**
      * Appends the type information to an [[AppendableBuffer]]
      * @param buffer The buffer to append to

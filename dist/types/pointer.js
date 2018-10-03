@@ -152,4 +152,4 @@ class PointerType extends abstract_1.default {
             && this.type.equals(otherType.type);
     }
 }
-exports.default = PointerType;
+exports.PointerType = PointerType;

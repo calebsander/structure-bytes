@@ -90,4 +90,4 @@ class TupleType extends absolute_1.default {
             && this.length === otherType.length;
     }
 }
-exports.default = TupleType;
+exports.TupleType = TupleType;

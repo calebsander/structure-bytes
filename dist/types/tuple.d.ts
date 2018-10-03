@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import Type from './type';
+import { Type } from './type';
 /**
  * A [[Type]] for writing values of type `E`
  * and a number of elements in the tuple
@@ -36,7 +36,7 @@ export interface TupleParams<E, READ_E extends E> {
  * @param READ_E The type of each element
  * in the read tuple
  */
-export default class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
+export declare class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
     static readonly _value: number;
     /**
      * The [[Type]] passed to the constructor

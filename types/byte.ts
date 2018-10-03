@@ -15,7 +15,7 @@ const readByte = readNumber({type: Int8Array, func: 'getInt8'})
  * let type = new sb.ByteType
  * ````
  */
-export default class ByteType extends IntegerType<number | string, number> {
+export class ByteType extends IntegerType<number | string, number> {
 	static get _value() {
 		return 0x01
 	}

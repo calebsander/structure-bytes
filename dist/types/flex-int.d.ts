@@ -16,7 +16,7 @@ import IntegerType from './integer';
  * let type = new sb.FlexIntType
  * ````
  */
-export default class FlexIntType extends IntegerType<number | string, number> {
+export declare class FlexIntType extends IntegerType<number | string, number> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type

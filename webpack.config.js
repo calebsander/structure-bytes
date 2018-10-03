@@ -1,6 +1,5 @@
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
-
 module.exports = {
+	mode: 'production',
 	entry: {
 		upload: __dirname + '/client-side/upload.ts',
 		download: __dirname + '/client-side/download.ts',
@@ -11,21 +10,20 @@ module.exports = {
 		filename: '[name].js'
 	},
 	module: {
-		rules: [
-			{test: /\.ts$/, use: 'ts-loader'}
-		]
+		rules: [{
+			test: /\.ts$/,
+			use: {
+				loader: 'ts-loader',
+				options: {
+					compilerOptions: {declaration: false}
+				}
+			}
+		}]
 	},
 	node: {
 		Buffer: false
 	},
 	resolve: {
 		extensions: ['.ts', '.js']
-	},
-	plugins: [
-		new UglifyJSPlugin({
-			uglifyOptions: {
-				ecma: 6
-			}
-		})
-	]
+	}
 }

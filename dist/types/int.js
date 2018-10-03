@@ -44,4 +44,4 @@ class IntType extends integer_1.default {
         return readInt(buffer, offset);
     }
 }
-exports.default = IntType;
+exports.IntType = IntType;

@@ -1,6 +1,6 @@
 import AppendableBuffer from '../lib/appendable';
 import AbstractType from './abstract';
-import Type from './type';
+import { Type } from './type';
 export interface SingletonParams<E> {
     type: Type<E, any>;
     value: E;
@@ -41,7 +41,7 @@ export interface SingletonParams<E> {
  *
  * @param E The type of the value
  */
-export default class SingletonType<E> extends AbstractType<E> {
+export declare class SingletonType<E> extends AbstractType<E> {
     static readonly _value: number;
     /** The type used to serialize the value */
     readonly type: Type<E>;

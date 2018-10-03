@@ -16,7 +16,7 @@ import AbsoluteType from './absolute'
  * let type = new sb.BooleanTupleType(100)
  * ````
  */
-export default class BooleanTupleType extends AbsoluteType<boolean[]> {
+export class BooleanTupleType extends AbsoluteType<boolean[]> {
 	static get _value() {
 		return 0x31
 	}

@@ -1,7 +1,7 @@
 import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
-import Type from './type';
+import { Type } from './type';
 /**
  * A type storing a value of another type through a pointer.
  * If you expect to have the same large value repeated many times,
@@ -32,7 +32,7 @@ import Type from './type';
  * @param E The type of values that can be written
  * @param READ_E The type of values that will be read
  */
-export default class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
+export declare class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
     static readonly _value: number;
     /**
      * The [[Type]] passed to the constructor

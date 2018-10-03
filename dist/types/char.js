@@ -42,4 +42,4 @@ class CharType extends absolute_1.default {
         };
     }
 }
-exports.default = CharType;
+exports.CharType = CharType;

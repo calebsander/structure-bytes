@@ -53,4 +53,4 @@ class DayType extends chrono_1.default {
         };
     }
 }
-exports.default = DayType;
+exports.DayType = DayType;

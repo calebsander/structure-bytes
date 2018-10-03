@@ -10,7 +10,7 @@ import UnsignedType from './unsigned';
  * let type = new sb.UnsignedIntType
  * ````
  */
-export default class UnsignedIntType extends UnsignedType<number | string, number> {
+export declare class UnsignedIntType extends UnsignedType<number | string, number> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
