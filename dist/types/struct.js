@@ -52,7 +52,7 @@ class StructType extends absolute_1.default {
         try {
             assert_1.default.byteUnsignedInteger(fieldCount);
         }
-        catch (e) {
+        catch (_a) {
             assert_1.default.fail(`${fieldCount} fields is too many`);
         }
         this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
@@ -65,7 +65,7 @@ class StructType extends absolute_1.default {
             try {
                 assert_1.default.byteUnsignedInteger(fieldNameBuffer.byteLength);
             }
-            catch (e) {
+            catch (_b) {
                 assert_1.default.fail(`Field name ${fieldName} is too long`);
             }
             //Type must be a Type
@@ -73,7 +73,7 @@ class StructType extends absolute_1.default {
             try {
                 assert_1.default.instanceOf(fieldType, abstract_1.default);
             }
-            catch (e) {
+            catch (_c) {
                 assert_1.default.fail(util_inspect_1.inspect(fieldType) + ' is not a valid field type');
             }
             this.fields[fieldIndex] = {

@@ -69,7 +69,7 @@ class NamedChoiceType extends absolute_1.default {
         try {
             assert_1.default.byteUnsignedInteger(constructorTypes.size);
         }
-        catch (e) {
+        catch (_a) {
             assert_1.default.fail(`${constructorTypes.size} types is too many`);
         }
         this.indexConstructors = new Map;
@@ -86,7 +86,7 @@ class NamedChoiceType extends absolute_1.default {
             try {
                 assert_1.default.byteUnsignedInteger(typeNameBuffer.byteLength);
             }
-            catch (e) {
+            catch (_b) {
                 assert_1.default.fail(`Function name "${name}" is too long`);
             }
             assert_1.default.instanceOf(type, struct_1.default);
@@ -182,7 +182,7 @@ class NamedChoiceType extends absolute_1.default {
             try {
                 assert_1.default.equal(otherConstructor.nameBuffer, thisConstructor.nameBuffer);
             }
-            catch (e) {
+            catch (_a) {
                 return false;
             }
         }

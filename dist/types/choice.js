@@ -48,7 +48,7 @@ class ChoiceType extends absolute_1.default {
         try {
             assert_1.default.byteUnsignedInteger(types.length);
         }
-        catch (e) {
+        catch (_a) {
             assert_1.default.fail(`${types.length} types is too many`);
         }
         for (const type of types)
@@ -101,7 +101,7 @@ class ChoiceType extends absolute_1.default {
                 success = true;
                 break;
             }
-            catch (e) {
+            catch (_a) {
                 buffer.reset();
             }
         }

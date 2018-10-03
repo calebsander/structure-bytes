@@ -41,7 +41,7 @@ class EnumType extends abstract_1.default {
         try {
             assert_1.default.byteUnsignedInteger(values.length);
         }
-        catch (e) {
+        catch (_a) {
             assert_1.default.fail(`${values.length} values is too many`);
         }
         this.type = type;

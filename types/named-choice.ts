@@ -83,7 +83,7 @@ export default class NamedChoiceType<E extends object, READ_E extends E = E> ext
 		super()
 		assert.instanceOf(constructorTypes, Map)
 		try { assert.byteUnsignedInteger(constructorTypes.size) }
-		catch (e) { assert.fail(`${constructorTypes.size} types is too many`) }
+		catch { assert.fail(`${constructorTypes.size} types is too many`) }
 		this.indexConstructors = new Map
 		this.constructorTypes = new Array(constructorTypes.size)
 		const usedNames = new Set<string>()
@@ -96,7 +96,7 @@ export default class NamedChoiceType<E extends object, READ_E extends E = E> ext
 			//Name must fit in 255 UTF-8 bytes
 			const typeNameBuffer = bufferString.fromString(name)
 			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
-			catch (e) { assert.fail(`Function name "${name}" is too long`) }
+			catch { assert.fail(`Function name "${name}" is too long`) }
 			assert.instanceOf(type, StructType)
 			const constructorIndex = this.indexConstructors.size
 			this.indexConstructors.set(constructorIndex, constructor)
@@ -184,7 +184,7 @@ export default class NamedChoiceType<E extends object, READ_E extends E = E> ext
 			const otherConstructor = otherChoiceType.constructorTypes[i]
 			if (!thisConstructor.type.equals(otherConstructor.type)) return false
 			try { assert.equal(otherConstructor.nameBuffer, thisConstructor.nameBuffer) }
-			catch (e) { return false }
+			catch { return false }
 		}
 		return true
 	}

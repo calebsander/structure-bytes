@@ -22,7 +22,7 @@ class GrowableBuffer extends appendable_1.default {
             assert_1.default.integer(initialLength);
             assert_1.default(initialLength >= 0);
         }
-        catch (e) {
+        catch (_a) {
             throw new RangeError(`${initialLength} is not a valid buffer length`);
         }
         this.buffer = new ArrayBuffer(initialLength);

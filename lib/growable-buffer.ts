@@ -27,7 +27,7 @@ export default class GrowableBuffer extends AppendableBuffer {
 			assert.integer(initialLength)
 			assert(initialLength >= 0)
 		}
-		catch (e) { throw new RangeError(`${initialLength} is not a valid buffer length`) }
+		catch { throw new RangeError(`${initialLength} is not a valid buffer length`) }
 		this.buffer = new ArrayBuffer(initialLength)
 		this.size = 0
 		this.pausePoints = []

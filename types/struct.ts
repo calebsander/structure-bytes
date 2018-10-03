@@ -81,7 +81,7 @@ export default class StructType<E extends StringIndexable, READ_E extends E = E>
 		//Allow only 255 fields
 		const fieldCount = Object.keys(fields).length
 		try { assert.byteUnsignedInteger(fieldCount) }
-		catch (e) { assert.fail(`${fieldCount} fields is too many`) }
+		catch { assert.fail(`${fieldCount} fields is too many`) }
 
 		this.fields = new Array(fieldCount) //really a set, but we want ordering to be fixed so that type bytes are consistent
 		let fieldIndex = 0
@@ -90,11 +90,11 @@ export default class StructType<E extends StringIndexable, READ_E extends E = E>
 			//Name must fit in 255 UTF-8 bytes
 			const fieldNameBuffer = bufferString.fromString(fieldName)
 			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength) }
-			catch (e) { assert.fail(`Field name ${fieldName} is too long`) }
+			catch { assert.fail(`Field name ${fieldName} is too long`) }
 			//Type must be a Type
 			const fieldType = fields[fieldName]
 			try { assert.instanceOf(fieldType, AbstractType) }
-			catch (e) { assert.fail(inspect(fieldType) + ' is not a valid field type') }
+			catch { assert.fail(inspect(fieldType) + ' is not a valid field type') }
 			this.fields[fieldIndex] = {
 				name: fieldName,
 				type: fieldType,

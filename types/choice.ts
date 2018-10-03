@@ -54,7 +54,7 @@ export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E,
 		super()
 		assert.instanceOf(types, Array)
 		try { assert.byteUnsignedInteger(types.length) }
-		catch (e) { assert.fail(`${types.length} types is too many`) }
+		catch { assert.fail(`${types.length} types is too many`) }
 		for (const type of types) assert.instanceOf(type, AbstractType)
 		this.types = types
 	}
@@ -100,7 +100,7 @@ export default class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E,
 				success = true
 				break
 			}
-			catch (e) { buffer.reset() }
+			catch { buffer.reset() }
 		}
 		buffer.resume()
 		if (!success) assert.fail('No types matched: ' + inspect(value))

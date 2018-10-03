@@ -51,7 +51,7 @@ export default class EnumType<E> extends AbstractType<E> {
 		assert.instanceOf(values, Array)
 		//At most 255 values allowed
 		try { assert.byteUnsignedInteger(values.length) }
-		catch (e) { assert.fail(`${values.length} values is too many`) }
+		catch { assert.fail(`${values.length} values is too many`) }
 
 		this.type = type
 		this.values = values //used when reading to get constant-time lookup of value index into value
