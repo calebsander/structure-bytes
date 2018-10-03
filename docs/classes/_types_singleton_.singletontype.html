@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>OptionalType | structure-bytes</title>
+	<title>SingletonType | structure-bytes</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_types_optional_.html">&quot;types/optional&quot;</a>
+					<a href="../modules/_types_singleton_.html">&quot;types/singleton&quot;</a>
 				</li>
 				<li>
-					<a href="_types_optional_.optionaltype.html">OptionalType</a>
+					<a href="_types_singleton_.singletontype.html">SingletonType</a>
 				</li>
 			</ul>
-			<h1>Class OptionalType&lt;E, READ_E&gt;</h1>
+			<h1>Class SingletonType&lt;E, READ_VALUE&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -72,20 +72,36 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A type storing a value of another type or <code>null</code> or <code>undefined</code>.
-							<code>null</code> and <code>undefined</code> are treated identically,
-						and reading either value will result in <code>null</code>.</p>
+						<p>A type storing a fixed value.
+							The value takes up no space in the value bytes,
+							only the type bytes.
+						Functions as an <a href="_types_enum_.enumtype.html">EnumType</a> with only one value.</p>
 					</div>
 					<p>Example:</p>
-					<pre><code class="language-javascript"><span class="hljs-comment">//If you have a job slot that may or may not be filled</span>
-<span class="hljs-keyword">let</span> personType = <span class="hljs-keyword">new</span> sb.StructType({
-  <span class="hljs-attr">age</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
-  <span class="hljs-attr">name</span>: <span class="hljs-keyword">new</span> sb.StringType
-})
-<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.StructType({
-  <span class="hljs-attr">title</span>: <span class="hljs-keyword">new</span> sb.StringType,
-  <span class="hljs-attr">employee</span>: <span class="hljs-keyword">new</span> sb.OptionalType(personType)
-})</code></pre>
+					<pre><code class="language-javascript"><span class="hljs-comment">//Encodes a JSON literal value</span>
+<span class="hljs-keyword">let</span> type = <span class="hljs-keyword">new</span> sb.ChoiceType([
+  <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.SingletonType({
+      <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StringType,
+      <span class="hljs-attr">value</span>: <span class="hljs-string">'boolean'</span>
+    }),
+    <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.BooleanType
+  }),
+  <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.SingletonType({
+      <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StringType,
+      <span class="hljs-attr">value</span>: <span class="hljs-string">'number'</span>
+    }),
+    <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.DoubleType
+  }),
+  <span class="hljs-keyword">new</span> sb.StructType({
+    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.SingletonType({
+      <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StringType,
+      <span class="hljs-attr">value</span>: <span class="hljs-string">'string'</span>
+    }),
+    <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> sb.StringType
+  })
+])</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -95,17 +111,12 @@
 						<h4>E</h4>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>The type of non-<code>null</code> values</p>
+								<p>The type of the value</p>
 							</div>
 						</div>
 					</li>
 					<li>
-						<h4>READ_E<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></h4>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>The type of non-<code>null</code> read values</p>
-							</div>
-						</div>
+						<h4>READ_VALUE<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -113,10 +124,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_types_absolute_.absolutetype.html" class="tsd-signature-type">AbsoluteType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="_types_abstract_.abstracttype.html" class="tsd-signature-type">AbstractType</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">OptionalType</span>
+								<span class="target">SingletonType</span>
 							</li>
 						</ul>
 					</li>
@@ -125,7 +136,7 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -135,34 +146,37 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-external"><a href="_types_optional_.optionaltype.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-external"><a href="_types_singleton_.singletontype.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="_types_optional_.optionaltype.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_types_singleton_.singletontype.html#cachedvaluebuffer" class="tsd-kind-icon">cached<wbr>Value<wbr>Buffer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="_types_singleton_.singletontype.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="_types_singleton_.singletontype.html#value" class="tsd-kind-icon">value</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external"><a href="_types_optional_.optionaltype.html#_value" class="tsd-kind-icon">_value</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="_types_singleton_.singletontype.html#singletonvaluebuffer" class="tsd-kind-icon">singleton<wbr>Value<wbr>Buffer</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external"><a href="_types_singleton_.singletontype.html#_value" class="tsd-kind-icon">_value</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_optional_.optionaltype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_optional_.optionaltype.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_optional_.optionaltype.html#equals" class="tsd-kind-icon">equals</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_optional_.optionaltype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_optional_.optionaltype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external"><a href="_types_optional_.optionaltype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_optional_.optionaltype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_optional_.optionaltype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_optional_.optionaltype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_optional_.optionaltype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_singleton_.singletontype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_singleton_.singletontype.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_singleton_.singletontype.html#equals" class="tsd-kind-icon">equals</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_singleton_.singletontype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_singleton_.singletontype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external"><a href="_types_singleton_.singletontype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_singleton_.singletontype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_singleton_.singletontype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="_types_singleton_.singletontype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external"><a href="_types_singleton_.singletontype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
 							</ul>
 						</section>
 					</div>
@@ -174,54 +188,109 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Optional<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_types_optional_.optionaltype.html" class="tsd-signature-type">OptionalType</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Singleton<wbr>Type<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_types_singleton_.singletontype.html" class="tsd-signature-type">SingletonType</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in types/optional.ts:36</li>
+									<li>Defined in types/singleton.ts:55</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If <code>value</code> cannot be serialized by <code>type</code></p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>type: <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>The <a href="../interfaces/_types_type_.type.html">Type</a> used to write values
-											if they are not <code>null</code> or <code>undefined</code></p>
-										</div>
-									</div>
+									<h5>__namedParameters: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>type<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The type that can serialize this type&#39;s value</p>
+											</div>
+										</li>
+										<li class="tsd-parameter">
+											<h5>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>The value to serialize</p>
+											</div>
+										</li>
+									</ul>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_types_optional_.optionaltype.html" class="tsd-signature-type">OptionalType</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_types_singleton_.singletontype.html" class="tsd-signature-type">SingletonType</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="cachedvaluebuffer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> cached<wbr>Value<wbr>Buffer</h3>
+					<div class="tsd-signature tsd-kind-icon">cached<wbr>Value<wbr>Buffer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in types/singleton.ts:55</li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-external">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_type_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in types/optional.ts:36</li>
+							<li>Defined in types/singleton.ts:52</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The <a href="../interfaces/_types_type_.type.html">Type</a> passed into the constructor</p>
+							<p>The type used to serialize the value</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-external">
+					<a name="value" class="tsd-anchor"></a>
+					<h3>value</h3>
+					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">E</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in types/singleton.ts:54</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The value that this type serializes</p>
 						</div>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="singletonvaluebuffer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> singleton<wbr>Value<wbr>Buffer</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-private tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> singletonValueBuffer<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in types/singleton.ts:67</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external">
 					<a name="_value" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> _value</h3>
@@ -233,7 +302,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#_value">_value</a></p>
 								<ul>
-									<li>Defined in types/optional.ts:30</li>
+									<li>Defined in types/singleton.ts:48</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -255,7 +324,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#addtobuffer">addToBuffer</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#addtobuffer">addToBuffer</a></p>
 								<ul>
-									<li>Defined in types/optional.ts:46</li>
+									<li>Defined in types/singleton.ts:71</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -272,26 +341,25 @@
 					<a name="consumevalue" class="tsd-anchor"></a>
 					<h3>consume<wbr>Value</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">consume<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_lib_read_util_.readresult.html" class="tsd-signature-type">ReadResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">consume<wbr>Value<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#consumevalue">consumeValue</a></p>
 								<ul>
-									<li>Defined in types/optional.ts:88</li>
+									<li>Defined in types/singleton.ts:100</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
 							<ul class="tsd-parameters">
-								<li>
-									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+								<li class="tsd-parameter">
+									<h5>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
 								</li>
-								<li>
-									<h5>offset: <span class="tsd-signature-type">number</span></h5>
+								<li class="tsd-parameter">
+									<h5>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_lib_read_util_.readresult.html" class="tsd-signature-type">ReadResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -307,7 +375,7 @@
 								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#equals">equals</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#equals">equals</a></p>
 								<ul>
-									<li>Defined in types/optional.ts:100</li>
+									<li>Defined in types/singleton.ts:103</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -441,11 +509,12 @@
 					<a name="valuebuffer" class="tsd-anchor"></a>
 					<h3>value<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">value<wbr>Buffer<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+						<li class="tsd-signature tsd-kind-icon">value<wbr>Buffer<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#valuebuffer">valueBuffer</a></p>
 								<p>Inherited from <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#valuebuffer">valueBuffer</a></p>
 								<ul>
 									<li>Defined in types/abstract.ts:61</li>
@@ -454,7 +523,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<h5>value: <span class="tsd-signature-type">E</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
@@ -465,30 +534,24 @@
 					<a name="writevalue" class="tsd-anchor"></a>
 					<h3>write<wbr>Value</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="_lib_appendable_.appendablebuffer.html" class="tsd-signature-type">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_types_type_.type.html">Type</a>.<a href="../interfaces/_types_type_.type.html#writevalue">writeValue</a></p>
 								<p>Overrides <a href="_types_abstract_.abstracttype.html">AbstractType</a>.<a href="_types_abstract_.abstracttype.html#writevalue">writeValue</a></p>
 								<ul>
-									<li>Defined in types/optional.ts:76</li>
+									<li>Defined in types/singleton.ts:93</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Appends value bytes to an <a href="_lib_appendable_.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
 								</div>
-								<p>Examples:</p>
-								<pre><code class="language-javascript">type.writeValue(buffer, {
-  <span class="hljs-attr">title</span>: <span class="hljs-string">'Manager'</span>,
-  <span class="hljs-attr">employee</span>: <span class="hljs-literal">null</span> <span class="hljs-comment">//or undefined</span>
-})</code></pre>
-								<p>or</p>
-								<pre><code class="language-javascript">type.writeValue(buffer, {
-  <span class="hljs-attr">title</span>: <span class="hljs-string">'Coder'</span>,
-  <span class="hljs-attr">employee</span>: {<span class="hljs-attr">age</span>: <span class="hljs-number">19</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">'Johnny'</span>}
-})</code></pre>
+								<p>Example:</p>
+								<pre><code class="language-javascript">type.writeValue(buffer, {<span class="hljs-attr">type</span>: <span class="hljs-string">'boolean'</span>, <span class="hljs-attr">value</span>: <span class="hljs-literal">true</span>})
+type.writeValue(buffer, {<span class="hljs-attr">type</span>: <span class="hljs-string">'string'</span>, <span class="hljs-attr">value</span>: <span class="hljs-string">'abc'</span>})</code></pre>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
 									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
@@ -504,7 +567,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>value: <span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<h5>value: <span class="tsd-signature-type">E</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The value to write</p>
 									</div>
@@ -523,7 +586,7 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module tsd-is-external">
-						<a href="../modules/_types_optional_.html">"types/optional"</a>
+						<a href="../modules/_types_singleton_.html">"types/singleton"</a>
 					</li>
 				</ul>
 			</nav>
@@ -532,51 +595,63 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-external">
-						<a href="_types_optional_.optionaltype.html" class="tsd-kind-icon">Optional<wbr>Type</a>
+						<a href="_types_singleton_.singletontype.html" class="tsd-kind-icon">Singleton<wbr>Type</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_types_singleton_.singletontype.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="_types_singleton_.singletontype.html#cachedvaluebuffer" class="tsd-kind-icon">cached<wbr>Value<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#type" class="tsd-kind-icon">type</a>
+								<a href="_types_singleton_.singletontype.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
+								<a href="_types_singleton_.singletontype.html#value" class="tsd-kind-icon">value</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="_types_singleton_.singletontype.html#singletonvaluebuffer" class="tsd-kind-icon">singleton<wbr>Value<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite tsd-is-static tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#_value" class="tsd-kind-icon">_value</a>
+								<a href="_types_singleton_.singletontype.html#_value" class="tsd-kind-icon">_value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
+								<a href="_types_singleton_.singletontype.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a>
+								<a href="_types_singleton_.singletontype.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#equals" class="tsd-kind-icon">equals</a>
+								<a href="_types_singleton_.singletontype.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a>
+								<a href="_types_singleton_.singletontype.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
+								<a href="_types_singleton_.singletontype.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-private tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a>
+								<a href="_types_singleton_.singletontype.html#isbuffer" class="tsd-kind-icon">is<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a>
+								<a href="_types_singleton_.singletontype.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
+								<a href="_types_singleton_.singletontype.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a>
+								<a href="_types_singleton_.singletontype.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-external">
-								<a href="_types_optional_.optionaltype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a>
+								<a href="_types_singleton_.singletontype.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-external">
+						<a href="../interfaces/_types_singleton_.singletonparams.html" class="tsd-kind-icon">Singleton<wbr>Params</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

@@ -95,7 +95,6 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_read_util_.html#makebasevalue" class="tsd-kind-icon">make<wbr>Base<wbr>Value</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_read_util_.html#pad" class="tsd-kind-icon">pad</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_read_util_.html#readbooleanbyte" class="tsd-kind-icon">read<wbr>Boolean<wbr>Byte</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_read_util_.html#readbooleans" class="tsd-kind-icon">read<wbr>Booleans</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-external"><a href="_lib_read_util_.html#readflexint" class="tsd-kind-icon">read<wbr>Flex<wbr>Int</a></li>
@@ -114,7 +113,7 @@
 					<div class="tsd-signature tsd-kind-icon">Get<wbr>Number<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"getInt8"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getInt16"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getInt32"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getUint8"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getUint16"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getUint32"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getFloat32"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"getFloat64"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/read-util.ts:178</li>
+							<li>Defined in lib/read-util.ts:163</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -131,7 +130,7 @@
 					<div class="tsd-signature tsd-kind-icon">Typed<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Int8ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Int16ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Int32ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint16ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint32ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Float32ArrayConstructor</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Float64ArrayConstructor</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in lib/read-util.ts:164</li>
+							<li>Defined in lib/read-util.ts:149</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -199,48 +198,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
-					<a name="pad" class="tsd-anchor"></a>
-					<h3>pad</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">pad<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in lib/read-util.ts:62</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Pads a string with preceding <code>0</code> characters
-										so it has the desired length
-									(for readability)</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>str: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The numeric string</p>
-									</div>
-								</li>
-								<li>
-									<h5>digits: <span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The target number of digits</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p><code>str</code> if str has at least enough digits,
-								otherwise <code>str</code> with enough zeros in front to have
-							the desired number of digits</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 					<a name="readbooleanbyte" class="tsd-anchor"></a>
 					<h3>read<wbr>Boolean<wbr>Byte</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
@@ -250,7 +207,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/read-util.ts:77</li>
+									<li>Defined in lib/read-util.ts:62</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -292,7 +249,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/read-util.ts:106</li>
+									<li>Defined in lib/read-util.ts:91</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -343,7 +300,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/read-util.ts:131</li>
+									<li>Defined in lib/read-util.ts:116</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -382,7 +339,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/read-util.ts:149</li>
+									<li>Defined in lib/read-util.ts:134</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -421,7 +378,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in lib/read-util.ts:206</li>
+									<li>Defined in lib/read-util.ts:191</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -494,9 +451,6 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 						<a href="_lib_read_util_.html#makebasevalue" class="tsd-kind-icon">make<wbr>Base<wbr>Value</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
-						<a href="_lib_read_util_.html#pad" class="tsd-kind-icon">pad</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-external">
 						<a href="_lib_read_util_.html#readbooleanbyte" class="tsd-kind-icon">read<wbr>Boolean<wbr>Byte</a>

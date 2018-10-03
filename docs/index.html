@@ -139,6 +139,7 @@
 							<li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
 							<li><code>NamedChoice</code> (a fixed set of up to 255 named types that values can take on, each associated with a constructor)</li>
 							<li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
+							<li><code>Singleton&lt;Type&gt;</code> (a type that serializes only one value)</li>
 							<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or <code>undefined</code> or an instance of <code>Type</code>)</li>
 							<li><code>Pointer&lt;Type&gt;</code> (allows multiple instances of <code>Type</code> with the same serialization to be stored only once)</li>
 						</ul>
@@ -610,6 +611,11 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 							</li>
 						</ul>
 					</li>
+					<li><code>SingletonType</code>: identifier <code>0x59</code>, payload:<ul>
+							<li><code>valueType</code> - <code>type</code></li>
+							<li><code>value</code> - a value that conforms to <code>valueType</code></li>
+						</ul>
+					</li>
 					<li><code>OptionalType</code>: identifier <code>0x60</code>, payload:<ul>
 							<li><code>typeIfNonNull</code> - <code>type</code></li>
 						</ul>
@@ -718,6 +724,10 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 									<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of <code>value</code> in buffer]) - <code>flexInt</code></li>
 								</ul>
 							</li>
+						</ul>
+					</li>
+					<li><code>SingletonType</code>:<ul>
+							<li>No value bytes</li>
 						</ul>
 					</li>
 					<li><code>OptionalType</code>:<ul>
@@ -939,6 +949,9 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_types_short_.html">"types/short"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_types_singleton_.html">"types/singleton"</a>
 					</li>
 					<li class=" tsd-kind-external-module tsd-is-external">
 						<a href="modules/_types_string_.html">"types/string"</a>

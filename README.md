@@ -74,6 +74,7 @@ This project is somewhat similar to Google's [Protocol Buffers](https://develope
 	- `Choice` (a fixed set of up to 255 types that values can take on)
 	- `NamedChoice` (a fixed set of up to 255 named types that values can take on, each associated with a constructor)
 	- `Recursive<Type>` (a type that can reference itself and be used to serialize circular data structures)
+	- `Singleton<Type>` (a type that serializes only one value)
 	- `Optional<Type>` (either `null` or `undefined` or an instance of `Type`)
 	- `Pointer<Type>` (allows multiple instances of `Type` with the same serialization to be stored only once)
 
@@ -564,6 +565,9 @@ In the following definitions, `type` means the binary type format.
 	- `recursiveID` (an identifier unique to this recursive type in this type buffer) - `flexInt`
 	- If this is the first instance of this recursive type in this buffer:
 		- `recursiveType` (the type definition of this type) - `type`
+- `SingletonType`: identifier `0x59`, payload:
+	- `valueType` - `type`
+	- `value` - a value that conforms to `valueType`
 - `OptionalType`: identifier `0x60`, payload:
 	- `typeIfNonNull` - `type`
 - `PointerType`: identifier `0x70`, payload:
@@ -634,6 +638,8 @@ In the following definitions, `type` means the binary type format.
 		- `value` - value serialized by `recursiveType`
 	- Else:
 		- `offset` ([position of first byte of `offset` in buffer] - [position of `value` in buffer]) - `flexInt`
+- `SingletonType`:
+	- No value bytes
 - `OptionalType`:
 	- `valueIsNonNull` - byte containing either `0x00` or `0xFF`
 	- If `valueIsNonNull`:

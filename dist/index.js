@@ -57,6 +57,7 @@
  *     - [[ChoiceType]]
  *     - [[NamedChoiceType]]
  *     - [[RecursiveType]]
+ *     - [[SingletonType]]
  *   - Modifier types
  *     - [[OptionalType]]
  *     - [[PointerType]]
