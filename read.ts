@@ -192,6 +192,15 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			readType = new t.RecursiveType(recursiveName)
 			break
 		}
+		case t.SingletonType._value: {
+			const valueType = consumeType(typeBuffer, offset + length)
+			length += valueType.length
+			const subType = valueType.value
+			const value = subType.consumeValue(typeBuffer, offset + length)
+			length += value.length
+			readType = new t.SingletonType({type: subType, value: value.value})
+			break
+		}
 		case t.OptionalType._value: {
 			const subType = consumeType(typeBuffer, offset + length)
 			length += subType.length

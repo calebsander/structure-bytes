@@ -28,14 +28,12 @@ export interface EnumParams<E> {
  */
 export default class EnumType<E> extends AbstractType<E> {
     static readonly _value: number;
-    /**
-     * The list of possible values
-     */
+    /** The list of possible values */
     readonly values: E[];
-    private readonly type;
+    readonly type: Type<E>;
     private cachedValueIndices;
     /**
-     * @param type The type of each element in the tuple
+     * @param type The type of each value of the enum
      * @param values The possible distinct values.
      * Cannot contain more than 255 values.
      * @throws If any value cannot be serialized by `type`

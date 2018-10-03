@@ -31,5 +31,6 @@ export { default as EnumType } from './enum';
 export { default as ChoiceType } from './choice';
 export { default as NamedChoiceType } from './named-choice';
 export { default as RecursiveType } from './recursive';
+export { default as SingletonType } from './singleton';
 export { default as OptionalType } from './optional';
 export { default as PointerType } from './pointer';

@@ -28,7 +28,7 @@ const abstract_1 = require("./abstract");
  */
 class EnumType extends abstract_1.default {
     /**
-     * @param type The type of each element in the tuple
+     * @param type The type of each value of the enum
      * @param values The possible distinct values.
      * Cannot contain more than 255 values.
      * @throws If any value cannot be serialized by `type`
