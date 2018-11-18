@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -34,8 +34,8 @@ class TupleType extends absolute_1.default {
      */
     constructor({ type, length }) {
         super();
-        assert_1.default.instanceOf(type, abstract_1.default);
-        assert_1.default.byteUnsignedInteger(length);
+        assert.instanceOf(type, abstract_1.default);
+        assert.byteUnsignedInteger(length);
         this.type = type;
         this.length = length;
     }
@@ -69,8 +69,9 @@ class TupleType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Array);
-        assert_1.default(value.length === this.length, `Length does not match: expected ${this.length} but got ${value.length}`);
+        assert.instanceOf(value, Array);
+        if (value.length !== this.length)
+            throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`);
         for (const instance of value)
             this.type.writeValue(buffer, instance);
     }

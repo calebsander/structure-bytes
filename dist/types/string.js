@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
@@ -31,7 +31,7 @@ class StringType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, String);
+        assert.instanceOf(value, String);
         buffer
             .addAll(bufferString.fromString(value))
             .add(0); //add a null byte to indicate end
@@ -39,9 +39,12 @@ class StringType extends absolute_1.default {
     consumeValue(buffer, offset) {
         const castBuffer = new Uint8Array(buffer, offset);
         let length = 0;
-        for (;; length++) {
-            assert_1.default(castBuffer.length > length, read_util_1.NOT_LONG_ENOUGH);
-            if (!castBuffer[length])
+        for (;;) {
+            if (castBuffer.length <= length)
+                throw new Error(read_util_1.NOT_LONG_ENOUGH);
+            if (castBuffer[length])
+                length++;
+            else
                 break;
         }
         const value = bufferString.toString(castBuffer.subarray(0, length));

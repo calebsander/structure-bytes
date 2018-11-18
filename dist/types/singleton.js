@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const util_inspect_1 = require("../lib/util-inspect");
 const abstract_1 = require("./abstract");
 /**
@@ -47,7 +47,7 @@ class SingletonType extends abstract_1.default {
      */
     constructor({ type, value }) {
         super();
-        assert_1.default.instanceOf(type, abstract_1.default);
+        assert.instanceOf(type, abstract_1.default);
         this.type = type;
         this.value = value;
     }
@@ -82,11 +82,8 @@ class SingletonType extends abstract_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        try {
-            assert_1.default.equal(this.type.valueBuffer(value), this.singletonValueBuffer);
-        }
-        catch (_a) {
-            assert_1.default.fail(`Expected ${util_inspect_1.inspect(this.value)} but got ${util_inspect_1.inspect(value)}`);
+        if (!assert.equal.buffers(this.type.valueBuffer(value), this.singletonValueBuffer)) {
+            throw new Error(`Expected ${util_inspect_1.inspect(this.value)} but got ${util_inspect_1.inspect(value)}`);
         }
     }
     consumeValue() {
@@ -98,13 +95,7 @@ class SingletonType extends abstract_1.default {
         const otherSingletonType = otherType;
         if (!this.type.equals(otherSingletonType.type))
             return false;
-        try {
-            assert_1.default.equal(this.value, otherSingletonType.value);
-        }
-        catch (_a) {
-            return false;
-        }
-        return true;
+        return assert.equal.buffers(otherSingletonType.singletonValueBuffer, this.singletonValueBuffer);
     }
 }
 exports.SingletonType = SingletonType;

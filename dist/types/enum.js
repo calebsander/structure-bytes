@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
@@ -35,14 +35,14 @@ class EnumType extends abstract_1.default {
      */
     constructor({ type, values }) {
         super();
-        assert_1.default.instanceOf(type, absolute_1.default); //pointer types don't make sense because each value should be distinct
-        assert_1.default.instanceOf(values, Array);
+        assert.instanceOf(type, absolute_1.default); //pointer types don't make sense because each value should be distinct
+        assert.instanceOf(values, Array);
         //At most 255 values allowed
         try {
-            assert_1.default.byteUnsignedInteger(values.length);
+            assert.byteUnsignedInteger(values.length);
         }
         catch (_a) {
-            assert_1.default.fail(`${values.length} values is too many`);
+            throw new Error(`${values.length} values is too many`);
         }
         this.type = type;
         this.values = values; //used when reading to get constant-time lookup of value index into value
@@ -59,7 +59,7 @@ class EnumType extends abstract_1.default {
             const value = values[i];
             const valueString = bufferString.toBinaryString(type.valueBuffer(value)); //convert value to bytes and then string for use as a map key
             if (valueIndices.has(valueString))
-                assert_1.default.fail('Value is repeated: ' + util_inspect_1.inspect(value));
+                throw new Error('Value is repeated: ' + util_inspect_1.inspect(value));
             valueIndices.set(valueString, i); //so writing a value has constant-time lookup into the values array
         }
         return this.cachedValueIndices = valueIndices;
@@ -97,7 +97,8 @@ class EnumType extends abstract_1.default {
         buffer.add(index); //write the index to the requested value in the values array
     }
     consumeValue(buffer, offset) {
-        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength <= offset)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const valueIndex = new Uint8Array(buffer)[offset];
         const value = this.values[valueIndex];
         if (value === undefined)

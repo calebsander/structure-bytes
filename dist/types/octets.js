@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
@@ -33,7 +33,7 @@ class OctetsType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, ArrayBuffer);
+        assert.instanceOf(value, ArrayBuffer);
         buffer
             .addAll(flexInt.makeValueBuffer(value.byteLength))
             .addAll(value);
@@ -42,7 +42,8 @@ class OctetsType extends absolute_1.default {
         const octetsLength = read_util_1.readFlexInt(buffer, offset);
         const { length } = octetsLength;
         const finalLength = length + octetsLength.value;
-        assert_1.default(buffer.byteLength >= offset + finalLength, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + finalLength)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         return {
             value: buffer.slice(offset + length, offset + finalLength),
             length: finalLength

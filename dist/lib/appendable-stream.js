@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = require("http");
 const stream_1 = require("stream");
 const appendable_1 = require("./appendable");
-const assert_1 = require("./assert");
+const assert = require("./assert");
 const growable_buffer_1 = require("./growable-buffer");
 const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http_1.OutgoingMessage];
 /**
@@ -19,7 +19,7 @@ class AppendableStream extends appendable_1.default {
      */
     constructor(outStream) {
         super();
-        assert_1.default.instanceOf(outStream, WRITABLE_STREAMS);
+        assert.instanceOf(outStream, WRITABLE_STREAMS);
         this.outStream = outStream;
         this.writtenBytes = 0;
         this.pauseCount = 0;
@@ -31,8 +31,8 @@ class AppendableStream extends appendable_1.default {
      * @param value The unsigned byte value to add
      */
     add(value) {
-        assert_1.default.integer(value);
-        assert_1.default.between(0, value, 0x100, `Not a byte: ${value}`);
+        assert.integer(value);
+        assert.between(0, value, 0x100, `Not a byte: ${value}`);
         return this.addAll(new Uint8Array([value]).buffer);
     }
     /**
@@ -41,7 +41,7 @@ class AppendableStream extends appendable_1.default {
      * @param buffer The bytes to add
      */
     addAll(buffer) {
-        assert_1.default.instanceOf(buffer, ArrayBuffer);
+        assert.instanceOf(buffer, ArrayBuffer);
         if (this.pauseCount)
             this.paused.addAll(buffer);
         else

@@ -4,7 +4,7 @@ const base64 = require("base64-js");
 const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
 const appendable_1 = require("../lib/appendable");
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
 const growable_buffer_1 = require("../lib/growable-buffer");
@@ -61,8 +61,8 @@ class AbstractType {
         return buffer.toBuffer();
     }
     readValue(buffer, offset = 0) {
-        assert_1.default.instanceOf(buffer, ArrayBuffer);
-        assert_1.default.instanceOf(offset, Number);
+        assert.instanceOf(buffer, ArrayBuffer);
+        assert.instanceOf(offset, Number);
         const { value, length } = this.consumeValue(buffer, offset);
         if (offset + length !== buffer.byteLength)
             throw new Error('Did not consume all of buffer');
@@ -87,7 +87,7 @@ class AbstractType {
      * @param buffer The value to assert is an [[AppendableBuffer]]
      */
     isBuffer(buffer) {
-        assert_1.default.instanceOf(buffer, appendable_1.default);
+        assert.instanceOf(buffer, appendable_1.default);
     }
     /**
      * Generates the type buffer, recomputed each time

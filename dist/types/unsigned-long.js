@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const strint = require("../lib/strint");
 const unsigned_1 = require("./unsigned");
@@ -32,8 +32,9 @@ class UnsignedLongType extends unsigned_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, String);
-        assert_1.default(!(strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')), 'Value out of range');
+        assert.instanceOf(value, String);
+        if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0'))
+            throw new RangeError('Value out of range');
         const upper = strint.div(value, strint.LONG_UPPER_SHIFT); //get upper unsigned int
         const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
         const byteBuffer = new ArrayBuffer(8);
@@ -44,7 +45,8 @@ class UnsignedLongType extends unsigned_1.default {
     }
     consumeValue(buffer, offset) {
         const length = 8;
-        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + length)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const dataView = new DataView(buffer, offset);
         const upper = dataView.getUint32(0);
         const lower = dataView.getUint32(4);

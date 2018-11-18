@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const date = require("../lib/date");
 const read_util_1 = require("../lib/read-util");
 const chrono_1 = require("./chrono");
@@ -36,14 +36,15 @@ class TimeType extends chrono_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Date);
+        assert.instanceOf(value, Date);
         const byteBuffer = new ArrayBuffer(4);
         new DataView(byteBuffer).setUint32(0, value.getTime() % date.MILLIS_PER_DAY);
         buffer.addAll(byteBuffer);
     }
     consumeValue(buffer, offset) {
         const length = 4;
-        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + length)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         return {
             value: new Date(new DataView(buffer).getUint32(offset)),
             length

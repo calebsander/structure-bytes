@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const integer_1 = require("./integer");
@@ -34,8 +34,8 @@ class ByteType extends integer_1.default {
         const convertedValue = str_to_num_1.default(value);
         if (convertedValue !== undefined)
             value = convertedValue;
-        assert_1.default.integer(value);
-        assert_1.default.between(-128, value, 128, 'Value out of range');
+        assert.integer(value);
+        assert.between(-128, value, 128, 'Value out of range');
         buffer.addAll(new Int8Array([value]).buffer);
     }
     consumeValue(buffer, offset) {

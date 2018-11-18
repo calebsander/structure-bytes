@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -46,7 +46,7 @@ class PointerType extends abstract_1.default {
      */
     constructor(type) {
         super();
-        assert_1.default.instanceOf(type, absolute_1.default);
+        assert.instanceOf(type, absolute_1.default);
         this.type = type;
     }
     static get _value() {

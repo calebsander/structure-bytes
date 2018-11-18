@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const strint = require("../lib/strint");
@@ -36,8 +36,9 @@ class BigUnsignedIntType extends unsigned_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, String);
-        assert_1.default(!strint.isNegative(value), 'Value out of range');
+        assert.instanceOf(value, String);
+        if (strint.isNegative(value))
+            throw new RangeError('Value out of range');
         const bytes = [];
         if (!strint.eq(value, '0')) { //if value is 0, avoid adding a 0 byte
             while (strint.ge(value, strint.BYTE_SHIFT)) { //builds bytes in LE order
@@ -58,7 +59,8 @@ class BigUnsignedIntType extends unsigned_1.default {
         const lengthInt = read_util_1.readFlexInt(buffer, offset);
         const bytes = lengthInt.value;
         let { length } = lengthInt;
-        assert_1.default(buffer.byteLength >= offset + length + bytes, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + length + bytes)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const castBuffer = new Uint8Array(buffer, offset + length);
         let value = '0';
         for (let byte = 0; byte < bytes; byte++) {

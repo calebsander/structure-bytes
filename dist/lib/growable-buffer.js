@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const appendable_1 = require("./appendable");
-const assert_1 = require("./assert");
+const assert = require("./assert");
 const INITIAL_LENGTH = 10;
 /**
  * A [`StringBuilder`](https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html)-like
@@ -19,8 +19,9 @@ class GrowableBuffer extends appendable_1.default {
     constructor(initialLength = INITIAL_LENGTH) {
         super();
         try {
-            assert_1.default.integer(initialLength);
-            assert_1.default(initialLength >= 0);
+            assert.integer(initialLength);
+            if (initialLength < 0)
+                throw new Error;
         }
         catch (_a) {
             throw new RangeError(`${initialLength} is not a valid buffer length`);
@@ -49,7 +50,7 @@ class GrowableBuffer extends appendable_1.default {
      * in the internal buffer after the method returns
      */
     grow(size) {
-        assert_1.default.integer(size);
+        assert.integer(size);
         if (size > this.buffer.byteLength) { //if resizing is necessary
             const newBuffer = new ArrayBuffer(size << 1);
             new Uint8Array(newBuffer).set(new Uint8Array(this.buffer).subarray(0, this.size));
@@ -63,8 +64,8 @@ class GrowableBuffer extends appendable_1.default {
      * @param value The unsigned byte value to add
      */
     add(value) {
-        assert_1.default.integer(value);
-        assert_1.default.between(0, value, 0x100, `Not a byte: ${value}`);
+        assert.integer(value);
+        assert.between(0, value, 0x100, `Not a byte: ${value}`);
         return this.addAll(new Uint8Array([value]).buffer);
     }
     /**
@@ -76,7 +77,7 @@ class GrowableBuffer extends appendable_1.default {
      * position `this.length + i` of the [[GrowableBuffer]]).
      */
     addAll(buffer) {
-        assert_1.default.instanceOf(buffer, ArrayBuffer);
+        assert.instanceOf(buffer, ArrayBuffer);
         const oldSize = this.size;
         const newSize = this.size + buffer.byteLength;
         this.grow(newSize);

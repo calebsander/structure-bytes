@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const strint = require("../lib/strint");
@@ -36,7 +36,7 @@ class BigIntType extends integer_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, String);
+        assert.instanceOf(value, String);
         value = strint.normalize(value); //throws if value is invalid
         const bytes = [];
         if (!strint.eq(value, '0')) {
@@ -60,7 +60,8 @@ class BigIntType extends integer_1.default {
         const lengthInt = read_util_1.readFlexInt(buffer, offset);
         const bytes = lengthInt.value;
         let { length } = lengthInt;
-        assert_1.default(buffer.byteLength >= offset + length + bytes, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + length + bytes)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const castBuffer = new Uint8Array(buffer, offset + length);
         let value;
         if (bytes) {

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
@@ -32,8 +32,8 @@ class MapType extends absolute_1.default {
      */
     constructor(keyType, valueType) {
         super();
-        assert_1.default.instanceOf(keyType, abstract_1.default);
-        assert_1.default.instanceOf(valueType, abstract_1.default);
+        assert.instanceOf(keyType, abstract_1.default);
+        assert.instanceOf(valueType, abstract_1.default);
         this.keyType = keyType;
         this.valueType = valueType;
     }
@@ -75,7 +75,7 @@ class MapType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Map);
+        assert.instanceOf(value, Map);
         buffer.addAll(flexInt.makeValueBuffer(value.size));
         for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value
             this.keyType.writeValue(buffer, mapKey);

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
@@ -46,14 +46,14 @@ class StructType extends absolute_1.default {
      */
     constructor(fields) {
         super();
-        assert_1.default.instanceOf(fields, Object);
+        assert.instanceOf(fields, Object);
         //Allow only 255 fields
         const fieldCount = Object.keys(fields).length;
         try {
-            assert_1.default.byteUnsignedInteger(fieldCount);
+            assert.byteUnsignedInteger(fieldCount);
         }
         catch (_a) {
-            assert_1.default.fail(`${fieldCount} fields is too many`);
+            throw new Error(`${fieldCount} fields is too many`);
         }
         this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
         let fieldIndex = 0;
@@ -63,18 +63,18 @@ class StructType extends absolute_1.default {
             //Name must fit in 255 UTF-8 bytes
             const fieldNameBuffer = bufferString.fromString(fieldName);
             try {
-                assert_1.default.byteUnsignedInteger(fieldNameBuffer.byteLength);
+                assert.byteUnsignedInteger(fieldNameBuffer.byteLength);
             }
             catch (_b) {
-                assert_1.default.fail(`Field name ${fieldName} is too long`);
+                throw new Error(`Field name ${fieldName} is too long`);
             }
             //Type must be a Type
             const fieldType = fields[fieldName];
             try {
-                assert_1.default.instanceOf(fieldType, abstract_1.default);
+                assert.instanceOf(fieldType, abstract_1.default);
             }
             catch (_c) {
-                assert_1.default.fail(util_inspect_1.inspect(fieldType) + ' is not a valid field type');
+                throw new Error(util_inspect_1.inspect(fieldType) + ' is not a valid field type');
             }
             this.fields[fieldIndex] = {
                 name: fieldName,
@@ -130,7 +130,7 @@ class StructType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Object);
+        assert.instanceOf(value, Object);
         for (const field of this.fields) {
             const fieldValue = value[field.name];
             try {

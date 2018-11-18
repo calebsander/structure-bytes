@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const write_iterable_1 = require("../lib/write-iterable");
 const absolute_1 = require("./absolute");
@@ -29,7 +29,7 @@ class SetType extends absolute_1.default {
      */
     constructor(type) {
         super();
-        assert_1.default.instanceOf(type, abstract_1.default);
+        assert.instanceOf(type, abstract_1.default);
         this.type = type;
     }
     static get _value() {
@@ -60,7 +60,7 @@ class SetType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Set);
+        assert.instanceOf(value, Set);
         write_iterable_1.default({ type: this.type, buffer, value, length: value.size });
     }
     consumeValue(buffer, offset, baseValue) {

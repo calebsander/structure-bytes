@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("./assert");
+const assert = require("./assert");
 const growable_buffer_1 = require("./growable-buffer");
 //Arbitrarily set; fairly low to be safe
 const MAX_ARGUMENTS_LENGTH = 0x1000;
@@ -10,7 +10,7 @@ const MAX_ARGUMENTS_LENGTH = 0x1000;
  * @param buffer The binary data to convert
  */
 function toString(buffer) {
-    assert_1.default.instanceOf(buffer, Uint8Array);
+    assert.instanceOf(buffer, Uint8Array);
     //Taken from https://github.com/feross/buffer/blob/da8a677bdb746ed9d6dae42ee1eaf236aad32ccb/index.js#L917-L988
     const codePoints = [];
     for (let i = 0; i < buffer.length;) {
@@ -85,7 +85,7 @@ exports.toString = toString;
  * @param str The string to convert
  */
 function fromString(str) {
-    assert_1.default.instanceOf(str, String);
+    assert.instanceOf(str, String);
     //Taken from http://stackoverflow.com/a/18729931
     const utf8 = new growable_buffer_1.default;
     for (const char of str) {
@@ -127,7 +127,7 @@ exports.fromString = fromString;
  * @param buffer The binary data to convert
  */
 function toBinaryString(buffer) {
-    assert_1.default.instanceOf(buffer, ArrayBuffer);
+    assert.instanceOf(buffer, ArrayBuffer);
     let str = '';
     const castBuffer = new Uint8Array(buffer);
     for (let i = 0; i < castBuffer.length; i += MAX_ARGUMENTS_LENGTH) {
@@ -142,7 +142,7 @@ exports.toBinaryString = toBinaryString;
  * @param str The string to convert
  */
 function fromBinaryString(str) {
-    assert_1.default.instanceOf(str, String);
+    assert.instanceOf(str, String);
     const buffer = new Uint8Array(str.length);
     for (let i = 0; i < str.length; i++)
         buffer[i] = str[i].charCodeAt(0);

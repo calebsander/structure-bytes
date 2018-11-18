@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
@@ -44,15 +44,15 @@ class ChoiceType extends absolute_1.default {
      */
     constructor(types) {
         super();
-        assert_1.default.instanceOf(types, Array);
+        assert.instanceOf(types, Array);
         try {
-            assert_1.default.byteUnsignedInteger(types.length);
+            assert.byteUnsignedInteger(types.length);
         }
         catch (_a) {
-            assert_1.default.fail(`${types.length} types is too many`);
+            throw new Error(`${types.length} types is too many`);
         }
         for (const type of types)
-            assert_1.default.instanceOf(type, abstract_1.default);
+            assert.instanceOf(type, abstract_1.default);
         this.types = types;
     }
     static get _value() {
@@ -107,11 +107,12 @@ class ChoiceType extends absolute_1.default {
         }
         buffer.resume();
         if (!success)
-            assert_1.default.fail('No types matched: ' + util_inspect_1.inspect(value));
+            throw new Error('No types matched: ' + util_inspect_1.inspect(value));
     }
     consumeValue(buffer, offset) {
         let length = 1;
-        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength <= offset)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const typeIndex = new Uint8Array(buffer)[offset];
         const { value, length: subLength } = this.types[typeIndex].consumeValue(buffer, offset + length);
         length += subLength;

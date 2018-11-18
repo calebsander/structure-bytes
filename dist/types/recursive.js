@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const recursiveNesting = require("../lib/recursive-nesting");
@@ -78,7 +78,7 @@ class RecursiveType extends absolute_1.default {
      */
     constructor(name) {
         super();
-        assert_1.default.instanceOf(name, String);
+        assert.instanceOf(name, String);
         this.name = name;
     }
     static get _value() {

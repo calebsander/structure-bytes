@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const date = require("../lib/date");
 const read_util_1 = require("../lib/read-util");
 const chrono_1 = require("./chrono");
@@ -31,7 +31,7 @@ class DayType extends chrono_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Date);
+        assert.instanceOf(value, Date);
         //Instead of taking value.getTime() / MILLIS_PER_DAY (which would act as if the date was measured at UTC),
         //we round down the date in the current time zone
         const flooredDate = new Date(value.getFullYear(), value.getMonth(), value.getDate());
@@ -44,7 +44,8 @@ class DayType extends chrono_1.default {
     }
     consumeValue(buffer, offset) {
         const length = 3;
-        assert_1.default(buffer.byteLength >= offset + length, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + length)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const dataView = new DataView(buffer, offset);
         const day = (dataView.getInt16(0) << 8) | dataView.getUint8(2);
         return {

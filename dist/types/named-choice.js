@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const constructorRegistry = require("../lib/constructor-registry");
 const read_util_1 = require("../lib/read-util");
@@ -65,31 +65,33 @@ class NamedChoiceType extends absolute_1.default {
      */
     constructor(constructorTypes) {
         super();
-        assert_1.default.instanceOf(constructorTypes, Map);
+        assert.instanceOf(constructorTypes, Map);
         try {
-            assert_1.default.byteUnsignedInteger(constructorTypes.size);
+            assert.byteUnsignedInteger(constructorTypes.size);
         }
         catch (_a) {
-            assert_1.default.fail(`${constructorTypes.size} types is too many`);
+            throw new Error(`${constructorTypes.size} types is too many`);
         }
         this.indexConstructors = new Map;
         this.constructorTypes = new Array(constructorTypes.size);
         const usedNames = new Set();
         for (const [constructor, type] of constructorTypes) {
-            assert_1.default.instanceOf(constructor, Function);
+            assert.instanceOf(constructor, Function);
             const { name } = constructor;
-            assert_1.default(name !== '', 'Function does not have a name');
-            assert_1.default(!usedNames.has(name), `Function name "${name}" is repeated`);
+            if (!name)
+                throw new Error('Function does not have a name');
+            if (usedNames.has(name))
+                throw new Error(`Function name "${name}" is repeated`);
             usedNames.add(name);
             //Name must fit in 255 UTF-8 bytes
             const typeNameBuffer = bufferString.fromString(name);
             try {
-                assert_1.default.byteUnsignedInteger(typeNameBuffer.byteLength);
+                assert.byteUnsignedInteger(typeNameBuffer.byteLength);
             }
             catch (_b) {
-                assert_1.default.fail(`Function name "${name}" is too long`);
+                throw new Error(`Function name "${name}" is too long`);
             }
-            assert_1.default.instanceOf(type, struct_1.StructType);
+            assert.instanceOf(type, struct_1.StructType);
             const constructorIndex = this.indexConstructors.size;
             this.indexConstructors.set(constructorIndex, constructor);
             this.constructorTypes[constructorIndex] = { nameBuffer: typeNameBuffer, type };
@@ -142,7 +144,7 @@ class NamedChoiceType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Object);
+        assert.instanceOf(value, Object);
         let writeIndex;
         for (const [index, constructor] of this.indexConstructors) {
             if (value instanceof constructor) {
@@ -158,7 +160,8 @@ class NamedChoiceType extends absolute_1.default {
     }
     consumeValue(buffer, offset) {
         let length = 1;
-        assert_1.default(buffer.byteLength > offset, read_util_1.NOT_LONG_ENOUGH);
+        if (buffer.byteLength <= offset)
+            throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const typeIndex = new Uint8Array(buffer)[offset];
         const typeConstructor = this.indexConstructors.get(typeIndex);
         if (!typeConstructor)
@@ -179,10 +182,7 @@ class NamedChoiceType extends absolute_1.default {
             const otherConstructor = otherChoiceType.constructorTypes[i];
             if (!thisConstructor.type.equals(otherConstructor.type))
                 return false;
-            try {
-                assert_1.default.equal(otherConstructor.nameBuffer, thisConstructor.nameBuffer);
-            }
-            catch (_a) {
+            if (!assert.equal.buffers(otherConstructor.nameBuffer, thisConstructor.nameBuffer)) {
                 return false;
             }
         }

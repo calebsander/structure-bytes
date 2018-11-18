@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const floating_1 = require("./floating");
@@ -43,7 +43,7 @@ class FloatType extends floating_1.default {
         const convertedValue = str_to_num_1.default(value);
         if (convertedValue !== undefined)
             value = convertedValue;
-        assert_1.default.instanceOf(value, Number);
+        assert.instanceOf(value, Number);
         const byteBuffer = new ArrayBuffer(4);
         new DataView(byteBuffer).setFloat32(0, value);
         buffer.addAll(byteBuffer);

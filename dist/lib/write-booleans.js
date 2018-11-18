@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("./assert");
+const assert = require("./assert");
 const bit_math_1 = require("./bit-math");
 /**
  * Writes an array of booleans for [[BooleanTupleType]]
@@ -12,7 +12,7 @@ const bit_math_1 = require("./bit-math");
  * @param booleans The boolean values to write
  */
 exports.default = (buffer, booleans) => {
-    assert_1.default.instanceOf(booleans, Array);
+    assert.instanceOf(booleans, Array);
     byteLoop: for (let byteIndex = 0;; byteIndex++) {
         let byteValue = 0;
         for (let bit = 0; bit < 8; bit++) {
@@ -23,7 +23,7 @@ exports.default = (buffer, booleans) => {
                 break byteLoop;
             }
             const bool = booleans[booleanIndex];
-            assert_1.default.instanceOf(bool, Boolean);
+            assert.instanceOf(bool, Boolean);
             if (bool)
                 byteValue |= 1 << (7 - bit); //go from most significant bit to least significant
         }

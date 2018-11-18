@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("./assert");
 const bit_math_1 = require("./bit-math");
 const flexInt = require("./flex-int");
 const strint = require("./strint");
@@ -44,7 +43,8 @@ exports.makeBaseValue = makeBaseValue;
  * `false` if it is `0x00`
  */
 function readBooleanByte(buffer, offset) {
-    assert_1.default(buffer.byteLength > offset, exports.NOT_LONG_ENOUGH);
+    if (buffer.byteLength <= offset)
+        throw new Error(exports.NOT_LONG_ENOUGH);
     let value;
     const readByte = new Uint8Array(buffer)[offset];
     switch (readByte) {
@@ -72,7 +72,8 @@ function readBooleans({ buffer, offset, count }) {
     const incompleteBytes = bit_math_1.modEight(count);
     const bytes = bit_math_1.dividedByEight(count);
     const length = incompleteBytes ? bytes + 1 : bytes;
-    assert_1.default(buffer.byteLength >= offset + length, exports.NOT_LONG_ENOUGH);
+    if (buffer.byteLength < offset + length)
+        throw new Error(exports.NOT_LONG_ENOUGH);
     const castBuffer = new Uint8Array(buffer, offset);
     for (let i = 0; i < length; i++) {
         const byte = castBuffer[i];
@@ -94,10 +95,12 @@ exports.readBooleans = readBooleans;
  * @return The number stored in the `flexInt`
  */
 function readFlexInt(buffer, offset) {
-    assert_1.default(buffer.byteLength > offset, exports.NOT_LONG_ENOUGH);
+    if (buffer.byteLength <= offset)
+        throw new Error(exports.NOT_LONG_ENOUGH);
     const castBuffer = new Uint8Array(buffer, offset);
     const length = flexInt.getByteCount(castBuffer[0]);
-    assert_1.default(buffer.byteLength >= offset + length, exports.NOT_LONG_ENOUGH);
+    if (buffer.byteLength < offset + length)
+        throw new Error(exports.NOT_LONG_ENOUGH);
     return {
         value: flexInt.readValueBuffer(castBuffer.slice(0, length).buffer),
         length
@@ -113,7 +116,8 @@ exports.readFlexInt = readFlexInt;
  */
 function readLong(buffer, offset) {
     const length = 8;
-    assert_1.default(buffer.byteLength >= offset + length, exports.NOT_LONG_ENOUGH);
+    if (buffer.byteLength < offset + length)
+        throw new Error(exports.NOT_LONG_ENOUGH);
     const dataView = new DataView(buffer, offset);
     const upper = dataView.getInt32(0);
     const lower = dataView.getUint32(4);
@@ -137,7 +141,8 @@ exports.readLong = readLong;
 function readNumber({ func, type }) {
     const length = type.BYTES_PER_ELEMENT;
     return (buffer, offset) => {
-        assert_1.default(buffer.byteLength >= offset + length, exports.NOT_LONG_ENOUGH);
+        if (buffer.byteLength < offset + length)
+            throw new Error(exports.NOT_LONG_ENOUGH);
         return {
             value: new DataView(buffer)[func](offset),
             length

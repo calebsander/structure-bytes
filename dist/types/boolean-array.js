@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const write_booleans_1 = require("../lib/write-booleans");
@@ -37,7 +37,7 @@ class BooleanArrayType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert_1.default.instanceOf(value, Array);
+        assert.instanceOf(value, Array);
         buffer.addAll(flexInt.makeValueBuffer(value.length));
         write_booleans_1.default(buffer, value);
     }

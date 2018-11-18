@@ -8,7 +8,7 @@ const util_1 = require("util");
 const zlib = require("zlib");
 const accepts = require("accepts");
 const appendable_stream_1 = require("./lib/appendable-stream");
-const assert_1 = require("./lib/assert");
+const assert = require("./lib/assert");
 const r = require("./read");
 const abstract_1 = require("./types/abstract");
 function toArrayBuffer(buffer) {
@@ -63,10 +63,10 @@ function concatStream(stream, callback) {
  * @return `outStream`
  */
 function writeType({ type, outStream }, callback) {
-    assert_1.default.instanceOf(type, abstract_1.default);
+    assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
         callback = _ => { };
-    assert_1.default.instanceOf(callback, Function);
+    assert.instanceOf(callback, Function);
     let error = null;
     outStream
         .on('error', callback)
@@ -116,10 +116,10 @@ exports.writeType = writeType;
  * @return `outStream`
  */
 function writeValue({ type, value, outStream }, callback) {
-    assert_1.default.instanceOf(type, abstract_1.default);
+    assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
         callback = _ => { };
-    assert_1.default.instanceOf(callback, Function);
+    assert.instanceOf(callback, Function);
     let error = null;
     outStream
         .on('error', callback)
@@ -170,10 +170,10 @@ exports.writeValue = writeValue;
  * @return `outStream`
  */
 function writeTypeAndValue({ type, value, outStream }, callback) {
-    assert_1.default.instanceOf(type, abstract_1.default);
+    assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
         callback = _ => { };
-    assert_1.default.instanceOf(callback, Function);
+    assert.instanceOf(callback, Function);
     let error = null;
     outStream
         .on('error', callback)
@@ -213,8 +213,8 @@ exports.writeTypeAndValue = writeTypeAndValue;
  * @param callback The callback to call with the read result
  */
 function readType(inStream, callback) {
-    assert_1.default.instanceOf(inStream, stream_1.Readable);
-    assert_1.default.instanceOf(callback, Function);
+    assert.instanceOf(inStream, stream_1.Readable);
+    assert.instanceOf(callback, Function);
     concatStream(inStream, (err, buffer) => {
         if (err)
             return callback(err, null);
@@ -262,8 +262,8 @@ exports.readType = readType;
  * @param callback The callback to call with the read result
  */
 function readValue({ type, inStream }, callback) {
-    assert_1.default.instanceOf(inStream, stream_1.Readable);
-    assert_1.default.instanceOf(callback, Function);
+    assert.instanceOf(inStream, stream_1.Readable);
+    assert.instanceOf(callback, Function);
     concatStream(inStream, (err, buffer) => {
         if (err)
             return callback(err, null);
@@ -301,8 +301,8 @@ exports.readValue = readValue;
  * @param callback The callback to call with the read result
  */
 function readTypeAndValue(inStream, callback) {
-    assert_1.default.instanceOf(inStream, stream_1.Readable);
-    assert_1.default.instanceOf(callback, Function);
+    assert.instanceOf(inStream, stream_1.Readable);
+    assert.instanceOf(callback, Function);
     concatStream(inStream, (err, buffer) => {
         if (err)
             return callback(err, null, null);
@@ -357,12 +357,12 @@ readTypeAndValue[util_1.promisify.custom] = (inStream) => new Promise((resolve, 
  * @param callback The optional callback to call when response ends
  */
 function httpRespond({ req, res, type, value }, callback) {
-    assert_1.default.instanceOf(type, abstract_1.default);
+    assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
         callback = _ => { };
-    assert_1.default.instanceOf(callback, Function);
-    assert_1.default.instanceOf(req, http.IncomingMessage);
-    assert_1.default.instanceOf(res, http.OutgoingMessage);
+    assert.instanceOf(callback, Function);
+    assert.instanceOf(req, http.IncomingMessage);
+    assert.instanceOf(res, http.OutgoingMessage);
     try {
         res.setHeader('Content-Type', 'application/octet-stream');
         res.setHeader('sig', type.getSignature());

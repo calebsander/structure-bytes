@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert_1 = require("../lib/assert");
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
@@ -32,7 +32,7 @@ class OptionalType extends absolute_1.default {
      */
     constructor(type) {
         super();
-        assert_1.default.instanceOf(type, abstract_1.default);
+        assert.instanceOf(type, abstract_1.default);
         this.type = type;
     }
     static get _value() {

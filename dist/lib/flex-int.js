@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * See [[FlexUnsignedIntType]] for an explanation
  * of the `flexInt` format
  */
-const assert_1 = require("./assert");
+const assert = require("./assert");
 function possibleValueCount(bytes) {
     const usableBits = 7 * bytes;
     return Math.pow(2, usableBits); //can't bit-shift because this may not fit in 32-bit integer
@@ -35,8 +35,9 @@ const NUMBER_OF_BYTES = new Map();
  * @return An `ArrayBuffer` containing 1 to 8 bytes
  */
 function makeValueBuffer(value) {
-    assert_1.default.integer(value);
-    assert_1.default(value >= 0, `${value} is negative`);
+    assert.integer(value);
+    if (value < 0)
+        throw new RangeError(`${value} is negative`);
     const bytes = (() => {
         for (const [byteCount, maxValue] of UPPER_BOUNDS) {
             if (maxValue > value)
@@ -67,7 +68,8 @@ exports.makeValueBuffer = makeValueBuffer;
 function getByteCount(firstByte) {
     const leadingOnes = Math.clz32(~firstByte << 24);
     const bytes = NUMBER_OF_BYTES.get(leadingOnes);
-    assert_1.default(bytes !== undefined, 'Invalid number of bytes');
+    if (!bytes)
+        throw new Error('Invalid number of bytes');
     return bytes;
 }
 exports.getByteCount = getByteCount;
@@ -79,9 +81,10 @@ exports.getByteCount = getByteCount;
  * @return The number used to generate the `flexInt` buffer
  */
 function readValueBuffer(valueBuffer) {
-    assert_1.default.instanceOf(valueBuffer, ArrayBuffer);
+    assert.instanceOf(valueBuffer, ArrayBuffer);
     const bytes = valueBuffer.byteLength;
-    assert_1.default(bytes > 0, 'Empty flex int buffer');
+    if (!bytes)
+        throw new Error('Empty flex int buffer');
     const castBuffer = new Uint8Array(valueBuffer);
     let relativeValue = castBuffer[0] ^ BYTE_MASKS.get(bytes);
     for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
