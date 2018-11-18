@@ -1,5 +1,5 @@
+import {strict as assert} from 'assert'
 import * as crypto from 'crypto'
-import assert from '../../dist/lib/assert'
 import {r} from '../../dist'
 import * as rec from '../../dist'
 import * as t from '../../dist'
@@ -17,20 +17,20 @@ export = () => {
 	}))
 	const graphType = new t.SetType(nodeType)
 	const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
-	assert.equal(graphType.toBuffer(), GRAPH_BUFFER)
-	const readGraphType = r.type(GRAPH_BUFFER) as typeof graphType
+	assert.deepEqual(new Uint8Array(graphType.toBuffer()), GRAPH_BUFFER)
+	const readGraphType = r.type(GRAPH_BUFFER.buffer) as typeof graphType
 	const graphNodeName = (readGraphType.type as typeof nodeType).name
-	assert.equal(readGraphType, new t.SetType(
+	assert(new t.SetType(
 		new t.RecursiveType<GraphNode>(graphNodeName)
-	))
-	assert.equal(rec.getType(graphNodeName), new t.StructType({
+	).equals(readGraphType))
+	assert(new t.StructType({
 		links: new t.SetType(
 			new t.RecursiveType<GraphNode>(graphNodeName)
 		),
 		value: new t.UnsignedIntType
-	}))
+	}).equals(rec.getType(graphNodeName)))
 	const reusedGraphType = new t.SetType(nodeType)
-	assert.equal(reusedGraphType.toBuffer(), GRAPH_BUFFER)
+	assert.deepEqual(new Uint8Array(reusedGraphType.toBuffer()), GRAPH_BUFFER)
 	//Ensure that REPEATED_TYPE links don't go outside of recursive type
 	const type = new t.ArrayType(
 		new t.RecursiveType('type')
@@ -39,7 +39,7 @@ export = () => {
 		type,
 		name: 'type'
 	})
-	assert.equal(type.toBuffer(), bufferFrom([0x52, 0x57, 0, 0x52, 0x57, 0])) //the important piece is that the child array type declaration doesn't point to the root one
+	assert.deepEqual(new Uint8Array(type.toBuffer()), bufferFrom([0x52, 0x57, 0, 0x52, 0x57, 0])) //the important piece is that the child array type declaration doesn't point to the root one
 	//Test multiple recursive types in same buffer
 	interface BinaryTree {
 		left: BinaryTree | null
@@ -52,31 +52,48 @@ export = () => {
 		value: nodeType,
 		right: binaryTreeType
 	}))
-	assert.equal(binaryTreeType.toBuffer(), bufferFrom([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
+	assert.deepEqual(new Uint8Array(binaryTreeType.toBuffer()), bufferFrom([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
 	const readTreeType = r.type(binaryTreeType.toBuffer()) as typeof binaryTreeType
-	assert.instanceOf(readTreeType, t.RecursiveType)
+	assert(readTreeType instanceof t.RecursiveType)
 	const readTreeName = readTreeType.name
 	const valueField = (rec.getType(readTreeName) as t.StructType<BinaryTree>).fields.find(field => field.name === 'value')
 	if (valueField === undefined) throw new Error('No field with name "value"')
 	const readNodeName = (valueField.type as typeof nodeType).name
-	assert.equal(rec.getType(readTreeName), new t.StructType({
+	assert(new t.StructType({
 		left: new t.RecursiveType<BinaryTree>(readTreeName),
 		value: new t.RecursiveType<GraphNode>(readNodeName),
 		right: new t.RecursiveType<BinaryTree>(readTreeName)
-	}))
+	}).equals(rec.getType(readTreeName)))
 
-	assert.throws(() => new (t.RecursiveType as any), 'undefined is not an instance of String')
-	assert.throws(() => new t.RecursiveType(23 as any), '23 is not an instance of String')
+	assert.throws(
+		() => new (t.RecursiveType as any),
+		(err: Error) => err.message === 'undefined is not an instance of String'
+	)
+	assert.throws(
+		() => new t.RecursiveType(23 as any),
+		(err: Error) => err.message === '23 is not an instance of String'
+	)
 	assert.throws(
 		() => new t.RecursiveType('abc').toBuffer(),
-		'"abc" is not a registered type'
+		(err: Error) => err.message === '"abc" is not a registered type'
 	)
-	assert.throws(() => r.type(bufferFrom([0x57])), 'Buffer is not long enough')
-	assert.throws(() => r.type(bufferFrom([0x57, 0])), 'Buffer is not long enough')
-	assert.throws(() => rec.registerType(undefined as any), "Cannot destructure property `type` of 'undefined' or 'null'.")
+	assert.throws(
+		() => r.type(bufferFrom([0x57]).buffer),
+		(err: Error) => err.message === 'Buffer is not long enough'
+	)
+	assert.throws(
+		() => r.type(bufferFrom([0x57, 0]).buffer),
+		(err: Error) => err.message === 'Buffer is not long enough'
+	)
+	assert.throws(
+		() => rec.registerType(undefined as any),
+		(err: Error) =>
+			err.message === "Cannot destructure property `type` of 'undefined' or 'null'."
+	)
 	assert.throws(
 		() => rec.registerType({name: 'some-type'} as any),
-		'undefined is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
+		(err: Error) =>
+			err.message === 'undefined is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
 	)
 	assert.throws(
 		() => rec.registerType({
@@ -88,23 +105,25 @@ export = () => {
 				})
 			) as any
 		}),
-		'OptionalType {type: StructType {fields: [{name: "a", type: StringType {}, nameBuffer: [0x61]}, {name: "b", type: StringType {}, nameBuffer: [0x62]}]}} is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
+		(err: Error) =>
+			err.message === 'OptionalType {type: StructType {fields: [{name: "a", type: StringType {}, nameBuffer: [0x61]}, {name: "b", type: StringType {}, nameBuffer: [0x62]}]}} is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
 	)
 	assert.throws(
 		() => rec.registerType({name: 23 as any, type: new t.StructType({})}),
-		'23 is not an instance of String'
+		(err: Error) => err.message === '23 is not an instance of String'
 	)
 	assert.throws(
 		() => rec.registerType({name: 'some-type', type: 23 as any}),
-		'23 is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
+		(err: Error) =>
+			err.message === '23 is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
 	)
 	assert.throws(
 		() => rec.registerType({name: 'tree-node', type: new t.StructType({})}),
-		'"tree-node" is already a registered type'
+		(err: Error) => err.message === '"tree-node" is already a registered type'
 	)
 	assert.throws(
 		() => new t.RecursiveType('abc').toBuffer(),
-		'"abc" is not a registered type'
+		(err: Error) => err.message === '"abc" is not a registered type'
 	)
 
 	const randomString = crypto.randomBytes(1000).toString('binary')

@@ -1,5 +1,5 @@
 import AppendableBuffer from './appendable'
-import assert from './assert'
+import * as assert from './assert'
 import {timesEight} from './bit-math'
 
 /**

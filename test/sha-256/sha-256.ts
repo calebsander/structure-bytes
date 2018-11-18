@@ -1,5 +1,5 @@
+import {strict as assert} from 'assert'
 import * as crypto from 'crypto'
-import assert from '../../dist/lib/assert'
 import sha256, {sha256JS, sha256Wasm} from '../../dist/lib/sha-256'
 
 function toBytes(str: string): ArrayBuffer {
@@ -12,7 +12,7 @@ const toHexString = (buffer: ArrayBuffer): string =>
 const cryptoSHA256 = (message: Uint8Array) =>
 	crypto.createHash('sha256').update(message as Buffer).digest('hex')
 export = () => {
-	assert(sha256 === sha256Wasm, 'No WebAssembly support')
+	assert.equal(sha256, sha256Wasm, 'No WebAssembly support')
 	const TEST_CASES: [string, string][] = [
 		['abc', 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'],
 		['', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'],

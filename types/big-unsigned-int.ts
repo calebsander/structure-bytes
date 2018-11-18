@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
 import * as strint from '../lib/strint'
@@ -37,7 +37,7 @@ export class BigUnsignedIntType extends UnsignedType<string, string> {
 	writeValue(buffer: AppendableBuffer, value: string) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, String)
-		assert(!strint.isNegative(value), 'Value out of range')
+		if (strint.isNegative(value)) throw new RangeError('Value out of range')
 		const bytes: number[] = []
 		if (!strint.eq(value, '0')) { //if value is 0, avoid adding a 0 byte
 			while (strint.ge(value, strint.BYTE_SHIFT)) { //builds bytes in LE order
@@ -57,7 +57,7 @@ export class BigUnsignedIntType extends UnsignedType<string, string> {
 		const lengthInt = readFlexInt(buffer, offset)
 		const bytes = lengthInt.value
 		let {length} = lengthInt
-		assert(buffer.byteLength >= offset + length + bytes, NOT_LONG_ENOUGH)
+		if (buffer.byteLength < offset + length + bytes) throw new Error(NOT_LONG_ENOUGH)
 		const castBuffer = new Uint8Array(buffer, offset + length)
 		let value = '0'
 		for (let byte = 0; byte < bytes; byte++) {

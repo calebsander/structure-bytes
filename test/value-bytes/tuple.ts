@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -17,10 +17,10 @@ export = () => {
 		[[1, 2, 3, 4, 5], '1 is not an instance of String'],
 		[['a', 'b', 'c', 'd', 5], '5 is not an instance of String'],
 		[['a', 'b', 'c', 'd', 'e', 'f'], 'Length does not match: expected 5 but got 6']
-	]) {
+	] as [any, string][]) {
 		assert.throws(
-			() => type.valueBuffer(invalidValue as any),
-			message as string
+			() => type.valueBuffer(invalidValue),
+			(err: Error) => err.message === message
 		)
 	}
 	const gb = new GrowableBuffer
@@ -32,12 +32,12 @@ export = () => {
 		'abcd'
 	]
 	type.writeValue(gb, VALUE)
-	assert.equal(gb.toBuffer(), bufferFrom([
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 		0,
 		0x61, 0,
 		0x61, 0x62, 0,
 		0x61, 0x62, 0x63, 0,
 		0x61, 0x62, 0x63, 0x64, 0
 	]))
-	assert.equal(type.readValue(gb.toBuffer()), VALUE)
+	assert.deepEqual(type.readValue(gb.toBuffer()), VALUE)
 }

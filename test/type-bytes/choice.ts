@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -6,8 +6,8 @@ import {bufferFrom} from '../test-common'
 export = () => {
 	const type = new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedLongType, new t.StringType])
 	const buffer = type.toBuffer()
-	assert.equal(buffer, bufferFrom([0x56, 3, 0x11, 0x14, 0x41]))
-	assert.equal(r.type(buffer), type)
+	assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x56, 3, 0x11, 0x14, 0x41]))
+	assert(type.equals(r.type(buffer)))
 
 	const tooManyTypes = new Array<t.Type<any>>(256)
 	for (let i = 0; i < tooManyTypes.length; i++) {
@@ -17,7 +17,7 @@ export = () => {
 	}
 	assert.throws(
 		() => new t.ChoiceType(tooManyTypes),
-		'256 types is too many'
+		(err: Error) => err.message === '256 types is too many'
 	)
 
 	assert(!type.equals(new t.UnsignedByteType))

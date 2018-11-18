@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {readBooleans, readFlexInt, ReadResult} from '../lib/read-util'
 import writeBooleans from '../lib/write-booleans'

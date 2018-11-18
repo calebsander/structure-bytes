@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -15,10 +15,10 @@ export = () => {
 		[[2, true], '2 is not an instance of Object'],
 		['abc', '"abc" is not an instance of Array'],
 		[{a: 'b'}, '{a: "b"} is not an instance of Array']
-	]) {
+	] as [any, string][]) {
 		assert.throws(
-			() => type.valueBuffer(invalidValue as any),
-			message as string
+			() => type.valueBuffer(invalidValue),
+			(err: Error) => err.message === message
 		)
 	}
 
@@ -28,11 +28,11 @@ export = () => {
 		{a: '23', b: 'Ȁ'}
 	]
 	type.writeValue(gb, VALUE)
-	assert.equal(gb.toBuffer(), bufferFrom([2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
-	assert.equal(type.readValue(gb.toBuffer()), VALUE.map(({a, b}) => ({a: Number(a), b})))
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
+	assert.deepEqual(type.readValue(gb.toBuffer()), VALUE.map(({a, b}) => ({a: Number(a), b})))
 
 	const EMPTY_VALUE: {a: number, b: string}[] = []
 	const emptyBuffer = type.valueBuffer(EMPTY_VALUE)
-	assert.equal(emptyBuffer, bufferFrom([0]))
-	assert.equal(type.readValue(emptyBuffer), EMPTY_VALUE)
+	assert.deepEqual(new Uint8Array(emptyBuffer), bufferFrom([0]))
+	assert.deepEqual(type.readValue(emptyBuffer), EMPTY_VALUE)
 }

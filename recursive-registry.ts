@@ -1,4 +1,4 @@
-import assert from './lib/assert'
+import * as assert from './lib/assert'
 import {RegisterableType, TypeAndName} from './recursive-registry-type'
 import {ArrayType, MapType, SetType, StructType, TupleType} from './types'
 
@@ -58,7 +58,7 @@ export function registerType({type, name}: TypeAndName): void {
 		TupleType
 	])
 	assert.instanceOf(name, String)
-	assert(!isRegistered(name), `"${name}" is already a registered type`)
+	if (isRegistered(name)) throw new Error(`"${name}" is already a registered type`)
 	registeredTypes.set(name, type)
 }
 /**

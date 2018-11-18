@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -6,6 +6,6 @@ import {bufferFrom} from '../test-common'
 export = () => {
 	const type = new t.CharType
 	const buffer = type.toBuffer()
-	assert.equal(buffer, bufferFrom([0x40]))
-	assert.equal(r.type(buffer), new t.CharType)
+	assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x40]))
+	assert(new t.CharType().equals(r.type(buffer)))
 }

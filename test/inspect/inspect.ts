@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import * as util from '../../dist/lib/util-inspect'
 
 export = () => {

@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import {makeBaseValue, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
@@ -81,7 +81,7 @@ export class StructType<E extends StringIndexable, READ_E extends E = E> extends
 		//Allow only 255 fields
 		const fieldCount = Object.keys(fields).length
 		try { assert.byteUnsignedInteger(fieldCount) }
-		catch { assert.fail(`${fieldCount} fields is too many`) }
+		catch { throw new Error(`${fieldCount} fields is too many`) }
 
 		this.fields = new Array(fieldCount) //really a set, but we want ordering to be fixed so that type bytes are consistent
 		let fieldIndex = 0
@@ -90,11 +90,11 @@ export class StructType<E extends StringIndexable, READ_E extends E = E> extends
 			//Name must fit in 255 UTF-8 bytes
 			const fieldNameBuffer = bufferString.fromString(fieldName)
 			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength) }
-			catch { assert.fail(`Field name ${fieldName} is too long`) }
+			catch { throw new Error(`Field name ${fieldName} is too long`) }
 			//Type must be a Type
 			const fieldType = fields[fieldName]
 			try { assert.instanceOf(fieldType, AbstractType) }
-			catch { assert.fail(inspect(fieldType) + ' is not a valid field type') }
+			catch { throw new Error(inspect(fieldType) + ' is not a valid field type') }
 			this.fields[fieldIndex] = {
 				name: fieldName,
 				type: fieldType,

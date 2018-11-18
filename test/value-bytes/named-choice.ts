@@ -1,5 +1,5 @@
+import {strict as assert} from 'assert'
 import sha256 from '../../dist/lib/sha-256'
-import assert from '../../dist/lib/assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -38,40 +38,43 @@ export = () => {
 	const hashedQRCode = new HashedQRCode('abcde')
 	assert.equal(hashedQRCode.hash, '36bbe50ed96841d10443bcb670d6554f0a34b761be67ec9c4a8ad2c0c44ca42c')
 	const valueBuffer = type.valueBuffer(hashedQRCode)
-	assert.equal(valueBuffer, bufferFrom([0, 0x61, 0x62, 0x63, 0x64, 0x65, 0]))
+	assert.deepEqual(new Uint8Array(valueBuffer), bufferFrom([0, 0x61, 0x62, 0x63, 0x64, 0x65, 0]))
 	const readType = r.type(type.toBuffer()) as t.NamedChoiceType<QRCode | UPC>
 	const readValue = readType.readValue(valueBuffer) as QRCode
 	const castValue = new QRCode(hashedQRCode.text)
 	assert.equal(readValue.constructor.name, castValue.constructor.name)
 	assert.equal(readValue.constructor.name, 'QRCode')
-	assert.equal(Object.keys(readValue), Object.keys(castValue))
-	assert.equal(Object.keys(readValue), ['text'])
+	assert.deepEqual(Object.keys(readValue), Object.keys(castValue))
+	assert.deepEqual(Object.keys(readValue), ['text'])
 	assert.equal(readValue.text, castValue.text)
 
 	const upc = new UPC('123')
 	const valueBuffer2 = type.valueBuffer(upc)
-	assert.equal(valueBuffer2, bufferFrom([1, 0, 0, 0, 0, 0, 0, 0, 123]))
+	assert.deepEqual(
+		new Uint8Array(valueBuffer2),
+		bufferFrom([1, 0, 0, 0, 0, 0, 0, 0, 123])
+	)
 	const readValue2 = type.readValue(valueBuffer2) as UPC
 	assert.equal(readValue2.constructor.name, upc.constructor.name)
 	assert.equal(readValue2.constructor.name, 'UPC')
-	assert.equal(Object.keys(readValue2), Object.keys(upc))
-	assert.equal(Object.keys(readValue2), ['number'])
+	assert.deepEqual(Object.keys(readValue2), Object.keys(upc))
+	assert.deepEqual(Object.keys(readValue2), ['number'])
 	assert.equal(readValue2.number, upc.number)
 
 	assert.throws(
 		() => type.valueBuffer([1, 2, 3] as any),
-		'No types matched: [1, 2, 3]'
+		(err: Error) => err.message === 'No types matched: [1, 2, 3]'
 	)
 	assert.throws(
 		() => type.valueBuffer(new (QRCode as any)),
-		'Value for field "text" missing'
+		(err: Error) => err.message === 'Value for field "text" missing'
 	)
 	assert.throws(
 		() => type.valueBuffer(null as any),
-		'null is not an instance of Object'
+		(err: Error) => err.message === 'null is not an instance of Object'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([100])),
-		'Constructor index 100 is invalid'
+		() => type.readValue(bufferFrom([100]).buffer),
+		(err: Error) => err.message === 'Constructor index 100 is invalid'
 	)
 }

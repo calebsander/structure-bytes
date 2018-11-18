@@ -1,6 +1,6 @@
+import {strict as assert} from 'assert'
 import {Writable} from 'stream'
 import AppendableStream from '../../dist/lib/appendable-stream'
-import assert from '../../dist/lib/assert'
 
 class CaptureStream extends Writable {
 	private readonly chunks: Buffer[]
@@ -22,12 +22,12 @@ class CaptureStream extends Writable {
 const testBasic = new Promise<void>((resolve, reject) => {
 	assert.throws(
 		() => new AppendableStream(0 as any),
-		'0 is not an instance of Writable'
+		(err: Error) => err.message === '0 is not an instance of Writable or Duplex or OutgoingMessage'
 	)
 	const outStream = new CaptureStream
 	outStream.on('finish', () => {
 		try {
-			assert.equal(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 5, 6, 7]))
+			assert.deepEqual(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 5, 6, 7]))
 			resolve()
 		}
 		catch (e) { reject(e) }
@@ -40,23 +40,23 @@ const testBasic = new Promise<void>((resolve, reject) => {
 	assert.equal(stream.length, 4)
 	assert.throws(
 		() => stream.add('abc' as any),
-		'"abc" is not an instance of Number'
+		(err: Error) => err.message === '"abc" is not an instance of Number'
 	)
 	assert.throws(
 		() => stream.add(-1),
-		'Not a byte: -1 (-1 is not in [0,256))'
+		(err: Error) => err.message === 'Not a byte: -1 (-1 is not in [0,256))'
 	)
 	assert.throws(
 		() => stream.add(256),
-		'Not a byte: 256 (256 is not in [0,256))'
+		(err: Error) => err.message === 'Not a byte: 256 (256 is not in [0,256))'
 	)
 	assert.throws(
 		() => stream.add(1.3),
-		'1.3 is not an integer'
+		(err: Error) => err.message === '1.3 is not an integer'
 	)
 	assert.throws(
 		() => stream.addAll(Buffer.from([5, 6]) as any),
-		'<Buffer 05 06> is not an instance of ArrayBuffer'
+		(err: Error) => err.message === '<Buffer 05 06> is not an instance of ArrayBuffer'
 	)
 	assert.equal(stream.length, 4)
 	stream.addAll(new ArrayBuffer(0))
@@ -71,7 +71,7 @@ const testPause = new Promise<void>((resolve, reject) => {
 	const outStream = new CaptureStream
 	outStream.on('finish', () => {
 		try {
-			assert.equal(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 9, 10]))
+			assert.deepEqual(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 9, 10]))
 			resolve()
 		}
 		catch (e) { reject(e) }
@@ -82,11 +82,11 @@ const testPause = new Promise<void>((resolve, reject) => {
 	assert.equal(stream.length, 2)
 	assert.throws(
 		() => stream.resume(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	assert.throws(
 		() => stream.reset(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	stream
 		.pause()
@@ -118,11 +118,11 @@ const testPause = new Promise<void>((resolve, reject) => {
 	assert.equal(stream.length, 6)
 	assert.throws(
 		() => stream.resume(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	assert.throws(
 		() => stream.reset(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	stream.end()
 })

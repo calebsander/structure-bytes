@@ -1,4 +1,3 @@
-import assert from './assert'
 import {dividedByEight, modEight, timesEight} from './bit-math'
 import * as flexInt from './flex-int'
 import * as strint from './strint'
@@ -60,7 +59,7 @@ export function makeBaseValue(readType: RegisterableType, count?: number): any {
  * `false` if it is `0x00`
  */
 export function readBooleanByte(buffer: ArrayBuffer, offset: number): ReadResult<boolean> {
-	assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+	if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
 	let value: boolean
 	const readByte = new Uint8Array(buffer)[offset]
 	switch (readByte) {
@@ -93,7 +92,7 @@ export function readBooleans({buffer, offset, count}: ReadBooleansParams): ReadR
 	const incompleteBytes = modEight(count)
 	const bytes = dividedByEight(count)
 	const length = incompleteBytes ? bytes + 1 : bytes
-	assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 	const castBuffer = new Uint8Array(buffer, offset)
 	for (let i = 0; i < length; i++) {
 		const byte = castBuffer[i]
@@ -114,10 +113,10 @@ export function readBooleans({buffer, offset, count}: ReadBooleansParams): ReadR
  * @return The number stored in the `flexInt`
  */
 export function readFlexInt(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-	assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+	if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
 	const castBuffer = new Uint8Array(buffer, offset)
 	const length = flexInt.getByteCount(castBuffer[0])
-	assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 	return {
 		value: flexInt.readValueBuffer(castBuffer.slice(0, length).buffer),
 		length
@@ -133,7 +132,7 @@ export function readFlexInt(buffer: ArrayBuffer, offset: number): ReadResult<num
  */
 export function readLong(buffer: ArrayBuffer, offset: number): ReadResult<string> {
 	const length = 8
-	assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 	const dataView = new DataView(buffer, offset)
 	const upper = dataView.getInt32(0)
 	const lower = dataView.getUint32(4)
@@ -191,7 +190,7 @@ export interface TypeAndFunc {
 export function readNumber({func, type}: TypeAndFunc) {
 	const length = type.BYTES_PER_ELEMENT
 	return (buffer: ArrayBuffer, offset: number): ReadResult<number> => {
-		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 		return {
 			value: new DataView(buffer)[func](offset),
 			length

@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {makeBaseValue, readBooleanByte, readFlexInt, ReadResult} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'

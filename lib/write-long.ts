@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from './assert'
+import * as assert from './assert'
 import * as strint from './strint'
 
 const LONG_MAX = '9223372036854775807',
@@ -11,7 +11,7 @@ const LONG_MAX = '9223372036854775807',
  */
 export default (buffer: AppendableBuffer, value: string): void => {
 	assert.instanceOf(value, String)
-	assert(!(strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)), 'Value out of range')
+	if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) throw new RangeError('Value out of range')
 	const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int
 	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
 	const byteBuffer = new ArrayBuffer(8)

@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import * as flexInt from '../../dist/lib/flex-int'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
@@ -23,13 +23,13 @@ export = () => {
 			c: [100, 101, 102, 103, 104]
 		}
 		type.writeValue(gb, VALUE)
-		assert.equal(gb.toBuffer(), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 			0,
 				5, 100, 101, 102, 103, 104,
 			7,
 			1
 		]))
-		assert.equal(type.readValue(gb.toBuffer()), VALUE)
+		assert.deepEqual(type.readValue(gb.toBuffer()), VALUE)
 	}
 
 	{
@@ -40,7 +40,7 @@ export = () => {
 		const gb = new GrowableBuffer
 		const VALUE = ['1234567890', '0', '0', '2', '0']
 		type.writeValue(gb, VALUE)
-		assert.equal(gb.toBuffer(), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 			0,
 				0, 0, 0, 0, 0x49, 0x96, 0x02, 0xd2,
 			0,
@@ -50,7 +50,7 @@ export = () => {
 				0, 0, 0, 0, 0, 0, 0, 2,
 			10
 		]))
-		assert.equal(type.readValue(gb.toBuffer()), VALUE)
+		assert.deepEqual(type.readValue(gb.toBuffer()), VALUE)
 	}
 
 	{
@@ -62,7 +62,7 @@ export = () => {
 		const tuple = []
 		for (let i = 0; i < 10; i++) tuple[i] = '0abc0'
 		type.writeValue(gb, tuple)
-		assert.equal(gb.toBuffer(), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 			0,
 				0x30, 0x61, 0x62, 0x63, 0x30, 0,
 			7,
@@ -75,7 +75,7 @@ export = () => {
 			1,
 			1
 		]))
-		assert.equal(type.readValue(gb.toBuffer()), tuple)
+		assert.deepEqual(type.readValue(gb.toBuffer()), tuple)
 	}
 
 	{
@@ -86,7 +86,7 @@ export = () => {
 		)
 		const gb = new GrowableBuffer
 		type.writeValue(gb, 123)
-		assert.equal(gb.toBuffer(), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 			0xff,
 				0,
 					0, 123
@@ -102,7 +102,7 @@ export = () => {
 		const gb = new GrowableBuffer
 		const map = new Map<string, number>().set('abc', -126).set('def', -126)
 		type.writeValue(gb, map)
-		assert.equal(gb.toBuffer(), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 			2,
 				0,
 					0x61, 0x62, 0x63, 0,
@@ -112,7 +112,7 @@ export = () => {
 					0x64, 0x65, 0x66, 0,
 				7
 		]))
-		assert.equal(type.readValue(gb.toBuffer()), map)
+		assert.deepEqual(type.readValue(gb.toBuffer()), map)
 	}
 
 	//Reading a value being pointed to twice should always give the same value
@@ -127,7 +127,7 @@ export = () => {
 		b: threeDVectorType
 	})
 	const buffer = duplicateType.valueBuffer({a: [2, 0, 1], b: [2, 0, 1]})
-	assert.equal(buffer, bufferFrom([
+	assert.deepEqual(new Uint8Array(buffer), bufferFrom([
 		0,
 			0x40, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00,
@@ -135,7 +135,7 @@ export = () => {
 		13
 	]))
 	const valueReadBack = duplicateType.readValue(buffer)
-	assert(valueReadBack.a === valueReadBack.b)
+	assert.equal(valueReadBack.a, valueReadBack.b)
 
 	//Different types should be able to use the same pointer location if value bytes are equivalent
 	{
@@ -148,12 +148,12 @@ export = () => {
 			number: 'a'.charCodeAt(0) << 8
 		}
 		const buffer = type.valueBuffer(value)
-		assert.equal(buffer, bufferFrom([
+		assert.deepEqual(new Uint8Array(buffer), bufferFrom([
 			0,
 				0x61, 0,
 			3
 		]))
-		assert.equal(type.readValue(buffer), value)
+		assert.deepEqual(type.readValue(buffer), value)
 	}
 
 	//Test with offset requiring 2 flexInt bytes
@@ -169,15 +169,14 @@ export = () => {
 			value.push(n)
 			bytes.push(0, n)
 		}
-		value.push(1)
-		value.push(1)
+		value.push(1, 1)
 		const buffer = type.valueBuffer(value)
-		assert.equal(buffer, concat([
+		assert.deepEqual(new Uint8Array(buffer), concat([
 			bufferFrom([value.length]),
 			bufferFrom(bytes),
-			flexInt.makeValueBuffer(100 * 2),
+			new Uint8Array(flexInt.makeValueBuffer(100 * 2)),
 			bufferFrom([2])
 		]))
-		assert.equal(type.readValue(buffer), value)
+		assert.deepEqual(type.readValue(buffer), value)
 	}
 }

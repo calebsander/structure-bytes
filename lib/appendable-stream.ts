@@ -1,7 +1,7 @@
 import {OutgoingMessage} from 'http'
 import {Duplex, Writable} from 'stream'
 import AppendableBuffer from './appendable'
-import assert from './assert'
+import * as assert from './assert'
 import GrowableBuffer from './growable-buffer'
 
 const WRITABLE_STREAMS = [Writable, Duplex, OutgoingMessage]

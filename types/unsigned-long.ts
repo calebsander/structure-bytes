@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import * as strint from '../lib/strint'
 import UnsignedType from './unsigned'
@@ -33,7 +33,7 @@ export class UnsignedLongType extends UnsignedType<string, string> {
 	writeValue(buffer: AppendableBuffer, value: string) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, String)
-		assert(!(strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')), 'Value out of range')
+		if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0')) throw new RangeError('Value out of range')
 		const upper = strint.div(value, strint.LONG_UPPER_SHIFT) //get upper unsigned int
 		const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
 		const byteBuffer = new ArrayBuffer(8)
@@ -44,7 +44,7 @@ export class UnsignedLongType extends UnsignedType<string, string> {
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
 		const length = 8
-		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 		const dataView = new DataView(buffer, offset)
 		const upper = dataView.getUint32(0)
 		const lower = dataView.getUint32(4)

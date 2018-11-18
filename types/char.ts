@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
@@ -30,11 +30,11 @@ export class CharType extends AbsoluteType<string> {
 	writeValue(buffer: AppendableBuffer, value: string) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, String)
-		assert(value.length === 1, 'String must contain only 1 character')
+		if (value.length !== 1) throw new Error('String must contain only 1 character')
 		buffer.addAll(bufferString.fromString(value))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
-		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
 		const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4)) //UTF-8 codepoint can't be more than 4 bytes
 		return {
 			value,

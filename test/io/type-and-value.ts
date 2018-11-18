@@ -1,6 +1,6 @@
+import {strict as assert} from 'assert'
 import * as fs from 'fs'
 import {promisify} from 'util'
-import assert from '../../dist/lib/assert'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
@@ -26,7 +26,7 @@ const writePromise = (() => {
 	const outStream = fs.createWriteStream(OUT_FILE)
 	return promisify(io.writeTypeAndValue)({type, value, outStream})
 		.then(_ => promisify(fs.readFile)(OUT_FILE))
-		.then(data => assert.equal(data, Buffer.from(BUFFER)))
+		.then(data => assert.deepEqual(data, Buffer.from(BUFFER)))
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const writeWithoutCallback = new Promise<void>((resolve, reject) => {
@@ -37,7 +37,7 @@ const writeWithoutCallback = new Promise<void>((resolve, reject) => {
 			resolve(
 				promisify(fs.readFile)(OUT_FILE)
 					.then(data =>
-						assert.equal(data, Buffer.from([0x41, 0x61, 0x62, 0x63, 0]))
+						assert.deepEqual(data, Buffer.from([0x41, 0x61, 0x62, 0x63, 0]))
 					)
 					.then(_ => promisify(fs.unlink)(OUT_FILE))
 			)
@@ -55,7 +55,7 @@ const writeTypeErrorPromise = (() => {
 		outStream
 	})
 		.then(_ => { throw new Error('Expected error to be thrown') })
-		.catch(err => assert.errorMessage(err, '"no-such-type" is not a registered type'))
+		.catch(err => assert(err.message === '"no-such-type" is not a registered type'))
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const writeValueErrorPromise = (() => {
@@ -64,20 +64,20 @@ const writeValueErrorPromise = (() => {
 	return promisify(io.writeTypeAndValue)({type: new t.UnsignedIntType, value: -1, outStream})
 		.then(_ => { throw new Error('Expected error to be thrown') })
 		.catch(err =>
-			assert.errorMessage(err, 'Value out of range (-1 is not in [0,4294967296))')
+			assert(err.message === 'Value out of range (-1 is not in [0,4294967296))')
 		)
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const readPromise = promisify(io.readTypeAndValue)<Map<string, number>>(new BufferStream(BUFFER))
 	.then(({type: readType, value: readValue}) => {
-		assert.equal(readType, type)
-		assert.equal(readValue, value)
+		assert(type.equals(readType))
+		assert.deepEqual(readValue, value)
 	})
 const readErrorPromise = promisify(io.readTypeAndValue)<string>(
 	new BufferStream(bufferFrom([0x41, 0x61, 0x62, 0x63]))
 )
 	.then(_ => { throw new Error('Expected error to be thrown') })
-	.catch(err => assert.errorMessage(err, 'Buffer is not long enough'))
+	.catch(err => assert(err.message === 'Buffer is not long enough'))
 export = Promise.all([
 	writePromise,
 	writeWithoutCallback,

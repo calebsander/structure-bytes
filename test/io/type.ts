@@ -1,6 +1,6 @@
+import {strict as assert} from 'assert'
 import * as fs from 'fs'
 import {promisify} from 'util'
-import assert from '../../dist/lib/assert'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
@@ -21,7 +21,7 @@ const writePromise = (() => {
 	return promisify(io.writeType)({type, outStream})
 		.then(_ => promisify(fs.readFile)(OUT_FILE))
 		.then(data =>
-			assert.equal(data, Buffer.from([
+			assert.deepEqual(data, Buffer.from([
 				0x52,
 					0x51, 2,
 						3, 0x61, 0x62, 0x63,
@@ -40,7 +40,7 @@ const writeWithoutCallback = new Promise<void>((resolve, reject) => {
 		try {
 			resolve(
 				promisify(fs.readFile)(OUT_FILE)
-					.then(data => assert.equal(data, Buffer.from([0x41])))
+					.then(data => assert.deepEqual(data, Buffer.from([0x41])))
 					.then(_ => promisify(fs.unlink)(OUT_FILE))
 			)
 		}
@@ -56,14 +56,14 @@ const writeErrorPromise = (() => {
 		outStream
 	})
 		.then(_ => { throw new Error('Expected error to be thrown') })
-		.catch(err => assert.errorMessage(err, '"no-such-type" is not a registered type'))
+		.catch(err => assert(err.message === '"no-such-type" is not a registered type'))
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const readPromise = promisify(io.readType)<Value>(new BufferStream(type.toBuffer()))
-	.then(readType => assert.equal(readType, type))
+	.then(readType => assert(type.equals(readType)))
 const readErrorPromise = promisify(io.readType)(new BufferStream(bufferFrom([0])))
 	.then(_ => { throw new Error('Expected error to be thrown') })
-	.catch(err => assert.errorMessage(err, 'No such type: 0x00'))
+	.catch(err => assert(err.message === 'No such type: 0x00'))
 export = Promise.all([
 	writePromise,
 	writeWithoutCallback,

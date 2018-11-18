@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {REPEATED_TYPE} from '../../dist/lib/constants'
 import * as t from '../../dist/types'
 import AbstractType from '../../dist/types/abstract'
@@ -15,10 +15,10 @@ export = () => {
 			typeByte = (t as any as TypesOnly)[typeName]._value
 		}
 		catch (e) {
-			assert.errorMessage(e, 'Generic Type has no value byte')
+			assert(e.message === 'Generic Type has no value byte')
 			continue
 		}
-		if (usedBytes.has(typeByte)) assert.fail('Type byte ' + String(typeByte) + ' is used twice')
+		assert(!usedBytes.has(typeByte), `Type byte ${typeByte} is used twice`)
 		usedBytes.add(typeByte)
 	}
 }

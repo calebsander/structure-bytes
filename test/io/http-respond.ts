@@ -1,7 +1,7 @@
+import {strict as assert} from 'assert'
 import * as http from 'http'
 import {promisify} from 'util'
 import * as zlib from 'zlib'
-import assert from '../../dist/lib/assert'
 import * as io from '../../dist'
 import * as t from '../../dist'
 
@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
 	else {
 		io.httpRespond({req, res, type, value: responseValue}, err => {
 			if (throwError) {
-				assert.instanceOf(err, Error)
+				assert(err instanceof Error)
 				const {message} = err!
 				assert(
 					message === "Can't set headers after they are sent." || //Node 8 and before
@@ -44,8 +44,8 @@ const requestDate = new Promise<void>((resolve, reject) => {
 			resolve(
 				promisify(io.readTypeAndValue)<Date>(res)
 					.then(({type, value}) => {
-						assert.equal(type, new t.DateType)
-						assert.equal(value.getTime(), responseValue.getTime())
+						assert(new t.DateType().equals(type))
+						assert.deepEqual(value, responseValue)
 					})
 			)
 		}
@@ -59,8 +59,8 @@ const requestGzip = new Promise<void>((resolve, reject) => {
 			resolve(
 				promisify(io.readTypeAndValue)<Date>(res.pipe(zlib.createGunzip()))
 					.then(({type, value}) => {
-						assert.equal(type, new t.DateType)
-						assert.equal(value.getTime(), responseValue.getTime())
+						assert(new t.DateType().equals(type))
+						assert.deepEqual(value, responseValue)
 					})
 			)
 		}
@@ -73,7 +73,7 @@ const requestWithSignature = new Promise<void>((resolve, reject) => {
 			resolve(
 				promisify(io.readValue)({type, inStream: res})
 					.then(value =>
-						assert.equal(value.getTime(), responseValue.getTime())
+						assert.deepEqual(value, responseValue)
 					)
 			)
 		}
@@ -86,7 +86,7 @@ const requestGzipWithSignature = new Promise<void>((resolve, reject) => {
 			resolve(
 				promisify(io.readValue)({type, inStream: res.pipe(zlib.createGunzip())})
 					.then(value =>
-						assert.equal(value.getTime(), responseValue.getTime())
+						assert.deepEqual(value, responseValue)
 					)
 			)
 		}
@@ -100,7 +100,7 @@ const errorRequest = new Promise<void>((resolve, reject) => {
 			.on('data', chunk => chunks.push(chunk as Buffer))
 			.on('end', () => {
 				try {
-					assert.equal(Buffer.concat(chunks), Buffer.from([]))
+					assert.deepEqual(Buffer.concat(chunks), Buffer.from([]))
 					resolve()
 				}
 				catch (e) { reject(e) }
@@ -115,8 +115,8 @@ const noCallbackRequest = new Promise<void>((resolve, reject) => {
 			resolve(
 				promisify(io.readTypeAndValue)<Date>(res)
 					.then(({type, value}) => {
-						assert.equal(type, new t.DateType)
-						assert.equal(value.getTime(), responseValue.getTime())
+						assert(new t.DateType().equals(type))
+						assert.deepEqual(value, responseValue)
 					})
 			)
 		}
@@ -127,7 +127,7 @@ const noCallbackRequest = new Promise<void>((resolve, reject) => {
 const port2 = port + 1
 const server2 = http.createServer((req, res) => {
 	io.httpRespond<number | string>({req, res, type: new t.ByteType, value: '257'}, err => {
-		assert.errorMessage(err, 'Value out of range (257 is not in [-128,128))')
+		assert(err && err.message === 'Value out of range (257 is not in [-128,128))')
 		res.end()
 	})
 })

@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import * as constructorRegistry from '../lib/constructor-registry'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
@@ -83,20 +83,20 @@ export class NamedChoiceType<E extends object, READ_E extends E = E> extends Abs
 		super()
 		assert.instanceOf(constructorTypes, Map)
 		try { assert.byteUnsignedInteger(constructorTypes.size) }
-		catch { assert.fail(`${constructorTypes.size} types is too many`) }
+		catch { throw new Error(`${constructorTypes.size} types is too many`) }
 		this.indexConstructors = new Map
 		this.constructorTypes = new Array(constructorTypes.size)
 		const usedNames = new Set<string>()
 		for (const [constructor, type] of constructorTypes) {
 			assert.instanceOf(constructor, Function)
 			const {name} = constructor
-			assert(name !== '', 'Function does not have a name')
-			assert(!usedNames.has(name), `Function name "${name}" is repeated`)
+			if (!name) throw new Error('Function does not have a name')
+			if (usedNames.has(name)) throw new Error(`Function name "${name}" is repeated`)
 			usedNames.add(name)
 			//Name must fit in 255 UTF-8 bytes
 			const typeNameBuffer = bufferString.fromString(name)
 			try { assert.byteUnsignedInteger(typeNameBuffer.byteLength) }
-			catch { assert.fail(`Function name "${name}" is too long`) }
+			catch { throw new Error(`Function name "${name}" is too long`) }
 			assert.instanceOf(type, StructType)
 			const constructorIndex = this.indexConstructors.size
 			this.indexConstructors.set(constructorIndex, constructor)
@@ -162,7 +162,7 @@ export class NamedChoiceType<E extends object, READ_E extends E = E> extends Abs
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
 		let length = 1
-		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
 		const typeIndex = new Uint8Array(buffer)[offset]
 		const typeConstructor = this.indexConstructors.get(typeIndex)
 		if (!typeConstructor) throw new Error(`Constructor index ${typeIndex} is invalid`)
@@ -183,8 +183,9 @@ export class NamedChoiceType<E extends object, READ_E extends E = E> extends Abs
 			const thisConstructor = this.constructorTypes[i]
 			const otherConstructor = otherChoiceType.constructorTypes[i]
 			if (!thisConstructor.type.equals(otherConstructor.type)) return false
-			try { assert.equal(otherConstructor.nameBuffer, thisConstructor.nameBuffer) }
-			catch { return false }
+			if (!assert.equal.buffers(otherConstructor.nameBuffer, thisConstructor.nameBuffer)) {
+				return false
+			}
 		}
 		return true
 	}

@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 
 export = () => {
@@ -12,10 +12,10 @@ export = () => {
 		[null, 'null is not a valid buffer length'],
 		[true, 'true is not a valid buffer length'],
 		['abc', 'abc is not a valid buffer length']
-	]) {
+	] as [any, string][]) {
 		assert.throws(
-			() => new GrowableBuffer(invalidSize as any),
-			message as string
+			() => new GrowableBuffer(invalidSize),
+			(err: Error) => err.message === message
 		)
 	}
 }

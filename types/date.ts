@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {readLong, ReadResult} from '../lib/read-util'
 import writeLong from '../lib/write-long'
 import ChronoType from './chrono'

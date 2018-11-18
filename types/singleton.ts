@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {inspect} from '../lib/util-inspect'
 import AbstractType from './abstract'
 import {Type} from './type'
@@ -92,9 +92,8 @@ export class SingletonType<E> extends AbstractType<E> {
 	 */
 	writeValue(buffer: AppendableBuffer, value: E) {
 		this.isBuffer(buffer)
-		try { assert.equal(this.type.valueBuffer(value), this.singletonValueBuffer) }
-		catch {
-			assert.fail(`Expected ${inspect(this.value)} but got ${inspect(value)}`)
+		if (!assert.equal.buffers(this.type.valueBuffer(value), this.singletonValueBuffer)) {
+			throw new Error(`Expected ${inspect(this.value)} but got ${inspect(value)}`)
 		}
 	}
 	consumeValue() {
@@ -104,8 +103,9 @@ export class SingletonType<E> extends AbstractType<E> {
 		if (!super.equals(otherType)) return false
 		const otherSingletonType = otherType as SingletonType<any>
 		if (!this.type.equals(otherSingletonType.type)) return false
-		try { assert.equal(this.value, otherSingletonType.value) }
-		catch { return false }
-		return true
+		return assert.equal.buffers(
+			otherSingletonType.singletonValueBuffer,
+			this.singletonValueBuffer
+		)
 	}
 }

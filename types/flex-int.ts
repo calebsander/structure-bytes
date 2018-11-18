@@ -1,5 +1,5 @@
-import assert from '../lib/assert'
 import AppendableBuffer from '../lib/appendable'
+import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {readFlexInt, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'

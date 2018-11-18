@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {readBooleanByte, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'

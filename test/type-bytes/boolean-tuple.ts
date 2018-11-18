@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -6,12 +6,12 @@ import {bufferFrom} from '../test-common'
 export = () => {
 	const type = new t.BooleanTupleType(12)
 	const buffer = type.toBuffer()
-	assert.equal(buffer, bufferFrom([0x31, 12]))
+	assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x31, 12]))
 	const readType = r.type(buffer)
-	assert.equal(readType, type)
+	assert(type.equals(readType))
 	assert.throws(
 		() => new t.BooleanTupleType(256),
-		'256 is not in [0,256)'
+		(err: Error) => err.message === '256 is not in [0,256)'
 	)
 
 	assert(!type.equals(undefined))

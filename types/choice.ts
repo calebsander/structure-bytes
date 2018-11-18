@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
@@ -54,7 +54,7 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		super()
 		assert.instanceOf(types, Array)
 		try { assert.byteUnsignedInteger(types.length) }
-		catch { assert.fail(`${types.length} types is too many`) }
+		catch { throw new Error(`${types.length} types is too many`) }
 		for (const type of types) assert.instanceOf(type, AbstractType)
 		this.types = types
 	}
@@ -103,11 +103,11 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 			catch { buffer.reset() }
 		}
 		buffer.resume()
-		if (!success) assert.fail('No types matched: ' + inspect(value))
+		if (!success) throw new Error('No types matched: ' + inspect(value))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
 		let length = 1
-		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
 		const typeIndex = new Uint8Array(buffer)[offset]
 		const {value, length: subLength} = this.types[typeIndex].consumeValue(buffer, offset + length)
 		length += subLength

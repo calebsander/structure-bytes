@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as date from '../lib/date'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import ChronoType from './chrono'
@@ -43,7 +43,7 @@ export class TimeType extends ChronoType {
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {
 		const length = 4
-		assert(buffer.byteLength >= offset + length, NOT_LONG_ENOUGH)
+		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 		return {
 			value: new Date(new DataView(buffer).getUint32(offset)),
 			length

@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import * as t from '../../dist'
 import {bufferFrom, concat} from '../test-common'
 
@@ -8,25 +8,25 @@ export = () => {
 	{
 		const buffer = type.valueBuffer(VALUE)
 		const bytes = [0x3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01]
-		assert.equal(buffer, concat([bufferFrom([bytes.length]), bufferFrom(bytes)]))
+		assert.deepEqual(new Uint8Array(buffer), concat([bufferFrom([bytes.length]), bufferFrom(bytes)]))
 		assert.equal(type.readValue(buffer), VALUE)
 	}
 	{
 		const buffer = type.valueBuffer('0')
-		assert.equal(buffer, bufferFrom([0]))
+		assert.deepEqual(new Uint8Array(buffer), bufferFrom([0]))
 		assert.equal(type.readValue(buffer), '0')
 	}
 
 	assert.throws(
 		() => type.valueBuffer([true] as any),
-		'[true] is not an instance of String'
+		(err: Error) => err.message === '[true] is not an instance of String'
 	)
 	assert.throws(
 		() => type.valueBuffer('120971.00'),
-		'Illegal strint format: 120971.00'
+		(err: Error) => err.message === 'Illegal strint format: 120971.00'
 	)
 	assert.throws(
 		() => type.valueBuffer('-1'),
-		'Value out of range'
+		(err: Error) => err.message === 'Value out of range'
 	)
 }

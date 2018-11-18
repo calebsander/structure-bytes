@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -14,13 +14,13 @@ export = () => {
 		[['abc', 3], '3 is not an instance of String'],
 		[['1', '2', '1'], 'Value is repeated: "1"'],
 		[tooManyValues, '256 values is too many']
-	]) {
+	] as [any, string][]) {
 		assert.throws(
 			() => new t.EnumType({
 				type: new t.StringType,
-				values: invalidValues as any
+				values: invalidValues
 			}).toBuffer(),
-			message as string
+			(err: Error) => err.message === message
 		)
 	}
 
@@ -33,8 +33,15 @@ export = () => {
 				'GHI'
 			]
 		})
-		assert.equal(type.toBuffer(), bufferFrom([0x55, 0x41, 3, 0x41, 0x42, 0x43, 0, 0x44, 0x45, 0x46, 0, 0x47, 0x48, 0x49, 0]))
-		assert.equal(r.type(type.toBuffer()), type)
+		assert.deepEqual(new Uint8Array(type.toBuffer()), bufferFrom([
+			0x55,
+				0x41,
+				3,
+					0x41, 0x42, 0x43, 0,
+					0x44, 0x45, 0x46, 0,
+					0x47, 0x48, 0x49, 0
+		]))
+		assert(type.equals(r.type(type.toBuffer())))
 	}
 
 	{
@@ -50,8 +57,19 @@ export = () => {
 				CHEETAH
 			]
 		})
-		assert.equal(type.toBuffer(), bufferFrom([0x55, 0x51, 2, 8, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x46, 0x74, 0x20, 8, 0x73, 0x70, 0x65, 0x65, 0x64, 0x4d, 0x70, 0x68, 0x11, 2, 0x40, 0xc0, 0x00, 0x00, 28, 0x40, 0x40, 0x00, 0x00, 70]))
-		assert.equal(r.type(type.toBuffer()), type)
+		assert.deepEqual(new Uint8Array(type.toBuffer()), bufferFrom([
+			0x55,
+				0x51,
+					2,
+						8, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x46, 0x74,
+							0x20,
+						8, 0x73, 0x70, 0x65, 0x65, 0x64, 0x4d, 0x70, 0x68,
+							0x11,
+				2,
+					0x40, 0xc0, 0x00, 0x00, 28,
+					0x40, 0x40, 0x00, 0x00, 70
+		]))
+		assert(type.equals(r.type(type.toBuffer())))
 	}
 
 	{

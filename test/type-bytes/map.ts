@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -11,8 +11,17 @@ export = () => {
 			'b—c': new t.CharType
 		})
 	)
-	assert.equal(map.toBuffer(), bufferFrom([0x54, 0x41, 0x51, 2, 1, 0x61, 0x52, 0x11, 5, 0x62, 0xe2, 0x80, 0x94, 0x63, 0x40]))
-	assert.equal(r.type(map.toBuffer()), map)
+	assert.deepEqual(new Uint8Array(map.toBuffer()), bufferFrom([
+		0x54,
+			0x41,
+			0x51,
+				2,
+					1, 0x61,
+						0x52, 0x11,
+					5, 0x62, 0xe2, 0x80, 0x94, 0x63,
+						0x40
+	]))
+	assert(map.equals(r.type(map.toBuffer())))
 
 	const type1 = new t.MapType(
 		new t.ByteType,

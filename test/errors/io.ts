@@ -1,5 +1,5 @@
+import {strict as assert} from 'assert'
 import * as fs from 'fs'
-import assert from '../../dist/lib/assert'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
@@ -8,7 +8,7 @@ import {bufferFrom, concat} from '../test-common'
 const invalidTypeBuffer = new Promise((resolve, reject) => {
 	io.readTypeAndValue(new BufferStream(bufferFrom([t.ArrayType._value])), (err, type, value) => {
 		try {
-			assert.errorMessage(err, 'Buffer is not long enough')
+			assert(err && err.message === 'Buffer is not long enough')
 			assert.equal(type, null)
 			assert.equal(value, null)
 			resolve()
@@ -19,12 +19,12 @@ const invalidTypeBuffer = new Promise((resolve, reject) => {
 const tooLongTypeBuffer = new Promise((resolve, reject) => {
 	const type = new t.ArrayType(new t.UnsignedShortType)
 	const typeValueBuffer = concat([
-		type.toBuffer(),
+		new Uint8Array(type.toBuffer()),
 		bufferFrom([1])
 	])
 	io.readTypeAndValue(new BufferStream(typeValueBuffer), (err, type, value) => {
 		try {
-			assert.errorMessage(err, 'Buffer is not long enough')
+			assert(err && err.message === 'Buffer is not long enough')
 			assert.equal(type, null)
 			assert.equal(value, null)
 			resolve()
@@ -36,7 +36,7 @@ const enoentType = new Promise((resolve, reject) => {
 	const errorStream = fs.createReadStream(__dirname + '/asdfasdf')
 	io.readType(errorStream, (err, type) => {
 		try {
-			assert.errorMessage(err, 'ENOENT')
+			assert(err && err.message.startsWith('ENOENT'))
 			assert.equal(type, null)
 			resolve()
 		}
@@ -47,7 +47,7 @@ const enoentValue = new Promise((resolve, reject) => {
 	const errorStream = fs.createReadStream(__dirname + '/asdfasdf')
 	io.readValue({type: new t.ByteType, inStream: errorStream}, (err, type) => {
 		try {
-			assert.errorMessage(err, 'ENOENT')
+			assert(err && err.message.startsWith('ENOENT'))
 			assert.equal(type, null)
 			resolve()
 		}
@@ -58,7 +58,7 @@ const enoentTypeAndValue = new Promise((resolve, reject) => {
 	const errorStream = fs.createReadStream(__dirname + '/asdfasdf')
 	io.readTypeAndValue(errorStream, (err, type) => {
 		try {
-			assert.errorMessage(err, 'ENOENT')
+			assert(err && err.message.startsWith('ENOENT'))
 			assert.equal(type, null)
 			resolve()
 		}
@@ -78,7 +78,7 @@ const enoentWriteType = new Promise((resolve, reject) => {
 		outStream: errorStream
 	}, err => {
 		try {
-			assert.errorMessage(err, 'ENOENT')
+			assert(err && err.message.startsWith('ENOENT'))
 			assert.equal(errorStream.writable, false)
 			resolve()
 		}
@@ -95,7 +95,7 @@ const enoentWriteValue = new Promise((resolve, reject) => {
 		outStream: errorStream
 	}, err => {
 		try {
-			assert.errorMessage(err, 'ENOENT')
+			assert(err && err.message.startsWith('ENOENT'))
 			assert.equal(errorStream.writable, false)
 			resolve()
 		}
@@ -111,7 +111,7 @@ const enoentWriteTypeAndValue = new Promise((resolve, reject) => {
 		outStream: errorStream
 	}, err => {
 		try {
-			assert.errorMessage(err, 'ENOENT')
+			assert(err && err.message.startsWith('ENOENT'))
 			assert.equal(errorStream.writable, false)
 			resolve()
 		}

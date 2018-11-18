@@ -2,7 +2,7 @@
  * See [[FlexUnsignedIntType]] for an explanation
  * of the `flexInt` format
  */
-import assert from './assert'
+import * as assert from './assert'
 
 function possibleValueCount(bytes: number): number {
 	const usableBits = 7 * bytes
@@ -36,7 +36,7 @@ const NUMBER_OF_BYTES = new Map<number, number>()
  */
 export function makeValueBuffer(value: number): ArrayBuffer {
 	assert.integer(value)
-	assert(value >= 0, `${value} is negative`)
+	if (value < 0) throw new RangeError(`${value} is negative`)
 	const bytes = (() => {
 		for (const [byteCount, maxValue] of UPPER_BOUNDS) {
 			if (maxValue > value) return byteCount
@@ -65,8 +65,8 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 export function getByteCount(firstByte: number): number {
 	const leadingOnes = Math.clz32(~firstByte << 24)
 	const bytes = NUMBER_OF_BYTES.get(leadingOnes)
-	assert(bytes !== undefined, 'Invalid number of bytes')
-	return bytes!
+	if (!bytes) throw new Error('Invalid number of bytes')
+	return bytes
 }
 /**
  * Converts a binary `flexInt` representation
@@ -78,7 +78,7 @@ export function getByteCount(firstByte: number): number {
 export function readValueBuffer(valueBuffer: ArrayBuffer): number {
 	assert.instanceOf(valueBuffer, ArrayBuffer)
 	const bytes = valueBuffer.byteLength
-	assert(bytes > 0, 'Empty flex int buffer')
+	if (!bytes) throw new Error('Empty flex int buffer')
 	const castBuffer = new Uint8Array(valueBuffer)
 	let relativeValue = castBuffer[0] ^ BYTE_MASKS.get(bytes)!
 	for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {

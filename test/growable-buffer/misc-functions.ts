@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import * as bufferString from '../../dist/lib/buffer-string'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import {bufferFrom} from '../test-common'
@@ -8,8 +8,8 @@ export = () => {
 	for (let i = 0; i < 10; i++) gb.addAll(bufferString.fromString('abc'))
 	const gb2 = new GrowableBuffer
 	gb2.addAll(bufferString.fromString('abc'.repeat(10)))
-	assert.equal(gb.toBuffer(), gb2.toBuffer())
-	assert.equal(gb.toBuffer(), bufferFrom([
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array(gb2.toBuffer()))
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
 		0x61, 0x62, 0x63,
 		0x61, 0x62, 0x63,
 		0x61, 0x62, 0x63,
@@ -28,24 +28,24 @@ export = () => {
 		nums.push(i)
 	}
 	assert.equal(gb3.length, 100)
-	assert.equal(gb3.toBuffer(), bufferFrom(nums))
+	assert.deepEqual(new Uint8Array(gb3.toBuffer()), bufferFrom(nums))
 	assert.throws(
 		() => gb3.add(undefined as any),
-		'undefined is not an instance of Number'
+		(err: Error) => err.message === 'undefined is not an instance of Number'
 	)
 	assert.throws(
 		() => gb3.add(0x100),
-		'Not a byte: 256 (256 is not in [0,256))'
+		(err: Error) => err.message === 'Not a byte: 256 (256 is not in [0,256))'
 	)
 	assert.throws(
 		() => gb3.add(1.2),
-		'1.2 is not an integer'
+		(err: Error) => err.message === '1.2 is not an integer'
 	)
 	assert.throws(
 		() => gb3.addAll('abc' as any),
-		'"abc" is not an instance of ArrayBuffer'
+		(err: Error) => err.message === '"abc" is not an instance of ArrayBuffer'
 	)
-	assert.equal(gb3.toBuffer(), bufferFrom(nums))
+	assert.deepEqual(new Uint8Array(gb3.toBuffer()), bufferFrom(nums))
 
 	const gb4 = new GrowableBuffer
 	gb4
@@ -53,11 +53,11 @@ export = () => {
 	assert.equal(gb4.length, 2)
 	assert.throws(
 		() => gb4.resume(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	assert.throws(
 		() => gb4.reset(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	gb4
 		.pause()
@@ -70,11 +70,11 @@ export = () => {
 	gb4
 				.pause()
 					.add(7).add(8)
-	assert.equal(gb4.toBuffer(), bufferFrom([1, 2]))
+	assert.deepEqual(new Uint8Array(gb4.toBuffer()), bufferFrom([1, 2]))
 	assert.equal(gb4.length, 8)
 	gb4
 				.resume()
-	assert.equal(gb4.toBuffer(), bufferFrom([1, 2]))
+	assert.deepEqual(new Uint8Array(gb4.toBuffer()), bufferFrom([1, 2]))
 	assert.equal(gb4.length, 8)
 	gb4
 				.reset()
@@ -85,18 +85,18 @@ export = () => {
 	assert.equal(gb4.length, 5)
 	gb4
 			.add(10)
-	assert.equal(gb4.toBuffer(), bufferFrom([1, 2]))
+	assert.deepEqual(new Uint8Array(gb4.toBuffer()), bufferFrom([1, 2]))
 	assert.equal(gb4.length, 6)
 	gb4
 		.resume()
-	assert.equal(gb4.toBuffer(), bufferFrom([1, 2, 3, 4, 9, 10]))
+	assert.deepEqual(new Uint8Array(gb4.toBuffer()), bufferFrom([1, 2, 3, 4, 9, 10]))
 	assert.equal(gb4.length, 6)
 	assert.throws(
 		() => gb4.resume(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 	assert.throws(
 		() => gb4.reset(),
-		'Was not paused'
+		(err: Error) => err.message === 'Was not paused'
 	)
 }

@@ -1,5 +1,5 @@
 import AppendableBuffer from './appendable'
-import assert from './assert'
+import * as assert from './assert'
 
 const INITIAL_LENGTH = 10
 
@@ -25,7 +25,7 @@ export default class GrowableBuffer extends AppendableBuffer {
 		super()
 		try {
 			assert.integer(initialLength)
-			assert(initialLength >= 0)
+			if (initialLength < 0) throw new Error
 		}
 		catch { throw new RangeError(`${initialLength} is not a valid buffer length`) }
 		this.buffer = new ArrayBuffer(initialLength)

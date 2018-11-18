@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {makeBaseValue, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -91,10 +91,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	writeValue(buffer: AppendableBuffer, value: E[]) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
-		assert(
-			value.length === this.length,
-			`Length does not match: expected ${this.length} but got ${value.length}`
-		)
+		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
 		for (const instance of value) this.type.writeValue(buffer, instance)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {

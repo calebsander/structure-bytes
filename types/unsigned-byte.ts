@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {readNumber, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'

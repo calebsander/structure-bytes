@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -17,17 +17,17 @@ export = () => {
 		['abc', '"abc" is not an instance of Set'],
 		[{a: 'b'}, '{a: "b"} is not an instance of Set'],
 		[new Set([1]), '1 is not an instance of Object']
-	]) {
+	] as [any, string][]) {
 		assert.throws(
-			() => type.writeValue(gb, invalidValue as any),
-			message as string
+			() => type.writeValue(gb, invalidValue),
+			(err: Error) => err.message === message
 		)
 	}
 
 	const gb2 = new GrowableBuffer
 	type.writeValue(gb2, new Set)
-	assert.equal(gb2.toBuffer(), bufferFrom([0]))
-	assert.equal(type.readValue(gb2.toBuffer()), new Set)
+	assert.deepEqual(new Uint8Array(gb2.toBuffer()), bufferFrom([0]))
+	assert.deepEqual(type.readValue(gb2.toBuffer()), new Set)
 
 	const gb3 = new GrowableBuffer
 	const VALUE = new Set([
@@ -35,6 +35,9 @@ export = () => {
 		{a: 420, b: '-'}
 	])
 	type.writeValue(gb3, VALUE)
-	assert.equal(gb3.toBuffer(), bufferFrom([2, 0, 2, 0x63, 0x01, 0xa4, 0x2d]))
-	assert.equal(type.readValue(gb3.toBuffer()), VALUE)
+	assert.deepEqual(
+		new Uint8Array(gb3.toBuffer()),
+		bufferFrom([2, 0, 2, 0x63, 0x01, 0xa4, 0x2d])
+	)
+	assert.deepEqual(type.readValue(gb3.toBuffer()), VALUE)
 }

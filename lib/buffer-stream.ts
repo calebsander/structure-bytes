@@ -6,7 +6,7 @@ import {Readable} from 'stream'
  * Used for testing purposes only.
  */
 export default class BufferStream extends Readable {
-	constructor(buffer: ArrayBuffer) {
+	constructor(buffer: ArrayBuffer | Uint8Array) {
 		super()
 		this._read = () => {}
 		this.push(Buffer.from(buffer))

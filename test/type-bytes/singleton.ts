@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
 import {bufferFrom} from '../test-common'
@@ -6,7 +6,7 @@ import {bufferFrom} from '../test-common'
 export = () => {
 	assert.throws(
 		() => new t.SingletonType({} as any),
-		'undefined is not an instance of AbstractType'
+		(err: Error) => err.message === 'undefined is not an instance of AbstractType'
 	)
 
 	{
@@ -16,7 +16,7 @@ export = () => {
 		})
 		assert.throws(
 			() => type.toBuffer(),
-			'1 is not an instance of String'
+			(err: Error) => err.message === '1 is not an instance of String'
 		)
 	}
 
@@ -27,9 +27,12 @@ export = () => {
 	{
 		assert.equal((type as any).cachedValueBuffer, undefined)
 		const buffer = type.toBuffer()
-		assert.equal((type as any).cachedValueBuffer, bufferFrom([0x61, 0x62, 0x63, 0]))
-		assert.equal(buffer, bufferFrom([0x59, 0x41, 0x61, 0x62, 0x63, 0]))
-		assert.equal(r.type(buffer), type)
+		assert.deepEqual(
+			new Uint8Array((type as any).cachedValueBuffer),
+			bufferFrom([0x61, 0x62, 0x63, 0])
+		)
+		assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x59, 0x41, 0x61, 0x62, 0x63, 0]))
+		assert(type.equals(r.type(buffer)))
 	}
 
 	{
@@ -39,9 +42,9 @@ export = () => {
 			type: new t.UnsignedIntType,
 			value: 0x61_62_63_00
 		})
-		assert.equal(
-			equalValueBytesType.type.valueBuffer(equalValueBytesType.value),
-			type.type.valueBuffer(type.value)
+		assert.deepEqual(
+			new Uint8Array(equalValueBytesType.type.valueBuffer(equalValueBytesType.value)),
+			new Uint8Array(type.type.valueBuffer(type.value))
 		)
 		assert(!type.equals(equalValueBytesType))
 		assert(!type.equals(

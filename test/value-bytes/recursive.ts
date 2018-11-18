@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import {inspect} from '../../dist/lib/util-inspect'
 import * as rec from '../../dist'
 import * as t from '../../dist'
@@ -36,7 +36,7 @@ export = () => {
 	node1Second.links.add(node2)
 	const graph = new Set([node1First, node2, node3, node1Second])
 	const buffer = graphType.valueBuffer(graph)
-	assert.equal(buffer, bufferFrom([
+	assert.deepEqual(new Uint8Array(buffer), bufferFrom([
 		4,
 			0xff, 2, //node1First
 				0xff, 3, //node2
@@ -60,20 +60,19 @@ export = () => {
 	for (const g of [graph, readGraph]) {
 		let i = 0
 		for (const node of g) {
-			assert.equal(node.value, VALUES[i])
-			i++
+			assert.equal(node.value, VALUES[i++])
 		}
-		const nodes = Array.from(g)
-		const nodeLinks = nodes.map(node => Array.from(node.links))
-		assert.equal(nodeLinks.map(links => links.length), [2, 3, 2, 1])
-		assert(nodes[0] === nodeLinks[1][0]) //node1First
-		assert(nodes[0] === nodeLinks[2][0]) //node1First
-		assert(nodes[1] === nodeLinks[0][0]) //node2
-		assert(nodes[1] === nodeLinks[2][1]) //node2
-		assert(nodes[1] === nodeLinks[3][0]) //node2
-		assert(nodes[2] === nodeLinks[0][1]) //node3
-		assert(nodes[2] === nodeLinks[1][1]) //node3
-		assert(nodes[3] === nodeLinks[1][2]) //node1Second
+		const nodes = [...g]
+		const nodeLinks = nodes.map(node => [...node.links])
+		assert.deepEqual(nodeLinks.map(links => links.length), [2, 3, 2, 1])
+		assert.equal(nodes[0], nodeLinks[1][0]) //node1First
+		assert.equal(nodes[0], nodeLinks[2][0]) //node1First
+		assert.equal(nodes[1], nodeLinks[0][0]) //node2
+		assert.equal(nodes[1], nodeLinks[2][1]) //node2
+		assert.equal(nodes[1], nodeLinks[3][0]) //node2
+		assert.equal(nodes[2], nodeLinks[0][1]) //node3
+		assert.equal(nodes[2], nodeLinks[1][1]) //node3
+		assert.equal(nodes[3], nodeLinks[1][2]) //node1Second
 	}
 
 	interface SelfReference {
@@ -85,10 +84,13 @@ export = () => {
 	}))
 	const selfReference: SelfReference = {} as SelfReference
 	selfReference.self = selfReference
-	assert.equal(selfReferenceType.valueBuffer(selfReference), bufferFrom([
-		0xff,
-			0x00, 1
-	]))
+	assert.deepEqual(
+		new Uint8Array(selfReferenceType.valueBuffer(selfReference)),
+		bufferFrom([
+			0xff,
+				0x00, 1
+		])
+	)
 
 	const tupleType = new t.RecursiveType<any[]>('tuple-or-not')
 	rec.registerType({
@@ -103,7 +105,7 @@ export = () => {
 	tupleA.push(null, tupleB, tupleA)
 	tupleB.push(tupleA, null, null)
 	const tupleBuffer = tupleType.valueBuffer(tupleA)
-	assert.equal(tupleBuffer, bufferFrom([
+	assert.deepEqual(new Uint8Array(tupleBuffer), bufferFrom([
 		0xff,
 			0x00,
 			0xff,
@@ -118,10 +120,10 @@ export = () => {
 	const readTupleA = tupleType.readValue(tupleBuffer)
 	assert.equal(readTupleA.length, tupleA.length)
 	assert.equal(readTupleA[0], null)
-	assert(readTupleA[2] === readTupleA)
+	assert.equal(readTupleA[2], readTupleA)
 	const readTupleB = readTupleA[1]
 	assert.equal(readTupleB.length, tupleB.length)
-	assert(readTupleB[0] === readTupleA)
+	assert.equal(readTupleB[0], readTupleA)
 	assert.equal(readTupleB[1], null)
 	assert.equal(readTupleB[2], null)
 
@@ -138,7 +140,7 @@ export = () => {
 	const arr: any[] = [1, 2]
 	arr.push(arr, 3, 4, arr, 5)
 	const arrBuffer = arrayType.valueBuffer(arr)
-	assert.equal(arrBuffer, bufferFrom([
+	assert.deepEqual(new Uint8Array(arrBuffer), bufferFrom([
 		0xff,
 			7,
 			0,
@@ -176,7 +178,7 @@ export = () => {
 		.add(set)
 		.add(5)
 	const setBuffer = setType.valueBuffer(set)
-	assert.equal(setBuffer, bufferFrom([
+	assert.deepEqual(new Uint8Array(setBuffer), bufferFrom([
 		0xff,
 			6,
 			0,
@@ -208,7 +210,7 @@ export = () => {
 	map.set(50, new Map<number, any>().set(20, map))
 	map.set(100, map)
 	const mapBuffer = mapType.valueBuffer(map)
-	assert.equal(mapBuffer, bufferFrom([
+	assert.deepEqual(new Uint8Array(mapBuffer), bufferFrom([
 		0xff,
 			3,
 			10,
@@ -243,12 +245,12 @@ export = () => {
 					{a: null as any, b: 1 as any} //ensure null is not considered already written by fieldsType
 				]
 			}),
-			'No types matched: {a: null, b: 1}'
+			(err: Error) => err.message === 'No types matched: {a: null, b: 1}'
 		)
 	}
 
 	assert.throws(
-		() => selfReferenceType.readValue(bufferFrom([0xff, 0x00, 2])),
-		'Cannot find target at 0'
+		() => selfReferenceType.readValue(bufferFrom([0xff, 0x00, 2]).buffer),
+		(err: Error) => err.message === 'Cannot find target at 0'
 	)
 }

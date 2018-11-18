@@ -1,6 +1,6 @@
 //This file contains functions for reading types from bytes
 
-import assert from './lib/assert'
+import * as assert from './lib/assert'
 import * as bufferString from './lib/buffer-string'
 import {REPEATED_TYPE} from './lib/constants'
 import * as constructorRegistry from './lib/constructor-registry'
@@ -40,16 +40,16 @@ const recursiveNames = new WeakMap<ArrayBuffer, Map<number, string>>()
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<any>> {
-	assert(offset >= 0, `Offset is negative: ${offset}`)
+	if (offset < 0) throw new RangeError(`Offset is negative: ${offset}`)
 	const castBuffer = new Uint8Array(typeBuffer)
-	assert(typeBuffer.byteLength > offset, NOT_LONG_ENOUGH) //make sure there is a type byte
+	if (typeBuffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH) //make sure there is a type byte
 	const typeByte = castBuffer[offset]
 	let readType: t.Type<any>, length = 1 //going to be at least one type byte
 	const singleByteType = SINGLE_BYTE_TYPE_BYTES.get(typeByte)
 	if (singleByteType) return {value: new singleByteType, length}
 	switch (typeByte) {
 		case t.BooleanTupleType._value: {
-			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const tupleLength = castBuffer[offset + length]
 			length++
 			readType = new t.BooleanTupleType(tupleLength)
@@ -58,7 +58,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 		case t.TupleType._value: {
 			const elementType = consumeType(typeBuffer, offset + length)
 			length += elementType.length
-			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const tupleLength = castBuffer[offset + length]
 			length++
 			readType = new t.TupleType({
@@ -68,17 +68,17 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			break
 		}
 		case t.StructType._value: {
-			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const fieldCount = castBuffer[offset + length]
 			length++
 			const fields: {[key: string]: t.Type<any>} = {}
 			for (let i = 0; i < fieldCount; i++) { //read field information for each field
-				assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+				if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 				const nameLength = castBuffer[offset + length]
 				length++
 				const nameStart = offset + length
 				const nameEnd = nameStart + nameLength
-				assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
+				if (typeBuffer.byteLength < nameEnd) throw new Error(NOT_LONG_ENOUGH)
 				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
 				length += nameLength
 				const fieldType = consumeType(typeBuffer, nameEnd)
@@ -112,7 +112,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			const valueType = consumeType(typeBuffer, offset + length)
 			const subType = valueType.value
 			length += valueType.length
-			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const valueCount = castBuffer[offset + length]
 			length++
 			const values = new Array(valueCount)
@@ -126,7 +126,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			break
 		}
 		case t.ChoiceType._value: {
-			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const typeCount = castBuffer[offset + length]
 			length++
 			const types = new Array(typeCount)
@@ -139,17 +139,17 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			break
 		}
 		case t.NamedChoiceType._value: {
-			assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const typeCount = castBuffer[offset + length]
 			length++
 			const constructorTypes = new Map<Function, t.StructType<{}>>()
 			for (let i = 0; i < typeCount; i++) {
-				assert(typeBuffer.byteLength > offset + length, NOT_LONG_ENOUGH)
+				if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 				const nameLength = castBuffer[offset + length]
 				length++
 				const nameStart = offset + length
 				const nameEnd = nameStart + nameLength
-				assert(typeBuffer.byteLength >= nameEnd, NOT_LONG_ENOUGH)
+				if (typeBuffer.byteLength < nameEnd) throw new Error(NOT_LONG_ENOUGH)
 				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
 				length += nameLength
 				const possibleType = consumeType(typeBuffer, nameEnd)
@@ -248,6 +248,8 @@ export {consumeType as _consumeType}
 export function type(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
 	assert.instanceOf(typeBuffer, ArrayBuffer)
 	const {value: readValue, length} = consumeType(typeBuffer, 0)
-	if (fullBuffer) assert(length === typeBuffer.byteLength, 'Did not consume all of the buffer')
+	if (fullBuffer && length !== typeBuffer.byteLength) {
+		throw new Error('Did not consume all of the buffer')
+	}
 	return readValue
 }

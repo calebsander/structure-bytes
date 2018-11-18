@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'

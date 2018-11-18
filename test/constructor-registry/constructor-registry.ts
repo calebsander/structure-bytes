@@ -1,4 +1,4 @@
-import assert from '../../dist/lib/assert'
+import {strict as assert} from 'assert'
 import * as constructorRegistry from '../../dist/lib/constructor-registry'
 
 export = () => {

@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
@@ -51,7 +51,7 @@ export class EnumType<E> extends AbstractType<E> {
 		assert.instanceOf(values, Array)
 		//At most 255 values allowed
 		try { assert.byteUnsignedInteger(values.length) }
-		catch { assert.fail(`${values.length} values is too many`) }
+		catch { throw new Error(`${values.length} values is too many`) }
 
 		this.type = type
 		this.values = values //used when reading to get constant-time lookup of value index into value
@@ -64,7 +64,7 @@ export class EnumType<E> extends AbstractType<E> {
 		for (let i = 0; i < values.length; i++) {
 			const value = values[i]
 			const valueString = bufferString.toBinaryString(type.valueBuffer(value)) //convert value to bytes and then string for use as a map key
-			if (valueIndices.has(valueString)) assert.fail('Value is repeated: ' + inspect(value))
+			if (valueIndices.has(valueString)) throw new Error('Value is repeated: ' + inspect(value))
 			valueIndices.set(valueString, i) //so writing a value has constant-time lookup into the values array
 		}
 		return this.cachedValueIndices = valueIndices
@@ -101,7 +101,7 @@ export class EnumType<E> extends AbstractType<E> {
 		buffer.add(index) //write the index to the requested value in the values array
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<E> {
-		assert(buffer.byteLength > offset, NOT_LONG_ENOUGH)
+		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
 		const valueIndex = new Uint8Array(buffer)[offset]
 		const value = this.values[valueIndex] as E | undefined
 		if (value === undefined) throw new Error(`Index ${valueIndex} is invalid`)

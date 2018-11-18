@@ -1,5 +1,5 @@
 import AppendableBuffer from '../lib/appendable'
-import assert from '../lib/assert'
+import * as assert from '../lib/assert'
 import {readBooleans, ReadResult} from '../lib/read-util'
 import writeBooleans from '../lib/write-booleans'
 import AbsoluteType from './absolute'
@@ -55,10 +55,7 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 	writeValue(buffer: AppendableBuffer, value: boolean[]) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
-		assert(
-			value.length === this.length,
-			`Length does not match: expected ${this.length} but got ${value.length}`
-		)
+		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
 		writeBooleans(buffer, value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]> {

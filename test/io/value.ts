@@ -1,6 +1,6 @@
+import {strict as assert} from 'assert'
 import * as fs from 'fs'
 import {promisify} from 'util'
-import assert from '../../dist/lib/assert'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
@@ -19,7 +19,7 @@ const writePromise = (() => {
 	const outStream = fs.createWriteStream(OUT_FILE)
 	return promisify(io.writeValue)({type, value, outStream})
 		.then(_ => promisify(fs.readFile)(OUT_FILE))
-		.then(data => assert.equal(data, Buffer.from(VALUE_BUFFER)))
+		.then(data => assert.deepEqual(data, Buffer.from(VALUE_BUFFER)))
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const writeWithoutCallback = new Promise<void>((resolve, reject) => {
@@ -29,7 +29,7 @@ const writeWithoutCallback = new Promise<void>((resolve, reject) => {
 		try {
 			resolve(
 				promisify(fs.readFile)(OUT_FILE)
-					.then(data => assert.equal(data, Buffer.from([0x61, 0x62, 0x63, 0])))
+					.then(data => assert.deepEqual(data, Buffer.from([0x61, 0x62, 0x63, 0])))
 					.then(_ => promisify(fs.unlink)(OUT_FILE))
 			)
 		}
@@ -46,7 +46,7 @@ const writeErrorPromise = (() => {
 		outStream
 	})
 		.then(_ => { throw new Error('Expected error to be thrown') })
-		.catch(err => assert.errorMessage(err, '0 is not an instance of Boolean'))
+		.catch(err => assert(err.message === '0 is not an instance of Boolean'))
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const pauseWrite = (() => {
@@ -67,7 +67,7 @@ const pauseWrite = (() => {
 	return promisify(io.writeValue)({type, value, outStream})
 		.then(_ => promisify(fs.readFile)(OUT_FILE))
 		.then(data =>
-			assert.equal(data, Buffer.from([
+			assert.deepEqual(data, Buffer.from([
 				3,
 					1,
 						3, 0b11000000,
@@ -80,13 +80,13 @@ const pauseWrite = (() => {
 		.then(_ => promisify(fs.unlink)(OUT_FILE))
 })()
 const readPromise = promisify(io.readValue)({type, inStream: new BufferStream(VALUE_BUFFER)})
-	.then(readValue => assert.equal(readValue, value))
+	.then(readValue => assert.deepEqual(readValue, value))
 const readErrorPromise = promisify(io.readValue)({
 	type,
 	inStream: new BufferStream(bufferFrom([0x00]))
 })
 	.then(_ => { throw new Error('Expected error to be thrown') })
-	.catch(err => assert.errorMessage(err, 'Buffer is not long enough'))
+	.catch(err => assert(err.message === 'Buffer is not long enough'))
 export = Promise.all([
 	writePromise,
 	writeWithoutCallback,
