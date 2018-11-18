@@ -1,5 +1,5 @@
-import {strict as assert} from 'assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
+import {assert} from '../test-common'
 
 export = () => {
 	const gb = new GrowableBuffer

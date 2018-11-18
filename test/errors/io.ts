@@ -1,9 +1,8 @@
-import {strict as assert} from 'assert'
 import * as fs from 'fs'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {bufferFrom, concat} from '../test-common'
+import {assert, bufferFrom, concat} from '../test-common'
 
 const invalidTypeBuffer = new Promise((resolve, reject) => {
 	io.readTypeAndValue(new BufferStream(bufferFrom([t.ArrayType._value])), (err, type, value) => {

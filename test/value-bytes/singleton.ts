@@ -1,6 +1,5 @@
-import {strict as assert} from 'assert'
 import * as t from '../../dist'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 type JSONLiteral
 	= {type: 'boolean', value: boolean}

@@ -1,3 +1,13 @@
+import * as builtinAssert from 'assert'
+
+//Polyfill for Node.js 8
+export const assert = builtinAssert.strict || Object.assign(builtinAssert, {
+	equal: builtinAssert.strictEqual,
+	deepEqual: builtinAssert.deepStrictEqual,
+	notEqual: builtinAssert.notStrictEqual,
+	notDeepEqual: builtinAssert.notDeepStrictEqual
+})
+
 export function bufferFrom(bytes: number[]) {
 	const buffer = new Uint8Array(bytes.length)
 	buffer.set(bytes)

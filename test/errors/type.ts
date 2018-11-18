@@ -1,7 +1,6 @@
-import {strict as assert} from 'assert'
 import * as t from '../../dist/types'
 import AbstractType from '../../dist/types/abstract'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 interface Types {
 	[typeName: string]: typeof AbstractType

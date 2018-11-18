@@ -1,10 +1,9 @@
-import {strict as assert} from 'assert'
 import {REPEATED_TYPE} from '../../dist/lib/constants'
 import * as t from '../../dist/types'
-import AbstractType from '../../dist/types/abstract'
+import {assert} from '../test-common'
 
 interface TypesOnly {
-	[name: string]: typeof AbstractType
+	[name: string]: typeof import('../../dist/types/abstract').default
 }
 
 export = () => {

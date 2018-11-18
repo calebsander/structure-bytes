@@ -1,8 +1,7 @@
-import {strict as assert} from 'assert'
 import {inspect} from '../../dist/lib/util-inspect'
 import * as rec from '../../dist'
 import * as t from '../../dist'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 type Field = {a: Fields} | {b: boolean}
 interface Fields {

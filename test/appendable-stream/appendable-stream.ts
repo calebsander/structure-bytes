@@ -1,6 +1,6 @@
-import {strict as assert} from 'assert'
 import {Writable} from 'stream'
 import AppendableStream from '../../dist/lib/appendable-stream'
+import {assert} from '../test-common'
 
 class CaptureStream extends Writable {
 	private readonly chunks: Buffer[]

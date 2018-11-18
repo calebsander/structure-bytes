@@ -1,7 +1,6 @@
-import {strict as assert} from 'assert'
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 export = () => {
 	const type = new t.ByteType

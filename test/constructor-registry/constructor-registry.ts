@@ -1,5 +1,5 @@
-import {strict as assert} from 'assert'
 import * as constructorRegistry from '../../dist/lib/constructor-registry'
+import {assert} from '../test-common'
 
 export = () => {
 	const AFirst = constructorRegistry.get('A')

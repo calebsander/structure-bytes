@@ -1,7 +1,6 @@
-import {strict as assert} from 'assert'
 import * as bufferString from '../../dist/lib/buffer-string'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 export = () => {
 	const gb = new GrowableBuffer

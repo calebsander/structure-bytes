@@ -1,6 +1,6 @@
-import {strict as assert} from 'assert'
 import * as crypto from 'crypto'
 import sha256, {sha256JS, sha256Wasm} from '../../dist/lib/sha-256'
+import {assert} from '../test-common'
 
 function toBytes(str: string): ArrayBuffer {
 	return new Uint8Array([...str].map(c => c.charCodeAt(0))).buffer

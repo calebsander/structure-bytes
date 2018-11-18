@@ -1,10 +1,9 @@
-import {strict as assert} from 'assert'
 import * as fs from 'fs'
 import {promisify} from 'util'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {bufferFrom, concat} from '../test-common'
+import {assert, bufferFrom, concat} from '../test-common'
 
 const type = new t.MapType(new t.StringType, new t.PointerType(new t.UnsignedIntType))
 const value = new Map<string, number>().set('abc', 4560).set('def', 4560).set('—ݥ—', 4560)

@@ -1,6 +1,5 @@
-import {strict as assert} from 'assert'
 import * as t from '../../dist'
-import {bufferFrom, concat} from '../test-common'
+import {assert, bufferFrom, concat} from '../test-common'
 
 export = () => {
 	const type = new t.BigIntType

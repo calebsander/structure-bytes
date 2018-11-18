@@ -1,8 +1,7 @@
-import {strict as assert} from 'assert'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
 import * as strint from '../../dist/lib/strint'
-import {bufferFill, bufferFrom} from '../test-common'
+import {assert, bufferFill, bufferFrom} from '../test-common'
 
 export = () => {
 	const type = new t.UnsignedLongType

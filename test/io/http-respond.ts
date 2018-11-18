@@ -1,9 +1,9 @@
-import {strict as assert} from 'assert'
 import * as http from 'http'
 import {promisify} from 'util'
 import * as zlib from 'zlib'
 import * as io from '../../dist'
 import * as t from '../../dist'
+import {assert} from '../test-common'
 
 const port = 8080
 const type = new t.DateType

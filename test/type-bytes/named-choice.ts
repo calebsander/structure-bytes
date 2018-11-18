@@ -1,8 +1,7 @@
-import {strict as assert} from 'assert'
 import * as constructorRegistry from '../../dist/lib/constructor-registry'
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 export = () => {
 	class QRCode {

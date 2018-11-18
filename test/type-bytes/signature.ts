@@ -1,5 +1,5 @@
-import {strict as assert} from 'assert'
 import * as t from '../../dist'
+import {assert} from '../test-common'
 
 export = () => {
 	assert.equal(new t.ByteType().getSignature(), 'AAw=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=')

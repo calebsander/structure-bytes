@@ -1,5 +1,5 @@
-import {strict as assert} from 'assert'
 import * as util from '../../dist/lib/util-inspect'
+import {assert} from '../test-common'
 
 export = () => {
 	assert.equal(util.inspect(23), '23')

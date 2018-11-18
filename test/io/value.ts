@@ -1,10 +1,9 @@
-import {strict as assert} from 'assert'
 import * as fs from 'fs'
 import {promisify} from 'util'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {bufferFrom} from '../test-common'
+import {assert, bufferFrom} from '../test-common'
 
 const type = new t.TupleType({
 	type: new t.OptionalType(
