@@ -88,10 +88,10 @@
 				)
 			)
 		)
-		(i32.store8 ;; buf[byteLength] = (i8)128
+		(set_local $i ;; i = byteLength
 			(i32.add (get_global $INPUT_START) (get_local $byteLength))
-			(i32.const 128)
 		)
+		(i32.store8 (get_local $i) (i32.const 128)) ;; buf[byteLength] = (i8)128
 		(set_local $lengthIndex ;; lengthIndex = messageLength - 8
 			(i32.sub
 				(i32.add (get_global $INPUT_START) (get_local $messageLength))
@@ -99,15 +99,12 @@
 			)
 		)
 		;; for (i = byteLength + 1; i < lengthIndex; i++)
-		(set_local $i (i32.add (get_local $byteLength) (i32.const 1)))
 		(loop $zeroBytes
-			(i32.store8 ;; buf[i] = 0
-				(i32.add (get_global $INPUT_START) (get_local $i))
-				(i32.const 0)
-			)
-			(br_if $zeroBytes ;; if (++i < lengthIndex) continue
-				(i32.lt_u (tee_local $i (i32.add (get_local $i) (i32.const 1))) (get_local $lengthIndex))
-			)
+			;; if (++i < lengthIndex)
+			(if (i32.lt_u (tee_local $i (i32.add (get_local $i) (i32.const 1))) (get_local $lengthIndex)) (then
+				(i32.store8 (get_local $i) (i32.const 0)) ;; buf[i] = 0
+				(br $zeroBytes) ;; continue
+			))
 		)
 		(call $store64BE ;; buf[lengthIndex] = (i64)byteLength << 3
 			(get_local $lengthIndex)
