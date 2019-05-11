@@ -127,7 +127,7 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
 			const typeCount = castBuffer[offset + length]
 			length++
-			const types = new Array(typeCount)
+			const types = new Array<t.Type<any>>(typeCount)
 			for (let i = 0; i < typeCount; i++) {
 				const possibleType = consumeType(typeBuffer, offset + length)
 				types[i] = possibleType.value

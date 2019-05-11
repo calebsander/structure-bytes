@@ -20,18 +20,16 @@ export = () => {
 	assert.equal(util.inspect(new Map), 'Map {}')
 	assert.equal(util.inspect(new Map().set(1, 2).set(3, 4)), 'Map {1 => 2, 3 => 4}')
 	class A {
-		one: string
-		constructor() { this.one = '1' }
+		one = '1'
 	}
 	assert.equal(util.inspect(new A), 'A {one: "1"}')
 	const [B] = [class { //without array destructuring, B.name is defined
-		one: number
-		constructor() {
-			this.one = 2
-		}
+		one = 2
 	}]
 	assert.equal(util.inspect(new B), '{one: 2}')
 	assert.equal(util.inspect(Buffer.from([0x01, 0x10])), '<Buffer 01 10>')
+	assert.equal(util.inspect(new Uint8Array([0x01, 0x10])), '<Uint8Array 01 10>')
+	assert.equal(util.inspect(new Uint8Array([0x01, 0x10]).buffer), '<ArrayBuffer 01 10>')
 	const circularArray: any[] = []
 	const arr = [2, circularArray]
 	circularArray.push(circularArray, 1, arr, arr)

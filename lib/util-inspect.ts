@@ -16,26 +16,12 @@ export const hexByte = (n: number) => (n < 16 ? '0' : '') + n.toString(16)
  * @param obj The value to inspect
  * @return A string expressing the given value
  */
-export function inspect(obj: any): string {
-	return inspectWithSeen(obj, new Set)
-}
+export const inspect = (obj: any): string => inspectWithSeen(obj, new Set)
 function inspectWithSeen(obj: any, seen: Set<object>): string {
 	if (obj === undefined) return 'undefined'
 	if (obj === null || jsonTypes.has(obj.constructor)) return JSON.stringify(obj)
-	if (obj instanceof ArrayBuffer) {
-		const castBuffer = new Uint8Array(obj)
-		let result = '['
-		for (let i = 0; i < castBuffer.length; i++) {
-			if (i) result += ', '
-			result += '0x' + hexByte(castBuffer[i])
-		}
-		return result + ']'
-	}
-	//tslint:disable-next-line:strict-type-predicates
-	if (typeof Buffer !== 'undefined' && obj instanceof Buffer) {
-		let result = '<Buffer'
-		for (const b of obj) result += ' ' + hexByte(b)
-		return result + '>'
+	if (obj instanceof ArrayBuffer || obj instanceof Uint8Array) {
+		return `<${obj.constructor.name} ${[...new Uint8Array(obj)].map(hexByte).join(' ')}>`
 	}
 	if (obj instanceof Function) {
 		return 'Function ' + (obj as Function).name

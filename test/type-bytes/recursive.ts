@@ -105,7 +105,7 @@ export = () => {
 			) as any
 		}),
 		(err: Error) =>
-			err.message === 'OptionalType {type: StructType {fields: [{name: "a", type: StringType {}, nameBuffer: [0x61]}, {name: "b", type: StringType {}, nameBuffer: [0x62]}]}} is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
+			err.message === 'OptionalType {type: StructType {fields: [{name: "a", type: StringType {}, nameBuffer: <ArrayBuffer 61>}, {name: "b", type: StringType {}, nameBuffer: <ArrayBuffer 62>}]}} is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
 	)
 	assert.throws(
 		() => rec.registerType({name: 23 as any, type: new t.StructType({})}),
