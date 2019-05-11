@@ -1,6 +1,6 @@
 import * as t from '../../dist/types'
 import AbstractType from '../../dist/types/abstract'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 interface Types {
 	[typeName: string]: typeof AbstractType
@@ -24,8 +24,8 @@ export = () => {
 		)
 	}
 	assert.throws(
-		() => new t.ByteType().readValue(bufferFrom([1, 2]).buffer),
+		() => new t.ByteType().readValue(new Uint8Array([1, 2]).buffer),
 		(err: Error) => err.message === 'Did not consume all of buffer'
 	)
-	new t.ByteType().readValue(bufferFrom([1, 2]).buffer, 1)
+	new t.ByteType().readValue(new Uint8Array([1, 2]).buffer, 1)
 }

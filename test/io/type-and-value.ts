@@ -3,13 +3,13 @@ import {promisify} from 'util'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom, concat} from '../test-common'
+import {assert, concat} from '../test-common'
 
 const type = new t.MapType(new t.StringType, new t.PointerType(new t.UnsignedIntType))
 const value = new Map<string, number>().set('abc', 4560).set('def', 4560).set('—ݥ—', 4560)
 const BUFFER = concat([
-	bufferFrom([0x54, 0x41, 0x70, 0x13]),
-	bufferFrom([
+	new Uint8Array([0x54, 0x41, 0x70, 0x13]),
+	new Uint8Array([
 		3,
 			0x61, 0x62, 0x63, 0,
 				0,
@@ -73,7 +73,7 @@ const readPromise = promisify(io.readTypeAndValue)<Map<string, number>>(new Buff
 		assert.deepEqual(readValue, value)
 	})
 const readErrorPromise = promisify(io.readTypeAndValue)<string>(
-	new BufferStream(bufferFrom([0x41, 0x61, 0x62, 0x63]))
+	new BufferStream(new Uint8Array([0x41, 0x61, 0x62, 0x63]))
 )
 	.then(_ => { throw new Error('Expected error to be thrown') })
 	.catch(err => assert(err.message === 'Buffer is not long enough'))

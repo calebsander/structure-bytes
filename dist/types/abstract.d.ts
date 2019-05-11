@@ -22,7 +22,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
     abstract writeValue(buffer: AppendableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
     abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>;
-    readValue(buffer: ArrayBuffer, offset?: number): READ_VALUE;
+    readValue(buffer: ArrayBuffer | Uint8Array, offset?: number): READ_VALUE;
     equals(otherType: any): boolean;
     /**
      * Requires that the buffer be a [[GrowableBuffer]]

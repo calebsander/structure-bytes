@@ -1,6 +1,6 @@
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.TupleType({
@@ -8,7 +8,7 @@ export = () => {
 		length: 3
 	})
 	const buffer = type.toBuffer()
-	assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x50, 0x32, 3]))
+	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x50, 0x32, 3]))
 	assert(type.equals(r.type(buffer)))
 	assert.throws(
 		() => new t.TupleType({type: new t.StringType, length: 256}),

@@ -2,24 +2,27 @@ import * as fs from 'fs'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom, concat} from '../test-common'
+import {assert, concat} from '../test-common'
 
 const invalidTypeBuffer = new Promise((resolve, reject) => {
-	io.readTypeAndValue(new BufferStream(bufferFrom([t.ArrayType._value])), (err, type, value) => {
-		try {
-			assert(err && err.message === 'Buffer is not long enough')
-			assert.equal(type, null)
-			assert.equal(value, null)
-			resolve()
+	io.readTypeAndValue(
+		new BufferStream(new Uint8Array([t.ArrayType._value])),
+		(err, type, value) => {
+			try {
+				assert(err && err.message === 'Buffer is not long enough')
+				assert.equal(type, null)
+				assert.equal(value, null)
+				resolve()
+			}
+			catch (e) { reject(e) }
 		}
-		catch (e) { reject(e) }
-	})
+	)
 })
 const tooLongTypeBuffer = new Promise((resolve, reject) => {
 	const type = new t.ArrayType(new t.UnsignedShortType)
 	const typeValueBuffer = concat([
 		new Uint8Array(type.toBuffer()),
-		bufferFrom([1])
+		new Uint8Array([1])
 	])
 	io.readTypeAndValue(new BufferStream(typeValueBuffer), (err, type, value) => {
 		try {

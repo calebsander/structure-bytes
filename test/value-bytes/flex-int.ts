@@ -1,23 +1,23 @@
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.FlexIntType
 	const TWO_6 = 2 ** 6, TWO_13 = 2 ** 13
 	for (let value = 0; value < TWO_6; value++) {
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([value * 2]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([value * 2]))
 		assert.equal(type.readValue(buffer), value)
 	}
 	for (let value = -TWO_6; value < 0; value++) {
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([-(value * 2 + 1)]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([-(value * 2 + 1)]))
 		assert.equal(type.readValue(buffer), value)
 	}
 	for (let value = TWO_6; value < TWO_6 + TWO_13; value++) {
 		const relativeValue = value - TWO_6
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 			0b10000000 | ((relativeValue * 2) >> 8),
 			(relativeValue * 2) & 0xFF
 		]))
@@ -26,13 +26,13 @@ export = () => {
 	for (let value = -(TWO_6 + TWO_13); value < -TWO_6; value++) {
 		const relativeValue = value + TWO_6
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 			0b10000000 | ((-(relativeValue * 2 + 1)) >> 8),
 			(-(relativeValue * 2 + 1)) & 0xFF
 		]))
 		assert.equal(type.readValue(buffer), value)
 	}
-	assert.deepEqual(new Uint8Array(type.valueBuffer('-12')), bufferFrom([23]))
+	assert.deepEqual(new Uint8Array(type.valueBuffer('-12')), new Uint8Array([23]))
 
 	assert.throws(
 		() => type.valueBuffer(true as any),
@@ -59,11 +59,11 @@ export = () => {
 		(err: Error) => err.message === 'Buffer is not long enough'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([0b11111111]).buffer),
+		() => type.readValue(new Uint8Array([0b11111111]).buffer),
 		(err: Error) => err.message === 'Invalid number of bytes'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([0b10000001]).buffer),
+		() => type.readValue(new Uint8Array([0b10000001]).buffer),
 		(err: Error) => err.message === 'Buffer is not long enough'
 	)
 }

@@ -2,7 +2,7 @@ import * as crypto from 'crypto'
 import {r} from '../../dist'
 import * as rec from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	interface GraphNode {
@@ -15,7 +15,7 @@ export = () => {
 		value: new t.UnsignedIntType
 	}))
 	const graphType = new t.SetType(nodeType)
-	const GRAPH_BUFFER = bufferFrom([0x53, 0x57, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
+	const GRAPH_BUFFER = new Uint8Array([0x53, 0x57, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
 	assert.deepEqual(new Uint8Array(graphType.toBuffer()), GRAPH_BUFFER)
 	const readGraphType = r.type(GRAPH_BUFFER.buffer) as typeof graphType
 	const graphNodeName = (readGraphType.type as typeof nodeType).name
@@ -38,7 +38,7 @@ export = () => {
 		type,
 		name: 'type'
 	})
-	assert.deepEqual(new Uint8Array(type.toBuffer()), bufferFrom([0x52, 0x57, 0, 0x52, 0x57, 0])) //the important piece is that the child array type declaration doesn't point to the root one
+	assert.deepEqual(new Uint8Array(type.toBuffer()), new Uint8Array([0x52, 0x57, 0, 0x52, 0x57, 0])) //the important piece is that the child array type declaration doesn't point to the root one
 	//Test multiple recursive types in same buffer
 	interface BinaryTree {
 		left: BinaryTree | null
@@ -51,7 +51,7 @@ export = () => {
 		value: nodeType,
 		right: binaryTreeType
 	}))
-	assert.deepEqual(new Uint8Array(binaryTreeType.toBuffer()), bufferFrom([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
+	assert.deepEqual(new Uint8Array(binaryTreeType.toBuffer()), new Uint8Array([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
 	const readTreeType = r.type(binaryTreeType.toBuffer()) as typeof binaryTreeType
 	assert(readTreeType instanceof t.RecursiveType)
 	const readTreeName = readTreeType.name
@@ -77,11 +77,11 @@ export = () => {
 		(err: Error) => err.message === '"abc" is not a registered type'
 	)
 	assert.throws(
-		() => r.type(bufferFrom([0x57]).buffer),
+		() => r.type(new Uint8Array([0x57]).buffer),
 		(err: Error) => err.message === 'Buffer is not long enough'
 	)
 	assert.throws(
-		() => r.type(bufferFrom([0x57, 0]).buffer),
+		() => r.type(new Uint8Array([0x57, 0]).buffer),
 		(err: Error) => err.message === 'Buffer is not long enough'
 	)
 	assert.throws(

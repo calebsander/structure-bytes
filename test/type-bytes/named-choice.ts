@@ -1,7 +1,7 @@
 import * as constructorRegistry from '../../dist/lib/constructor-registry'
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	class QRCode {
@@ -24,7 +24,7 @@ export = () => {
 			number: new t.UnsignedLongType
 		}))
 	)
-	assert.deepEqual(new Uint8Array(type.toBuffer()), bufferFrom([
+	assert.deepEqual(new Uint8Array(type.toBuffer()), new Uint8Array([
 		0x58,
 			2,
 				6, 0x51, 0x52, 0x43, 0x6f, 0x64, 0x65,
@@ -84,7 +84,7 @@ export = () => {
 			err.message === 'UnsignedIntType {} is not an instance of StructType'
 	)
 	assert.throws(
-		() => r.type(bufferFrom([0x58, 1, 0, 0x01]).buffer),
+		() => r.type(new Uint8Array([0x58, 1, 0, 0x01]).buffer),
 		(err: Error) => err.message === 'Not a StructType: ByteType {}'
 	)
 

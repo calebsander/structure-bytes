@@ -1,6 +1,6 @@
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const map = new t.MapType(
@@ -10,7 +10,7 @@ export = () => {
 			'b—c': new t.CharType
 		})
 	)
-	assert.deepEqual(new Uint8Array(map.toBuffer()), bufferFrom([
+	assert.deepEqual(new Uint8Array(map.toBuffer()), new Uint8Array([
 		0x54,
 			0x41,
 			0x51,

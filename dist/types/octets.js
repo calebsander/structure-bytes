@@ -25,6 +25,8 @@ class OctetsType extends absolute_1.default {
      * Example:
      * ````javascript
      * let octets = new Uint8Array([1, 2, 3, 4, 5])
+     * type.writeValue(buffer, octets)
+     * // or
      * type.writeValue(buffer, octets.buffer)
      * ````
      * @param buffer The buffer to which to append
@@ -33,7 +35,7 @@ class OctetsType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert.instanceOf(value, ArrayBuffer);
+        assert.instanceOf(value, [ArrayBuffer, Uint8Array]);
         buffer
             .addAll(flexInt.makeValueBuffer(value.byteLength))
             .addAll(value);

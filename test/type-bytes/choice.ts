@@ -1,11 +1,11 @@
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedLongType, new t.StringType])
 	const buffer = type.toBuffer()
-	assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x56, 3, 0x11, 0x14, 0x41]))
+	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x56, 3, 0x11, 0x14, 0x41]))
 	assert(type.equals(r.type(buffer)))
 
 	const tooManyTypes = new Array<t.Type<any>>(256)

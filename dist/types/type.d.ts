@@ -83,7 +83,7 @@ export interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
      * @throws If the value does not occupy all of the buffer
      * from index `offset` to the end
      */
-    readValue(buffer: ArrayBuffer, offset?: number): READ_VALUE;
+    readValue(buffer: ArrayBuffer | Uint8Array, offset?: number): READ_VALUE;
     /**
      * Returns whether this type object represents the same type as another object
      * @param otherType Another object to compare with

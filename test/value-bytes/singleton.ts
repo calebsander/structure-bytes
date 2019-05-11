@@ -1,5 +1,5 @@
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 type JSONLiteral
 	= {type: 'boolean', value: boolean}
@@ -21,9 +21,9 @@ export = () => {
 			() => type.valueBuffer('def'),
 			(err: Error) => err.message === 'Expected "abc" but got "def"'
 		)
-		assert.deepEqual(new Uint8Array((type as any).cachedValueBuffer), bufferFrom([0x61, 0x62, 0x63, 0]))
+		assert.deepEqual(new Uint8Array((type as any).cachedValueBuffer), new Uint8Array([0x61, 0x62, 0x63, 0]))
 		const valueBuffer = type.valueBuffer('abc')
-		assert.deepEqual(new Uint8Array(valueBuffer), bufferFrom([]))
+		assert.deepEqual(new Uint8Array(valueBuffer), new Uint8Array())
 		assert.equal(type.readValue(valueBuffer), 'abc')
 	}
 
@@ -53,15 +53,15 @@ export = () => {
 		])
 		assert.deepEqual(
 			new Uint8Array(type.valueBuffer({type: 'boolean', value: true})),
-			bufferFrom([0, 0xFF])
+			new Uint8Array([0, 0xFF])
 		)
 		assert.deepEqual(
 			new Uint8Array(type.valueBuffer({type: 'number', value: 1})),
-			bufferFrom([1, 0x3F, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+			new Uint8Array([1, 0x3F, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 		)
 		assert.deepEqual(
 			new Uint8Array(type.valueBuffer({type: 'string', value: ''})),
-			bufferFrom([2, 0])
+			new Uint8Array([2, 0])
 		)
 		assert.throws(
 			() => type.valueBuffer({type: 'boolean', value: 2 as any}),

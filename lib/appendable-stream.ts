@@ -39,15 +39,15 @@ export default class AppendableStream extends AppendableBuffer {
 	add(value: number) {
 		assert.integer(value)
 		assert.between(0, value, 0x100, `Not a byte: ${value}`)
-		return this.addAll(new Uint8Array([value]).buffer)
+		return this.addAll(new Uint8Array([value]))
 	}
 	/**
 	 * Appends a contiguous set of bytes
 	 * to the end of the written data
 	 * @param buffer The bytes to add
 	 */
-	addAll(buffer: ArrayBuffer) {
-		assert.instanceOf(buffer, ArrayBuffer)
+	addAll(buffer: ArrayBuffer | Uint8Array) {
+		assert.instanceOf(buffer, [ArrayBuffer, Uint8Array])
 		if (this.pauseCount) this.paused.addAll(buffer)
 		else this.outStream.write(Buffer.from(buffer))
 		this.writtenBytes += buffer.byteLength

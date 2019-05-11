@@ -33,7 +33,7 @@ class AppendableStream extends appendable_1.default {
     add(value) {
         assert.integer(value);
         assert.between(0, value, 0x100, `Not a byte: ${value}`);
-        return this.addAll(new Uint8Array([value]).buffer);
+        return this.addAll(new Uint8Array([value]));
     }
     /**
      * Appends a contiguous set of bytes
@@ -41,7 +41,7 @@ class AppendableStream extends appendable_1.default {
      * @param buffer The bytes to add
      */
     addAll(buffer) {
-        assert.instanceOf(buffer, ArrayBuffer);
+        assert.instanceOf(buffer, [ArrayBuffer, Uint8Array]);
         if (this.pauseCount)
             this.paused.addAll(buffer);
         else

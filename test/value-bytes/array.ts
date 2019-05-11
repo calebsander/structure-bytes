@@ -1,6 +1,6 @@
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.ArrayType(
@@ -27,11 +27,11 @@ export = () => {
 		{a: '23', b: 'Ȁ'}
 	]
 	type.writeValue(gb, VALUE)
-	assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([2, 0x1d, 0xc7, 0x61, 0, 23, 0xc8, 0x80]))
 	assert.deepEqual(type.readValue(gb.toBuffer()), VALUE.map(({a, b}) => ({a: Number(a), b})))
 
 	const EMPTY_VALUE: {a: number, b: string}[] = []
 	const emptyBuffer = type.valueBuffer(EMPTY_VALUE)
-	assert.deepEqual(new Uint8Array(emptyBuffer), bufferFrom([0]))
+	assert.deepEqual(new Uint8Array(emptyBuffer), new Uint8Array([0]))
 	assert.deepEqual(type.readValue(emptyBuffer), EMPTY_VALUE)
 }

@@ -3,12 +3,7 @@ import AppendableStream from '../../dist/lib/appendable-stream'
 import {assert} from '../test-common'
 
 class CaptureStream extends Writable {
-	private readonly chunks: Buffer[]
-
-	constructor() {
-		super()
-		this.chunks = []
-	}
+	private readonly chunks: Buffer[] = []
 
 	_write(chunk: Buffer, _: string, callback: (err?: Error) => void) {
 		this.chunks.push(chunk)
@@ -24,8 +19,7 @@ const testBasic = new Promise<void>((resolve, reject) => {
 		() => new AppendableStream(0 as any),
 		(err: Error) => err.message === '0 is not an instance of Writable or Duplex or OutgoingMessage'
 	)
-	const outStream = new CaptureStream
-	outStream.on('finish', () => {
+	const outStream = new CaptureStream().on('finish', () => {
 		try {
 			assert.deepEqual(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 5, 6, 7]))
 			resolve()
@@ -54,22 +48,17 @@ const testBasic = new Promise<void>((resolve, reject) => {
 		() => stream.add(1.3),
 		(err: Error) => err.message === '1.3 is not an integer'
 	)
-	assert.throws(
-		() => stream.addAll(Buffer.from([5, 6]) as any),
-		(err: Error) => err.message === '<Buffer 05 06> is not an instance of ArrayBuffer'
-	)
 	assert.equal(stream.length, 4)
 	stream.addAll(new ArrayBuffer(0))
 	assert.equal(stream.length, 4)
-	stream.addAll(new Uint8Array([5, 6]).buffer)
+	stream.addAll(new Uint8Array([1, 5, 6, 2]).subarray(1, 3)) //5, 6
 	assert.equal(stream.length, 6)
 	stream.add(7)
 	assert.equal(stream.length, 7)
 	stream.end()
 })
 const testPause = new Promise<void>((resolve, reject) => {
-	const outStream = new CaptureStream
-	outStream.on('finish', () => {
+	const outStream = new CaptureStream().on('finish', () => {
 		try {
 			assert.deepEqual(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 9, 10]))
 			resolve()

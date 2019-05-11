@@ -18,7 +18,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	private cachedBuffer?: ArrayBuffer
 	private cachedHash?: string
 	private cachedSignature?: string
-	private cachedTypeLocations?: Map<AppendableBuffer, number>
+	private cachedTypeLocations?: WeakMap<AppendableBuffer, number>
 
 	/**
 	 * Returns an unsigned byte value unique to this type class;
@@ -40,7 +40,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 				}
 			}
 		}
-		else this.cachedTypeLocations = new Map
+		else this.cachedTypeLocations = new WeakMap
 		this.cachedTypeLocations.set(buffer, buffer.length) //future uses of this type will be able to point to this position in the buffer
 		buffer.add((this.constructor as typeof AbstractType)._value)
 		return true
@@ -64,10 +64,19 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		return buffer.toBuffer()
 	}
 	abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>
-	readValue(buffer: ArrayBuffer, offset = 0) {
-		assert.instanceOf(buffer, ArrayBuffer)
+	readValue(buffer: ArrayBuffer | Uint8Array, offset = 0) {
+		assert.instanceOf(buffer, [ArrayBuffer, Uint8Array])
 		assert.instanceOf(offset, Number)
-		const {value, length} = this.consumeValue(buffer, offset)
+		let readBuffer: ArrayBuffer, readOffset: number
+		if (buffer instanceof ArrayBuffer) {
+			readBuffer = buffer
+			readOffset = offset
+		}
+		else {
+			readBuffer = buffer.buffer
+			readOffset = buffer.byteOffset + offset
+		}
+		const {value, length} = this.consumeValue(readBuffer, readOffset)
 		if (offset + length !== buffer.byteLength) throw new Error('Did not consume all of buffer')
 		return value
 	}

@@ -1,7 +1,7 @@
 import * as flexInt from '../../dist/lib/flex-int'
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
-import {assert, bufferFrom, concat} from '../test-common'
+import {assert, concat} from '../test-common'
 
 export = () => {
 	{
@@ -22,7 +22,7 @@ export = () => {
 			c: [100, 101, 102, 103, 104]
 		}
 		type.writeValue(gb, VALUE)
-		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 			0,
 				5, 100, 101, 102, 103, 104,
 			7,
@@ -39,7 +39,7 @@ export = () => {
 		const gb = new GrowableBuffer
 		const VALUE = ['1234567890', '0', '0', '2', '0']
 		type.writeValue(gb, VALUE)
-		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 			0,
 				0, 0, 0, 0, 0x49, 0x96, 0x02, 0xd2,
 			0,
@@ -61,7 +61,7 @@ export = () => {
 		const tuple = []
 		for (let i = 0; i < 10; i++) tuple[i] = '0abc0'
 		type.writeValue(gb, tuple)
-		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 			0,
 				0x30, 0x61, 0x62, 0x63, 0x30, 0,
 			7,
@@ -85,7 +85,7 @@ export = () => {
 		)
 		const gb = new GrowableBuffer
 		type.writeValue(gb, 123)
-		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 			0xff,
 				0,
 					0, 123
@@ -101,7 +101,7 @@ export = () => {
 		const gb = new GrowableBuffer
 		const map = new Map<string, number>().set('abc', -126).set('def', -126)
 		type.writeValue(gb, map)
-		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 			2,
 				0,
 					0x61, 0x62, 0x63, 0,
@@ -126,7 +126,7 @@ export = () => {
 		b: threeDVectorType
 	})
 	const buffer = duplicateType.valueBuffer({a: [2, 0, 1], b: [2, 0, 1]})
-	assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 		0,
 			0x40, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00,
@@ -147,7 +147,7 @@ export = () => {
 			number: 'a'.charCodeAt(0) << 8
 		}
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 			0,
 				0x61, 0,
 			3
@@ -171,10 +171,10 @@ export = () => {
 		value.push(1, 1)
 		const buffer = type.valueBuffer(value)
 		assert.deepEqual(new Uint8Array(buffer), concat([
-			bufferFrom([value.length]),
-			bufferFrom(bytes),
+			new Uint8Array([value.length]),
+			new Uint8Array(bytes),
 			new Uint8Array(flexInt.makeValueBuffer(100 * 2)),
-			bufferFrom([2])
+			new Uint8Array([2])
 		]))
 		assert.deepEqual(type.readValue(buffer), value)
 	}

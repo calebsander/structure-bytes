@@ -28,7 +28,7 @@ export default class AppendableStream extends AppendableBuffer {
      * to the end of the written data
      * @param buffer The bytes to add
      */
-    addAll(buffer: ArrayBuffer): this;
+    addAll(buffer: ArrayBuffer | Uint8Array): this;
     /**
      * Closes the underlying stream
      */

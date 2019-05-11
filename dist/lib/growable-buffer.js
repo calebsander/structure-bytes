@@ -53,7 +53,7 @@ class GrowableBuffer extends appendable_1.default {
         assert.integer(size);
         if (size > this.buffer.byteLength) { //if resizing is necessary
             const newBuffer = new ArrayBuffer(size << 1);
-            new Uint8Array(newBuffer).set(new Uint8Array(this.buffer).subarray(0, this.size));
+            new Uint8Array(newBuffer).set(new Uint8Array(this.buffer));
             this.buffer = newBuffer;
         }
         return this;
@@ -77,7 +77,7 @@ class GrowableBuffer extends appendable_1.default {
      * position `this.length + i` of the [[GrowableBuffer]]).
      */
     addAll(buffer) {
-        assert.instanceOf(buffer, ArrayBuffer);
+        assert.instanceOf(buffer, [ArrayBuffer, Uint8Array]);
         const oldSize = this.size;
         const newSize = this.size + buffer.byteLength;
         this.grow(newSize);
@@ -157,7 +157,7 @@ class GrowableBuffer extends appendable_1.default {
     reset() {
         if (!this.pausePoints.length)
             throw new Error('Was not paused');
-        const pausePoint = this.pausePoints[this.pausePoints.length - 1];
+        const [pausePoint] = this.pausePoints.slice(-1);
         this.size = pausePoint;
         return this;
     }

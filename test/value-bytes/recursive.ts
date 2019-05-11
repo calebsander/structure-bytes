@@ -1,7 +1,7 @@
 import {inspect} from '../../dist/lib/util-inspect'
 import * as rec from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 type Field = {a: Fields} | {b: boolean}
 interface Fields {
@@ -35,7 +35,7 @@ export = () => {
 	node1Second.links.add(node2)
 	const graph = new Set([node1First, node2, node3, node1Second])
 	const buffer = graphType.valueBuffer(graph)
-	assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 		4,
 			0xff, 2, //node1First
 				0xff, 3, //node2
@@ -85,7 +85,7 @@ export = () => {
 	selfReference.self = selfReference
 	assert.deepEqual(
 		new Uint8Array(selfReferenceType.valueBuffer(selfReference)),
-		bufferFrom([
+		new Uint8Array([
 			0xff,
 				0x00, 1
 		])
@@ -104,7 +104,7 @@ export = () => {
 	tupleA.push(null, tupleB, tupleA)
 	tupleB.push(tupleA, null, null)
 	const tupleBuffer = tupleType.valueBuffer(tupleA)
-	assert.deepEqual(new Uint8Array(tupleBuffer), bufferFrom([
+	assert.deepEqual(new Uint8Array(tupleBuffer), new Uint8Array([
 		0xff,
 			0x00,
 			0xff,
@@ -139,7 +139,7 @@ export = () => {
 	const arr: any[] = [1, 2]
 	arr.push(arr, 3, 4, arr, 5)
 	const arrBuffer = arrayType.valueBuffer(arr)
-	assert.deepEqual(new Uint8Array(arrBuffer), bufferFrom([
+	assert.deepEqual(new Uint8Array(arrBuffer), new Uint8Array([
 		0xff,
 			7,
 			0,
@@ -177,7 +177,7 @@ export = () => {
 		.add(set)
 		.add(5)
 	const setBuffer = setType.valueBuffer(set)
-	assert.deepEqual(new Uint8Array(setBuffer), bufferFrom([
+	assert.deepEqual(new Uint8Array(setBuffer), new Uint8Array([
 		0xff,
 			6,
 			0,
@@ -209,7 +209,7 @@ export = () => {
 	map.set(50, new Map<number, any>().set(20, map))
 	map.set(100, map)
 	const mapBuffer = mapType.valueBuffer(map)
-	assert.deepEqual(new Uint8Array(mapBuffer), bufferFrom([
+	assert.deepEqual(new Uint8Array(mapBuffer), new Uint8Array([
 		0xff,
 			3,
 			10,
@@ -249,7 +249,7 @@ export = () => {
 	}
 
 	assert.throws(
-		() => selfReferenceType.readValue(bufferFrom([0xff, 0x00, 2]).buffer),
+		() => selfReferenceType.readValue(new Uint8Array([0xff, 0x00, 2]).buffer),
 		(err: Error) => err.message === 'Cannot find target at 0'
 	)
 }

@@ -48,7 +48,7 @@ export default class GrowableBuffer extends AppendableBuffer {
      * The byte at position `i` in `buffer` will be written to
      * position `this.length + i` of the [[GrowableBuffer]]).
      */
-    addAll(buffer: ArrayBuffer): this;
+    addAll(buffer: ArrayBuffer | Uint8Array): this;
     /**
      * Gets the internal buffer to avoid calling `ArrayBuffer.slice()`
      * @private

@@ -8,7 +8,7 @@
  * let gb = new GrowableBuffer
  * gb
  *   .add(1).add(2)
- *   .addAll(new Uint8Array([3, 4, 5]).buffer)
+ *   .addAll(new Uint8Array([3, 4, 5]))
  *   .pause()
  *     .add(0)
  *     .reset()
@@ -34,7 +34,7 @@ export default abstract class AppendableBuffer {
 	 * The byte at position `i` in `buffer` will be written to
 	 * position `this.length + i`.
 	 */
-	abstract addAll(buffer: ArrayBuffer): this
+	abstract addAll(buffer: ArrayBuffer | Uint8Array): this
 	/**
 	 * Pauses the writing process, i.e.
 	 * bytes added are not written

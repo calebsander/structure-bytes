@@ -1,5 +1,5 @@
 import GrowableBuffer from '../../dist/lib/growable-buffer'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	{
@@ -22,9 +22,9 @@ export = () => {
 		gb.add(10).add(20).add(30)
 		assert.equal(gb.length, 3)
 		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array(gb.rawBuffer))
-		assert.deepEqual(new Uint8Array(gb.rawBuffer), bufferFrom([10, 20, 30]))
+		assert.deepEqual(new Uint8Array(gb.rawBuffer), new Uint8Array([10, 20, 30]))
 		gb.add(40)
 		assert.equal(gb.rawBuffer.byteLength, 8)
-		assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([10, 20, 30, 40]))
+		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([10, 20, 30, 40]))
 	}
 }

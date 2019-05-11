@@ -8,20 +8,9 @@ export const assert = builtinAssert.strict || Object.assign(builtinAssert, {
 	notDeepEqual: builtinAssert.notDeepStrictEqual
 })
 
-export function bufferFrom(bytes: number[]) {
-	const buffer = new Uint8Array(bytes.length)
-	buffer.set(bytes)
-	return buffer
-}
-export function bufferFill(length: number, value: number) {
-	const buffer = new Uint8Array(length)
-	return buffer.fill(value)
-}
 export function concat(buffers: Uint8Array[]): Uint8Array {
+	const result = new Uint8Array(buffers.reduce((a, {length}) => a + length, 0))
 	let length = 0
-	for (const buffer of buffers) length += buffer.length
-	const result = new Uint8Array(length)
-	length = 0
 	for (const buffer of buffers) {
 		result.set(buffer, length)
 		length += buffer.length

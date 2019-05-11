@@ -3,7 +3,7 @@ import {promisify} from 'util'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 type Value = {abc: string, def: number[]}[]
 const type: t.Type<Value> = new t.ArrayType(
@@ -60,7 +60,7 @@ const writeErrorPromise = (() => {
 })()
 const readPromise = promisify(io.readType)<Value>(new BufferStream(type.toBuffer()))
 	.then(readType => assert(type.equals(readType)))
-const readErrorPromise = promisify(io.readType)(new BufferStream(bufferFrom([0])))
+const readErrorPromise = promisify(io.readType)(new BufferStream(new Uint8Array([0])))
 	.then(_ => { throw new Error('Expected error to be thrown') })
 	.catch(err => assert(err.message === 'No such type: 0x00'))
 export = Promise.all([

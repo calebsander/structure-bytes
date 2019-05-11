@@ -12,7 +12,7 @@ import AbsoluteType from './absolute';
  * let type = new sb.OctetsType
  * ````
  */
-export declare class OctetsType extends AbsoluteType<ArrayBuffer> {
+export declare class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuffer> {
     static readonly _value: number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -20,12 +20,14 @@ export declare class OctetsType extends AbsoluteType<ArrayBuffer> {
      * Example:
      * ````javascript
      * let octets = new Uint8Array([1, 2, 3, 4, 5])
+     * type.writeValue(buffer, octets)
+     * // or
      * type.writeValue(buffer, octets.buffer)
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
-    writeValue(buffer: AppendableBuffer, value: ArrayBuffer): void;
+    writeValue(buffer: AppendableBuffer, value: ArrayBuffer | Uint8Array): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<ArrayBuffer>;
 }

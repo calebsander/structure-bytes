@@ -1,7 +1,7 @@
 import sha256 from '../../dist/lib/sha-256'
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	class QRCode {
@@ -37,7 +37,7 @@ export = () => {
 	const hashedQRCode = new HashedQRCode('abcde')
 	assert.equal(hashedQRCode.hash, '36bbe50ed96841d10443bcb670d6554f0a34b761be67ec9c4a8ad2c0c44ca42c')
 	const valueBuffer = type.valueBuffer(hashedQRCode)
-	assert.deepEqual(new Uint8Array(valueBuffer), bufferFrom([0, 0x61, 0x62, 0x63, 0x64, 0x65, 0]))
+	assert.deepEqual(new Uint8Array(valueBuffer), new Uint8Array([0, 0x61, 0x62, 0x63, 0x64, 0x65, 0]))
 	const readType = r.type(type.toBuffer()) as t.NamedChoiceType<QRCode | UPC>
 	const readValue = readType.readValue(valueBuffer) as QRCode
 	const castValue = new QRCode(hashedQRCode.text)
@@ -51,7 +51,7 @@ export = () => {
 	const valueBuffer2 = type.valueBuffer(upc)
 	assert.deepEqual(
 		new Uint8Array(valueBuffer2),
-		bufferFrom([1, 0, 0, 0, 0, 0, 0, 0, 123])
+		new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 123])
 	)
 	const readValue2 = type.readValue(valueBuffer2) as UPC
 	assert.equal(readValue2.constructor.name, upc.constructor.name)
@@ -73,7 +73,7 @@ export = () => {
 		(err: Error) => err.message === 'null is not an instance of Object'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([100]).buffer),
+		() => type.readValue(new Uint8Array([100]).buffer),
 		(err: Error) => err.message === 'Constructor index 100 is invalid'
 	)
 }

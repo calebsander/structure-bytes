@@ -1,6 +1,6 @@
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.SetType(
@@ -25,7 +25,7 @@ export = () => {
 
 	const gb2 = new GrowableBuffer
 	type.writeValue(gb2, new Set)
-	assert.deepEqual(new Uint8Array(gb2.toBuffer()), bufferFrom([0]))
+	assert.deepEqual(new Uint8Array(gb2.toBuffer()), new Uint8Array([0]))
 	assert.deepEqual(type.readValue(gb2.toBuffer()), new Set)
 
 	const gb3 = new GrowableBuffer
@@ -36,7 +36,7 @@ export = () => {
 	type.writeValue(gb3, VALUE)
 	assert.deepEqual(
 		new Uint8Array(gb3.toBuffer()),
-		bufferFrom([2, 0, 2, 0x63, 0x01, 0xa4, 0x2d])
+		new Uint8Array([2, 0, 2, 0x63, 0x01, 0xa4, 0x2d])
 	)
 	assert.deepEqual(type.readValue(gb3.toBuffer()), VALUE)
 }

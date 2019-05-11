@@ -1,6 +1,6 @@
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.StructType({
@@ -10,7 +10,7 @@ export = () => {
 	const buffer = type.toBuffer()
 	assert.deepEqual(
 		new Uint8Array(buffer),
-		bufferFrom([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30])
+		new Uint8Array([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30])
 	)
 	assert(type.equals(r.type(buffer)))
 	for (let i = 0; i < buffer.byteLength; i++) {

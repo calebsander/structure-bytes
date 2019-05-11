@@ -1,6 +1,6 @@
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.TupleType({
@@ -31,7 +31,7 @@ export = () => {
 		'abcd'
 	]
 	type.writeValue(gb, VALUE)
-	assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 		0,
 		0x61, 0,
 		0x61, 0x62, 0,

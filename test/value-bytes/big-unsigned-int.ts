@@ -1,5 +1,5 @@
 import * as t from '../../dist'
-import {assert, bufferFrom, concat} from '../test-common'
+import {assert, concat} from '../test-common'
 
 export = () => {
 	const type = new t.BigUnsignedIntType
@@ -7,12 +7,12 @@ export = () => {
 	{
 		const buffer = type.valueBuffer(VALUE)
 		const bytes = [0x3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01]
-		assert.deepEqual(new Uint8Array(buffer), concat([bufferFrom([bytes.length]), bufferFrom(bytes)]))
+		assert.deepEqual(new Uint8Array(buffer), concat([new Uint8Array([bytes.length]), new Uint8Array(bytes)]))
 		assert.equal(type.readValue(buffer), VALUE)
 	}
 	{
 		const buffer = type.valueBuffer('0')
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([0]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0]))
 		assert.equal(type.readValue(buffer), '0')
 	}
 

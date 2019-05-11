@@ -3,7 +3,7 @@ import {promisify} from 'util'
 import BufferStream from '../../lib/buffer-stream'
 import * as io from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 const type = new t.TupleType({
 	type: new t.OptionalType(
@@ -12,7 +12,7 @@ const type = new t.TupleType({
 	length: 5
 })
 const value = ['a', null, 'b', null, 'c']
-const VALUE_BUFFER = bufferFrom([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63])
+const VALUE_BUFFER = new Uint8Array([0xff, 0x61, 0x00, 0xff, 0x62, 0x00, 0xff, 0x63])
 const writePromise = (() => {
 	const OUT_FILE = 'value-out'
 	const outStream = fs.createWriteStream(OUT_FILE)
@@ -82,7 +82,7 @@ const readPromise = promisify(io.readValue)({type, inStream: new BufferStream(VA
 	.then(readValue => assert.deepEqual(readValue, value))
 const readErrorPromise = promisify(io.readValue)({
 	type,
-	inStream: new BufferStream(bufferFrom([0x00]))
+	inStream: new BufferStream(new Uint8Array([0x00]))
 })
 	.then(_ => { throw new Error('Expected error to be thrown') })
 	.catch(err => assert(err.message === 'Buffer is not long enough'))

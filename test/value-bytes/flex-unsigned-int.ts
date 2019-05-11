@@ -1,18 +1,18 @@
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.FlexUnsignedIntType
 	const TWO_7 = 2 ** 7, TWO_14 = 2 ** 14
 	for (let value = 0; value < TWO_7; value++) {
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([value]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([value]))
 		assert.equal(type.readValue(buffer), value)
 	}
 	for (let value = TWO_7; value < TWO_7 + TWO_14; value++) {
 		const relativeValue = value - TWO_7
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 			0b10000000 | (relativeValue >> 8),
 			relativeValue & 0xFF
 		]))
@@ -21,7 +21,7 @@ export = () => {
 	for (let value = TWO_7 + TWO_14; value < 50000; value++) {
 		const relativeValue = value - (TWO_7 + TWO_14)
 		const buffer = type.valueBuffer(value)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([
 			0b11000000 | (relativeValue >> 16),
 			(relativeValue >> 8) & 0xFF,
 			relativeValue & 0xFF
@@ -32,7 +32,7 @@ export = () => {
 	function makeMinBuffer(bytes: number) {
 		const fullBytes = new Array<number>(bytes - 1)
 		fullBytes.fill(0b00000000)
-		return bufferFrom(
+		return new Uint8Array(
 			[parseInt('1'.repeat(bytes - 1) + '0'.repeat(9 - bytes), 2)]
 			.concat(fullBytes)
 		)
@@ -40,7 +40,7 @@ export = () => {
 	function makeMaxBuffer(bytes: number) {
 		const fullBytes = new Array<number>(bytes - 1)
 		fullBytes.fill(0b11111111)
-		return bufferFrom(
+		return new Uint8Array(
 			[parseInt('1'.repeat(bytes - 1) + '0' + '1'.repeat(8 - bytes), 2)]
 			.concat(fullBytes)
 		)
@@ -55,9 +55,9 @@ export = () => {
 	assert.deepEqual(new Uint8Array(type.valueBuffer(4432676798592)), makeMinBuffer(7))
 	assert.deepEqual(new Uint8Array(type.valueBuffer(567382630219903)), makeMaxBuffer(7))
 	assert.deepEqual(new Uint8Array(type.valueBuffer(567382630219904)), makeMinBuffer(8))
-	assert.deepEqual(new Uint8Array(type.valueBuffer(Number.MAX_SAFE_INTEGER)), bufferFrom([0b11111110, 0b00011101, 0b11111011, 0b11110111, 0b11101111, 0b11011111, 0b10111111, 0b01111111]))
+	assert.deepEqual(new Uint8Array(type.valueBuffer(Number.MAX_SAFE_INTEGER)), new Uint8Array([0b11111110, 0b00011101, 0b11111011, 0b11110111, 0b11101111, 0b11011111, 0b10111111, 0b01111111]))
 	assert.equal(type.readValue(type.valueBuffer(Number.MAX_SAFE_INTEGER)), Number.MAX_SAFE_INTEGER)
-	assert.deepEqual(new Uint8Array(type.valueBuffer('123')), bufferFrom([123]))
+	assert.deepEqual(new Uint8Array(type.valueBuffer('123')), new Uint8Array([123]))
 
 	assert.throws(
 		() => type.valueBuffer(true as any),
@@ -80,11 +80,11 @@ export = () => {
 		(err: Error) => err.message === 'Buffer is not long enough'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([0b11111111]).buffer),
+		() => type.readValue(new Uint8Array([0b11111111]).buffer),
 		(err: Error) => err.message === 'Invalid number of bytes'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([0b10000001]).buffer),
+		() => type.readValue(new Uint8Array([0b10000001]).buffer),
 		(err: Error) => err.message === 'Buffer is not long enough'
 	)
 }

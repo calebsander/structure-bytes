@@ -1,5 +1,5 @@
 import * as t from '../../dist'
-import {assert, bufferFrom, concat} from '../test-common'
+import {assert, concat} from '../test-common'
 
 export = () => {
 	const type = new t.BigIntType
@@ -8,24 +8,24 @@ export = () => {
 		const buffer = type.valueBuffer(VALUE)
 		const bytes = [0xb6, 0x69, 0xfd, 0x2e]
 		assert.deepEqual(new Uint8Array(buffer), concat([
-			bufferFrom([bytes.length]),
-			bufferFrom(bytes)
+			new Uint8Array([bytes.length]),
+			new Uint8Array(bytes)
 		]))
 		assert.equal(type.readValue(buffer), VALUE)
 	}
 	{
 		const buffer = type.valueBuffer('0')
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([0]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0]))
 		assert.equal(type.readValue(buffer), '0')
 	}
 	{
 		const buffer = type.valueBuffer('-128')
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([1, -128 + 256]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([1, -128 + 256]))
 		assert.equal(type.readValue(buffer), '-128')
 	}
 	{
 		const buffer = type.valueBuffer('127')
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([1, 127]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([1, 127]))
 		assert.equal(type.readValue(buffer), '127')
 	}
 

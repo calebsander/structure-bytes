@@ -1,5 +1,5 @@
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.EnumType({
@@ -10,10 +10,10 @@ export = () => {
 			'MISSING'
 		]
 	})
-	assert.deepEqual(new Uint8Array(type.valueBuffer('AVAILABLE')), bufferFrom([0]))
-	assert.deepEqual(new Uint8Array(type.valueBuffer('IN_USE')), bufferFrom([1]))
+	assert.deepEqual(new Uint8Array(type.valueBuffer('AVAILABLE')), new Uint8Array([0]))
+	assert.deepEqual(new Uint8Array(type.valueBuffer('IN_USE')), new Uint8Array([1]))
 	const buffer = type.valueBuffer('MISSING')
-	assert.deepEqual(new Uint8Array(buffer), bufferFrom([2]))
+	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([2]))
 	assert.equal(type.readValue(buffer), 'MISSING')
 
 	assert.throws(
@@ -25,7 +25,7 @@ export = () => {
 		(err: Error) => err.message === '101 is not an instance of String'
 	)
 	assert.throws(
-		() => type.readValue(bufferFrom([type.values.length]).buffer),
+		() => type.readValue(new Uint8Array([type.values.length]).buffer),
 		(err: Error) => err.message === 'Index 3 is invalid'
 	)
 
@@ -41,5 +41,5 @@ export = () => {
 			CHEETAH
 		]
 	})
-	assert.deepEqual(new Uint8Array(type2.valueBuffer({heightFt: 3, speedMph: 70})), bufferFrom([1]))
+	assert.deepEqual(new Uint8Array(type2.valueBuffer({heightFt: 3, speedMph: 70})), new Uint8Array([1]))
 }

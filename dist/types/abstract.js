@@ -35,7 +35,7 @@ class AbstractType {
             }
         }
         else
-            this.cachedTypeLocations = new Map;
+            this.cachedTypeLocations = new WeakMap;
         this.cachedTypeLocations.set(buffer, buffer.length); //future uses of this type will be able to point to this position in the buffer
         buffer.add(this.constructor._value);
         return true;
@@ -61,9 +61,18 @@ class AbstractType {
         return buffer.toBuffer();
     }
     readValue(buffer, offset = 0) {
-        assert.instanceOf(buffer, ArrayBuffer);
+        assert.instanceOf(buffer, [ArrayBuffer, Uint8Array]);
         assert.instanceOf(offset, Number);
-        const { value, length } = this.consumeValue(buffer, offset);
+        let readBuffer, readOffset;
+        if (buffer instanceof ArrayBuffer) {
+            readBuffer = buffer;
+            readOffset = offset;
+        }
+        else {
+            readBuffer = buffer.buffer;
+            readOffset = buffer.byteOffset + offset;
+        }
+        const { value, length } = this.consumeValue(readBuffer, readOffset);
         if (offset + length !== buffer.byteLength)
             throw new Error('Did not consume all of buffer');
         return value;

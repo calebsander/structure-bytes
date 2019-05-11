@@ -1,6 +1,6 @@
 import {r} from '../../dist'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	assert.throws(
@@ -28,9 +28,9 @@ export = () => {
 		const buffer = type.toBuffer()
 		assert.deepEqual(
 			new Uint8Array((type as any).cachedValueBuffer),
-			bufferFrom([0x61, 0x62, 0x63, 0])
+			new Uint8Array([0x61, 0x62, 0x63, 0])
 		)
-		assert.deepEqual(new Uint8Array(buffer), bufferFrom([0x59, 0x41, 0x61, 0x62, 0x63, 0]))
+		assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x59, 0x41, 0x61, 0x62, 0x63, 0]))
 		assert(type.equals(r.type(buffer)))
 	}
 

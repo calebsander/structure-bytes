@@ -1,16 +1,16 @@
 import GrowableBuffer from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
-import {assert, bufferFrom} from '../test-common'
+import {assert} from '../test-common'
 
 export = () => {
 	const type = new t.ByteType
 	const gb = new GrowableBuffer
 	type.writeValue(gb, -128)
-	assert.deepEqual(new Uint8Array(gb.toBuffer()), bufferFrom([-128 + 0x100]))
+	assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([-128 + 0x100]))
 	assert.equal(type.readValue(gb.toBuffer()), -128)
 
-	assert.deepEqual(new Uint8Array(type.valueBuffer('1')), bufferFrom([1]))
-	assert.equal(type.readValue(bufferFrom([1]).buffer), 1)
+	assert.deepEqual(new Uint8Array(type.valueBuffer('1')), new Uint8Array([1]))
+	assert.equal(type.readValue(new Uint8Array([1]).buffer), 1)
 
 	assert.throws(
 		() => type.writeValue(gb, true as any),
