@@ -243,11 +243,20 @@ export {consumeType as _consumeType}
  * In most use cases, this argument should be be omitted.
  * @return The type that was read
  */
-export function type(typeBuffer: ArrayBuffer, fullBuffer = true): t.Type<any> {
-	assert.instanceOf(typeBuffer, ArrayBuffer)
-	const {value: readValue, length} = consumeType(typeBuffer, 0)
+export function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer = true): t.Type<any> {
+	assert.instanceOf(typeBuffer, [ArrayBuffer, Uint8Array])
+	let readBuffer: ArrayBuffer, readOffset: number
+	if (typeBuffer instanceof ArrayBuffer) {
+		readBuffer = typeBuffer
+		readOffset = 0
+	}
+	else {
+		readBuffer = typeBuffer.buffer
+		readOffset = typeBuffer.byteOffset
+	}
+	const {value, length} = consumeType(readBuffer, readOffset)
 	if (fullBuffer && length !== typeBuffer.byteLength) {
 		throw new Error('Did not consume all of the buffer')
 	}
-	return readValue
+	return value
 }

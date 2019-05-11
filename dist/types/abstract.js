@@ -73,8 +73,9 @@ class AbstractType {
             readOffset = buffer.byteOffset + offset;
         }
         const { value, length } = this.consumeValue(readBuffer, readOffset);
-        if (offset + length !== buffer.byteLength)
+        if (offset + length !== buffer.byteLength) {
             throw new Error('Did not consume all of buffer');
+        }
         return value;
     }
     /*

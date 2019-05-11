@@ -77,7 +77,9 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 			readOffset = buffer.byteOffset + offset
 		}
 		const {value, length} = this.consumeValue(readBuffer, readOffset)
-		if (offset + length !== buffer.byteLength) throw new Error('Did not consume all of buffer')
+		if (offset + length !== buffer.byteLength) {
+			throw new Error('Did not consume all of buffer')
+		}
 		return value
 	}
 	/*

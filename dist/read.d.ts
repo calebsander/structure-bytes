@@ -22,4 +22,4 @@ export { consumeType as _consumeType };
  * In most use cases, this argument should be be omitted.
  * @return The type that was read
  */
-export declare function type(typeBuffer: ArrayBuffer, fullBuffer?: boolean): t.Type<any>;
+export declare function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer?: boolean): t.Type<any>;
