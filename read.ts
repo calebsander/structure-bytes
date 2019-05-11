@@ -25,9 +25,7 @@ interface Types {
 		if (testType.prototype.addToBuffer === defaultAddToBuffer) SINGLE_BYTE_TYPES.push(testType)
 	}
 }
-interface NoParamsType {
-	new(): t.Type<any>
-}
+type NoParamsType = new() => t.Type<any>
 //Mapping of type bytes to the corresponding types
 const SINGLE_BYTE_TYPE_BYTES = new Map<number, NoParamsType>()
 for (const singleByteType of SINGLE_BYTE_TYPES) {

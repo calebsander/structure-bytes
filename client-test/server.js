@@ -1,4 +1,4 @@
-const assert = require('../dist/lib/assert').default
+const assert = require('assert').strict
 const fs = require('fs')
 const http = require('http')
 const sb = require('../dist')
@@ -26,7 +26,7 @@ http.createServer((req, res) => {
 				console.log(err)
 			}
 			else {
-				assert.equal(value, VALUE)
+				assert.deepEqual(value, VALUE)
 				console.log('Got upload')
 				res.end('Success')
 			}

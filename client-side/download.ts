@@ -1,5 +1,5 @@
 import * as base64 from 'base64-js'
-import {assert, Type} from './common'
+import {Type} from './common'
 import * as r from '../read'
 
 interface Sig {
@@ -45,10 +45,11 @@ export interface DownloadOptions {
 	options?: RequestInit
 }
 export function download({name, url, options}: DownloadOptions): Promise<any> {
-	assert.instanceOf(name, String)
-	assert.instanceOf(url, String)
+	if (typeof name !== 'string') throw new Error('Name is not a string')
+	if (typeof url !== 'string') throw new Error('URL is not a string')
 	options = options || {}
-	assert.instanceOf(options, Object)
+	if (!(options instanceof Object)) throw new Error('Invalid options object')
+
 	const typeInCache = typeCache[name]
 	if (typeInCache) {
 		if (options.headers) {
@@ -62,24 +63,19 @@ export function download({name, url, options}: DownloadOptions): Promise<any> {
 		.then(response => {
 			if (!response.ok) throw new Error(`Received status of ${response.status}`)
 			const sig = response.headers.get('sig')!
-			if (typeInCache && typeInCache.sig === sig) {
-				return response.arrayBuffer()
-					.then(buffer => {
-						const value = typeInCache.type.readValue(buffer)
-						return Promise.resolve(value)
-					})
-			}
-			else {
-				return response.arrayBuffer()
-					.then(buffer => {
-						const readType = r._consumeType(buffer, 0)
-						const type = readType.value
-						const value = type.readValue(buffer, readType.length)
-						typeCache[name] = {sig, type}
-						saveTypeCache()
-						return Promise.resolve(value)
-					})
-			}
+			return response.arrayBuffer()
+				.then(buffer => {
+					if (typeInCache && typeInCache.sig === sig) {
+						return typeInCache.type.readValue(buffer)
+					}
+
+					const readType = r._consumeType(buffer, 0)
+					const type = readType.value
+					const value = type.readValue(buffer, readType.length)
+					typeCache[name] = {sig, type}
+					saveTypeCache()
+					return value
+				})
 		})
 }
 export * from './common'

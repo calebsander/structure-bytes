@@ -1,4 +1,4 @@
-import {assert, Type} from './common'
+import {Type} from './common'
 import AbstractType from '../types/abstract'
 
 export interface UploadOptions<E> {
@@ -8,10 +8,10 @@ export interface UploadOptions<E> {
 	options: RequestInit
 }
 export function upload<E>({type, value, url, options}: UploadOptions<E>): Promise<Response> {
-	assert.instanceOf(type, AbstractType)
-	assert.instanceOf(url, String)
-	assert.instanceOf(options, Object)
-	if (options.method !== 'POST') assert.fail('Must use POST when uploading')
+	if (!(type instanceof AbstractType)) throw new Error('Invalid type')
+	if (typeof url !== 'string') throw new Error('Invalid URL')
+	if (!(options instanceof Object)) throw new Error('Invalid options')
+	if (options.method !== 'POST') throw new Error('Must use POST when uploading')
 	options.body = type.valueBuffer(value)
 	return fetch(url, options)
 }

@@ -1,9 +1,7 @@
 /**
  * A value that acts as a constructor
  */
-export interface Newable {
-	new(): object
-}
+export type Newable = new() => object
 /**
  * A function that acts as a constructor
  */
