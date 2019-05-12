@@ -5,6 +5,8 @@ const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
+const pointer = require("./pointer");
+const recursive = require("./recursive");
 /**
  * A type storing a value of one of several fixed types.
  * The list of possible types must contain at most 255 types.
@@ -103,6 +105,8 @@ class ChoiceType extends absolute_1.default {
             }
             catch (_a) {
                 buffer.reset();
+                pointer.rewindBuffer(buffer);
+                recursive.rewindBuffer(buffer);
             }
         }
         buffer.resume();
@@ -121,14 +125,9 @@ class ChoiceType extends absolute_1.default {
     equals(otherType) {
         if (!super.equals(otherType))
             return false;
-        const otherChoiceType = otherType;
-        if (this.types.length !== otherChoiceType.types.length)
-            return false;
-        for (let i = 0; i < this.types.length; i++) {
-            if (!this.types[i].equals(otherChoiceType.types[i]))
-                return false;
-        }
-        return true;
+        const otherTypes = otherType.types;
+        return this.types.length === otherTypes.length &&
+            this.types.every((type, i) => type.equals(otherTypes[i]));
     }
 }
 exports.ChoiceType = ChoiceType;

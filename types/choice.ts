@@ -4,6 +4,8 @@ import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
+import * as pointer from './pointer'
+import * as recursive from './recursive'
 import {Type} from './type'
 
 /**
@@ -100,7 +102,11 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 				success = true
 				break
 			}
-			catch { buffer.reset() }
+			catch {
+				buffer.reset()
+				pointer.rewindBuffer(buffer)
+				recursive.rewindBuffer(buffer)
+			}
 		}
 		buffer.resume()
 		if (!success) throw new Error('No types matched: ' + inspect(value))
@@ -115,11 +121,8 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 	}
 	equals(otherType: any) {
 		if (!super.equals(otherType)) return false
-		const otherChoiceType = otherType as ChoiceType<any>
-		if (this.types.length !== otherChoiceType.types.length) return false
-		for (let i = 0; i < this.types.length; i++) {
-			if (!this.types[i].equals(otherChoiceType.types[i])) return false
-		}
-		return true
+		const otherTypes = (otherType as ChoiceType<any>).types
+		return this.types.length === otherTypes.length &&
+			this.types.every((type, i) => type.equals(otherTypes[i]))
 	}
 }

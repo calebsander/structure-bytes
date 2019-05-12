@@ -10,6 +10,17 @@ const abstract_1 = require("./abstract");
 const pointers = new WeakMap();
 //Map of read value buffers to maps of pointer types to maps of pointer values to read results
 const pointerReads = new WeakMap();
+function rewindBuffer(buffer) {
+    const locations = pointers.get(buffer);
+    if (locations) {
+        const { length } = buffer;
+        for (const [value, index] of locations) {
+            if (index >= length)
+                locations.delete(value);
+        }
+    }
+}
+exports.rewindBuffer = rewindBuffer;
 /**
  * A type storing a value of another type through a pointer.
  * If you expect to have the same large value repeated many times,
@@ -101,16 +112,15 @@ class PointerType extends abstract_1.default {
         const valueBuffer = this.type.valueBuffer(value);
         const valueString = bufferString.toBinaryString(valueBuffer); //have to convert the buffer to a string because equivalent buffers are not ===
         const index = bufferPointers.get(valueString);
-        bufferPointers.set(valueString, buffer.length);
+        const { length } = buffer;
+        bufferPointers.set(valueString, length);
         if (index === undefined) {
             buffer
                 .add(0x00)
                 .addAll(valueBuffer);
         }
-        else {
-            const offset = buffer.length - index;
-            buffer.addAll(flexInt.makeValueBuffer(offset));
-        }
+        else
+            buffer.addAll(flexInt.makeValueBuffer(length - index));
     }
     consumeValue(buffer, offset) {
         let length = 1;

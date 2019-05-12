@@ -2,6 +2,7 @@ import AppendableBuffer from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
 import { Type } from './type';
+export declare function rewindBuffer(buffer: AppendableBuffer): void;
 /**
  * A type storing a value of another type through a pointer.
  * If you expect to have the same large value repeated many times,

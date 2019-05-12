@@ -5,7 +5,7 @@ import {assert} from '../test-common'
 export = () => {
 	assert.throws(
 		() => new t.SingletonType({} as any),
-		(err: Error) => err.message === 'undefined is not an instance of AbstractType'
+		(err: Error) => err.message === 'undefined is not an instance of AbsoluteType'
 	)
 
 	{

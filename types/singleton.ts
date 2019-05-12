@@ -1,6 +1,7 @@
 import AppendableBuffer from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {inspect} from '../lib/util-inspect'
+import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import {Type} from './type'
 
@@ -60,7 +61,7 @@ export class SingletonType<E> extends AbstractType<E> {
 	 */
 	constructor({type, value}: SingletonParams<E>) {
 		super()
-		assert.instanceOf(type, AbstractType)
+		assert.instanceOf(type, AbsoluteType)
 		this.type = type
 		this.value = value
 	}

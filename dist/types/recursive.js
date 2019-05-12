@@ -5,13 +5,24 @@ const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const recursiveNesting = require("../lib/recursive-nesting");
 const recursiveRegistry = require("../recursive-registry");
-const absolute_1 = require("./absolute");
+const abstract_1 = require("./abstract");
 //Map of write buffers to maps of objects to their first written locations in the buffer
 const recursiveLocations = new WeakMap();
 //Map of write buffers to maps of names to ids
 const recursiveIDs = new WeakMap();
 //Map of value buffers to maps of indices to read values for recursive types
 const readRecursives = new WeakMap();
+function rewindBuffer(buffer) {
+    const locations = recursiveLocations.get(buffer);
+    if (locations) {
+        const { length } = buffer;
+        for (const [value, index] of locations) {
+            if (index >= length)
+                locations.delete(value);
+        }
+    }
+}
+exports.rewindBuffer = rewindBuffer;
 /**
  * A type that can refer recursively to itself.
  * This is not a type in its own right, but allows you
@@ -71,7 +82,7 @@ const readRecursives = new WeakMap();
  * (presumably a recursive value)
  * @param READ_E The type of value this type will read
  */
-class RecursiveType extends absolute_1.default {
+class RecursiveType extends abstract_1.default {
     /**
      * @param name The name of the type,
      * as registered using [[registerType]]
@@ -143,9 +154,10 @@ class RecursiveType extends absolute_1.default {
         if (bufferRecursiveLocations) {
             const targetLocation = bufferRecursiveLocations.get(value);
             if (targetLocation !== undefined) { //value has already been written to the buffer
-                buffer.add(0x00);
-                const offset = buffer.length - targetLocation; //calculate offset to previous location
-                buffer.addAll(flexInt.makeValueBuffer(offset));
+                buffer
+                    .add(0x00)
+                    //calculate offset to previous location
+                    .addAll(flexInt.makeValueBuffer(buffer.length - targetLocation));
                 return;
             }
         }

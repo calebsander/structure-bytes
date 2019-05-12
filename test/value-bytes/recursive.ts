@@ -224,6 +224,7 @@ export = () => {
 				0x00, 12
 	]))
 
+	//Test that value is not considered written if an error occurs while writing it
 	{
 		const fieldsType = new t.RecursiveType<Fields>('fields')
 		rec.registerType({
@@ -245,6 +246,33 @@ export = () => {
 				]
 			}),
 			(err: Error) => err.message === 'No types matched: {a: null, b: 1}'
+		)
+	}
+
+	//Test that value is not considered written if ChoiceType rewinds the buffer after writing it
+	{
+		const undoneType = new t.RecursiveType<boolean[]>('undone')
+		undoneType.setType(new t.ArrayType(new t.BooleanType))
+		const type = new t.ArrayType(
+			new t.ChoiceType<{a: boolean[], b: boolean} | {b: string}>([
+				new t.StructType({a: undoneType, b: new t.BooleanType}),
+				new t.StructType({b: new t.StringType})
+			])
+		)
+		const value: boolean[] = []
+		assert.deepEqual(
+			new Uint8Array(type.valueBuffer([
+				{a: value, b: '123' as any}, //this will successfully write value but then reset
+				{a: value, b: true} //ensure value is not considered already written by undoneType
+			])),
+			new Uint8Array([
+				2,
+					1,
+						0x31, 0x32, 0x33, 0,
+					0,
+						0xff, 0,
+						0xff
+			])
 		)
 	}
 

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const util_inspect_1 = require("../lib/util-inspect");
+const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
  * A type storing a fixed value.
@@ -47,7 +48,7 @@ class SingletonType extends abstract_1.default {
      */
     constructor({ type, value }) {
         super();
-        assert.instanceOf(type, abstract_1.default);
+        assert.instanceOf(type, absolute_1.default);
         this.type = type;
         this.value = value;
     }

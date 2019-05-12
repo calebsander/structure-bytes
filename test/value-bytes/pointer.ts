@@ -178,4 +178,31 @@ export = () => {
 		]))
 		assert.deepEqual(type.readValue(buffer), value)
 	}
+
+	//Test that value is not considered written if ChoiceType rewinds the buffer after writing it
+	{
+		const type = new t.ArrayType(
+			new t.ChoiceType<{a: string, b: boolean} | {b: string}>([
+				new t.StructType({
+					a: new t.PointerType(new t.StringType),
+					b: new t.BooleanType
+				}),
+				new t.StructType({b: new t.StringType})
+			])
+		)
+		assert.deepEqual(
+			new Uint8Array(type.valueBuffer([
+				{a: 'abc', b: 'def' as any},
+				{a: 'abc', b: true}
+			])),
+			new Uint8Array([
+				2,
+					1,
+						0x64, 0x65, 0x66, 0,
+					0,
+						0, 0x61, 0x62, 0x63, 0,
+						0xff
+			])
+		)
+	}
 }
