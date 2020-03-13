@@ -87,7 +87,10 @@ export = () => {
 	assert.throws(
 		() => rec.registerType(undefined as any),
 		(err: Error) =>
-			err.message === "Cannot destructure property `type` of 'undefined' or 'null'."
+			[
+				"Cannot destructure property `type` of 'undefined' or 'null'.",
+				"Cannot destructure property 'type' of 'undefined' as it is undefined."
+			].includes(err.message)
 	)
 	assert.throws(
 		() => rec.registerType({name: 'some-type'} as any),

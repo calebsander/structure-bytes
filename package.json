@@ -26,7 +26,7 @@
 		"test": "test"
 	},
 	"scripts": {
-		"wabt": "bash -c '[[ -d wabt ]]' || (git clone --depth 1 https://github.com/WebAssembly/wabt && cd wabt && make gcc-release-no-tests)",
+		"wabt": "bash -c '[[ -d wabt ]]' || (git clone --depth 1 https://github.com/WebAssembly/wabt && cd wabt && git submodule update --init && make gcc-release-no-tests)",
 		"wat2wasm": "npm run wabt && wabt/bin/wat2wasm lib/sha256.wast -o lib/sha256.wasm && ./wasm2ts.js lib/sha256",
 		"build": "npm run wat2wasm && rm -rf dist && tsc",
 		"build-client": "rm -rf compiled && webpack",
