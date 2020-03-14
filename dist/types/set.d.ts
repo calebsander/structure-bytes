@@ -1,7 +1,7 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
+import type { Type } from './type';
 /**
  * A type storing a variable-size set of values of the same type.
  * Works much like [[ArrayType]] except all values are `Set`s.
@@ -21,11 +21,8 @@ import { Type } from './type';
  * in the read set
  */
 export declare class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
-    static readonly _value: number;
-    /**
-     * The [[Type]] passed to the constructor
-     */
     readonly type: Type<E, READ_E>;
+    static get _value(): number;
     /**
      * @param type A [[Type]] that can serialize each element in the set
      */
@@ -47,5 +44,5 @@ export declare class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E
      */
     writeValue(buffer: AppendableBuffer, value: Set<E>): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

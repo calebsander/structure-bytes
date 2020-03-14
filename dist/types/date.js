@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
-const write_long_1 = require("../lib/write-long");
+const write_util_1 = require("../lib/write-util");
 const chrono_1 = require("./chrono");
 /**
  * A type storing a `Date` with millisecond precision.
@@ -31,14 +31,11 @@ class DateType extends chrono_1.default {
     writeValue(buffer, value) {
         this.isBuffer(buffer);
         assert.instanceOf(value, Date);
-        write_long_1.default(buffer, `${value.getTime()}`);
+        write_util_1.writeLong(buffer, `${value.getTime()}`);
     }
     consumeValue(buffer, offset) {
         const { value, length } = read_util_1.readLong(buffer, offset);
-        return {
-            value: new Date(Number(value)),
-            length
-        };
+        return { value: new Date(Number(value)), length };
     }
 }
 exports.DateType = DateType;

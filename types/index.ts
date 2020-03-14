@@ -36,7 +36,6 @@ export * from './set'
 export * from './map'
 export * from './enum'
 export * from './choice'
-export * from './named-choice'
 export {RecursiveType} from './recursive'
 export * from './singleton'
 

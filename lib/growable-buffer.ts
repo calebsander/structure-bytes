@@ -1,7 +1,16 @@
-import AppendableBuffer from './appendable'
+import type {AppendableBuffer} from './appendable'
 import * as assert from './assert'
 
 const INITIAL_LENGTH = 10
+
+export const asUint8Array = (buffer: ArrayBuffer | Uint8Array): Uint8Array =>
+	buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer)
+export function toArrayBuffer(buffer: Uint8Array): ArrayBuffer {
+	const {buffer: arrayBuffer, byteOffset, byteLength} = buffer
+	return !byteOffset && byteLength === arrayBuffer.byteLength
+		? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
+		: arrayBuffer.slice(byteOffset, byteOffset + byteLength)
+}
 
 /**
  * A [`StringBuilder`](https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html)-like
@@ -10,7 +19,7 @@ const INITIAL_LENGTH = 10
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-export default class GrowableBuffer extends AppendableBuffer {
+export default class GrowableBuffer implements AppendableBuffer {
 	private buffer: ArrayBuffer
 	private size: number
 	//A stack, containing lengths when buffer was paused
@@ -22,10 +31,9 @@ export default class GrowableBuffer extends AppendableBuffer {
 	 * (defaults to 10)
 	 */
 	constructor(initialLength = INITIAL_LENGTH) {
-		super()
 		try {
 			assert.integer(initialLength)
-			if (initialLength < 0) throw new Error
+			assert.between(0, initialLength, Infinity)
 		}
 		catch { throw new RangeError(`${initialLength} is not a valid buffer length`) }
 		this.buffer = new ArrayBuffer(initialLength)
@@ -85,27 +93,22 @@ export default class GrowableBuffer extends AppendableBuffer {
 		const newSize = this.size + buffer.byteLength
 		this.grow(newSize)
 		this.size = newSize
-		new Uint8Array(this.buffer).set(new Uint8Array(buffer), oldSize)
+		new Uint8Array(this.buffer).set(asUint8Array(buffer), oldSize)
 		return this
-	}
-	/**
-	 * Gets the internal buffer to avoid calling `ArrayBuffer.slice()`
-	 * @private
-	 */
-	get rawBuffer(): ArrayBuffer {
-		return this.buffer
 	}
 	/**
 	 * Gets the occupied portion in `ArrayBuffer` form
 	 * @return The internal buffer trimmed to `this.length`
 	 */
 	toBuffer(): ArrayBuffer {
-		let length: number
-		if (this.pausePoints.length) [length] = this.pausePoints //go up to first pause point
-		else length = this.size
-		return length === this.buffer.byteLength
-			? this.buffer
-			: this.buffer.slice(0, length)
+		return toArrayBuffer(this.toUint8Array())
+	}
+	/**
+	 * Gets the occupied portion in `Uint8Array` form
+	 * @return The internal buffer trimmed to `this.length`
+	 */
+	toUint8Array(): Uint8Array {
+		return new Uint8Array(this.buffer, 0, this.pausePoints[0] ?? this.size)
 	}
 	/**
 	 * Pauses the writing process, i.e.
@@ -142,8 +145,7 @@ export default class GrowableBuffer extends AppendableBuffer {
 	 * @throws If not currently paused
 	 */
 	resume() {
-		if (!this.pausePoints.length) throw new Error('Was not paused')
-		this.pausePoints.pop()
+		if (this.pausePoints.pop() === undefined) throw new Error('Was not paused')
 		return this
 	}
 	/**
@@ -155,8 +157,8 @@ export default class GrowableBuffer extends AppendableBuffer {
 	 * @throws If not currently paused
 	 */
 	reset() {
-		if (!this.pausePoints.length) throw new Error('Was not paused')
-		const [pausePoint] = this.pausePoints.slice(-1)
+		const [pausePoint] = this.pausePoints.slice(-1) as [number | undefined]
+		if (pausePoint === undefined) throw new Error('Was not paused')
 		this.size = pausePoint
 		return this
 	}

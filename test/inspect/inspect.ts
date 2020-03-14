@@ -27,6 +27,10 @@ export = () => {
 		one = 2
 	}]
 	assert.equal(util.inspect(new B), '{one: 2}')
+	function f(x: number) {
+		return x + 1
+	}
+	assert.equal(util.inspect(f), 'Function f')
 	assert.equal(util.inspect(Buffer.from([0x01, 0x10])), '<Buffer 01 10>')
 	assert.equal(util.inspect(new Uint8Array([0x01, 0x10])), '<Uint8Array 01 10>')
 	assert.equal(util.inspect(new Uint8Array([0x01, 0x10]).buffer), '<ArrayBuffer 01 10>')

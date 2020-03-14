@@ -1,16 +1,16 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import * as flexInt from '../lib/flex-int'
+import {readFlexInt, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import * as pointer from './pointer'
 import * as recursive from './recursive'
-import {Type} from './type'
+import type {Type} from './type'
 
 /**
  * A type storing a value of one of several fixed types.
- * The list of possible types must contain at most 255 types.
  *
  * Example:
  * ````javascript
@@ -42,28 +42,20 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		return 0x56
 	}
 	/**
-	 * The array of types passed into the constructor
-	 */
-	readonly types: Type<E, READ_E>[]
-	/**
 	 * @param types The list of possible types.
-	 * Cannot contain more than 255 types.
 	 * Values will be written using the first type in the list
 	 * that successfully writes the value,
 	 * so place higher priority types earlier.
 	 */
-	constructor(types: Type<E, READ_E>[]) {
+	constructor(readonly types: Type<E, READ_E>[]) {
 		super()
 		assert.instanceOf(types, Array)
-		try { assert.byteUnsignedInteger(types.length) }
-		catch { throw new Error(`${types.length} types is too many`) }
 		for (const type of types) assert.instanceOf(type, AbstractType)
-		this.types = types
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
-			buffer.add(this.types.length)
+			buffer.addAll(flexInt.makeValueBuffer(this.types.length))
 			for (const type of this.types) type.addToBuffer(buffer)
 			return true
 		}
@@ -96,7 +88,7 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		//Try to write value using each type in order until no error is thrown
 		for (let i = 0; i < this.types.length; i++) {
 			const type = this.types[i]
-			buffer.add(i)
+			buffer.addAll(flexInt.makeValueBuffer(i))
 			try {
 				type.writeValue(buffer, value)
 				success = true
@@ -112,17 +104,15 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		if (!success) throw new Error('No types matched: ' + inspect(value))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
-		let length = 1
-		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
-		const typeIndex = new Uint8Array(buffer)[offset]
+		//tslint:disable-next-line:prefer-const
+		let {value: typeIndex, length} = readFlexInt(buffer, offset)
 		const {value, length: subLength} = this.types[typeIndex].consumeValue(buffer, offset + length)
 		length += subLength
 		return {value, length}
 	}
-	equals(otherType: any) {
-		if (!super.equals(otherType)) return false
-		const otherTypes = (otherType as ChoiceType<any>).types
-		return this.types.length === otherTypes.length &&
-			this.types.every((type, i) => type.equals(otherTypes[i]))
+	equals(otherType: unknown): otherType is this {
+		return super.equals(otherType)
+			&& this.types.length === otherType.types.length
+			&& this.types.every((type, i) => type.equals(otherType.types[i]))
 	}
 }

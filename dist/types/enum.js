@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
+const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
@@ -30,20 +31,12 @@ class EnumType extends abstract_1.default {
     /**
      * @param type The type of each value of the enum
      * @param values The possible distinct values.
-     * Cannot contain more than 255 values.
      * @throws If any value cannot be serialized by `type`
      */
     constructor({ type, values }) {
         super();
         assert.instanceOf(type, absolute_1.default); //pointer types don't make sense because each value should be distinct
         assert.instanceOf(values, Array);
-        //At most 255 values allowed
-        try {
-            assert.byteUnsignedInteger(values.length);
-        }
-        catch (_a) {
-            throw new Error(`${values.length} values is too many`);
-        }
         this.type = type;
         this.values = values; //used when reading to get constant-time lookup of value index into value
     }
@@ -51,24 +44,25 @@ class EnumType extends abstract_1.default {
         return 0x55;
     }
     get valueIndices() {
-        const { type, values, cachedValueIndices } = this;
-        if (cachedValueIndices)
-            return cachedValueIndices;
-        const valueIndices = new Map();
-        for (let i = 0; i < values.length; i++) {
-            const value = values[i];
-            const valueString = bufferString.toBinaryString(type.valueBuffer(value)); //convert value to bytes and then string for use as a map key
-            if (valueIndices.has(valueString))
-                throw new Error('Value is repeated: ' + util_inspect_1.inspect(value));
-            valueIndices.set(valueString, i); //so writing a value has constant-time lookup into the values array
+        if (!this.cachedValueIndices) {
+            const { type, values } = this;
+            const valueIndices = new Map();
+            values.forEach((value, i) => {
+                //Convert value to bytes and then string for use as a map key
+                const valueString = bufferString.toBinaryString(type.valueBuffer(value));
+                if (valueIndices.has(valueString))
+                    throw new Error('Value is repeated: ' + util_inspect_1.inspect(value));
+                valueIndices.set(valueString, i); //so writing a value has constant-time lookup into the values array
+            });
+            this.cachedValueIndices = valueIndices;
         }
-        return this.cachedValueIndices = valueIndices;
+        return this.cachedValueIndices;
     }
     addToBuffer(buffer) {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
-            buffer.add(this.values.length);
+            buffer.addAll(flexInt.makeValueBuffer(this.values.length));
             for (const valueBuffer of this.valueIndices.keys()) {
                 buffer.addAll(bufferString.fromBinaryString(valueBuffer));
             }
@@ -94,29 +88,26 @@ class EnumType extends abstract_1.default {
         const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer));
         if (index === undefined)
             throw new Error('Not a valid enum value: ' + util_inspect_1.inspect(value));
-        buffer.add(index); //write the index to the requested value in the values array
+        //Write the index to the requested value in the values array
+        buffer.addAll(flexInt.makeValueBuffer(index));
     }
     consumeValue(buffer, offset) {
-        if (buffer.byteLength <= offset)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        const valueIndex = new Uint8Array(buffer)[offset];
+        const { value: valueIndex, length } = read_util_1.readFlexInt(buffer, offset);
         const value = this.values[valueIndex];
         if (value === undefined)
             throw new Error(`Index ${valueIndex} is invalid`);
-        return { value, length: 1 };
+        return { value, length };
     }
     equals(otherType) {
         if (!super.equals(otherType))
             return false;
-        const otherEnumType = otherType;
-        if (!this.type.equals(otherEnumType.type))
+        if (!this.type.equals(otherType.type))
             return false;
-        if (this.values.length !== otherEnumType.values.length)
+        if (this.values.length !== otherType.values.length)
             return false;
-        const otherValuesIterator = otherEnumType.valueIndices.keys();
-        for (const thisValue of this.valueIndices.keys()) {
-            const otherValue = otherValuesIterator.next().value;
-            if (otherValue !== thisValue)
+        const otherIndices = otherType.valueIndices;
+        for (const [thisValue, thisIndex] of this.valueIndices) {
+            if (otherIndices.get(thisValue) !== thisIndex)
                 return false;
         }
         return true;

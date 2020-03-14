@@ -2,9 +2,7 @@
 //This file contains functions for reading types from bytes
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("./lib/assert");
-const bufferString = require("./lib/buffer-string");
 const constants_1 = require("./lib/constants");
-const constructorRegistry = require("./lib/constructor-registry");
 const read_util_1 = require("./lib/read-util");
 const util_inspect_1 = require("./lib/util-inspect");
 const recursiveRegistry = require("./recursive-registry");
@@ -31,6 +29,7 @@ for (const singleByteType of SINGLE_BYTE_TYPES) {
 const RECURSIVE_NAME_LENGTH = 16;
 //Map of type buffers to maps of ids to synthetic recursive type names
 const recursiveNames = new WeakMap();
+const stringType = new t.StringType;
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
 function consumeType(typeBuffer, offset) {
@@ -46,45 +45,32 @@ function consumeType(typeBuffer, offset) {
         return { value: new singleByteType, length };
     switch (typeByte) {
         case t.BooleanTupleType._value: {
-            if (typeBuffer.byteLength <= offset + length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            const tupleLength = castBuffer[offset + length];
-            length++;
-            readType = new t.BooleanTupleType(tupleLength);
+            const tupleLength = read_util_1.readFlexInt(typeBuffer, offset + length);
+            length += tupleLength.length;
+            readType = new t.BooleanTupleType(tupleLength.value);
             break;
         }
         case t.TupleType._value: {
             const elementType = consumeType(typeBuffer, offset + length);
             length += elementType.length;
-            if (typeBuffer.byteLength <= offset + length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            const tupleLength = castBuffer[offset + length];
-            length++;
+            const tupleLength = read_util_1.readFlexInt(typeBuffer, offset + length);
+            length += tupleLength.length;
             readType = new t.TupleType({
                 type: elementType.value,
-                length: tupleLength
+                length: tupleLength.value
             });
             break;
         }
         case t.StructType._value: {
-            if (typeBuffer.byteLength <= offset + length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            const fieldCount = castBuffer[offset + length];
-            length++;
+            const structFields = read_util_1.readFlexInt(typeBuffer, offset + length);
+            length += structFields.length;
+            const fieldCount = structFields.value;
             const fields = {};
             for (let i = 0; i < fieldCount; i++) { //read field information for each field
-                if (typeBuffer.byteLength <= offset + length)
-                    throw new Error(read_util_1.NOT_LONG_ENOUGH);
-                const nameLength = castBuffer[offset + length];
-                length++;
-                const nameStart = offset + length;
-                const nameEnd = nameStart + nameLength;
-                if (typeBuffer.byteLength < nameEnd)
-                    throw new Error(read_util_1.NOT_LONG_ENOUGH);
-                const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)); //using castBuffer to be able to subarray it without copying
-                length += nameLength;
-                const fieldType = consumeType(typeBuffer, nameEnd);
-                fields[name] = fieldType.value;
+                const fieldName = stringType.consumeValue(typeBuffer, offset + length);
+                length += fieldName.length;
+                const fieldType = consumeType(typeBuffer, offset + length);
+                fields[fieldName.value] = fieldType.value;
                 length += fieldType.length;
             }
             readType = new t.StructType(fields);
@@ -114,10 +100,9 @@ function consumeType(typeBuffer, offset) {
             const valueType = consumeType(typeBuffer, offset + length);
             const subType = valueType.value;
             length += valueType.length;
-            if (typeBuffer.byteLength <= offset + length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            const valueCount = castBuffer[offset + length];
-            length++;
+            const enumCount = read_util_1.readFlexInt(typeBuffer, offset + length);
+            length += enumCount.length;
+            const valueCount = enumCount.value;
             const values = new Array(valueCount);
             for (let i = 0; i < valueCount; i++) {
                 const valueLocation = offset + length;
@@ -129,10 +114,9 @@ function consumeType(typeBuffer, offset) {
             break;
         }
         case t.ChoiceType._value: {
-            if (typeBuffer.byteLength <= offset + length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            const typeCount = castBuffer[offset + length];
-            length++;
+            const choiceCount = read_util_1.readFlexInt(typeBuffer, offset + length);
+            length += choiceCount.length;
+            const typeCount = choiceCount.value;
             const types = new Array(typeCount);
             for (let i = 0; i < typeCount; i++) {
                 const possibleType = consumeType(typeBuffer, offset + length);
@@ -140,32 +124,6 @@ function consumeType(typeBuffer, offset) {
                 length += possibleType.length;
             }
             readType = new t.ChoiceType(types);
-            break;
-        }
-        case t.NamedChoiceType._value: {
-            if (typeBuffer.byteLength <= offset + length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            const typeCount = castBuffer[offset + length];
-            length++;
-            const constructorTypes = new Map();
-            for (let i = 0; i < typeCount; i++) {
-                if (typeBuffer.byteLength <= offset + length)
-                    throw new Error(read_util_1.NOT_LONG_ENOUGH);
-                const nameLength = castBuffer[offset + length];
-                length++;
-                const nameStart = offset + length;
-                const nameEnd = nameStart + nameLength;
-                if (typeBuffer.byteLength < nameEnd)
-                    throw new Error(read_util_1.NOT_LONG_ENOUGH);
-                const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)); //using castBuffer to be able to subarray it without copying
-                length += nameLength;
-                const possibleType = consumeType(typeBuffer, nameEnd);
-                if (!(possibleType.value instanceof t.StructType))
-                    throw new Error('Not a StructType: ' + util_inspect_1.inspect(possibleType.value));
-                constructorTypes.set(constructorRegistry.get(name), possibleType.value);
-                length += possibleType.length;
-            }
-            readType = new t.NamedChoiceType(constructorTypes);
             break;
         }
         case t.RecursiveType._value: {

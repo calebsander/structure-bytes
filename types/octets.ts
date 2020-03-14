@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
@@ -41,13 +41,14 @@ export class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuff
 			.addAll(value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<ArrayBuffer> {
-		const octetsLength = readFlexInt(buffer, offset)
-		const {length} = octetsLength
-		const finalLength = length + octetsLength.value
-		if (buffer.byteLength < offset + finalLength) throw new Error(NOT_LONG_ENOUGH)
+		//tslint:disable-next-line:prefer-const
+		let {value: octetsLength, length} = readFlexInt(buffer, offset)
+		const octetsStart = length
+		length += octetsLength
+		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
 		return {
-			value: buffer.slice(offset + length, offset + finalLength),
-			length: finalLength
+			value: buffer.slice(offset + octetsStart, offset + length),
+			length
 		}
 	}
 }

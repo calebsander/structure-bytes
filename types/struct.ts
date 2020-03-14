@@ -1,23 +1,18 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import * as bufferString from '../lib/buffer-string'
+import * as flexInt from '../lib/flex-int'
 import {makeBaseValue, ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import {Type} from './type'
+import {StringType} from './string'
+import type {Type} from './type'
 
-/**
- * An object whose keys are strings,
- * i.e. any object
- */
-export interface StringIndexable {
-	[key: string]: any
-}
-export interface StructField {
-	name: string
+const stringType = new StringType
+
+export interface StructField<E> {
+	name: keyof E & string
 	type: Type<any>
-	nameBuffer: ArrayBuffer
 }
 /**
  * Maps each key in `E` to a type capable of writing
@@ -27,7 +22,6 @@ export type StructFields<E, READ_E extends E> = {
 	[key in keyof E]: Type<E[key], READ_E[key]>
 }
 /**
- * A type storing up to 255 named fields.
  * Intended to model a generic JavaScript object,
  * whose field names are known in advance.
  * If field names are part of the value rather than the type,
@@ -58,7 +52,7 @@ export type StructFields<E, READ_E extends E> = {
  * @param E The type of object values this type can write
  * @param READ_E The type of object values this type will read
  */
-export class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+export class StructType<E extends Record<string, any>, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
 	static get _value() {
 		return 0x51
 	}
@@ -69,57 +63,38 @@ export class StructType<E extends StringIndexable, READ_E extends E = E> extends
 	 * to the constructor always gives the same result.
 	 * Field names' UTF-8 representations are also cached.
 	 */
-	readonly fields: StructField[]
+	readonly fields: StructField<E>[]
 	/**
 	 * @param fields A mapping of field names to their types.
-	 * There can be no more than 255 fields.
-	 * Each field name must be at most 255 bytes long in UTF-8.
 	 */
 	constructor(fields: StructFields<E, READ_E>) {
 		super()
 		assert.instanceOf(fields, Object)
-		//Allow only 255 fields
-		const fieldCount = Object.keys(fields).length
-		try { assert.byteUnsignedInteger(fieldCount) }
-		catch { throw new Error(`${fieldCount} fields is too many`) }
 
-		this.fields = new Array(fieldCount) //really a set, but we want ordering to be fixed so that type bytes are consistent
-		let fieldIndex = 0
-		for (const fieldName in fields) {
-			if (!{}.hasOwnProperty.call(fields, fieldName)) continue
-			//Name must fit in 255 UTF-8 bytes
-			const fieldNameBuffer = bufferString.fromString(fieldName)
-			try { assert.byteUnsignedInteger(fieldNameBuffer.byteLength) }
-			catch { throw new Error(`Field name ${fieldName} is too long`) }
+		this.fields = [] //really a set, but we want ordering to be fixed so that type bytes are consistent
+		for (const name in fields) {
+			if (!{}.hasOwnProperty.call(fields, name)) continue
 			//Type must be a Type
-			const fieldType = fields[fieldName]
-			try { assert.instanceOf(fieldType, AbstractType) }
-			catch { throw new Error(inspect(fieldType) + ' is not a valid field type') }
-			this.fields[fieldIndex] = {
-				name: fieldName,
-				type: fieldType,
-				nameBuffer: fieldNameBuffer
-			}
-			fieldIndex++
+			const type = fields[name]
+			try { assert.instanceOf(type, AbstractType) }
+			catch { throw new Error(inspect(type) + ' is not a valid field type') }
+			this.fields.push({name, type})
 		}
 		//Sort by field name so field order is predictable
 		this.fields.sort((a, b) => {
 			if (a.name < b.name) return -1
 			/*istanbul ignore else*/
-			if (a.name > b.name) return 1
-			else return 0 //should never occur since names are distinct
+			if (a.name > b.name) return +1
+			return 0 //should never occur since names are distinct
 		})
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
-			buffer.add(this.fields.length)
-			for (const field of this.fields) {
-				const {nameBuffer} = field
-				buffer
-					.add(nameBuffer.byteLength) //not using null-terminated string because length is only 1 byte
-					.addAll(nameBuffer)
-				field.type.addToBuffer(buffer)
+			buffer.addAll(flexInt.makeValueBuffer(this.fields.length))
+			for (const {name, type} of this.fields) {
+				stringType.writeValue(buffer, name)
+				type.addToBuffer(buffer)
 			}
 			return true
 		}
@@ -144,38 +119,35 @@ export class StructType<E extends StringIndexable, READ_E extends E = E> extends
 	writeValue(buffer: AppendableBuffer, value: E) {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Object)
-		for (const field of this.fields) {
-			const fieldValue = value[field.name]
-			try { field.type.writeValue(buffer, fieldValue) }
+		for (const {name, type} of this.fields) {
+			const fieldValue = value[name]
+			try { type.writeValue(buffer, fieldValue) }
 			catch (writeError) {
 				//Reporting that field is missing is more useful than, for example,
 				//Saying "undefined is not an instance of Number"
+				//tslint:disable-next-line:strict-type-predicates
 				throw fieldValue === undefined
-					? new Error(`Value for field "${field.name}" missing`)
+					? new Error(`Value for field "${name}" missing`)
 					: writeError //throw original error if field is defined, but just invalid
 			}
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E> {
 		let length = 0
-		const value = (baseValue || makeBaseValue(this)) as READ_E
-		for (const field of this.fields) {
-			const readField = field.type.consumeValue(buffer, offset + length)
-			value[field.name] = readField.value
+		const value = (baseValue ?? makeBaseValue(this)) as READ_E
+		for (const {name, type} of this.fields) {
+			const readField = type.consumeValue(buffer, offset + length)
+			value[name] = readField.value
 			length += readField.length
 		}
 		return {value, length}
 	}
-	equals(otherType: any) {
-		if (!super.equals(otherType)) return false
-		const otherStructType = otherType as StructType<any>
-		if (this.fields.length !== otherStructType.fields.length) return false
-		for (let field = 0; field < this.fields.length; field++) {
-			const thisField = this.fields[field]
-			const otherField = otherStructType.fields[field]
-			if (!thisField.type.equals(otherField.type)) return false
-			if (thisField.name !== otherField.name) return false
-		}
-		return true
+	equals(otherType: unknown): otherType is this {
+		return super.equals(otherType)
+			&& this.fields.length === otherType.fields.length
+			&& this.fields.every(({name, type}, i) => {
+				const otherFields = otherType.fields[i]
+				return name === otherFields.name && type.equals(otherFields.type)
+			})
 	}
 }

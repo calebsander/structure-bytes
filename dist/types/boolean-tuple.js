@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
+const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
-const write_booleans_1 = require("../lib/write-booleans");
+const write_util_1 = require("../lib/write-util");
 const absolute_1 = require("./absolute");
 /**
  * A type storing a fixed-length array of `Boolean` values.
- * The length must be at most 255.
  * This type creates more efficient serializations than
  * `new sb.TupleType({type: new sb.BooleanType})` for boolean tuples,
  * since it works with bits instead of whole bytes.
@@ -17,21 +17,21 @@ const absolute_1 = require("./absolute");
  * ````
  */
 class BooleanTupleType extends absolute_1.default {
-    static get _value() {
-        return 0x31;
-    }
     /**
-     * @param length The number of `Boolean`s in each value of this type. Must be between 0 and 255.
+     * @param length The number of `Boolean`s in each value of this type
      */
     constructor(length) {
         super();
-        assert.byteUnsignedInteger(length);
         this.length = length;
+        assert.nonNegativeInteger(length);
+    }
+    static get _value() {
+        return 0x31;
     }
     addToBuffer(buffer) {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
-            buffer.add(this.length);
+            buffer.addAll(flexInt.makeValueBuffer(this.length));
             return true;
         }
         /*istanbul ignore next*/
@@ -53,14 +53,10 @@ class BooleanTupleType extends absolute_1.default {
         assert.instanceOf(value, Array);
         if (value.length !== this.length)
             throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`);
-        write_booleans_1.default(buffer, value);
+        write_util_1.writeBooleans(buffer, value);
     }
     consumeValue(buffer, offset) {
-        return read_util_1.readBooleans({
-            buffer,
-            offset,
-            count: this.length
-        });
+        return read_util_1.readBooleans({ buffer, offset, count: this.length });
     }
     equals(otherType) {
         return super.equals(otherType) && otherType.length === this.length;

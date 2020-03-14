@@ -1,8 +1,8 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
-import { RegisterableType } from '../recursive-registry-type';
+import type { RegisterableType } from '../recursive-registry-type';
 import AbstractType from './abstract';
-import { Type } from './type';
+import type { Type } from './type';
 export declare function rewindBuffer(buffer: AppendableBuffer): void;
 /**
  * A type that can refer recursively to itself.
@@ -64,17 +64,14 @@ export declare function rewindBuffer(buffer: AppendableBuffer): void;
  * @param READ_E The type of value this type will read
  */
 export declare class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
-    static readonly _value: number;
-    /**
-     * The name passed into the constructor
-     */
     readonly name: string;
+    static get _value(): number;
     /**
      * @param name The name of the type,
      * as registered using [[registerType]]
      */
     constructor(name: string);
-    readonly type: RegisterableType & Type<E, READ_E>;
+    get type(): RegisterableType & Type<E, READ_E>;
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -101,7 +98,7 @@ export declare class RecursiveType<E, READ_E extends E = E> extends AbstractType
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
     /**
      * An alternative to [[registerType]],
      * to avoid writing the type's name twice.

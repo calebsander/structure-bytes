@@ -15,7 +15,15 @@ export = () => {
 		value: new t.UnsignedIntType
 	}))
 	const graphType = new t.SetType(nodeType)
-	const GRAPH_BUFFER = new Uint8Array([0x53, 0x57, 0, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13])
+	const GRAPH_BUFFER = new Uint8Array([
+		0x53,
+			0x57, 0,
+				0x51, 2,
+					0x6c, 0x69, 0x6e, 0x6b, 0x73, 0,
+						0x53, 0x57, 0,
+					0x76, 0x61, 0x6c, 0x75, 0x65, 0,
+						0x13
+	])
 	assert.deepEqual(new Uint8Array(graphType.toBuffer()), GRAPH_BUFFER)
 	const readGraphType = r.type(GRAPH_BUFFER.buffer) as typeof graphType
 	const graphNodeName = (readGraphType.type as typeof nodeType).name
@@ -51,7 +59,22 @@ export = () => {
 		value: nodeType,
 		right: binaryTreeType
 	}))
-	assert.deepEqual(new Uint8Array(binaryTreeType.toBuffer()), new Uint8Array([0x57, 0, 0x51, 3, 4, 0x6c, 0x65, 0x66, 0x74, 0x57, 0, 5, 0x72, 0x69, 0x67, 0x68, 0x74, 0x57, 0, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x57, 1, 0x51, 2, 5, 0x6c, 0x69, 0x6e, 0x6b, 0x73, 0x53, 0x57, 1, 5, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x13]))
+	assert.deepEqual(new Uint8Array(binaryTreeType.toBuffer()), new Uint8Array([
+		0x57, 0,
+			0x51, 3,
+				0x6c, 0x65, 0x66, 0x74, 0,
+					0x57, 0,
+				0x72, 0x69, 0x67, 0x68, 0x74, 0,
+					0x57, 0,
+				0x76, 0x61, 0x6c, 0x75, 0x65, 0,
+					0x57, 1,
+						0x51, 2,
+							0x6c, 0x69, 0x6e, 0x6b, 0x73, 0,
+								0x53,
+									0x57, 1,
+							0x76, 0x61, 0x6c, 0x75, 0x65, 0,
+								0x13
+	]))
 	const readTreeType = r.type(binaryTreeType.toBuffer()) as typeof binaryTreeType
 	assert(readTreeType instanceof t.RecursiveType)
 	const readTreeName = readTreeType.name
@@ -108,7 +131,7 @@ export = () => {
 			) as any
 		}),
 		(err: Error) =>
-			err.message === 'OptionalType {type: StructType {fields: [{name: "a", type: StringType {}, nameBuffer: <ArrayBuffer 61>}, {name: "b", type: StringType {}, nameBuffer: <ArrayBuffer 62>}]}} is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
+			err.message === 'OptionalType {type: StructType {fields: [{name: "a", type: StringType {}}, {name: "b", type: StringType {}}]}} is not an instance of ArrayType or MapType or SetType or StructType or TupleType'
 	)
 	assert.throws(
 		() => rec.registerType({name: 23 as any, type: new t.StructType({})}),

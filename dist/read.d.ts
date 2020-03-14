@@ -1,6 +1,6 @@
 import { ReadResult } from './lib/read-util';
 import * as t from './types';
-declare function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<any>>;
+declare function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<unknown>>;
 export { consumeType as _consumeType };
 /**
  * Deserializes a type, i.e. takes a buffer
@@ -22,4 +22,4 @@ export { consumeType as _consumeType };
  * In most use cases, this argument should be be omitted.
  * @return The type that was read
  */
-export declare function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer?: boolean): t.Type<any>;
+export declare function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer?: boolean): t.Type<unknown>;

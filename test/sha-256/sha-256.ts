@@ -2,9 +2,8 @@ import * as crypto from 'crypto'
 import sha256, {sha256JS, sha256Wasm} from '../../dist/lib/sha-256'
 import {assert} from '../test-common'
 
-function toBytes(str: string): ArrayBuffer {
-	return new Uint8Array([...str].map(c => c.charCodeAt(0))).buffer
-}
+const toBytes = (str: string) =>
+	new Uint8Array([...str].map(c => c.charCodeAt(0)))
 const toHexString = (buffer: ArrayBuffer): string =>
 	[...new Uint8Array(buffer)]
 		.map(b => (b < 16 ? '0' : '') + b.toString(16))

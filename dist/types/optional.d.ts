@@ -1,7 +1,7 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
+import type { Type } from './type';
 /**
  * A type storing a value of another type or `null` or `undefined`.
  * `null` and `undefined` are treated identically,
@@ -24,11 +24,8 @@ import { Type } from './type';
  * @param READ_E The type of non-`null` read values
  */
 export declare class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null | undefined, READ_E | null> {
-    static readonly _value: number;
-    /**
-     * The [[Type]] passed into the constructor
-     */
     readonly type: Type<E, READ_E>;
+    static get _value(): number;
     /**
      * @param type The [[Type]] used to write values
      * if they are not `null` or `undefined`
@@ -58,5 +55,5 @@ export declare class OptionalType<E, READ_E extends E = E> extends AbsoluteType<
      */
     writeValue(buffer: AppendableBuffer, value: E | null | undefined): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E | null>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

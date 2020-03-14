@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
@@ -35,10 +35,8 @@ export class CharType extends AbsoluteType<string> {
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
 		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
-		const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4)) //UTF-8 codepoint can't be more than 4 bytes
-		return {
-			value,
-			length: bufferString.fromString(value).byteLength
-		}
+		//UTF-8 codepoint can't be more than 4 bytes
+		const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4))
+		return {value, length: bufferString.fromString(value).byteLength}
 	}
 }

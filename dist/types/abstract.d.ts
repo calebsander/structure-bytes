@@ -1,6 +1,6 @@
-import AppendableBuffer from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
-import { Type } from './type';
+import type { AppendableBuffer } from '../lib/appendable';
+import type { ReadResult } from '../lib/read-util';
+import type { Type } from './type';
 /**
  * The superclass of all [[Type]] classes
  * in this package
@@ -14,7 +14,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
      * Returns an unsigned byte value unique to this type class;
      * used to serialize the type
      */
-    static readonly _value: number;
+    static get _value(): number;
     addToBuffer(buffer: AppendableBuffer): boolean;
     toBuffer(): ArrayBuffer;
     getHash(): string;
@@ -22,8 +22,8 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
     abstract writeValue(buffer: AppendableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
     abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>;
-    readValue(buffer: ArrayBuffer | Uint8Array, offset?: number): READ_VALUE;
-    equals(otherType: any): boolean;
+    readValue(valueBuffer: ArrayBuffer | Uint8Array, offset?: number): READ_VALUE;
+    equals(otherType: unknown): otherType is this;
     /**
      * Requires that the buffer be a [[GrowableBuffer]]
      * or [[AppendableStream]]

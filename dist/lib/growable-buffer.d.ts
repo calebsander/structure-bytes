@@ -1,4 +1,6 @@
-import AppendableBuffer from './appendable';
+import type { AppendableBuffer } from './appendable';
+export declare const asUint8Array: (buffer: ArrayBuffer | Uint8Array) => Uint8Array;
+export declare function toArrayBuffer(buffer: Uint8Array): ArrayBuffer;
 /**
  * A [`StringBuilder`](https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html)-like
  * object which automatically grows its internal buffer as bytes are added.
@@ -6,7 +8,7 @@ import AppendableBuffer from './appendable';
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-export default class GrowableBuffer extends AppendableBuffer {
+export default class GrowableBuffer implements AppendableBuffer {
     private buffer;
     private size;
     private readonly pausePoints;
@@ -20,7 +22,7 @@ export default class GrowableBuffer extends AppendableBuffer {
      * The current number of bytes being occupied.
      * Note that this is NOT the size of the internal buffer.
      */
-    readonly length: number;
+    get length(): number;
     /**
      * Grow the internal buffer to hold
      * at least the specified number of bytes.
@@ -50,15 +52,15 @@ export default class GrowableBuffer extends AppendableBuffer {
      */
     addAll(buffer: ArrayBuffer | Uint8Array): this;
     /**
-     * Gets the internal buffer to avoid calling `ArrayBuffer.slice()`
-     * @private
-     */
-    readonly rawBuffer: ArrayBuffer;
-    /**
      * Gets the occupied portion in `ArrayBuffer` form
      * @return The internal buffer trimmed to `this.length`
      */
     toBuffer(): ArrayBuffer;
+    /**
+     * Gets the occupied portion in `Uint8Array` form
+     * @return The internal buffer trimmed to `this.length`
+     */
+    toUint8Array(): Uint8Array;
     /**
      * Pauses the writing process, i.e.
      * bytes added are not written

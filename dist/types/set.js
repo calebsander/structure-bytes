@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
-const write_iterable_1 = require("../lib/write-iterable");
+const write_util_1 = require("../lib/write-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -29,8 +29,8 @@ class SetType extends absolute_1.default {
      */
     constructor(type) {
         super();
-        assert.instanceOf(type, abstract_1.default);
         this.type = type;
+        assert.instanceOf(type, abstract_1.default);
     }
     static get _value() {
         return 0x53;
@@ -61,13 +61,13 @@ class SetType extends absolute_1.default {
     writeValue(buffer, value) {
         this.isBuffer(buffer);
         assert.instanceOf(value, Set);
-        write_iterable_1.default({ type: this.type, buffer, value, length: value.size });
+        write_util_1.writeIterable({ type: this.type, buffer, value, length: value.size });
     }
     consumeValue(buffer, offset, baseValue) {
-        const size = read_util_1.readFlexInt(buffer, offset);
-        let { length } = size;
-        const value = baseValue || read_util_1.makeBaseValue(this);
-        for (let i = 0; i < size.value; i++) {
+        //tslint:disable-next-line:prefer-const
+        let { value: size, length } = read_util_1.readFlexInt(buffer, offset);
+        const value = baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this);
+        for (let i = 0; i < size; i++) {
             const element = this.type.consumeValue(buffer, offset + length);
             length += element.length;
             value.add(element.value);

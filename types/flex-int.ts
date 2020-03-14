@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {readFlexInt, ReadResult} from '../lib/read-util'
@@ -10,20 +10,20 @@ import IntegerType from './integer'
  * to a unique unsigned integer value
  * @param signed The signed integer value
  */
-function toUnsigned(signed: number): number {
-	if (signed < 0) return -2 * signed - 1
-	return 2 * signed
-}
+const toUnsigned = (signed: number): number =>
+	signed < 0
+		? -2 * signed - 1
+		: 2 * signed
 /**
  * Converts an unsigned integer value
  * to a unique signed integer value.
  * The inverse of [[toUnsigned]].
  * @param signed The unsigned integer value
  */
-function fromUnsigned(unsigned: number): number {
-	if (unsigned & 1) return (unsigned + 1) / -2
-	return unsigned / 2
-}
+const fromUnsigned = (unsigned: number): number =>
+	unsigned & 1
+		? (unsigned + 1) / -2
+		: unsigned / 2
 const MIN_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER) //< 0; inclusive
 const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1 //> 0; exclusive
 
@@ -63,14 +63,11 @@ export class FlexIntType extends IntegerType<number | string, number> {
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue
 		assert.integer(value)
-		assert.between(MIN_SAFE, value as number, MAX_SAFE)
-		buffer.addAll(flexInt.makeValueBuffer(toUnsigned(value as number)))
+		assert.between(MIN_SAFE, value, MAX_SAFE)
+		buffer.addAll(flexInt.makeValueBuffer(toUnsigned(value)))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
 		const {value, length} = readFlexInt(buffer, offset)
-		return {
-			value: fromUnsigned(value),
-			length
-		}
+		return {value: fromUnsigned(value), length}
 	}
 }

@@ -1,9 +1,10 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
+import * as flexInt from '../lib/flex-int'
 import {makeBaseValue, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import {Type} from './type'
+import type {Type} from './type'
 
 /**
  * A [[Type]] for writing values of type `E`
@@ -19,7 +20,6 @@ export interface TupleParams<E, READ_E extends E> {
 }
 /**
  * A type storing a fixed-length array of values of the same type.
- * The length must be at most 255.
  *
  * Example:
  * ````javascript
@@ -54,12 +54,11 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	/**
 	 * @param type A [[Type]] that can write each element in the tuple
 	 * @param length The number of elements in the tuple.
-	 * Must be at most 255.
 	 */
 	constructor({type, length}: TupleParams<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbstractType)
-		assert.byteUnsignedInteger(length)
+		assert.nonNegativeInteger(length)
 		this.type = type
 		this.length = length
 	}
@@ -67,7 +66,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
-			buffer.add(this.length)
+			buffer.addAll(flexInt.makeValueBuffer(this.length))
 			return true
 		}
 		/*istanbul ignore next*/
@@ -96,7 +95,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
 		let length = 0
-		const value: READ_E[] = baseValue || makeBaseValue(this) as READ_E[] //TypeScript complains if annotation is left off `value`
+		const value = baseValue ?? makeBaseValue(this) as READ_E[]
 		for (let i = 0; i < this.length; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
 			length += element.length
@@ -104,9 +103,9 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		}
 		return {value, length}
 	}
-	equals(otherType: any) {
+	equals(otherType: unknown): otherType is this {
 		return super.equals(otherType)
-			&& this.type.equals((otherType as TupleType<any>).type)
-			&& this.length === (otherType as TupleType<any>).length
+			&& this.type.equals(otherType.type)
+			&& this.length === otherType.length
 	}
 }

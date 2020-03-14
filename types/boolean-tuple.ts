@@ -1,12 +1,12 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
+import * as flexInt from '../lib/flex-int'
 import {readBooleans, ReadResult} from '../lib/read-util'
-import writeBooleans from '../lib/write-booleans'
+import {writeBooleans} from '../lib/write-util'
 import AbsoluteType from './absolute'
 
 /**
  * A type storing a fixed-length array of `Boolean` values.
- * The length must be at most 255.
  * This type creates more efficient serializations than
  * `new sb.TupleType({type: new sb.BooleanType})` for boolean tuples,
  * since it works with bits instead of whole bytes.
@@ -21,21 +21,16 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 		return 0x31
 	}
 	/**
-	 * The length of `boolean[]`s that this type can serialize
+	 * @param length The number of `Boolean`s in each value of this type
 	 */
-	readonly length: number
-	/**
-	 * @param length The number of `Boolean`s in each value of this type. Must be between 0 and 255.
-	 */
-	constructor(length: number) {
+	constructor(readonly length: number) {
 		super()
-		assert.byteUnsignedInteger(length)
-		this.length = length
+		assert.nonNegativeInteger(length)
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
-			buffer.add(this.length)
+			buffer.addAll(flexInt.makeValueBuffer(this.length))
 			return true
 		}
 		/*istanbul ignore next*/
@@ -59,13 +54,9 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 		writeBooleans(buffer, value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]> {
-		return readBooleans({
-			buffer,
-			offset,
-			count: this.length
-		})
+		return readBooleans({buffer, offset, count: this.length})
 	}
-	equals(otherType: any) {
+	equals(otherType: unknown): otherType is this {
 		return super.equals(otherType) && otherType.length === this.length
 	}
 }

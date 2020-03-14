@@ -1,9 +1,8 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
  * A type storing a fixed-length array of `Boolean` values.
- * The length must be at most 255.
  * This type creates more efficient serializations than
  * `new sb.TupleType({type: new sb.BooleanType})` for boolean tuples,
  * since it works with bits instead of whole bytes.
@@ -14,13 +13,10 @@ import AbsoluteType from './absolute';
  * ````
  */
 export declare class BooleanTupleType extends AbsoluteType<boolean[]> {
-    static readonly _value: number;
-    /**
-     * The length of `boolean[]`s that this type can serialize
-     */
     readonly length: number;
+    static get _value(): number;
     /**
-     * @param length The number of `Boolean`s in each value of this type. Must be between 0 and 255.
+     * @param length The number of `Boolean`s in each value of this type
      */
     constructor(length: number);
     addToBuffer(buffer: AppendableBuffer): boolean;
@@ -37,5 +33,5 @@ export declare class BooleanTupleType extends AbsoluteType<boolean[]> {
      */
     writeValue(buffer: AppendableBuffer, value: boolean[]): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

@@ -5,10 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * of the `flexInt` format
  */
 const assert = require("./assert");
-function possibleValueCount(bytes) {
-    const usableBits = 7 * bytes;
-    return Math.pow(2, usableBits); //can't bit-shift because this may not fit in 32-bit integer
-}
+const possibleValueCount = (bytes) => Math.pow(2, (7 * bytes)); //can't bit-shift because this may not fit in 32-bit integer
 const UPPER_BOUNDS = new Map() //mapping of numbers of bytes to the exclusive upper bound on numbers in the range
     .set(0, 0); //1-byte values are relative to 0
 //Mapping of numbers of bytes to the mask for the first byte
@@ -49,7 +46,7 @@ function makeValueBuffer(value) {
     let writeValue = value - UPPER_BOUNDS.get(bytes - 1);
     const buffer = new Uint8Array(bytes);
     for (let writeByte = bytes - 1; writeByte >= 0; writeByte--) {
-        buffer[writeByte] = writeValue & 0xFF; //write least significant byte
+        buffer[writeByte] = writeValue; //write least significant byte
         //Move next least significant byte to least significant byte
         //Can't use bitwise math here because number may not fit in 32 bits
         writeValue = Math.floor(writeValue / 0x100);

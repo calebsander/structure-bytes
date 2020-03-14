@@ -1,4 +1,4 @@
-import { RegisterableType, TypeAndName } from './recursive-registry-type';
+import type { RegisterableType, TypeAndName } from './recursive-registry-type';
 /**
  * Registers a type with a name so
  * the name can be used in a [[RecursiveType]].
@@ -59,4 +59,4 @@ export declare function getType(name: string): RegisterableType;
  * @param name The name to check
  * @return Whether the name has been mapped to a type
  */
-export declare function isRegistered(name: string): boolean;
+export declare const isRegistered: (name: string) => boolean;

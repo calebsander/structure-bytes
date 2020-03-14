@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
-const bufferString = require("../lib/buffer-string");
+const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
+const string_1 = require("./string");
+const stringType = new string_1.StringType;
 /**
- * A type storing up to 255 named fields.
  * Intended to model a generic JavaScript object,
  * whose field names are known in advance.
  * If field names are part of the value rather than the type,
@@ -41,47 +42,23 @@ const abstract_1 = require("./abstract");
 class StructType extends absolute_1.default {
     /**
      * @param fields A mapping of field names to their types.
-     * There can be no more than 255 fields.
-     * Each field name must be at most 255 bytes long in UTF-8.
      */
     constructor(fields) {
         super();
         assert.instanceOf(fields, Object);
-        //Allow only 255 fields
-        const fieldCount = Object.keys(fields).length;
-        try {
-            assert.byteUnsignedInteger(fieldCount);
-        }
-        catch (_a) {
-            throw new Error(`${fieldCount} fields is too many`);
-        }
-        this.fields = new Array(fieldCount); //really a set, but we want ordering to be fixed so that type bytes are consistent
-        let fieldIndex = 0;
-        for (const fieldName in fields) {
-            if (!{}.hasOwnProperty.call(fields, fieldName))
+        this.fields = []; //really a set, but we want ordering to be fixed so that type bytes are consistent
+        for (const name in fields) {
+            if (!{}.hasOwnProperty.call(fields, name))
                 continue;
-            //Name must fit in 255 UTF-8 bytes
-            const fieldNameBuffer = bufferString.fromString(fieldName);
-            try {
-                assert.byteUnsignedInteger(fieldNameBuffer.byteLength);
-            }
-            catch (_b) {
-                throw new Error(`Field name ${fieldName} is too long`);
-            }
             //Type must be a Type
-            const fieldType = fields[fieldName];
+            const type = fields[name];
             try {
-                assert.instanceOf(fieldType, abstract_1.default);
+                assert.instanceOf(type, abstract_1.default);
             }
-            catch (_c) {
-                throw new Error(util_inspect_1.inspect(fieldType) + ' is not a valid field type');
+            catch (_a) {
+                throw new Error(util_inspect_1.inspect(type) + ' is not a valid field type');
             }
-            this.fields[fieldIndex] = {
-                name: fieldName,
-                type: fieldType,
-                nameBuffer: fieldNameBuffer
-            };
-            fieldIndex++;
+            this.fields.push({ name, type });
         }
         //Sort by field name so field order is predictable
         this.fields.sort((a, b) => {
@@ -89,9 +66,8 @@ class StructType extends absolute_1.default {
                 return -1;
             /*istanbul ignore else*/
             if (a.name > b.name)
-                return 1;
-            else
-                return 0; //should never occur since names are distinct
+                return +1;
+            return 0; //should never occur since names are distinct
         });
     }
     static get _value() {
@@ -100,13 +76,10 @@ class StructType extends absolute_1.default {
     addToBuffer(buffer) {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
-            buffer.add(this.fields.length);
-            for (const field of this.fields) {
-                const { nameBuffer } = field;
-                buffer
-                    .add(nameBuffer.byteLength) //not using null-terminated string because length is only 1 byte
-                    .addAll(nameBuffer);
-                field.type.addToBuffer(buffer);
+            buffer.addAll(flexInt.makeValueBuffer(this.fields.length));
+            for (const { name, type } of this.fields) {
+                stringType.writeValue(buffer, name);
+                type.addToBuffer(buffer);
             }
             return true;
         }
@@ -131,45 +104,38 @@ class StructType extends absolute_1.default {
     writeValue(buffer, value) {
         this.isBuffer(buffer);
         assert.instanceOf(value, Object);
-        for (const field of this.fields) {
-            const fieldValue = value[field.name];
+        for (const { name, type } of this.fields) {
+            const fieldValue = value[name];
             try {
-                field.type.writeValue(buffer, fieldValue);
+                type.writeValue(buffer, fieldValue);
             }
             catch (writeError) {
                 //Reporting that field is missing is more useful than, for example,
                 //Saying "undefined is not an instance of Number"
+                //tslint:disable-next-line:strict-type-predicates
                 throw fieldValue === undefined
-                    ? new Error(`Value for field "${field.name}" missing`)
+                    ? new Error(`Value for field "${name}" missing`)
                     : writeError; //throw original error if field is defined, but just invalid
             }
         }
     }
     consumeValue(buffer, offset, baseValue) {
         let length = 0;
-        const value = (baseValue || read_util_1.makeBaseValue(this));
-        for (const field of this.fields) {
-            const readField = field.type.consumeValue(buffer, offset + length);
-            value[field.name] = readField.value;
+        const value = (baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this));
+        for (const { name, type } of this.fields) {
+            const readField = type.consumeValue(buffer, offset + length);
+            value[name] = readField.value;
             length += readField.length;
         }
         return { value, length };
     }
     equals(otherType) {
-        if (!super.equals(otherType))
-            return false;
-        const otherStructType = otherType;
-        if (this.fields.length !== otherStructType.fields.length)
-            return false;
-        for (let field = 0; field < this.fields.length; field++) {
-            const thisField = this.fields[field];
-            const otherField = otherStructType.fields[field];
-            if (!thisField.type.equals(otherField.type))
-                return false;
-            if (thisField.name !== otherField.name)
-                return false;
-        }
-        return true;
+        return super.equals(otherType)
+            && this.fields.length === otherType.fields.length
+            && this.fields.every(({ name, type }, i) => {
+                const otherFields = otherType.fields[i];
+                return name === otherFields.name && type.equals(otherFields.type);
+            });
     }
 }
 exports.StructType = StructType;

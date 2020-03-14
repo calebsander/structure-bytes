@@ -57,7 +57,7 @@ function registerType({ type, name }) {
         types_1.TupleType
     ]);
     assert.instanceOf(name, String);
-    if (isRegistered(name))
+    if (exports.isRegistered(name))
         throw new Error(`"${name}" is already a registered type`);
     registeredTypes.set(name, type);
 }
@@ -84,7 +84,4 @@ exports.getType = getType;
  * @param name The name to check
  * @return Whether the name has been mapped to a type
  */
-function isRegistered(name) {
-    return registeredTypes.has(name);
-}
-exports.isRegistered = isRegistered;
+exports.isRegistered = (name) => registeredTypes.has(name);

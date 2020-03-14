@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = require("http");
 const stream_1 = require("stream");
-const appendable_1 = require("./appendable");
 const assert = require("./assert");
 const growable_buffer_1 = require("./growable-buffer");
 const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http_1.OutgoingMessage];
@@ -13,12 +12,11 @@ const WRITABLE_STREAMS = [stream_1.Writable, stream_1.Duplex, http_1.OutgoingMes
  * by calling [[end]] after all bytes
  * have been written.
  */
-class AppendableStream extends appendable_1.default {
+class AppendableStream {
     /**
      * @param outStream The underlying writable stream
      */
     constructor(outStream) {
-        super();
         assert.instanceOf(outStream, WRITABLE_STREAMS);
         this.outStream = outStream;
         this.writtenBytes = 0;
@@ -100,10 +98,9 @@ class AppendableStream extends appendable_1.default {
         if (!this.pauseCount)
             throw new Error('Was not paused');
         this.pauseCount--;
-        if (this.pauseCount)
-            this.paused.resume(); //still in pause stack
-        else { //emptied pause stack
-            this.outStream.write(Buffer.from(this.paused.rawBuffer, 0, this.paused.length));
+        this.paused.resume();
+        if (!this.pauseCount) { //emptied pause stack
+            this.outStream.write(this.paused.toUint8Array());
             this.paused = new growable_buffer_1.default; //must use a new buffer to avoid overwriting data sent to outStream
         }
         return this;

@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
@@ -13,7 +13,7 @@ import AbsoluteType from './absolute';
  * ````
  */
 export declare class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuffer> {
-    static readonly _value: number;
+    static get _value(): number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
      *

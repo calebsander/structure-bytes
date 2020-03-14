@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as date from '../lib/date'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'

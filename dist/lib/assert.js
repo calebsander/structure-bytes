@@ -14,26 +14,25 @@ function instanceOf(instance, constructors) {
         constructors = [constructors];
     for (const constructor of constructors) {
         if (instance instanceof constructor ||
-            (!(instance === undefined || instance === null) && instance.constructor === constructor) //necessary for primitives
-        )
+            //Necessary for primitives
+            (!(instance === undefined || instance === null) &&
+                instance.constructor === constructor))
             return;
     }
     throw new TypeError(util_inspect_1.inspect(instance) +
         ' is not an instance of ' +
-        constructors
-            .map(({ name }) => name)
-            .join(' or '));
+        constructors.map(({ name }) => name).join(' or '));
 }
 exports.instanceOf = instanceOf;
 /**
  * Throws an error if the given value is not an integer
  * within the range of integers representable in JavaScript
- * @param instance The value in question
+ * @param value The value in question
  */
-function integer(instance) {
-    instanceOf(instance, Number);
-    if (!Number.isSafeInteger(instance)) {
-        throw new RangeError(util_inspect_1.inspect(instance) + ' is not an integer');
+function integer(value) {
+    instanceOf(value, Number);
+    if (!Number.isSafeInteger(value)) {
+        throw new RangeError(util_inspect_1.inspect(value) + ' is not an integer');
     }
 }
 exports.integer = integer;
@@ -53,15 +52,14 @@ function between(lower, value, upper, message) {
 }
 exports.between = between;
 /**
- * Throws an error if the given value is not an integer
- * and in the range that can be represented in an unsigned byte
+ * Throws an error if the given value is not zero or a positive integer
  * @param value The value in question
  */
-function byteUnsignedInteger(value) {
+function nonNegativeInteger(value) {
     integer(value);
-    between(0, value, 256);
+    between(0, value, Infinity);
 }
-exports.byteUnsignedInteger = byteUnsignedInteger;
+exports.nonNegativeInteger = nonNegativeInteger;
 /** Equality comparisons */
 exports.equal = {
     /** Compares two `ArrayBuffer`s and returns whether they are equal */

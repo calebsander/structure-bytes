@@ -1,6 +1,6 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import {readLong, ReadResult} from '../lib/read-util'
-import writeLong from '../lib/write-long'
+import {writeLong} from '../lib/write-util'
 import IntegerType from './integer'
 
 /**

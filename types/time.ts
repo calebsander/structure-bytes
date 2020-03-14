@@ -1,6 +1,6 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import * as date from '../lib/date'
+import {MILLIS_PER_DAY} from '../lib/date'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import ChronoType from './chrono'
 
@@ -38,7 +38,7 @@ export class TimeType extends ChronoType {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		const byteBuffer = new ArrayBuffer(4)
-		new DataView(byteBuffer).setUint32(0, value.getTime() % date.MILLIS_PER_DAY)
+		new DataView(byteBuffer).setUint32(0, value.getTime() % MILLIS_PER_DAY)
 		buffer.addAll(byteBuffer)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {

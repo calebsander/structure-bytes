@@ -4,6 +4,7 @@ const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const recursiveNesting = require("../lib/recursive-nesting");
+const write_util_1 = require("../lib/write-util");
 const recursiveRegistry = require("../recursive-registry");
 const abstract_1 = require("./abstract");
 //Map of write buffers to maps of objects to their first written locations in the buffer
@@ -89,29 +90,27 @@ class RecursiveType extends abstract_1.default {
      */
     constructor(name) {
         super();
-        assert.instanceOf(name, String);
         this.name = name;
+        assert.instanceOf(name, String);
     }
     static get _value() {
         return 0x57;
     }
     get type() {
-        const type = recursiveRegistry.getType(this.name);
-        return type;
+        return recursiveRegistry.getType(this.name);
     }
     addToBuffer(buffer) {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             let bufferRecursiveIDs = recursiveIDs.get(buffer);
             if (!bufferRecursiveIDs) {
-                bufferRecursiveIDs = new Map;
-                recursiveIDs.set(buffer, bufferRecursiveIDs); //look for existing translation into recursive ID
+                recursiveIDs.set(buffer, bufferRecursiveIDs = new Map);
             }
-            let recursiveID = bufferRecursiveIDs.get(this.name);
+            let recursiveID = bufferRecursiveIDs.get(this.name); //look for existing translation into recursive ID
             const firstOccurence = recursiveID === undefined;
             if (firstOccurence) {
-                recursiveID = bufferRecursiveIDs.size; //use the next number as the ID
-                bufferRecursiveIDs.set(this.name, recursiveID);
+                //Use the next number as the ID
+                bufferRecursiveIDs.set(this.name, recursiveID = bufferRecursiveIDs.size);
             }
             buffer.addAll(flexInt.makeValueBuffer(recursiveID));
             if (firstOccurence) { //only define type if type has not already been defined
@@ -154,19 +153,16 @@ class RecursiveType extends abstract_1.default {
         if (bufferRecursiveLocations) {
             const targetLocation = bufferRecursiveLocations.get(value);
             if (targetLocation !== undefined) { //value has already been written to the buffer
-                buffer
-                    .add(0x00)
+                write_util_1.writeBooleanByte(buffer, false)
                     //calculate offset to previous location
                     .addAll(flexInt.makeValueBuffer(buffer.length - targetLocation));
                 return;
             }
         }
-        else {
-            bufferRecursiveLocations = new Map;
-            recursiveLocations.set(buffer, bufferRecursiveLocations);
-        }
+        else
+            recursiveLocations.set(buffer, bufferRecursiveLocations = new Map);
         //Value has not yet been written to the buffer
-        buffer.add(0xFF);
+        write_util_1.writeBooleanByte(buffer, true);
         //Keep track of the location before writing the data so that this location can be referenced by sub-values
         bufferRecursiveLocations.set(value, buffer.length);
         try {
@@ -178,15 +174,14 @@ class RecursiveType extends abstract_1.default {
         }
     }
     consumeValue(buffer, offset) {
-        const explicit = read_util_1.readBooleanByte(buffer, offset);
-        let { length } = explicit;
+        //tslint:disable-next-line:prefer-const
+        let { value: explicit, length } = read_util_1.readBooleanByte(buffer, offset);
         let value;
-        if (explicit.value) {
+        if (explicit) {
             value = read_util_1.makeBaseValue(this.type);
             let bufferReadRecursives = readRecursives.get(buffer);
             if (!bufferReadRecursives) {
-                bufferReadRecursives = new Map;
-                readRecursives.set(buffer, bufferReadRecursives);
+                readRecursives.set(buffer, bufferReadRecursives = new Map);
             }
             bufferReadRecursives.set(offset + length, value);
             length += this.type.consumeValue(buffer, offset + length, value).length;
@@ -203,8 +198,7 @@ class RecursiveType extends abstract_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
-            && this.name === otherType.name;
+        return super.equals(otherType) && this.name === otherType.name;
     }
     /**
      * An alternative to [[registerType]],

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const read_util_1 = require("../lib/read-util");
-const write_long_1 = require("../lib/write-long");
+const write_util_1 = require("../lib/write-util");
 const integer_1 = require("./integer");
 /**
  * A type storing an 8-byte signed integer
@@ -30,7 +30,7 @@ class LongType extends integer_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        write_long_1.default(buffer, value);
+        write_util_1.writeLong(buffer, value);
     }
     consumeValue(buffer, offset) {
         return read_util_1.readLong(buffer, offset);

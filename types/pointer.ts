@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import * as flexInt from '../lib/flex-int'
@@ -10,7 +10,7 @@ import {Type} from './type'
 //Map of write buffers to maps of binary strings to the location they were written
 const pointers = new WeakMap<AppendableBuffer, Map<string, number>>()
 //Map of read value buffers to maps of pointer types to maps of pointer values to read results
-const pointerReads = new WeakMap<ArrayBuffer, Map<PointerType<any>, Map<number, any>>>()
+const pointerReads = new WeakMap<ArrayBuffer, Map<PointerType<unknown>, Map<number, unknown>>>()
 
 export function rewindBuffer(buffer: AppendableBuffer): void {
 	const locations = pointers.get(buffer)
@@ -57,16 +57,11 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		return 0x70
 	}
 	/**
-	 * The [[Type]] passed to the constructor
-	 */
-	readonly type: Type<E, READ_E>
-	/**
 	 * @param type The [[Type]] used to write the values being pointed to
 	 */
-	constructor(type: Type<E, READ_E>) {
+	constructor(readonly type: Type<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbsoluteType)
-		this.type = type
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
@@ -111,8 +106,8 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		this.isBuffer(buffer)
 		let bufferPointers = pointers.get(buffer)
 		if (!bufferPointers) {
-			bufferPointers = new Map //initialize pointers map if it doesn't exist
-			pointers.set(buffer, bufferPointers)
+			//Initialize pointers map if it doesn't exist
+			pointers.set(buffer, bufferPointers = new Map)
 		}
 		const valueBuffer = this.type.valueBuffer(value)
 		const valueString = bufferString.toBinaryString(valueBuffer) //have to convert the buffer to a string because equivalent buffers are not ===
@@ -121,45 +116,41 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		bufferPointers.set(valueString, length)
 		if (index === undefined) {
 			buffer
-				.add(0x00)
+				.addAll(flexInt.makeValueBuffer(0))
 				.addAll(valueBuffer)
 		}
 		else buffer.addAll(flexInt.makeValueBuffer(length - index))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
-		let length = 1
+		let length: number | undefined
 		let explicitValue = true
-		while (true) {
-			const offsetDiffInt = readFlexInt(buffer, offset)
-			const offsetDiff = offsetDiffInt.value
+		for (;;) {
+			const {value: offsetDiff, length: offsetDiffLength} = readFlexInt(buffer, offset)
+			if (length === undefined) length = offsetDiffLength
 			if (!offsetDiff) break
-			if (explicitValue) {
-				({length} = offsetDiffInt)
-				explicitValue = false
-			}
+
 			offset -= offsetDiff
+			explicitValue = false
 		}
 		let bufferPointerReads = pointerReads.get(buffer)
 		if (!bufferPointerReads) {
-			bufferPointerReads = new Map
-			pointerReads.set(buffer, bufferPointerReads)
+			pointerReads.set(buffer, bufferPointerReads = new Map)
 		}
 		let bufferTypePointerReads = bufferPointerReads.get(this)
 		if (!bufferTypePointerReads) {
-			bufferTypePointerReads = new Map
-			bufferPointerReads.set(this, bufferTypePointerReads)
+			bufferPointerReads.set(this, bufferTypePointerReads = new Map)
 		}
 		let value = bufferTypePointerReads.get(offset) as READ_E | undefined
 		if (value === undefined) {
 			const explicitRead = this.type.consumeValue(buffer, offset + length) //skip the flexInt
 			;({value} = explicitRead)
 			if (explicitValue) length += explicitRead.length
+			// TODO: store current location in map
 			bufferTypePointerReads.set(offset, value)
 		}
 		return {value, length}
 	}
-	equals(otherType: any) {
-		return super.equals(otherType)
-			&& this.type.equals((otherType as PointerType<any>).type)
+	equals(otherType: unknown): otherType is this {
+		return super.equals(otherType) && this.type.equals(otherType.type)
 	}
 }

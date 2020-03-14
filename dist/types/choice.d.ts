@@ -1,10 +1,9 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
+import type { Type } from './type';
 /**
  * A type storing a value of one of several fixed types.
- * The list of possible types must contain at most 255 types.
  *
  * Example:
  * ````javascript
@@ -32,14 +31,10 @@ import { Type } from './type';
  * @param READ_E The type of values this type will read
  */
 export declare class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
-    static readonly _value: number;
-    /**
-     * The array of types passed into the constructor
-     */
     readonly types: Type<E, READ_E>[];
+    static get _value(): number;
     /**
      * @param types The list of possible types.
-     * Cannot contain more than 255 types.
      * Values will be written using the first type in the list
      * that successfully writes the value,
      * so place higher priority types earlier.
@@ -67,5 +62,5 @@ export declare class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E,
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

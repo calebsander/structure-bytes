@@ -2,7 +2,7 @@ import {dividedByEight, modEight, timesEight} from './bit-math'
 import * as flexInt from './flex-int'
 import * as strint from './strint'
 import {hexByte, inspect} from './util-inspect'
-import {RegisterableType} from '../recursive-registry-type'
+import type {RegisterableType} from '../recursive-registry-type'
 import {ArrayType} from '../types/array'
 import {MapType} from '../types/map'
 import {SetType} from '../types/set'
@@ -36,10 +36,10 @@ export interface ReadResult<E> {
  * to initialize the array value with
  * @return `[]`, `new Map`, `new Set`, or `{}`
  */
-export function makeBaseValue(readType: RegisterableType, count?: number): any {
+export function makeBaseValue(readType: RegisterableType, count?: number): unknown {
 	switch (readType.constructor) {
 		case ArrayType: return new Array(count)
-		case TupleType: return new Array((readType as TupleType<any>).length)
+		case TupleType: return new Array((readType as TupleType<unknown>).length)
 		case MapType: return new Map
 		case SetType: return new Set
 		case StructType: return {}

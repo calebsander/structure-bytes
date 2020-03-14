@@ -1,7 +1,7 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
+import type { Type } from './type';
 /**
  * A type storing a variable-length array of values of the same type
  *
@@ -27,11 +27,8 @@ import { Type } from './type';
  * in the read array
  */
 export declare class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
-    static readonly _value: number;
-    /**
-     * The [[Type]] passed into the constructor
-     */
     readonly type: Type<E, READ_E>;
+    static get _value(): number;
     /**
      * @param type A [[Type]] that can serialize each element in the array
      */
@@ -53,5 +50,5 @@ export declare class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[]
      */
     writeValue(buffer: AppendableBuffer, value: E[]): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

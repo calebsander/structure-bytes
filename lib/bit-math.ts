@@ -3,20 +3,17 @@
  * for positive `n`
  * @param n The number in question
  */
-export function dividedByEight(n: number): number {
-	return n >>> 3
-}
+export const dividedByEight = (n: number): number =>
+	n >>> 3
 /**
  * Efficiently computes `n % 8`
  * @param n The number in question
  */
-export function modEight(n: number): number {
-	return n & 0b111
-}
+export const modEight = (n: number): number =>
+	n & 0b111
 /**
  * Efficiently computes `n * 8`
  * @param n The number in question
  */
-export function timesEight(n: number): number {
-	return n << 3
-}
+export const timesEight = (n: number): number =>
+	n << 3

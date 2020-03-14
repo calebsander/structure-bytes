@@ -1,8 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const appendable_1 = require("./appendable");
 const assert = require("./assert");
 const INITIAL_LENGTH = 10;
+exports.asUint8Array = (buffer) => buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+function toArrayBuffer(buffer) {
+    const { buffer: arrayBuffer, byteOffset, byteLength } = buffer;
+    return !byteOffset && byteLength === arrayBuffer.byteLength
+        ? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
+        : arrayBuffer.slice(byteOffset, byteOffset + byteLength);
+}
+exports.toArrayBuffer = toArrayBuffer;
 /**
  * A [`StringBuilder`](https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html)-like
  * object which automatically grows its internal buffer as bytes are added.
@@ -10,18 +17,16 @@ const INITIAL_LENGTH = 10;
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-class GrowableBuffer extends appendable_1.default {
+class GrowableBuffer {
     /**
      * @param initialLength
      * The number of bytes in the internal buffer at start
      * (defaults to 10)
      */
     constructor(initialLength = INITIAL_LENGTH) {
-        super();
         try {
             assert.integer(initialLength);
-            if (initialLength < 0)
-                throw new Error;
+            assert.between(0, initialLength, Infinity);
         }
         catch (_a) {
             throw new RangeError(`${initialLength} is not a valid buffer length`);
@@ -82,29 +87,23 @@ class GrowableBuffer extends appendable_1.default {
         const newSize = this.size + buffer.byteLength;
         this.grow(newSize);
         this.size = newSize;
-        new Uint8Array(this.buffer).set(new Uint8Array(buffer), oldSize);
+        new Uint8Array(this.buffer).set(exports.asUint8Array(buffer), oldSize);
         return this;
-    }
-    /**
-     * Gets the internal buffer to avoid calling `ArrayBuffer.slice()`
-     * @private
-     */
-    get rawBuffer() {
-        return this.buffer;
     }
     /**
      * Gets the occupied portion in `ArrayBuffer` form
      * @return The internal buffer trimmed to `this.length`
      */
     toBuffer() {
-        let length;
-        if (this.pausePoints.length)
-            [length] = this.pausePoints; //go up to first pause point
-        else
-            length = this.size;
-        return length === this.buffer.byteLength
-            ? this.buffer
-            : this.buffer.slice(0, length);
+        return toArrayBuffer(this.toUint8Array());
+    }
+    /**
+     * Gets the occupied portion in `Uint8Array` form
+     * @return The internal buffer trimmed to `this.length`
+     */
+    toUint8Array() {
+        var _a;
+        return new Uint8Array(this.buffer, 0, (_a = this.pausePoints[0]) !== null && _a !== void 0 ? _a : this.size);
     }
     /**
      * Pauses the writing process, i.e.
@@ -141,9 +140,8 @@ class GrowableBuffer extends appendable_1.default {
      * @throws If not currently paused
      */
     resume() {
-        if (!this.pausePoints.length)
+        if (this.pausePoints.pop() === undefined)
             throw new Error('Was not paused');
-        this.pausePoints.pop();
         return this;
     }
     /**
@@ -155,9 +153,9 @@ class GrowableBuffer extends appendable_1.default {
      * @throws If not currently paused
      */
     reset() {
-        if (!this.pausePoints.length)
-            throw new Error('Was not paused');
         const [pausePoint] = this.pausePoints.slice(-1);
+        if (pausePoint === undefined)
+            throw new Error('Was not paused');
         this.size = pausePoint;
         return this;
     }

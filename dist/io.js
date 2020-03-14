@@ -9,23 +9,18 @@ const zlib = require("zlib");
 const accepts = require("accepts");
 const appendable_stream_1 = require("./lib/appendable-stream");
 const assert = require("./lib/assert");
+const growable_buffer_1 = require("./lib/growable-buffer");
 const r = require("./read");
 const abstract_1 = require("./types/abstract");
-function toArrayBuffer(buffer) {
-    const { buffer: arrayBuffer, byteOffset, byteLength } = buffer;
-    return !byteOffset && byteLength === arrayBuffer.byteLength
-        ? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
-        : arrayBuffer.slice(byteOffset, byteOffset + byteLength);
-}
 function concatStream(stream, callback) {
     const segments = [];
     stream
         .on('data', chunk => segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk)))
-        .on('error', function (err) {
-        this.destroy();
+        .on('error', err => {
+        stream.destroy();
         callback(err, null);
     })
-        .on('end', () => callback(null, toArrayBuffer(Buffer.concat(segments))));
+        .on('end', () => callback(null, growable_buffer_1.toArrayBuffer(Buffer.concat(segments))));
 }
 /**
  * Writes the contents of `type.toBuffer()` ([[Type.toBuffer]])

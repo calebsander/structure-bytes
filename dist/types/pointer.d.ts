@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
 import { Type } from './type';
@@ -34,11 +34,8 @@ export declare function rewindBuffer(buffer: AppendableBuffer): void;
  * @param READ_E The type of values that will be read
  */
 export declare class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
-    static readonly _value: number;
-    /**
-     * The [[Type]] passed to the constructor
-     */
     readonly type: Type<E, READ_E>;
+    static get _value(): number;
     /**
      * @param type The [[Type]] used to write the values being pointed to
      */
@@ -76,5 +73,5 @@ export declare class PointerType<E, READ_E extends E = E> extends AbstractType<E
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

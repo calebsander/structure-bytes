@@ -5,23 +5,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * for positive `n`
  * @param n The number in question
  */
-function dividedByEight(n) {
-    return n >>> 3;
-}
-exports.dividedByEight = dividedByEight;
+exports.dividedByEight = (n) => n >>> 3;
 /**
  * Efficiently computes `n % 8`
  * @param n The number in question
  */
-function modEight(n) {
-    return n & 0b111;
-}
-exports.modEight = modEight;
+exports.modEight = (n) => n & 0b111;
 /**
  * Efficiently computes `n * 8`
  * @param n The number in question
  */
-function timesEight(n) {
-    return n << 3;
-}
-exports.timesEight = timesEight;
+exports.timesEight = (n) => n << 3;

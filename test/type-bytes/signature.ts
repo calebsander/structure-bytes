@@ -2,7 +2,7 @@ import * as t from '../../dist'
 import {assert} from '../test-common'
 
 export = () => {
-	assert.equal(new t.ByteType().getSignature(), 'AAw=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=')
+	assert.equal(new t.ByteType().getSignature(), 'AA0=S/USLzRFVMU73i67jNK349FgCtYxw4Wl18ziPHeFRZo=')
 	const type = new t.StructType({
 		bcd: new t.PointerType(
 			new t.OptionalType(
@@ -20,6 +20,6 @@ export = () => {
 			)
 		)
 	})
-	assert.equal(type.getHash(), 'YwJi4ZvHdopqQNW0lf2i8zQ37DEDMWmT9gFoqInimHw=')
-	assert.equal(type.getSignature(), 'AAw=YwJi4ZvHdopqQNW0lf2i8zQ37DEDMWmT9gFoqInimHw=')
+	assert.equal(type.getHash(), '4yDVdolj5f0dBz30x5khFhonpBuHWEPWHic3i2yL7Mk=')
+	assert.equal(type.getSignature(), 'AA0=4yDVdolj5f0dBz30x5khFhonpBuHWEPWHic3i2yL7Mk=')
 }

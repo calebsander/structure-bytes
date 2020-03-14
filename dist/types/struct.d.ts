@@ -1,18 +1,10 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
-/**
- * An object whose keys are strings,
- * i.e. any object
- */
-export interface StringIndexable {
-    [key: string]: any;
-}
-export interface StructField {
-    name: string;
+import type { Type } from './type';
+export interface StructField<E> {
+    name: keyof E & string;
     type: Type<any>;
-    nameBuffer: ArrayBuffer;
 }
 /**
  * Maps each key in `E` to a type capable of writing
@@ -22,7 +14,6 @@ export declare type StructFields<E, READ_E extends E> = {
     [key in keyof E]: Type<E[key], READ_E[key]>;
 };
 /**
- * A type storing up to 255 named fields.
  * Intended to model a generic JavaScript object,
  * whose field names are known in advance.
  * If field names are part of the value rather than the type,
@@ -53,8 +44,8 @@ export declare type StructFields<E, READ_E extends E> = {
  * @param E The type of object values this type can write
  * @param READ_E The type of object values this type will read
  */
-export declare class StructType<E extends StringIndexable, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
-    static readonly _value: number;
+export declare class StructType<E extends Record<string, any>, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
+    static get _value(): number;
     /**
      * An array of the field names with their corresponding types.
      * Fields are sorted lexicographically by name,
@@ -62,11 +53,9 @@ export declare class StructType<E extends StringIndexable, READ_E extends E = E>
      * to the constructor always gives the same result.
      * Field names' UTF-8 representations are also cached.
      */
-    readonly fields: StructField[];
+    readonly fields: StructField<E>[];
     /**
      * @param fields A mapping of field names to their types.
-     * There can be no more than 255 fields.
-     * Each field name must be at most 255 bytes long in UTF-8.
      */
     constructor(fields: StructFields<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
@@ -87,5 +76,5 @@ export declare class StructType<E extends StringIndexable, READ_E extends E = E>
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

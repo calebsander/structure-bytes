@@ -1,86 +1,77 @@
 //This file contains functions for reading types from bytes
 
 import * as assert from './lib/assert'
-import * as bufferString from './lib/buffer-string'
 import {REPEATED_TYPE} from './lib/constants'
-import * as constructorRegistry from './lib/constructor-registry'
 import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from './lib/read-util'
-import {hexByte, inspect} from './lib/util-inspect'
+import {hexByte} from './lib/util-inspect'
 import * as recursiveRegistry from './recursive-registry'
-import {RegisterableType} from './recursive-registry-type'
+import type {RegisterableType} from './recursive-registry-type'
 import * as t from './types'
 import AbstractType from './types/abstract'
 
 //Types whose type bytes are only 1 byte long (the type byte)
 const SINGLE_BYTE_TYPES: (typeof AbstractType)[] = []
-interface Types {
-	[typeName: string]: typeof AbstractType
-}
 {
 	const defaultAddToBuffer = AbstractType.prototype.addToBuffer
-	const tTypes = t as any as Types
+	const tTypes = t as unknown as Record<string, typeof AbstractType>
 	//tslint:disable-next-line:forin
 	for (const typeName in tTypes) {
 		const testType = tTypes[typeName]
 		if (testType.prototype.addToBuffer === defaultAddToBuffer) SINGLE_BYTE_TYPES.push(testType)
 	}
 }
-type NoParamsType = new() => t.Type<any>
+type NoParamsType = new () => t.Type<unknown>
 //Mapping of type bytes to the corresponding types
 const SINGLE_BYTE_TYPE_BYTES = new Map<number, NoParamsType>()
 for (const singleByteType of SINGLE_BYTE_TYPES) {
-	SINGLE_BYTE_TYPE_BYTES.set(singleByteType._value, singleByteType as any as NoParamsType)
+	SINGLE_BYTE_TYPE_BYTES.set(singleByteType._value, singleByteType as unknown as NoParamsType)
 }
+
 //Number of random characters in synthetic recursive type names
 const RECURSIVE_NAME_LENGTH = 16
 //Map of type buffers to maps of ids to synthetic recursive type names
 const recursiveNames = new WeakMap<ArrayBuffer, Map<number, string>>()
+
+const stringType = new t.StringType
+
 //Reads a type from the specified bytes at the specified offset
 //Returns the type that was read and the number of bytes consumed
-function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<any>> {
+function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<unknown>> {
 	if (offset < 0) throw new RangeError(`Offset is negative: ${offset}`)
 	const castBuffer = new Uint8Array(typeBuffer)
 	if (typeBuffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH) //make sure there is a type byte
 	const typeByte = castBuffer[offset]
-	let readType: t.Type<any>, length = 1 //going to be at least one type byte
+	let readType: t.Type<unknown>, length = 1 //going to be at least one type byte
 	const singleByteType = SINGLE_BYTE_TYPE_BYTES.get(typeByte)
 	if (singleByteType) return {value: new singleByteType, length}
 	switch (typeByte) {
 		case t.BooleanTupleType._value: {
-			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-			const tupleLength = castBuffer[offset + length]
-			length++
-			readType = new t.BooleanTupleType(tupleLength)
+			const tupleLength = readFlexInt(typeBuffer, offset + length)
+			length += tupleLength.length
+			readType = new t.BooleanTupleType(tupleLength.value)
 			break
 		}
 		case t.TupleType._value: {
 			const elementType = consumeType(typeBuffer, offset + length)
 			length += elementType.length
-			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-			const tupleLength = castBuffer[offset + length]
-			length++
+			const tupleLength = readFlexInt(typeBuffer, offset + length)
+			length += tupleLength.length
 			readType = new t.TupleType({
 				type: elementType.value,
-				length: tupleLength
+				length: tupleLength.value
 			})
 			break
 		}
 		case t.StructType._value: {
-			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-			const fieldCount = castBuffer[offset + length]
-			length++
-			const fields: {[key: string]: t.Type<any>} = {}
+			const structFields = readFlexInt(typeBuffer, offset + length)
+			length += structFields.length
+			const fieldCount = structFields.value
+			const fields: Record<string, t.Type<unknown>> = {}
 			for (let i = 0; i < fieldCount; i++) { //read field information for each field
-				if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-				const nameLength = castBuffer[offset + length]
-				length++
-				const nameStart = offset + length
-				const nameEnd = nameStart + nameLength
-				if (typeBuffer.byteLength < nameEnd) throw new Error(NOT_LONG_ENOUGH)
-				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
-				length += nameLength
-				const fieldType = consumeType(typeBuffer, nameEnd)
-				fields[name] = fieldType.value
+				const fieldName = stringType.consumeValue(typeBuffer, offset + length)
+				length += fieldName.length
+				const fieldType = consumeType(typeBuffer, offset + length)
+				fields[fieldName.value] = fieldType.value
 				length += fieldType.length
 			}
 			readType = new t.StructType(fields)
@@ -110,9 +101,9 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			const valueType = consumeType(typeBuffer, offset + length)
 			const subType = valueType.value
 			length += valueType.length
-			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-			const valueCount = castBuffer[offset + length]
-			length++
+			const enumCount = readFlexInt(typeBuffer, offset + length)
+			length += enumCount.length
+			const valueCount = enumCount.value
 			const values = new Array(valueCount)
 			for (let i = 0; i < valueCount; i++) {
 				const valueLocation = offset + length
@@ -124,38 +115,16 @@ function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type
 			break
 		}
 		case t.ChoiceType._value: {
-			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-			const typeCount = castBuffer[offset + length]
-			length++
-			const types = new Array<t.Type<any>>(typeCount)
+			const choiceCount = readFlexInt(typeBuffer, offset + length)
+			length += choiceCount.length
+			const typeCount = choiceCount.value
+			const types = new Array<t.Type<unknown>>(typeCount)
 			for (let i = 0; i < typeCount; i++) {
 				const possibleType = consumeType(typeBuffer, offset + length)
 				types[i] = possibleType.value
 				length += possibleType.length
 			}
 			readType = new t.ChoiceType(types)
-			break
-		}
-		case t.NamedChoiceType._value: {
-			if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-			const typeCount = castBuffer[offset + length]
-			length++
-			const constructorTypes = new Map<Function, t.StructType<{}>>()
-			for (let i = 0; i < typeCount; i++) {
-				if (typeBuffer.byteLength <= offset + length) throw new Error(NOT_LONG_ENOUGH)
-				const nameLength = castBuffer[offset + length]
-				length++
-				const nameStart = offset + length
-				const nameEnd = nameStart + nameLength
-				if (typeBuffer.byteLength < nameEnd) throw new Error(NOT_LONG_ENOUGH)
-				const name = bufferString.toString(castBuffer.subarray(nameStart, nameEnd)) //using castBuffer to be able to subarray it without copying
-				length += nameLength
-				const possibleType = consumeType(typeBuffer, nameEnd)
-				if (!(possibleType.value instanceof t.StructType)) throw new Error('Not a StructType: ' + inspect(possibleType.value))
-				constructorTypes.set(constructorRegistry.get(name), possibleType.value)
-				length += possibleType.length
-			}
-			readType = new t.NamedChoiceType(constructorTypes)
 			break
 		}
 		case t.RecursiveType._value: {
@@ -243,7 +212,7 @@ export {consumeType as _consumeType}
  * In most use cases, this argument should be be omitted.
  * @return The type that was read
  */
-export function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer = true): t.Type<any> {
+export function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer = true): t.Type<unknown> {
 	assert.instanceOf(typeBuffer, [ArrayBuffer, Uint8Array])
 	let readBuffer: ArrayBuffer, readOffset: number
 	if (typeBuffer instanceof ArrayBuffer) {

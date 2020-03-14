@@ -57,8 +57,8 @@ class PointerType extends abstract_1.default {
      */
     constructor(type) {
         super();
-        assert.instanceOf(type, absolute_1.default);
         this.type = type;
+        assert.instanceOf(type, absolute_1.default);
     }
     static get _value() {
         return 0x70;
@@ -106,8 +106,8 @@ class PointerType extends abstract_1.default {
         this.isBuffer(buffer);
         let bufferPointers = pointers.get(buffer);
         if (!bufferPointers) {
-            bufferPointers = new Map; //initialize pointers map if it doesn't exist
-            pointers.set(buffer, bufferPointers);
+            //Initialize pointers map if it doesn't exist
+            pointers.set(buffer, bufferPointers = new Map);
         }
         const valueBuffer = this.type.valueBuffer(value);
         const valueString = bufferString.toBinaryString(valueBuffer); //have to convert the buffer to a string because equivalent buffers are not ===
@@ -116,35 +116,31 @@ class PointerType extends abstract_1.default {
         bufferPointers.set(valueString, length);
         if (index === undefined) {
             buffer
-                .add(0x00)
+                .addAll(flexInt.makeValueBuffer(0))
                 .addAll(valueBuffer);
         }
         else
             buffer.addAll(flexInt.makeValueBuffer(length - index));
     }
     consumeValue(buffer, offset) {
-        let length = 1;
+        let length;
         let explicitValue = true;
-        while (true) {
-            const offsetDiffInt = read_util_1.readFlexInt(buffer, offset);
-            const offsetDiff = offsetDiffInt.value;
+        for (;;) {
+            const { value: offsetDiff, length: offsetDiffLength } = read_util_1.readFlexInt(buffer, offset);
+            if (length === undefined)
+                length = offsetDiffLength;
             if (!offsetDiff)
                 break;
-            if (explicitValue) {
-                ({ length } = offsetDiffInt);
-                explicitValue = false;
-            }
             offset -= offsetDiff;
+            explicitValue = false;
         }
         let bufferPointerReads = pointerReads.get(buffer);
         if (!bufferPointerReads) {
-            bufferPointerReads = new Map;
-            pointerReads.set(buffer, bufferPointerReads);
+            pointerReads.set(buffer, bufferPointerReads = new Map);
         }
         let bufferTypePointerReads = bufferPointerReads.get(this);
         if (!bufferTypePointerReads) {
-            bufferTypePointerReads = new Map;
-            bufferPointerReads.set(this, bufferTypePointerReads);
+            bufferPointerReads.set(this, bufferTypePointerReads = new Map);
         }
         let value = bufferTypePointerReads.get(offset);
         if (value === undefined) {
@@ -153,13 +149,13 @@ class PointerType extends abstract_1.default {
             ({ value } = explicitRead);
             if (explicitValue)
                 length += explicitRead.length;
+            // TODO: store current location in map
             bufferTypePointerReads.set(offset, value);
         }
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
-            && this.type.equals(otherType.type);
+        return super.equals(otherType) && this.type.equals(otherType.type);
     }
 }
 exports.PointerType = PointerType;

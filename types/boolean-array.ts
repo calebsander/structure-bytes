@@ -1,8 +1,8 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {readBooleans, readFlexInt, ReadResult} from '../lib/read-util'
-import writeBooleans from '../lib/write-booleans'
+import {writeBooleans} from '../lib/write-util'
 import AbsoluteType from './absolute'
 
 /**
@@ -42,9 +42,9 @@ export class BooleanArrayType extends AbsoluteType<boolean[]> {
 		writeBooleans(buffer, value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]> {
-		const arrayLength = readFlexInt(buffer, offset)
-		let {length} = arrayLength
-		const booleans = readBooleans({buffer, offset: offset + length, count: arrayLength.value})
+		//tslint:disable-next-line:prefer-const
+		let {value: count, length} = readFlexInt(buffer, offset)
+		const booleans = readBooleans({buffer, offset: offset + length, count})
 		const {value} = booleans
 		length += booleans.length
 		return {value, length}

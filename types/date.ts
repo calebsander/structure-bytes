@@ -1,7 +1,7 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {readLong, ReadResult} from '../lib/read-util'
-import writeLong from '../lib/write-long'
+import {writeLong} from '../lib/write-util'
 import ChronoType from './chrono'
 
 /**
@@ -35,9 +35,6 @@ export class DateType extends ChronoType {
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {
 		const {value, length} = readLong(buffer, offset)
-		return {
-			value: new Date(Number(value)),
-			length
-		}
+		return {value: new Date(Number(value)), length}
 	}
 }

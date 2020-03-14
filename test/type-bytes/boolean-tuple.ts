@@ -9,8 +9,12 @@ export = () => {
 	const readType = r.type(buffer)
 	assert(type.equals(readType))
 	assert.throws(
-		() => new t.BooleanTupleType(256),
-		(err: Error) => err.message === '256 is not in [0,256)'
+		() => new t.BooleanTupleType(1.2),
+		(err: Error) => err.message === '1.2 is not an integer'
+	)
+	assert.throws(
+		() => new t.BooleanTupleType(-1),
+		(err: Error) => err.message === '-1 is not in [0,Infinity)'
 	)
 
 	assert(!type.equals(undefined))

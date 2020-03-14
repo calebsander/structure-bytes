@@ -11,8 +11,12 @@ export = () => {
 	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x50, 0x32, 3]))
 	assert(type.equals(r.type(buffer)))
 	assert.throws(
-		() => new t.TupleType({type: new t.StringType, length: 256}),
-		(err: Error) => err.message === '256 is not in [0,256)'
+		() => new t.TupleType({type: new t.StringType, length: 45.6}),
+		(err: Error) => err.message === '45.6 is not an integer'
+	)
+	assert.throws(
+		() => new t.TupleType({type: new t.StringType, length: -10}),
+		(err: Error) => err.message === '-10 is not in [0,Infinity)'
 	)
 
 	assert(!type.equals(new t.StringType))

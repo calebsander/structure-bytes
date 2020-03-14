@@ -56,8 +56,10 @@ class SingletonType extends abstract_1.default {
         return 0x59;
     }
     get singletonValueBuffer() {
-        return this.cachedValueBuffer ||
-            (this.cachedValueBuffer = this.type.valueBuffer(this.value));
+        if (!this.cachedValueBuffer) {
+            this.cachedValueBuffer = this.type.valueBuffer(this.value);
+        }
+        return this.cachedValueBuffer;
     }
     addToBuffer(buffer) {
         /*istanbul ignore else*/
@@ -91,12 +93,9 @@ class SingletonType extends abstract_1.default {
         return { value: this.value, length: 0 };
     }
     equals(otherType) {
-        if (!super.equals(otherType))
-            return false;
-        const otherSingletonType = otherType;
-        if (!this.type.equals(otherSingletonType.type))
-            return false;
-        return assert.equal.buffers(otherSingletonType.singletonValueBuffer, this.singletonValueBuffer);
+        return super.equals(otherType)
+            && this.type.equals(otherType.type)
+            && assert.equal.buffers(this.singletonValueBuffer, otherType.singletonValueBuffer);
     }
 }
 exports.SingletonType = SingletonType;

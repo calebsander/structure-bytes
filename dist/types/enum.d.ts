@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
 import { Type } from './type';
@@ -27,19 +27,19 @@ export interface EnumParams<E> {
  * @param E The type of each value in the enum
  */
 export declare class EnumType<E> extends AbstractType<E> {
-    static readonly _value: number;
+    static get _value(): number;
     /** The list of possible values */
     readonly values: E[];
+    /** The type used to serialize the values */
     readonly type: Type<E>;
     private cachedValueIndices;
     /**
      * @param type The type of each value of the enum
      * @param values The possible distinct values.
-     * Cannot contain more than 255 values.
      * @throws If any value cannot be serialized by `type`
      */
     constructor({ type, values }: EnumParams<E>);
-    private readonly valueIndices;
+    private get valueIndices();
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -54,5 +54,5 @@ export declare class EnumType<E> extends AbstractType<E> {
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<E>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

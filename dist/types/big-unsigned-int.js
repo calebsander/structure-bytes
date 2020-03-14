@@ -56,9 +56,8 @@ class BigUnsignedIntType extends unsigned_1.default {
             .addAll(byteBuffer.buffer);
     }
     consumeValue(buffer, offset) {
-        const lengthInt = read_util_1.readFlexInt(buffer, offset);
-        const bytes = lengthInt.value;
-        let { length } = lengthInt;
+        //tslint:disable-next-line:prefer-const
+        let { value: bytes, length } = read_util_1.readFlexInt(buffer, offset);
         if (buffer.byteLength < offset + length + bytes)
             throw new Error(read_util_1.NOT_LONG_ENOUGH);
         const castBuffer = new Uint8Array(buffer, offset + length);

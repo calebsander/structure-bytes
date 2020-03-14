@@ -41,14 +41,15 @@ class OctetsType extends absolute_1.default {
             .addAll(value);
     }
     consumeValue(buffer, offset) {
-        const octetsLength = read_util_1.readFlexInt(buffer, offset);
-        const { length } = octetsLength;
-        const finalLength = length + octetsLength.value;
-        if (buffer.byteLength < offset + finalLength)
+        //tslint:disable-next-line:prefer-const
+        let { value: octetsLength, length } = read_util_1.readFlexInt(buffer, offset);
+        const octetsStart = length;
+        length += octetsLength;
+        if (buffer.byteLength < offset + length)
             throw new Error(read_util_1.NOT_LONG_ENOUGH);
         return {
-            value: buffer.slice(offset + length, offset + finalLength),
-            length: finalLength
+            value: buffer.slice(offset + octetsStart, offset + length),
+            length
         };
     }
 }

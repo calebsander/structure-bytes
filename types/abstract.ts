@@ -1,21 +1,22 @@
 import * as base64 from 'base64-js'
 import sha256 from '../lib/sha-256'
 import {VERSION_STRING} from '../config'
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
+import AppendableStream from '../lib/appendable-stream'
 import * as assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
 import * as flexInt from '../lib/flex-int'
-import GrowableBuffer from '../lib/growable-buffer'
-import {ReadResult} from '../lib/read-util'
+import GrowableBuffer, {asUint8Array, toArrayBuffer} from '../lib/growable-buffer'
+import type {ReadResult} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
-import {Type} from './type'
+import type {Type} from './type'
 
 /**
  * The superclass of all [[Type]] classes
  * in this package
  */
 export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VALUE> implements Type<VALUE, READ_VALUE> {
-	private cachedBuffer?: ArrayBuffer
+	private cachedBuffer?: ArrayBuffer | Uint8Array
 	private cachedHash?: string
 	private cachedSignature?: string
 	private cachedTypeLocations?: WeakMap<AppendableBuffer, number>
@@ -33,6 +34,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
 				const location = this.cachedTypeLocations.get(buffer)
 				if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
+					// TODO: use most recent location
 					buffer
 						.add(REPEATED_TYPE)
 						.addAll(flexInt.makeValueBuffer(buffer.length - location))
@@ -47,6 +49,9 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	}
 	toBuffer() {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer()
+		if (this.cachedBuffer instanceof Uint8Array) {
+			this.cachedBuffer = toArrayBuffer(this.cachedBuffer)
+		}
 		return this.cachedBuffer
 	}
 	getHash() {
@@ -64,20 +69,12 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		return buffer.toBuffer()
 	}
 	abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>
-	readValue(buffer: ArrayBuffer | Uint8Array, offset = 0) {
-		assert.instanceOf(buffer, [ArrayBuffer, Uint8Array])
+	readValue(valueBuffer: ArrayBuffer | Uint8Array, offset = 0) {
+		assert.instanceOf(valueBuffer, [ArrayBuffer, Uint8Array])
 		assert.instanceOf(offset, Number)
-		let readBuffer: ArrayBuffer, readOffset: number
-		if (buffer instanceof ArrayBuffer) {
-			readBuffer = buffer
-			readOffset = offset
-		}
-		else {
-			readBuffer = buffer.buffer
-			readOffset = buffer.byteOffset + offset
-		}
-		const {value, length} = this.consumeValue(readBuffer, readOffset)
-		if (offset + length !== buffer.byteLength) {
+		const {buffer, byteOffset, byteLength} = asUint8Array(valueBuffer)
+		const {value, length} = this.consumeValue(buffer, byteOffset + offset)
+		if (offset + length !== byteLength) {
 			throw new Error('Did not consume all of buffer')
 		}
 		return value
@@ -87,11 +84,11 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		Could also implement this by checking whether the 2 types' binary representations match,
 		but it is faster if we short-circuit when any fields don't match
 	*/
-	equals(otherType: any) {
+	equals(otherType: unknown): otherType is this {
 		//Checks that otherType is not null or undefined, so constructor property exists
 		if (!otherType) return false
 		//Other type must have the same constructor
-		return (otherType as object).constructor === this.constructor
+		return this.constructor === (otherType as object).constructor
 	}
 	/**
 	 * Requires that the buffer be a [[GrowableBuffer]]
@@ -100,17 +97,17 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	 * @param buffer The value to assert is an [[AppendableBuffer]]
 	 */
 	protected isBuffer(buffer: AppendableBuffer): void {
-		assert.instanceOf(buffer, AppendableBuffer)
+		assert.instanceOf(buffer, [AppendableStream, GrowableBuffer])
 	}
 	/**
 	 * Generates the type buffer, recomputed each time
 	 * @private
 	 * @return An `ArrayBuffer` containing the type bytes
 	 */
-	private _toBuffer(): ArrayBuffer {
+	private _toBuffer(): Uint8Array {
 		const buffer = new GrowableBuffer
 		this.addToBuffer(buffer)
-		return buffer.toBuffer()
+		return buffer.toUint8Array()
 	}
 	/**
 	 * Gets an SHA256 hash of the type, recomputed each time
@@ -118,8 +115,8 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	 * @return A hash of the buffer given by [[toBuffer]]
 	 */
 	private _getHash(): string {
-		const bytes = new Uint8Array(sha256(this.toBuffer()))
-		return base64.fromByteArray(bytes)
+		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer()
+		return base64.fromByteArray(new Uint8Array(sha256(asUint8Array(this.cachedBuffer))))
 	}
 	/**
 	 * Gets a signature string for the type, recomputed each time,

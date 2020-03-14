@@ -1,6 +1,6 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import AbstractType from './abstract';
-import { Type } from './type';
+import type { Type } from './type';
 export interface SingletonParams<E> {
     type: Type<E, any>;
     value: E;
@@ -42,7 +42,7 @@ export interface SingletonParams<E> {
  * @param E The type of the value
  */
 export declare class SingletonType<E> extends AbstractType<E> {
-    static readonly _value: number;
+    static get _value(): number;
     /** The type used to serialize the value */
     readonly type: Type<E>;
     /** The value that this type serializes */
@@ -54,7 +54,7 @@ export declare class SingletonType<E> extends AbstractType<E> {
      * @throws If `value` cannot be serialized by `type`
      */
     constructor({ type, value }: SingletonParams<E>);
-    private readonly singletonValueBuffer;
+    private get singletonValueBuffer();
     addToBuffer(buffer: AppendableBuffer): boolean;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
@@ -73,5 +73,5 @@ export declare class SingletonType<E> extends AbstractType<E> {
         value: E;
         length: number;
     };
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

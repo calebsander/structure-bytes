@@ -10,7 +10,7 @@ export = () => {
 	const buffer = type.toBuffer()
 	assert.deepEqual(
 		new Uint8Array(buffer),
-		new Uint8Array([0x51, 2, 0, 0x03, 6, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0x30])
+		new Uint8Array([0x51, 2, 0, 0x03, 0x62, 0x6f, 0x62, 0x62, 0xc3, 0xa9, 0, 0x30])
 	)
 	assert(type.equals(r.type(buffer)))
 	for (let i = 0; i < buffer.byteLength; i++) {
@@ -21,21 +21,6 @@ export = () => {
 	}
 
 	//Test invalid field request
-	assert.throws(
-		() => {
-			const struct: {[field: string]: t.Type<any>} = {}
-			for (let i = 1; i <= 256; i++) struct[(i % 2 ? 'a' : 'b').repeat(i >> 1)] = new t.IntType
-			new t.StructType(struct)
-		},
-		(err: Error) => err.message === '256 fields is too many'
-	)
-	const longString = 'a'.repeat(256)
-	assert.throws(
-		() => new t.StructType({
-			[longString]: new t.ByteType
-		}),
-		(err: Error) => err.message === `Field name ${longString} is too long`
-	)
 	assert.throws(
 		() => new t.StructType({
 			field: 'abc' as any

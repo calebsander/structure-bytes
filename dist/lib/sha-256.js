@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const bit_math_1 = require("./bit-math");
 const sha256_load_1 = require("./sha256-load");
 const K = new Uint32Array([
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -13,14 +14,14 @@ const K = new Uint32Array([
 ]);
 const rightRotate = (value, bits) => (value >>> bits) | (value << (32 - bits));
 function sha256JS(input) {
-    const lBytes = input.byteLength;
+    const lBytes = input.length;
     const extraBytes = 64 - ((lBytes + 72) & 63);
     const messageLength = lBytes + extraBytes + 8;
     const message = new ArrayBuffer(messageLength);
     const castMessage = new Uint8Array(message);
-    castMessage.set(new Uint8Array(input));
+    castMessage.set(input);
     castMessage[lBytes] = 1 << 7;
-    new DataView(message).setUint32(messageLength - 4, lBytes << 3);
+    new DataView(message).setUint32(messageLength - 4, bit_math_1.timesEight(lBytes));
     const hash = new Uint32Array([
         0x6a09e667,
         0xbb67ae85,
@@ -78,15 +79,16 @@ function sha256JS(input) {
 exports.sha256JS = sha256JS;
 exports.sha256Wasm = (() => {
     if (!sha256_load_1.default)
-        return;
+        return undefined;
     const { exports } = sha256_load_1.default;
-    const { INPUT_START, fitInput, sha256, memory } = exports;
+    const { INPUT_START, fitInput, memory, sha256 } = exports;
+    const inputStart = INPUT_START.valueOf();
     return (input) => {
-        const { byteLength } = input;
-        fitInput(byteLength);
+        const { length } = input;
+        fitInput(length);
         const { buffer } = memory;
-        new Uint8Array(buffer).set(new Uint8Array(input), INPUT_START);
-        sha256(byteLength);
+        new Uint8Array(buffer).set(input, inputStart);
+        sha256(length);
         return buffer.slice(0, 32);
     };
 })();
@@ -97,4 +99,4 @@ exports.sha256Wasm = (() => {
  * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
  * @param input The input data
  */
-exports.default = exports.sha256Wasm || sha256JS;
+exports.default = exports.sha256Wasm !== null && exports.sha256Wasm !== void 0 ? exports.sha256Wasm : sha256JS;

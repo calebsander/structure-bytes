@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
 import * as strint from '../lib/strint'

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
+const write_util_1 = require("../lib/write-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
@@ -32,8 +33,8 @@ class OptionalType extends absolute_1.default {
      */
     constructor(type) {
         super();
-        assert.instanceOf(type, abstract_1.default);
         this.type = type;
+        assert.instanceOf(type, abstract_1.default);
     }
     static get _value() {
         return 0x60;
@@ -70,21 +71,16 @@ class OptionalType extends absolute_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        switch (value) {
-            case null:
-            case undefined:
-                buffer.add(0x00);
-                break;
-            default:
-                buffer.add(0xFF);
-                this.type.writeValue(buffer, value);
-        }
+        const isNull = value === null || value === undefined;
+        write_util_1.writeBooleanByte(buffer, !isNull);
+        if (!isNull)
+            this.type.writeValue(buffer, value);
     }
     consumeValue(buffer, offset) {
-        const nonNull = read_util_1.readBooleanByte(buffer, offset);
-        let { length } = nonNull;
+        //tslint:disable-next-line:prefer-const
+        let { value: nonNull, length } = read_util_1.readBooleanByte(buffer, offset);
         let value;
-        if (nonNull.value) {
+        if (nonNull) {
             const subValue = this.type.consumeValue(buffer, offset + length);
             ({ value } = subValue);
             length += subValue.length;
@@ -94,8 +90,7 @@ class OptionalType extends absolute_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
-            && this.type.equals(otherType.type);
+        return super.equals(otherType) && this.type.equals(otherType.type);
     }
 }
 exports.OptionalType = OptionalType;

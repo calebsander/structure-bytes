@@ -1,10 +1,10 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
-import writeIterable from '../lib/write-iterable'
+import {writeIterable} from '../lib/write-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import {Type} from './type'
+import type {Type} from './type'
 
 /**
  * A type storing a variable-size set of values of the same type.
@@ -29,16 +29,11 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 		return 0x53
 	}
 	/**
-	 * The [[Type]] passed to the constructor
-	 */
-	readonly type: Type<E, READ_E>
-	/**
 	 * @param type A [[Type]] that can serialize each element in the set
 	 */
-	constructor(type: Type<E, READ_E>) {
+	constructor(readonly type: Type<E, READ_E>) {
 		super()
 		assert.instanceOf(type, AbstractType)
-		this.type = type
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
@@ -69,17 +64,17 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 		writeIterable({type: this.type, buffer, value, length: value.size})
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>> {
-		const size = readFlexInt(buffer, offset)
-		let {length} = size
-		const value = baseValue || makeBaseValue(this) as Set<READ_E>
-		for (let i = 0; i < size.value; i++) {
+		//tslint:disable-next-line:prefer-const
+		let {value: size, length} = readFlexInt(buffer, offset)
+		const value = baseValue ?? makeBaseValue(this) as Set<READ_E>
+		for (let i = 0; i < size; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
 			length += element.length
 			value.add(element.value)
 		}
 		return {value, length}
 	}
-	equals(otherType: any) {
-		return super.equals(otherType) && this.type.equals((otherType as SetType<any>).type)
+	equals(otherType: unknown): otherType is this {
+		return super.equals(otherType) && this.type.equals(otherType.type)
 	}
 }

@@ -1,7 +1,7 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
+import type { Type } from './type';
 /**
  * A [[Type]] for writing values of type `E`
  * and a number of elements in the tuple
@@ -16,7 +16,6 @@ export interface TupleParams<E, READ_E extends E> {
 }
 /**
  * A type storing a fixed-length array of values of the same type.
- * The length must be at most 255.
  *
  * Example:
  * ````javascript
@@ -37,7 +36,7 @@ export interface TupleParams<E, READ_E extends E> {
  * in the read tuple
  */
 export declare class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
-    static readonly _value: number;
+    static get _value(): number;
     /**
      * The [[Type]] passed to the constructor
      */
@@ -49,7 +48,6 @@ export declare class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[]
     /**
      * @param type A [[Type]] that can write each element in the tuple
      * @param length The number of elements in the tuple.
-     * Must be at most 255.
      */
     constructor({ type, length }: TupleParams<E, READ_E>);
     addToBuffer(buffer: AppendableBuffer): boolean;
@@ -70,5 +68,5 @@ export declare class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[]
      */
     writeValue(buffer: AppendableBuffer, value: E[]): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]>;
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): otherType is this;
 }

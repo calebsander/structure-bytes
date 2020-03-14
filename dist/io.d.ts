@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import * as http from 'http';
 import { Readable, Writable } from 'stream';
-import { Type } from './types';
+import type { Type } from './types';
 export interface WriteParams<E> {
     type: Type<E>;
     outStream: Writable;
@@ -10,7 +10,7 @@ export interface WriteTypeValueParams<E> extends WriteParams<E> {
     value: E;
 }
 export interface ReadValueParams<E> {
-    type: Type<any, E>;
+    type: Type<unknown, E>;
     inStream: Readable;
 }
 export interface TypeAndValue<E> {

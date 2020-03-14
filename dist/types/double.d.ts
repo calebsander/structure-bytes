@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import FloatingPointType from './floating';
 /**
@@ -12,7 +12,7 @@ import FloatingPointType from './floating';
  * ````
  */
 export declare class DoubleType extends FloatingPointType {
-    static readonly _value: number;
+    static get _value(): number;
     /**
      * Appends value bytes to an [[AppendableBuffer]] according to the type
      *

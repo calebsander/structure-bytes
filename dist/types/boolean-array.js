@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
-const write_booleans_1 = require("../lib/write-booleans");
+const write_util_1 = require("../lib/write-util");
 const absolute_1 = require("./absolute");
 /**
  * A type storing a variable-length array of `Boolean` values.
@@ -39,12 +39,12 @@ class BooleanArrayType extends absolute_1.default {
         this.isBuffer(buffer);
         assert.instanceOf(value, Array);
         buffer.addAll(flexInt.makeValueBuffer(value.length));
-        write_booleans_1.default(buffer, value);
+        write_util_1.writeBooleans(buffer, value);
     }
     consumeValue(buffer, offset) {
-        const arrayLength = read_util_1.readFlexInt(buffer, offset);
-        let { length } = arrayLength;
-        const booleans = read_util_1.readBooleans({ buffer, offset: offset + length, count: arrayLength.value });
+        //tslint:disable-next-line:prefer-const
+        let { value: count, length } = read_util_1.readFlexInt(buffer, offset);
+        const booleans = read_util_1.readBooleans({ buffer, offset: offset + length, count });
         const { value } = booleans;
         length += booleans.length;
         return { value, length };

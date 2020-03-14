@@ -8,17 +8,12 @@ import * as zlib from 'zlib'
 import * as accepts from 'accepts'
 import AppendableStream from './lib/appendable-stream'
 import * as assert from './lib/assert'
-import {ReadResult} from './lib/read-util'
+import {toArrayBuffer} from './lib/growable-buffer'
+import type {ReadResult} from './lib/read-util'
 import * as r from './read'
 import AbstractType from './types/abstract'
-import {Type} from './types'
+import type {Type} from './types'
 
-function toArrayBuffer(buffer: Buffer): ArrayBuffer {
-	const {buffer: arrayBuffer, byteOffset, byteLength} = buffer
-	return !byteOffset && byteLength === arrayBuffer.byteLength
-		? arrayBuffer // if Buffer occupies whole ArrayBuffer, no need to slice it
-		: arrayBuffer.slice(byteOffset, byteOffset + byteLength)
-}
 type ArrayBufferCallback = (err: Error | null, buffer: ArrayBuffer | null) => void
 function concatStream(stream: Readable, callback: ArrayBufferCallback) {
 	const segments: Buffer[] = []
@@ -26,8 +21,8 @@ function concatStream(stream: Readable, callback: ArrayBufferCallback) {
 		.on('data', chunk =>
 			segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk))
 		)
-		.on('error', function(this: typeof stream, err) {
-			this.destroy()
+		.on('error', err => {
+			stream.destroy()
 			callback(err, null)
 		})
 		.on('end', () =>
@@ -43,7 +38,7 @@ export interface WriteTypeValueParams<E> extends WriteParams<E> {
 	value: E
 }
 export interface ReadValueParams<E> {
-	type: Type<any, E>
+	type: Type<unknown, E>
 	inStream: Readable
 }
 export interface TypeAndValue<E> {
@@ -264,7 +259,7 @@ export function readType<E>(inStream: Readable, callback: TypeCallback<E>) {
 		if (err) return callback(err, null)
 
 		let type: Type<E>
-		try { type = r.type(buffer!, false) }
+		try { type = r.type(buffer!, false) as Type<E> }
 		catch (e) { return callback(e, null) }
 		callback(null, type)
 	})
@@ -351,7 +346,7 @@ export function readTypeAndValue<E>(inStream: Readable, callback: TypeAndValueCa
 
 		let type: ReadResult<Type<E>>
 		//Using consumeType() in order to get the length of the type (the start of the value)
-		try { type = r._consumeType(buffer!, 0) }
+		try { type = r._consumeType(buffer!, 0) as ReadResult<Type<E>> }
 		catch (e) { return callback(e, null, null) }
 		let value: E
 		try { value = type.value.readValue(buffer!, type.length) }

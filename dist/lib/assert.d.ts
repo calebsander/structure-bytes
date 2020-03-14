@@ -4,13 +4,13 @@
  * @param instance The value in question
  * @param constructors A constructor or array of constructors to test against
  */
-export declare function instanceOf(instance: any, constructors: Function | Function[]): void;
+export declare function instanceOf(instance: unknown, constructors: Function | Function[]): void;
 /**
  * Throws an error if the given value is not an integer
  * within the range of integers representable in JavaScript
- * @param instance The value in question
+ * @param value The value in question
  */
-export declare function integer(instance: any): void;
+export declare function integer(value: unknown): asserts value is number;
 /**
  * Throws an error if a numeric value is not between
  * the given bounds
@@ -21,11 +21,10 @@ export declare function integer(instance: any): void;
  */
 export declare function between(lower: number, value: number, upper: number, message?: string): void;
 /**
- * Throws an error if the given value is not an integer
- * and in the range that can be represented in an unsigned byte
+ * Throws an error if the given value is not zero or a positive integer
  * @param value The value in question
  */
-export declare function byteUnsignedInteger(value: any): void;
+export declare function nonNegativeInteger(value: unknown): asserts value is number;
 /** Equality comparisons */
 export declare const equal: {
     /** Compares two `ArrayBuffer`s and returns whether they are equal */

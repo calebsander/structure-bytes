@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {readNumber, ReadResult} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
@@ -35,9 +35,9 @@ export class ShortType extends IntegerType<number | string, number> {
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue
 		assert.integer(value)
-		assert.between(-32768, value as number, 32768, 'Value out of range')
+		assert.between(-32768, value, 32768, 'Value out of range')
 		const byteBuffer = new ArrayBuffer(2)
-		new DataView(byteBuffer).setInt16(0, value as number)
+		new DataView(byteBuffer).setInt16(0, value)
 		buffer.addAll(byteBuffer)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {

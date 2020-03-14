@@ -37,11 +37,9 @@ class CharType extends absolute_1.default {
     consumeValue(buffer, offset) {
         if (buffer.byteLength <= offset)
             throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4)); //UTF-8 codepoint can't be more than 4 bytes
-        return {
-            value,
-            length: bufferString.fromString(value).byteLength
-        };
+        //UTF-8 codepoint can't be more than 4 bytes
+        const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4));
+        return { value, length: bufferString.fromString(value).byteLength };
     }
 }
 exports.CharType = CharType;

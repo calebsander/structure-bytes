@@ -33,7 +33,6 @@ __export(require("./set"));
 __export(require("./map"));
 __export(require("./enum"));
 __export(require("./choice"));
-__export(require("./named-choice"));
 var recursive_1 = require("./recursive");
 exports.RecursiveType = recursive_1.RecursiveType;
 __export(require("./singleton"));

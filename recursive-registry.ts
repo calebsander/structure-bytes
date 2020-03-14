@@ -1,5 +1,5 @@
 import * as assert from './lib/assert'
-import {RegisterableType, TypeAndName} from './recursive-registry-type'
+import type {RegisterableType, TypeAndName} from './recursive-registry-type'
 import {ArrayType, MapType, SetType, StructType, TupleType} from './types'
 
 //A map of names of recursive types to their types
@@ -81,6 +81,5 @@ export function getType(name: string): RegisterableType {
  * @param name The name to check
  * @return Whether the name has been mapped to a type
  */
-export function isRegistered(name: string): boolean {
-	return registeredTypes.has(name)
-}
+export const isRegistered = (name: string): boolean =>
+	registeredTypes.has(name)

@@ -32,10 +32,10 @@ class MapType extends absolute_1.default {
      */
     constructor(keyType, valueType) {
         super();
-        assert.instanceOf(keyType, abstract_1.default);
-        assert.instanceOf(valueType, abstract_1.default);
         this.keyType = keyType;
         this.valueType = valueType;
+        assert.instanceOf(keyType, abstract_1.default);
+        assert.instanceOf(valueType, abstract_1.default);
     }
     static get _value() {
         return 0x54;
@@ -83,10 +83,10 @@ class MapType extends absolute_1.default {
         }
     }
     consumeValue(buffer, offset, baseValue) {
-        const size = read_util_1.readFlexInt(buffer, offset);
-        let { length } = size;
-        const value = baseValue || read_util_1.makeBaseValue(this);
-        for (let i = 0; i < size.value; i++) {
+        //tslint:disable-next-line:prefer-const
+        let { value: size, length } = read_util_1.readFlexInt(buffer, offset);
+        const value = baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this);
+        for (let i = 0; i < size; i++) {
             const keyElement = this.keyType.consumeValue(buffer, offset + length);
             length += keyElement.length;
             const valueElement = this.valueType.consumeValue(buffer, offset + length);

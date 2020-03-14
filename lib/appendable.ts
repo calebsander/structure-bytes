@@ -16,17 +16,17 @@
  * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3, 4, 5 ]
  * ````
  */
-export default abstract class AppendableBuffer {
+export interface AppendableBuffer {
 	/**
 	 * The number of bytes that have been written
 	 */
-	abstract readonly length: number
+	readonly length: number
 	/**
 	 * Adds a byte after the end
 	 * of the written data
 	 * @param value The unsigned byte value to add
 	 */
-	abstract add(value: number): this
+	add(value: number): this
 	/**
 	 * Adds a contiguous set of bytes
 	 * after the end of the written data
@@ -34,7 +34,7 @@ export default abstract class AppendableBuffer {
 	 * The byte at position `i` in `buffer` will be written to
 	 * position `this.length + i`.
 	 */
-	abstract addAll(buffer: ArrayBuffer | Uint8Array): this
+	addAll(buffer: ArrayBuffer | Uint8Array): this
 	/**
 	 * Pauses the writing process, i.e.
 	 * bytes added are not written
@@ -59,14 +59,14 @@ export default abstract class AppendableBuffer {
 	 * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
 	 * ````
 	 */
-	abstract pause(): this
+	pause(): this
 	/**
 	 * See [[pause]].
 	 * Flushes all paused data to the output
 	 * and exits paused mode.
 	 * @throws If not currently paused
 	 */
-	abstract resume(): this
+	resume(): this
 	/**
 	 * See [[pause]].
 	 * Restores state to immediately after
@@ -75,5 +75,5 @@ export default abstract class AppendableBuffer {
 	 * being flushed to the output.
 	 * @throws If not currently paused
 	 */
-	abstract reset(): this
+	reset(): this
 }

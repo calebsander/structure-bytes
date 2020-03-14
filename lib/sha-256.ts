@@ -1,7 +1,8 @@
+import {timesEight} from './bit-math'
 import sha256Module from './sha256-load'
 
 interface WasmExports {
-	INPUT_START: number
+	INPUT_START: number | (WebAssembly.Global & {value: number})
 	memory: WebAssembly.Memory
 	fitInput(length: number): void
 	sha256(length: number): void
@@ -21,15 +22,15 @@ const K = new Uint32Array([
 const rightRotate = (value: number, bits: number): number =>
 	(value >>> bits) | (value << (32 - bits))
 
-export function sha256JS(input: ArrayBuffer) {
-	const lBytes = input.byteLength
+export function sha256JS(input: Uint8Array) {
+	const lBytes = input.length
 	const extraBytes = 64 - ((lBytes + 72) & 63)
 	const messageLength = lBytes + extraBytes + 8
 	const message = new ArrayBuffer(messageLength)
 	const castMessage = new Uint8Array(message)
-	castMessage.set(new Uint8Array(input))
+	castMessage.set(input)
 	castMessage[lBytes] = 1 << 7
-	new DataView(message).setUint32(messageLength - 4, lBytes << 3)
+	new DataView(message).setUint32(messageLength - 4, timesEight(lBytes))
 
 	const hash = new Uint32Array([
 		0x6a09e667,
@@ -65,8 +66,14 @@ export function sha256JS(input: ArrayBuffer) {
 			d = c; c = b; b = a
 			a = temp1 + temp2
 		}
-		hash[0] += a; hash[1] += b; hash[2] += c; hash[3] += d
-		hash[4] += e; hash[5] += f; hash[6] += g; hash[7] += h
+		hash[0] += a
+		hash[1] += b
+		hash[2] += c
+		hash[3] += d
+		hash[4] += e
+		hash[5] += f
+		hash[6] += g
+		hash[7] += h
 	}
 	const result = new ArrayBuffer(32)
 	const resultDataView = new DataView(result)
@@ -74,16 +81,17 @@ export function sha256JS(input: ArrayBuffer) {
 	return result
 }
 export const sha256Wasm: typeof sha256JS | undefined = (() => {
-	if (!sha256Module) return
+	if (!sha256Module) return undefined
 
 	const {exports} = sha256Module
-	const {INPUT_START, fitInput, sha256, memory} = exports as WasmExports
-	return (input: ArrayBuffer) => {
-		const {byteLength} = input
-		fitInput(byteLength)
+	const {INPUT_START, fitInput, memory, sha256} = exports as unknown as WasmExports
+	const inputStart: number = INPUT_START.valueOf()
+	return (input: Uint8Array) => {
+		const {length} = input
+		fitInput(length)
 		const {buffer} = memory
-		new Uint8Array(buffer).set(new Uint8Array(input), INPUT_START)
-		sha256(byteLength)
+		new Uint8Array(buffer).set(input, inputStart)
+		sha256(length)
 		return buffer.slice(0, 32)
 	}
 })()
@@ -94,4 +102,4 @@ export const sha256Wasm: typeof sha256JS | undefined = (() => {
  * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
  * @param input The input data
  */
-export default sha256Wasm || sha256JS
+export default sha256Wasm ?? sha256JS

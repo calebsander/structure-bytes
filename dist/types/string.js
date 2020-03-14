@@ -42,10 +42,9 @@ class StringType extends absolute_1.default {
         for (;;) {
             if (castBuffer.length <= length)
                 throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            if (castBuffer[length])
-                length++;
-            else
+            if (!castBuffer[length])
                 break;
+            length++;
         }
         const value = bufferString.toString(castBuffer.subarray(0, length));
         length++; //account for null byte

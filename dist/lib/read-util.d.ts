@@ -1,4 +1,4 @@
-import { RegisterableType } from '../recursive-registry-type';
+import type { RegisterableType } from '../recursive-registry-type';
 export declare const NOT_LONG_ENOUGH = "Buffer is not long enough";
 /**
  * The result of reading a value from bytes
@@ -24,7 +24,7 @@ export interface ReadResult<E> {
  * to initialize the array value with
  * @return `[]`, `new Map`, `new Set`, or `{}`
  */
-export declare function makeBaseValue(readType: RegisterableType, count?: number): any;
+export declare function makeBaseValue(readType: RegisterableType, count?: number): unknown;
 /**
  * Reads a byte from the buffer,
  * requires it to be `0x00` or `0xFF`,

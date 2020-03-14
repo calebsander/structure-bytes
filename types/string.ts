@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
@@ -41,8 +41,9 @@ export class StringType extends AbsoluteType<string> {
 		let length = 0
 		for (;;) {
 			if (castBuffer.length <= length) throw new Error(NOT_LONG_ENOUGH)
-			if (castBuffer[length]) length++
-			else break
+			if (!castBuffer[length]) break
+
+			length++
 		}
 		const value = bufferString.toString(castBuffer.subarray(0, length))
 		length++ //account for null byte

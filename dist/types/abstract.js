@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const base64 = require("base64-js");
 const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
-const appendable_1 = require("../lib/appendable");
+const appendable_stream_1 = require("../lib/appendable-stream");
 const assert = require("../lib/assert");
 const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
@@ -27,6 +27,7 @@ class AbstractType {
             if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
                 const location = this.cachedTypeLocations.get(buffer);
                 if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
+                    // TODO: use most recent location
                     buffer
                         .add(constants_1.REPEATED_TYPE)
                         .addAll(flexInt.makeValueBuffer(buffer.length - location));
@@ -43,6 +44,9 @@ class AbstractType {
     toBuffer() {
         if (!this.cachedBuffer)
             this.cachedBuffer = this._toBuffer();
+        if (this.cachedBuffer instanceof Uint8Array) {
+            this.cachedBuffer = growable_buffer_1.toArrayBuffer(this.cachedBuffer);
+        }
         return this.cachedBuffer;
     }
     getHash() {
@@ -60,20 +64,12 @@ class AbstractType {
         this.writeValue(buffer, value);
         return buffer.toBuffer();
     }
-    readValue(buffer, offset = 0) {
-        assert.instanceOf(buffer, [ArrayBuffer, Uint8Array]);
+    readValue(valueBuffer, offset = 0) {
+        assert.instanceOf(valueBuffer, [ArrayBuffer, Uint8Array]);
         assert.instanceOf(offset, Number);
-        let readBuffer, readOffset;
-        if (buffer instanceof ArrayBuffer) {
-            readBuffer = buffer;
-            readOffset = offset;
-        }
-        else {
-            readBuffer = buffer.buffer;
-            readOffset = buffer.byteOffset + offset;
-        }
-        const { value, length } = this.consumeValue(readBuffer, readOffset);
-        if (offset + length !== buffer.byteLength) {
+        const { buffer, byteOffset, byteLength } = growable_buffer_1.asUint8Array(valueBuffer);
+        const { value, length } = this.consumeValue(buffer, byteOffset + offset);
+        if (offset + length !== byteLength) {
             throw new Error('Did not consume all of buffer');
         }
         return value;
@@ -88,7 +84,7 @@ class AbstractType {
         if (!otherType)
             return false;
         //Other type must have the same constructor
-        return otherType.constructor === this.constructor;
+        return this.constructor === otherType.constructor;
     }
     /**
      * Requires that the buffer be a [[GrowableBuffer]]
@@ -97,7 +93,7 @@ class AbstractType {
      * @param buffer The value to assert is an [[AppendableBuffer]]
      */
     isBuffer(buffer) {
-        assert.instanceOf(buffer, appendable_1.default);
+        assert.instanceOf(buffer, [appendable_stream_1.default, growable_buffer_1.default]);
     }
     /**
      * Generates the type buffer, recomputed each time
@@ -107,7 +103,7 @@ class AbstractType {
     _toBuffer() {
         const buffer = new growable_buffer_1.default;
         this.addToBuffer(buffer);
-        return buffer.toBuffer();
+        return buffer.toUint8Array();
     }
     /**
      * Gets an SHA256 hash of the type, recomputed each time
@@ -115,8 +111,9 @@ class AbstractType {
      * @return A hash of the buffer given by [[toBuffer]]
      */
     _getHash() {
-        const bytes = new Uint8Array(sha_256_1.default(this.toBuffer()));
-        return base64.fromByteArray(bytes);
+        if (!this.cachedBuffer)
+            this.cachedBuffer = this._toBuffer();
+        return base64.fromByteArray(new Uint8Array(sha_256_1.default(growable_buffer_1.asUint8Array(this.cachedBuffer))));
     }
     /**
      * Gets a signature string for the type, recomputed each time,

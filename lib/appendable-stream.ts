@@ -1,6 +1,6 @@
 import {OutgoingMessage} from 'http'
 import {Duplex, Writable} from 'stream'
-import AppendableBuffer from './appendable'
+import type {AppendableBuffer} from './appendable'
 import * as assert from './assert'
 import GrowableBuffer from './growable-buffer'
 
@@ -13,7 +13,7 @@ const WRITABLE_STREAMS = [Writable, Duplex, OutgoingMessage]
  * by calling [[end]] after all bytes
  * have been written.
  */
-export default class AppendableStream extends AppendableBuffer {
+export default class AppendableStream implements AppendableBuffer {
 	private readonly outStream: Writable
 	private writtenBytes: number
 	private pauseCount: number //number of pauses deep in the pause stack
@@ -23,7 +23,6 @@ export default class AppendableStream extends AppendableBuffer {
 	 * @param outStream The underlying writable stream
 	 */
 	constructor(outStream: Writable) {
-		super()
 		assert.instanceOf(outStream, WRITABLE_STREAMS)
 		this.outStream = outStream
 		this.writtenBytes = 0
@@ -103,9 +102,9 @@ export default class AppendableStream extends AppendableBuffer {
 	resume() {
 		if (!this.pauseCount) throw new Error('Was not paused')
 		this.pauseCount--
-		if (this.pauseCount) this.paused.resume() //still in pause stack
-		else { //emptied pause stack
-			this.outStream.write(Buffer.from(this.paused.rawBuffer, 0, this.paused.length))
+		this.paused.resume()
+		if (!this.pauseCount) { //emptied pause stack
+			this.outStream.write(this.paused.toUint8Array())
 			this.paused = new GrowableBuffer //must use a new buffer to avoid overwriting data sent to outStream
 		}
 		return this

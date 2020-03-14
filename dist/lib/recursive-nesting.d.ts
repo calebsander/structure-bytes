@@ -1,4 +1,4 @@
-import AppendableBuffer from './appendable';
+import type { AppendableBuffer } from './appendable';
 /**
  * Increments the number of levels the specified
  * value write buffer is currently deep in recursive types
@@ -18,4 +18,4 @@ export declare function decrement(buffer: AppendableBuffer): void;
  * @return The number of [[increment]]s minus
  * the number of [[decrement]]s called on the buffer
  */
-export declare function get(buffer: AppendableBuffer): number | undefined;
+export declare const get: (buffer: AppendableBuffer) => number | undefined;

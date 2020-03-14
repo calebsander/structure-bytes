@@ -15,7 +15,7 @@ export function toString(buffer: Uint8Array) {
 	const codePoints = []
 	for (let i = 0; i < buffer.length;) {
 		const firstByte = buffer[i]
-		let codePoint
+		let codePoint: number | undefined
 		let bytesPerSequence: 1 | 2 | 3 | 4
 			= firstByte > 0xEF ? 4
 			: firstByte > 0xDF ? 3
@@ -84,7 +84,7 @@ export function toString(buffer: Uint8Array) {
  * The inverse of [[toString]].
  * @param str The string to convert
  */
-export function fromString(str: string) {
+export function fromString(str: string): ArrayBuffer {
 	assert.instanceOf(str, String)
 	//Taken from http://stackoverflow.com/a/18729931
 	const utf8 = new GrowableBuffer

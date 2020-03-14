@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
+const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
@@ -9,7 +10,6 @@ const pointer = require("./pointer");
 const recursive = require("./recursive");
 /**
  * A type storing a value of one of several fixed types.
- * The list of possible types must contain at most 255 types.
  *
  * Example:
  * ````javascript
@@ -39,23 +39,16 @@ const recursive = require("./recursive");
 class ChoiceType extends absolute_1.default {
     /**
      * @param types The list of possible types.
-     * Cannot contain more than 255 types.
      * Values will be written using the first type in the list
      * that successfully writes the value,
      * so place higher priority types earlier.
      */
     constructor(types) {
         super();
+        this.types = types;
         assert.instanceOf(types, Array);
-        try {
-            assert.byteUnsignedInteger(types.length);
-        }
-        catch (_a) {
-            throw new Error(`${types.length} types is too many`);
-        }
         for (const type of types)
             assert.instanceOf(type, abstract_1.default);
-        this.types = types;
     }
     static get _value() {
         return 0x56;
@@ -63,7 +56,7 @@ class ChoiceType extends absolute_1.default {
     addToBuffer(buffer) {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
-            buffer.add(this.types.length);
+            buffer.addAll(flexInt.makeValueBuffer(this.types.length));
             for (const type of this.types)
                 type.addToBuffer(buffer);
             return true;
@@ -97,7 +90,7 @@ class ChoiceType extends absolute_1.default {
         //Try to write value using each type in order until no error is thrown
         for (let i = 0; i < this.types.length; i++) {
             const type = this.types[i];
-            buffer.add(i);
+            buffer.addAll(flexInt.makeValueBuffer(i));
             try {
                 type.writeValue(buffer, value);
                 success = true;
@@ -114,20 +107,16 @@ class ChoiceType extends absolute_1.default {
             throw new Error('No types matched: ' + util_inspect_1.inspect(value));
     }
     consumeValue(buffer, offset) {
-        let length = 1;
-        if (buffer.byteLength <= offset)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        const typeIndex = new Uint8Array(buffer)[offset];
+        //tslint:disable-next-line:prefer-const
+        let { value: typeIndex, length } = read_util_1.readFlexInt(buffer, offset);
         const { value, length: subLength } = this.types[typeIndex].consumeValue(buffer, offset + length);
         length += subLength;
         return { value, length };
     }
     equals(otherType) {
-        if (!super.equals(otherType))
-            return false;
-        const otherTypes = otherType.types;
-        return this.types.length === otherTypes.length &&
-            this.types.every((type, i) => type.equals(otherTypes[i]));
+        return super.equals(otherType)
+            && this.types.length === otherType.types.length
+            && this.types.every((type, i) => type.equals(otherType.types[i]));
     }
 }
 exports.ChoiceType = ChoiceType;

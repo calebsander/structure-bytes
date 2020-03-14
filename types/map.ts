@@ -1,10 +1,10 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import {Type} from './type'
+import type {Type} from './type'
 
 /**
  * A type storing a variable-size mapping of keys of one type to values of another
@@ -31,23 +31,13 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 		return 0x54
 	}
 	/**
-	 * The type used to serialize keys
-	 */
-	readonly keyType: Type<K, READ_K>
-	/**
-	 * The type used to serialize values
-	 */
-	readonly valueType: Type<V, READ_V>
-	/**
 	 * @param keyType The type of each key in the map
 	 * @param valueType The type of each value in the map
 	 */
-	constructor(keyType: Type<K, READ_K>, valueType: Type<V, READ_V>) {
+	constructor(readonly keyType: Type<K, READ_K>, readonly valueType: Type<V, READ_V>) {
 		super()
 		assert.instanceOf(keyType, AbstractType)
 		assert.instanceOf(valueType, AbstractType)
-		this.keyType = keyType
-		this.valueType = valueType
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
@@ -92,10 +82,10 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>> {
-		const size = readFlexInt(buffer, offset)
-		let {length} = size
-		const value = baseValue || makeBaseValue(this) as Map<READ_K, READ_V>
-		for (let i = 0; i < size.value; i++) {
+		//tslint:disable-next-line:prefer-const
+		let {value: size, length} = readFlexInt(buffer, offset)
+		const value = baseValue ?? makeBaseValue(this) as Map<READ_K, READ_V>
+		for (let i = 0; i < size; i++) {
 			const keyElement = this.keyType.consumeValue(buffer, offset + length)
 			length += keyElement.length
 			const valueElement = this.valueType.consumeValue(buffer, offset + length)
@@ -104,9 +94,9 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 		}
 		return {value, length}
 	}
-	equals(otherType: any) {
+	equals(otherType: any): otherType is this {
 		return super.equals(otherType)
-			&& this.keyType.equals((otherType as MapType<any, any>).keyType)
-			&& this.valueType.equals((otherType as MapType<any, any>).valueType)
+			&& this.keyType.equals(otherType.keyType)
+			&& this.valueType.equals(otherType.valueType)
 	}
 }

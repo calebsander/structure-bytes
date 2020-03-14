@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
+const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 const abstract_1 = require("./abstract");
 /**
  * A type storing a fixed-length array of values of the same type.
- * The length must be at most 255.
  *
  * Example:
  * ````javascript
@@ -30,12 +30,11 @@ class TupleType extends absolute_1.default {
     /**
      * @param type A [[Type]] that can write each element in the tuple
      * @param length The number of elements in the tuple.
-     * Must be at most 255.
      */
     constructor({ type, length }) {
         super();
         assert.instanceOf(type, abstract_1.default);
-        assert.byteUnsignedInteger(length);
+        assert.nonNegativeInteger(length);
         this.type = type;
         this.length = length;
     }
@@ -46,7 +45,7 @@ class TupleType extends absolute_1.default {
         /*istanbul ignore else*/
         if (super.addToBuffer(buffer)) {
             this.type.addToBuffer(buffer);
-            buffer.add(this.length);
+            buffer.addAll(flexInt.makeValueBuffer(this.length));
             return true;
         }
         /*istanbul ignore next*/
@@ -77,7 +76,7 @@ class TupleType extends absolute_1.default {
     }
     consumeValue(buffer, offset, baseValue) {
         let length = 0;
-        const value = baseValue || read_util_1.makeBaseValue(this); //TypeScript complains if annotation is left off `value`
+        const value = baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this);
         for (let i = 0; i < this.length; i++) {
             const element = this.type.consumeValue(buffer, offset + length);
             length += element.length;

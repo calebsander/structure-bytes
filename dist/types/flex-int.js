@@ -10,22 +10,18 @@ const integer_1 = require("./integer");
  * to a unique unsigned integer value
  * @param signed The signed integer value
  */
-function toUnsigned(signed) {
-    if (signed < 0)
-        return -2 * signed - 1;
-    return 2 * signed;
-}
+const toUnsigned = (signed) => signed < 0
+    ? -2 * signed - 1
+    : 2 * signed;
 /**
  * Converts an unsigned integer value
  * to a unique signed integer value.
  * The inverse of [[toUnsigned]].
  * @param signed The unsigned integer value
  */
-function fromUnsigned(unsigned) {
-    if (unsigned & 1)
-        return (unsigned + 1) / -2;
-    return unsigned / 2;
-}
+const fromUnsigned = (unsigned) => unsigned & 1
+    ? (unsigned + 1) / -2
+    : unsigned / 2;
 const MIN_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER); //< 0; inclusive
 const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1; //> 0; exclusive
 /**
@@ -70,10 +66,7 @@ class FlexIntType extends integer_1.default {
     }
     consumeValue(buffer, offset) {
         const { value, length } = read_util_1.readFlexInt(buffer, offset);
-        return {
-            value: fromUnsigned(value),
-            length
-        };
+        return { value: fromUnsigned(value), length };
     }
 }
 exports.FlexIntType = FlexIntType;

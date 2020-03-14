@@ -9,31 +9,33 @@ import {inspect} from './util-inspect'
  * @param instance The value in question
  * @param constructors A constructor or array of constructors to test against
  */
-export function instanceOf(instance: any, constructors: Function | Function[]): void {
+export function instanceOf(instance: unknown, constructors: Function | Function[]): void {
 	if (!(constructors instanceof Array)) constructors = [constructors]
 	for (const constructor of constructors) {
 		if (
 			instance instanceof constructor ||
-			(!(instance === undefined || instance === null) && instance.constructor === constructor) //necessary for primitives
+			//Necessary for primitives
+			(
+				!(instance === undefined || instance === null) &&
+				(instance as any).constructor === constructor
+			)
 		) return
 	}
 	throw new TypeError(
 		inspect(instance) +
 		' is not an instance of ' +
-		constructors
-			.map(({name}) => name)
-			.join(' or ')
+		constructors.map(({name}) => name).join(' or ')
 	)
 }
 /**
  * Throws an error if the given value is not an integer
  * within the range of integers representable in JavaScript
- * @param instance The value in question
+ * @param value The value in question
  */
-export function integer(instance: any): void {
-	instanceOf(instance, Number)
-	if (!Number.isSafeInteger(instance)) {
-		throw new RangeError(inspect(instance) + ' is not an integer')
+export function integer(value: unknown): asserts value is number {
+	instanceOf(value, Number)
+	if (!Number.isSafeInteger(value as number)) {
+		throw new RangeError(inspect(value) + ' is not an integer')
 	}
 }
 /**
@@ -51,13 +53,12 @@ export function between(lower: number, value: number, upper: number, message?: s
 	}
 }
 /**
- * Throws an error if the given value is not an integer
- * and in the range that can be represented in an unsigned byte
+ * Throws an error if the given value is not zero or a positive integer
  * @param value The value in question
  */
-export function byteUnsignedInteger(value: any): void {
+export function nonNegativeInteger(value: unknown): asserts value is number {
 	integer(value)
-	between(0, value, 256)
+	between(0, value, Infinity)
 }
 /** Equality comparisons */
 export const equal = {

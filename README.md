@@ -66,13 +66,12 @@ This project is somewhat similar to Google's [Protocol Buffers](https://develope
 	- `Octets` (an `ArrayBuffer` (raw binary data))
 - Compound/recursive types
 	- `Tuple<Type>` (a constant-length array of `Type`s)
-	- `Struct` (an object with up to 255 fields, each with a fixed name and type)
+	- `Struct` (an object with a fixed set of fields, each with a fixed name and type)
 	- `Array<Type>` (a variable-length array of `Type`s)
 	- `Set<Type>` (like an `Array`, except creates a set when read)
 	- `Map<KeyType, ValueType>` (a mapping of `KeyType` instances to `ValueType` instances)
-	- `Enum<Type>` (a fixed set of up to 255 `Type`s; useful when only a small subset of `Type` instances represent possible values, especially with `String`s)
-	- `Choice` (a fixed set of up to 255 types that values can take on)
-	- `NamedChoice` (a fixed set of up to 255 named types that values can take on, each associated with a constructor)
+	- `Enum<Type>` (a fixed set of `Type`s; useful when only a small subset of `Type` instances represent possible values, especially with `String`s)
+	- `Choice` (a fixed set of types that values can take on)
 	- `Recursive<Type>` (a type that can reference itself and be used to serialize circular data structures)
 	- `Singleton<Type>` (a type that serializes only one value)
 	- `Optional<Type>` (either `null` or `undefined` or an instance of `Type`)
@@ -363,7 +362,7 @@ const carType = new sb.StructType<SerializedCar>({
 })
 ````
 
-With `ChoiceType` (and similarly for `NamedChoiceType`), you can let the type be inferred automatically if each of the possible types writes the same type of values:
+With `ChoiceType`, you can let the type be inferred automatically if each of the possible types writes the same type of values:
 ````javascript
 const choiceType = new sb.ChoiceType([ // Type<number | string, number>
 	new sb.ByteType,
@@ -457,7 +456,7 @@ intType.valueBuffer('100')
 ````
 
 ## Binary formats
-In the following definitions, `uint8_t` means an 8-bit unsigned integer. `flexInt` means a variable-length unsigned integer with the following format, where `X` represents either `0` or `1`:
+In the following definitions, `flexInt` means a variable-length unsigned integer with the following format, where `X` represents either `0` or `1`:
 - `[0b0XXXXXXX]` stores values from `0` to `2**7 - 1` in their unsigned 7-bit integer representations
 - `[0b10XXXXXX, 0bXXXXXXXX]` stores values from `2**7` to `2**7 + 2**14 - 1`, where a value `x` is encoded into the unsigned 14-bit representation of `x - 2**7`
 - `[0b110XXXXX, 0bXXXXXXXX, 0bXXXXXXXX]` stores values from `2**7 + 2**14` to `2**7 + 2**14 + 2**21 - 1`, where a value `x` is encoded into the unsigned 21-bit representation of `x - (2**7 + 2**14)`
@@ -472,8 +471,8 @@ For example, `new sb.UnsignedIntType` translates into `[0x13]`, and `new sb.Stru
 [
 	0x51 /*StructType*/,
 		2 /*2 fields*/,
-			3 /*3 characters in first field's name*/, 0x61 /*a*/, 0x62 /*b*/, 0x63 /*c*/, 0x01 /*ByteType*/,
-			3 /*3 characters in second field's name*/, 0x64 /*d*/, 0x65 /*e*/, 0x66 /*f*/, 0x41 /*StringType*/
+			/*first field's name*/, 0x61 /*a*/, 0x62 /*b*/, 0x63 /*c*/, 0, 0x01 /*ByteType*/,
+			/*second field's name*/, 0x64 /*d*/, 0x65 /*e*/, 0x66 /*f*/, 0, 0x41 /*StringType*/
 ]
 ````
 If the type has already been written to the buffer, it is also valid to serialize the type as:
@@ -495,11 +494,11 @@ const type = new sb.StructType({
 [
 	0x51 /*StructType*/,
 		2 /*2 fields*/,
-			3 /*3 characters in first field's name*/, 0x6f /*o*/, 0x6e /*n*/, 0x65 /*e*/,
+			/*first field's name*/, 0x6f /*o*/, 0x6e /*n*/, 0x65 /*e*/, 0,
 				0x50 /*TupleType*/,
 					0x20 /*FloatType*/,
 					3 /*3 floats in the tuple*/,
-			3 /*3 characters in second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/,
+			/*second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/, 0,
 				0xff, /*type is defined previously*/
 					8 /*type is defined 8 bytes before this byte*/
 ]
@@ -525,19 +524,18 @@ In the following definitions, `type` means the binary type format.
 - `DoubleType`: identifier `0x21`
 - `BooleanType`: identifier `0x30`
 - `BooleanTupleType`: identifier `0x31`, payload:
-	- `length` - `uint8_t`
+	- `length` - `flexInt`
 - `BooleanArrayType`: identifier `0x32`
 - `CharType`: identifier `0x40`
 - `StringType`: identifier `0x41`
 - `OctetsType`: identifier `0x42`
 - `TupleType`: identifier `0x50`, payload:
 	- `elementType` - `type`
-	- `length` - `uint8_t`
+	- `length` - `flexInt`
 - `StructType`: identifier `0x51`, payload:
-	- `fieldCount` - `uint8_t`
+	- `fieldCount` - `flexInt`
 	- `fieldCount` instances of `field`:
-		- `nameLength` - `uint8_t`
-		- `name` - a UTF-8 string containing `nameLength` bytes
+		- `name` - a serialized `StringType` value
 		- `fieldType` - `type`
 - `ArrayType`: identifier `0x52`, payload:
 	- `elementType` - `type`
@@ -548,19 +546,13 @@ In the following definitions, `type` means the binary type format.
 	- `valueType` - `type`
 - `EnumType`: identifier `0x55`, payload:
 	- `valueType` - `type`
-	- `valueCount` - `uint8_t`
+	- `valueCount` - `flexInt`
 	- `valueCount` instances of `value`:
 		- `value` - a value that conforms to `valueType`
 - `ChoiceType`: identifier `0x56`, payload:
-	- `typeCount` - `uint8_t`
+	- `typeCount` - `flexInt`
 	- `typeCount` instances of `possibleType`:
 		- `possibleType` - `type`
-- `NamedChoiceType`: identifier `0x58`, payload:
-	- `typeCount` - `uint8_t`
-	- `typeCount` instances of `possibleType`:
-		- `typeNameLength` - `uint8_t`
-		- `typeName` - a UTF-8 string containing `typeNameLength` bytes
-		- `typeType` - `type`
 - `RecursiveType`: identifier `0x57`, payload:
 	- `recursiveID` (an identifier unique to this recursive type in this type buffer) - `flexInt`
 	- If this is the first instance of this recursive type in this buffer:
@@ -625,12 +617,9 @@ In the following definitions, `type` means the binary type format.
 		- `key` - value serialized by `keyType`
 		- `value` - value serialized by `valueType`
 - `EnumType`:
-	- `index` of value in values array - `uint8_t`
+	- `index` of value in values array - `flexInt`
 - `ChoiceType`:
-	- `index` of type in possible types array - `uint8_t`
-	- `value` - value serialized by specified type
-- `NamedChoiceType`:
-	- `index` of type in possible types array - `uint8_t`
+	- `index` of type in possible types array - `flexInt`
 	- `value` - value serialized by specified type
 - `RecursiveType`:
 	- `valueNotYetWrittenInBuffer` - byte containing either `0x00` or `0xFF`

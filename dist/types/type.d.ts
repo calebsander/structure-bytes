@@ -1,5 +1,5 @@
-import AppendableBuffer from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import type { AppendableBuffer } from '../lib/appendable';
+import type { ReadResult } from '../lib/read-util';
 /**
  * An interface representing an object that can serialize values of a certain type.
  * The object must also be able to serialize itself.
@@ -89,5 +89,5 @@ export interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
      * @param otherType Another object to compare with
      * @return `true` iff the types would be serialized to the same bytes
      */
-    equals(otherType: any): boolean;
+    equals(otherType: unknown): boolean;
 }

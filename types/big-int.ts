@@ -1,4 +1,4 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
@@ -57,9 +57,8 @@ export class BigIntType extends IntegerType<string, string> {
 			.addAll(byteBuffer.buffer)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
-		const lengthInt = readFlexInt(buffer, offset)
-		const bytes = lengthInt.value
-		let {length} = lengthInt
+		//tslint:disable-next-line:prefer-const
+		let {value: bytes, length} = readFlexInt(buffer, offset)
 		if (buffer.byteLength < offset + length + bytes) throw new Error(NOT_LONG_ENOUGH)
 		const castBuffer = new Uint8Array(buffer, offset + length)
 		let value: string

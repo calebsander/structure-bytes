@@ -8,15 +8,13 @@ export = () => {
 	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x56, 3, 0x11, 0x14, 0x41]))
 	assert(type.equals(r.type(buffer)))
 
-	const tooManyTypes = new Array<t.Type<any>>(256)
-	for (let i = 0; i < tooManyTypes.length; i++) {
-		let type = new t.ShortType as t.Type<any>
-		for (let j = 0; j < i; j++) type = new t.ArrayType(type)
-		tooManyTypes[i] = type
-	}
 	assert.throws(
-		() => new t.ChoiceType(tooManyTypes),
-		(err: Error) => err.message === '256 types is too many'
+		() => new t.ChoiceType(123 as any),
+		(err: Error) => err.message === '123 is not an instance of Array'
+	)
+	assert.throws(
+		() => new t.ChoiceType([123 as any]),
+		(err: Error) => err.message === '123 is not an instance of AbstractType'
 	)
 
 	assert(!type.equals(new t.UnsignedByteType))

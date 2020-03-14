@@ -1,7 +1,7 @@
-import AppendableBuffer from '../lib/appendable';
+import type { AppendableBuffer } from '../lib/appendable';
 import { ReadResult } from '../lib/read-util';
 import AbsoluteType from './absolute';
-import { Type } from './type';
+import type { Type } from './type';
 /**
  * A type storing a variable-size mapping of keys of one type to values of another
  *
@@ -23,15 +23,9 @@ import { Type } from './type';
  * @param READ_V The type of values this type will read
  */
 export declare class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends AbsoluteType<Map<K, V>, Map<READ_K, READ_V>> {
-    static readonly _value: number;
-    /**
-     * The type used to serialize keys
-     */
     readonly keyType: Type<K, READ_K>;
-    /**
-     * The type used to serialize values
-     */
     readonly valueType: Type<V, READ_V>;
+    static get _value(): number;
     /**
      * @param keyType The type of each key in the map
      * @param valueType The type of each value in the map
@@ -63,5 +57,5 @@ export declare class MapType<K, V, READ_K extends K = K, READ_V extends V = V> e
      */
     writeValue(buffer: AppendableBuffer, value: Map<K, V>): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>>;
-    equals(otherType: any): boolean;
+    equals(otherType: any): otherType is this;
 }

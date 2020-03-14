@@ -1,9 +1,9 @@
-import AppendableBuffer from '../lib/appendable'
+import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
-import {Type} from './type'
+import type {Type} from './type'
 
 export interface SingletonParams<E> {
 	type: Type<E, any>
@@ -65,9 +65,11 @@ export class SingletonType<E> extends AbstractType<E> {
 		this.type = type
 		this.value = value
 	}
-	private get singletonValueBuffer() {
-		return this.cachedValueBuffer ||
-			(this.cachedValueBuffer = this.type.valueBuffer(this.value))
+	private get singletonValueBuffer(): ArrayBuffer {
+		if (!this.cachedValueBuffer) {
+			this.cachedValueBuffer = this.type.valueBuffer(this.value)
+		}
+		return this.cachedValueBuffer
 	}
 	addToBuffer(buffer: AppendableBuffer) {
 		/*istanbul ignore else*/
@@ -100,13 +102,9 @@ export class SingletonType<E> extends AbstractType<E> {
 	consumeValue() {
 		return {value: this.value, length: 0}
 	}
-	equals(otherType: any) {
-		if (!super.equals(otherType)) return false
-		const otherSingletonType = otherType as SingletonType<any>
-		if (!this.type.equals(otherSingletonType.type)) return false
-		return assert.equal.buffers(
-			otherSingletonType.singletonValueBuffer,
-			this.singletonValueBuffer
-		)
+	equals(otherType: unknown): otherType is this {
+		return super.equals(otherType)
+			&& this.type.equals(otherType.type)
+			&& assert.equal.buffers(this.singletonValueBuffer, otherType.singletonValueBuffer)
 	}
 }
