@@ -85,7 +85,7 @@ class MapType extends absolute_1.default {
     consumeValue(buffer, offset, baseValue) {
         //tslint:disable-next-line:prefer-const
         let { value: size, length } = read_util_1.readFlexInt(buffer, offset);
-        const value = baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this);
+        const value = baseValue ?? read_util_1.makeBaseValue(this);
         for (let i = 0; i < size; i++) {
             const keyElement = this.keyType.consumeValue(buffer, offset + length);
             length += keyElement.length;

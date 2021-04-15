@@ -55,7 +55,7 @@ class StructType extends absolute_1.default {
             try {
                 assert.instanceOf(type, abstract_1.default);
             }
-            catch (_a) {
+            catch {
                 throw new Error(util_inspect_1.inspect(type) + ' is not a valid field type');
             }
             this.fields.push({ name, type });
@@ -121,7 +121,7 @@ class StructType extends absolute_1.default {
     }
     consumeValue(buffer, offset, baseValue) {
         let length = 0;
-        const value = (baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this));
+        const value = (baseValue ?? read_util_1.makeBaseValue(this));
         for (const { name, type } of this.fields) {
             const readField = type.consumeValue(buffer, offset + length);
             value[name] = readField.value;

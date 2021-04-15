@@ -6,14 +6,14 @@ import IntegerType from './integer'
 /**
  * A type storing an 8-byte signed integer
  * (`-9223372036854775808` to `9223372036854775807`).
- * Values to write must be given in base-10 string form.
+ * Each value must be provided as a BigInt.
  *
  * Example:
  * ````javascript
  * let type = new sb.LongType
  * ````
  */
-export class LongType extends IntegerType<string, string> {
+export class LongType extends IntegerType<bigint> {
 	static get _value() {
 		return 0x04
 	}
@@ -22,17 +22,17 @@ export class LongType extends IntegerType<string, string> {
 	 *
 	 * Example:
 	 * ````javascript
-	 * type.writeValue(buffer, '-1234567890123456789')
+	 * type.writeValue(buffer, -1234567890123456789n)
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: string) {
+	writeValue(buffer: AppendableBuffer, value: bigint) {
 		this.isBuffer(buffer)
 		writeLong(buffer, value)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
 		return readLong(buffer, offset)
 	}
 }

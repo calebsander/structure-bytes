@@ -6,7 +6,7 @@ const integer_1 = require("./integer");
 /**
  * A type storing an 8-byte signed integer
  * (`-9223372036854775808` to `9223372036854775807`).
- * Values to write must be given in base-10 string form.
+ * A value must be provided as a BigInt.
  *
  * Example:
  * ````javascript

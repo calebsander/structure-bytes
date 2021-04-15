@@ -2,11 +2,7 @@ import type {AppendableBuffer} from './appendable'
 import * as assert from './assert'
 import {timesEight} from './bit-math'
 import * as flexInt from './flex-int'
-import * as strint from './strint'
 import type {Type} from '../types'
-
-const LONG_MAX = '9223372036854775807',
-	LONG_MIN = '-9223372036854775808'
 
 /**
  * Writes a single boolean value to a buffer.
@@ -71,14 +67,10 @@ export function writeIterable<E>({type, buffer, value, length}: IterableWritePar
  * @param buffer The buffer to which to append
  * @param value The value to write (a numeric string)
  */
-export function writeLong(buffer: AppendableBuffer, value: string): void {
-	assert.instanceOf(value, String)
-	if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN)) throw new RangeError('Value out of range')
-	const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true) //get upper signed int
-	const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)) //get lower unsigned int
+export function writeLong(buffer: AppendableBuffer, value: bigint): void {
+	assert.instanceOf(value, BigInt)
+	if (value !== BigInt.asIntN(64, value)) throw new RangeError('Value out of range')
 	const byteBuffer = new ArrayBuffer(8)
-	const dataView = new DataView(byteBuffer)
-	dataView.setInt32(0, Number(upper))
-	dataView.setUint32(4, Number(lower))
+	new DataView(byteBuffer).setBigInt64(0, value)
 	buffer.addAll(byteBuffer)
 }

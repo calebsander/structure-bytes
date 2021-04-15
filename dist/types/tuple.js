@@ -76,7 +76,7 @@ class TupleType extends absolute_1.default {
     }
     consumeValue(buffer, offset, baseValue) {
         let length = 0;
-        const value = baseValue !== null && baseValue !== void 0 ? baseValue : read_util_1.makeBaseValue(this);
+        const value = baseValue ?? read_util_1.makeBaseValue(this);
         for (let i = 0; i < this.length; i++) {
             const element = this.type.consumeValue(buffer, offset + length);
             length += element.length;

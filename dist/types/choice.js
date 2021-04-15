@@ -96,7 +96,7 @@ class ChoiceType extends absolute_1.default {
                 success = true;
                 break;
             }
-            catch (_a) {
+            catch {
                 buffer.reset();
                 pointer.rewindBuffer(buffer);
                 recursive.rewindBuffer(buffer);

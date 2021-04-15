@@ -20,6 +20,7 @@ export const inspect = (obj: any): string => inspectWithSeen(obj, new Set)
 function inspectWithSeen(obj: any, seen: Set<object>): string {
 	if (obj === undefined) return 'undefined'
 	if (obj === null || jsonTypes.has(obj.constructor)) return JSON.stringify(obj)
+	if (obj.constructor === BigInt) return `${obj}n`
 	if (obj instanceof ArrayBuffer || obj instanceof Uint8Array) {
 		return `<${obj.constructor.name} ${[...new Uint8Array(obj)].map(hexByte).join(' ')}>`
 	}

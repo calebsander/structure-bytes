@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * of the `flexInt` format
  */
 const assert = require("./assert");
-const possibleValueCount = (bytes) => Math.pow(2, (7 * bytes)); //can't bit-shift because this may not fit in 32-bit integer
+const possibleValueCount = (bytes) => 2 ** (7 * bytes); //can't bit-shift because this may not fit in 32-bit integer
 const UPPER_BOUNDS = new Map() //mapping of numbers of bytes to the exclusive upper bound on numbers in the range
     .set(0, 0); //1-byte values are relative to 0
 //Mapping of numbers of bytes to the mask for the first byte

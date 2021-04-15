@@ -1,6 +1,5 @@
 import {dividedByEight, modEight, timesEight} from './bit-math'
 import * as flexInt from './flex-int'
-import * as strint from './strint'
 import {hexByte, inspect} from './util-inspect'
 import type {RegisterableType} from '../recursive-registry-type'
 import {ArrayType} from '../types/array'
@@ -130,16 +129,10 @@ export function readFlexInt(buffer: ArrayBuffer, offset: number): ReadResult<num
  * @return The value stored in the `8` bytes
  * starting at `offset`, in string form
  */
-export function readLong(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+export function readLong(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
 	const length = 8
 	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-	const dataView = new DataView(buffer, offset)
-	const upper = dataView.getInt32(0)
-	const lower = dataView.getUint32(4)
-	return {
-		value: strint.add(strint.mul(`${upper}`, strint.LONG_UPPER_SHIFT), `${lower}`),
-		length
-	}
+	return {value: new DataView(buffer, offset).getBigInt64(0), length}
 }
 
 /**

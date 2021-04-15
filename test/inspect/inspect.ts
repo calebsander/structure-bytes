@@ -3,6 +3,8 @@ import {assert} from '../test-common'
 
 export = () => {
 	assert.equal(util.inspect(23), '23')
+	assert.equal(util.inspect(123n), '123n')
+	assert.equal(util.inspect(-456n), '-456n')
 	assert.equal(util.inspect(true), 'true')
 	assert.equal(util.inspect(false), 'false')
 	assert.equal(util.inspect(null), 'null')

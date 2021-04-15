@@ -35,7 +35,6 @@ export = () => {
 				new t.ChoiceType<number | string | null | undefined | Person>([
 					new t.ByteType,
 					new t.UnsignedIntType,
-					new t.UnsignedLongType,
 					new t.StringType,
 					new t.OptionalType<Person>(personType)
 				])
@@ -43,7 +42,7 @@ export = () => {
 		)
 	)
 	assert.deepEqual(new Uint8Array(personCube.toBuffer()), concat([
-		new Uint8Array([0x52, 0x52, 0x52, 0x56, 5, 0x01, 0x13, 0x14, 0x41, 0x60]),
+		new Uint8Array([0x52, 0x52, 0x52, 0x56, 4, 0x01, 0x13, 0x41, 0x60]),
 		new Uint8Array(personType.toBuffer()) //ensure that no repeated type is used
 	]))
 }

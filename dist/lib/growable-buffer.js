@@ -28,7 +28,7 @@ class GrowableBuffer {
             assert.integer(initialLength);
             assert.between(0, initialLength, Infinity);
         }
-        catch (_a) {
+        catch {
             throw new RangeError(`${initialLength} is not a valid buffer length`);
         }
         this.buffer = new ArrayBuffer(initialLength);
@@ -102,8 +102,7 @@ class GrowableBuffer {
      * @return The internal buffer trimmed to `this.length`
      */
     toUint8Array() {
-        var _a;
-        return new Uint8Array(this.buffer, 0, (_a = this.pausePoints[0]) !== null && _a !== void 0 ? _a : this.size);
+        return new Uint8Array(this.buffer, 0, this.pausePoints[0] ?? this.size);
     }
     /**
      * Pauses the writing process, i.e.

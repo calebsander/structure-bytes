@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("./assert");
 const bit_math_1 = require("./bit-math");
 const flexInt = require("./flex-int");
-const strint = require("./strint");
-const LONG_MAX = '9223372036854775807', LONG_MIN = '-9223372036854775808';
 /**
  * Writes a single boolean value to a buffer.
  * `true` is written as `0xFF`; `false` is written as `0x00`.
@@ -63,15 +61,11 @@ exports.writeIterable = writeIterable;
  * @param value The value to write (a numeric string)
  */
 function writeLong(buffer, value) {
-    assert.instanceOf(value, String);
-    if (strint.gt(value, LONG_MAX) || strint.lt(value, LONG_MIN))
+    assert.instanceOf(value, BigInt);
+    if (value !== BigInt.asIntN(64, value))
         throw new RangeError('Value out of range');
-    const upper = strint.div(value, strint.LONG_UPPER_SHIFT, true); //get upper signed int
-    const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
     const byteBuffer = new ArrayBuffer(8);
-    const dataView = new DataView(byteBuffer);
-    dataView.setInt32(0, Number(upper));
-    dataView.setUint32(4, Number(lower));
+    new DataView(byteBuffer).setBigInt64(0, value);
     buffer.addAll(byteBuffer);
 }
 exports.writeLong = writeLong;

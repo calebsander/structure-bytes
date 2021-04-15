@@ -3,9 +3,9 @@ import * as t from '../../dist'
 import {assert} from '../test-common'
 
 export = () => {
-	const type = new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedLongType, new t.StringType])
+	const type = new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedIntType, new t.StringType])
 	const buffer = type.toBuffer()
-	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x56, 3, 0x11, 0x14, 0x41]))
+	assert.deepEqual(new Uint8Array(buffer), new Uint8Array([0x56, 3, 0x11, 0x13, 0x41]))
 	assert(type.equals(r.type(buffer)))
 
 	assert.throws(
@@ -18,8 +18,8 @@ export = () => {
 	)
 
 	assert(!type.equals(new t.UnsignedByteType))
-	assert(!type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedLongType, new t.StringType, new t.LongType])))
-	assert(!type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedLongType])))
-	assert(!type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.StringType, new t.UnsignedLongType])))
-	assert(type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedLongType, new t.StringType])))
+	assert(!type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedIntType, new t.StringType, new t.StringType])))
+	assert(!type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedIntType])))
+	assert(!type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.StringType, new t.UnsignedIntType])))
+	assert(type.equals(new t.ChoiceType<number | string>([new t.UnsignedByteType, new t.UnsignedIntType, new t.StringType])))
 }

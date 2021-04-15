@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const bit_math_1 = require("./bit-math");
 const flexInt = require("./flex-int");
-const strint = require("./strint");
 const util_inspect_1 = require("./util-inspect");
 const array_1 = require("../types/array");
 const map_1 = require("../types/map");
@@ -118,13 +117,7 @@ function readLong(buffer, offset) {
     const length = 8;
     if (buffer.byteLength < offset + length)
         throw new Error(exports.NOT_LONG_ENOUGH);
-    const dataView = new DataView(buffer, offset);
-    const upper = dataView.getInt32(0);
-    const lower = dataView.getUint32(4);
-    return {
-        value: strint.add(strint.mul(`${upper}`, strint.LONG_UPPER_SHIFT), `${lower}`),
-        length
-    };
+    return { value: new DataView(buffer, offset).getBigInt64(0), length };
 }
 exports.readLong = readLong;
 /**

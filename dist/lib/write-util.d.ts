@@ -39,4 +39,4 @@ export declare function writeIterable<E>({ type, buffer, value, length }: Iterab
  * @param buffer The buffer to which to append
  * @param value The value to write (a numeric string)
  */
-export declare function writeLong(buffer: AppendableBuffer, value: string): void;
+export declare function writeLong(buffer: AppendableBuffer, value: bigint): void;

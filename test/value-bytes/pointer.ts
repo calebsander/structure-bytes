@@ -37,7 +37,7 @@ export = () => {
 			length: 5
 		})
 		const gb = new GrowableBuffer
-		const VALUE = ['1234567890', '0', '0', '2', '0']
+		const VALUE = [1234567890n, 0n, 0n, 2n, 0n]
 		type.writeValue(gb, VALUE)
 		assert.deepEqual(new Uint8Array(gb.toBuffer()), new Uint8Array([
 			0,

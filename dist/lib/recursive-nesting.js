@@ -8,8 +8,7 @@ const recursiveNesting = new WeakMap();
  * @param buffer The buffer whose value to increment
  */
 function increment(buffer) {
-    var _a;
-    const lastValue = (_a = recursiveNesting.get(buffer)) !== null && _a !== void 0 ? _a : 0;
+    const lastValue = recursiveNesting.get(buffer) ?? 0;
     recursiveNesting.set(buffer, lastValue + 1);
 }
 exports.increment = increment;

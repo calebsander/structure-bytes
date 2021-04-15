@@ -2,20 +2,18 @@ import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
 import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
-import * as strint from '../lib/strint'
 import IntegerType from './integer'
 
 /**
  * A type storing an arbitrary precision signed integer.
  * Each written value has its own number of bytes of precision.
- * Values must be provided as base-10 strings.
  *
  * Example:
  * ````javascript
  * let type = new sb.BigIntType
  * ````
  */
-export class BigIntType extends IntegerType<string, string> {
+export class BigIntType extends IntegerType<bigint> {
 	static get _value() {
 		return 0x05
 	}
@@ -24,54 +22,46 @@ export class BigIntType extends IntegerType<string, string> {
 	 *
 	 * Examples:
 	 * ````javascript
-	 * type.writeValue(buffer, '-1') //takes up 2 bytes
+	 * type.writeValue(buffer, -1n) //takes up 2 bytes
 	 * ````
 	 * or
 	 * ````javascript
-	 * type.writeValue(buffer, '12345678901234567890') //takes up 10 bytes
+	 * type.writeValue(buffer, 12345678901234567890n) //takes up 10 bytes
 	 * ````
 	 * @param buffer The buffer to which to append
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: string) {
+	writeValue(buffer: AppendableBuffer, value: bigint) {
 		this.isBuffer(buffer)
-		assert.instanceOf(value, String)
-		value = strint.normalize(value) //throws if value is invalid
+		assert.instanceOf(value, BigInt)
 		const bytes: number[] = []
-		if (!strint.eq(value, '0')) {
-			while (strint.gt(value, '127') || strint.lt(value, '-128')) { //builds bytes in LE order
-				const quotient = strint.div(value, strint.BYTE_SHIFT, true)
-				const remainder = strint.sub(value, strint.mul(quotient, strint.BYTE_SHIFT))
-				bytes.push(Number(remainder))
-				value = quotient
-			}
-			bytes.push(Number(value))
+		let signBit = 0n
+		//Build bytes in LE order. Continue until sign-extended bytes match the value.
+		//If a positive number has a 1 in the highest bit, another 0 byte is needed.
+		//If a negative number has a 0 in the highest bit, another -1 byte is needed.
+		while (value !== signBit) {
+			const byte = BigInt.asIntN(8, value)
+			bytes.push(Number(byte) & 0xFF)
+			signBit = byte >> 8n
+			value >>= 8n
 		}
-		const byteBuffer = new Uint8Array(bytes.length)
-		for (let i = bytes.length - 1, offset = 0; i >= 0; i--, offset++) { //write in reverse order to get BE
-			byteBuffer[offset] = bytes[i] //signed highest byte can be cast to unsigned byte without issue
+		const byteLength = bytes.length
+		buffer.addAll(flexInt.makeValueBuffer(byteLength))
+		for (let i = byteLength - 1; i >= 0; i--) { //write in reverse order to get BE
+			buffer.add(bytes[i])
 		}
-		buffer
-			.addAll(flexInt.makeValueBuffer(bytes.length))
-			.addAll(byteBuffer.buffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
+	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
 		//tslint:disable-next-line:prefer-const
 		let {value: bytes, length} = readFlexInt(buffer, offset)
 		if (buffer.byteLength < offset + length + bytes) throw new Error(NOT_LONG_ENOUGH)
-		const castBuffer = new Uint8Array(buffer, offset + length)
-		let value: string
-		if (bytes) {
-			value = `${new Int8Array(castBuffer)[0]}`
-			for (let byte = 1; byte < bytes; byte++) {
-				value = strint.add(
-					strint.mul(value, strint.BYTE_SHIFT),
-					`${castBuffer[byte]}`
-				)
-			}
+		let value = 0n
+		for (const byte of new Uint8Array(buffer, offset + length, bytes)) {
+			value = value << 8n | BigInt(byte)
 		}
-		else value = '0'
+		//Sign-extend the read bytes
+		value = BigInt.asIntN(bytes << 3, value)
 		length += bytes
 		return {value, length}
 	}

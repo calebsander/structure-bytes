@@ -66,7 +66,7 @@ export declare function readFlexInt(buffer: ArrayBuffer, offset: number): ReadRe
  * @return The value stored in the `8` bytes
  * starting at `offset`, in string form
  */
-export declare function readLong(buffer: ArrayBuffer, offset: number): ReadResult<string>;
+export declare function readLong(buffer: ArrayBuffer, offset: number): ReadResult<bigint>;
 /**
  * A `TypedArray` constructor, e.g. `Uint8Array`
  */

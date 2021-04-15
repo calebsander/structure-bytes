@@ -2,13 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
-const strint = require("../lib/strint");
 const unsigned_1 = require("./unsigned");
-const UNSIGNED_LONG_MAX = '18446744073709551615';
 /**
  * A type storing an 8-byte unsigned integer
  * (`0` to `18446744073709551615`).
- * Values to write must be given in base-10 string form.
+ * A value must be provided as a BigInt.
  *
  * Example:
  * ````javascript
@@ -24,7 +22,7 @@ class UnsignedLongType extends unsigned_1.default {
      *
      * Example:
      * ````javascript
-     * type.writeValue(buffer, '1234567890123456789')
+     * type.writeValue(buffer, 1234567890123456789n)
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write
@@ -32,28 +30,18 @@ class UnsignedLongType extends unsigned_1.default {
      */
     writeValue(buffer, value) {
         this.isBuffer(buffer);
-        assert.instanceOf(value, String);
-        if (strint.gt(value, UNSIGNED_LONG_MAX) || strint.lt(value, '0'))
+        assert.instanceOf(value, BigInt);
+        if (value !== BigInt.asUintN(64, value))
             throw new RangeError('Value out of range');
-        const upper = strint.div(value, strint.LONG_UPPER_SHIFT); //get upper unsigned int
-        const lower = strint.sub(value, strint.mul(upper, strint.LONG_UPPER_SHIFT)); //get lower unsigned int
         const byteBuffer = new ArrayBuffer(8);
-        const dataView = new DataView(byteBuffer);
-        dataView.setUint32(0, Number(upper));
-        dataView.setUint32(4, Number(lower));
+        new DataView(byteBuffer).setBigInt64(0, value);
         buffer.addAll(byteBuffer);
     }
     consumeValue(buffer, offset) {
         const length = 8;
         if (buffer.byteLength < offset + length)
             throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        const dataView = new DataView(buffer, offset);
-        const upper = dataView.getUint32(0);
-        const lower = dataView.getUint32(4);
-        return {
-            value: strint.add(strint.mul(`${upper}`, strint.LONG_UPPER_SHIFT), `${lower}`),
-            length
-        };
+        return { value: new DataView(buffer, offset).getBigUint64(0), length };
     }
 }
 exports.UnsignedLongType = UnsignedLongType;

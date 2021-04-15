@@ -31,7 +31,7 @@ class DateType extends chrono_1.default {
     writeValue(buffer, value) {
         this.isBuffer(buffer);
         assert.instanceOf(value, Date);
-        write_util_1.writeLong(buffer, `${value.getTime()}`);
+        write_util_1.writeLong(buffer, BigInt(value.getTime()));
     }
     consumeValue(buffer, offset) {
         const { value, length } = read_util_1.readLong(buffer, offset);
