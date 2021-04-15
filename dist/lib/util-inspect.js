@@ -22,6 +22,8 @@ function inspectWithSeen(obj, seen) {
         return 'undefined';
     if (obj === null || jsonTypes.has(obj.constructor))
         return JSON.stringify(obj);
+    if (obj.constructor === BigInt)
+        return `${obj}n`;
     if (obj instanceof ArrayBuffer || obj instanceof Uint8Array) {
         return `<${obj.constructor.name} ${[...new Uint8Array(obj)].map(exports.hexByte).join(' ')}>`;
     }

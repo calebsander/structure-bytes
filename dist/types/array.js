@@ -72,7 +72,7 @@ class ArrayType extends absolute_1.default {
     consumeValue(buffer, offset, baseValue) {
         //tslint:disable-next-line:prefer-const
         let { value: arrayLength, length } = read_util_1.readFlexInt(buffer, offset);
-        const value = baseValue ?? read_util_1.makeBaseValue(this, arrayLength);
+        const value = baseValue || read_util_1.makeBaseValue(this, arrayLength);
         for (let i = 0; i < arrayLength; i++) {
             const element = this.type.consumeValue(buffer, offset + length);
             length += element.length;

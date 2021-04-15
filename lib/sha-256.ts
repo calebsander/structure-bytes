@@ -102,4 +102,4 @@ export const sha256Wasm: typeof sha256JS | undefined = (() => {
  * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
  * @param input The input data
  */
-export default sha256Wasm ?? sha256JS
+export default sha256Wasm || sha256JS

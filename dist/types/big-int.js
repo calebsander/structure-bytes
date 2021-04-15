@@ -37,7 +37,10 @@ class BigIntType extends integer_1.default {
         assert.instanceOf(value, BigInt);
         const bytes = [];
         let signBit = 0n;
-        while (value !== signBit) { //builds bytes in LE order
+        //Build bytes in LE order. Continue until sign-extended bytes match the value.
+        //If a positive number has a 1 in the highest bit, another 0 byte is needed.
+        //If a negative number has a 0 in the highest bit, another -1 byte is needed.
+        while (value !== signBit) {
             const byte = BigInt.asIntN(8, value);
             bytes.push(Number(byte) & 0xFF);
             signBit = byte >> 8n;
@@ -58,6 +61,7 @@ class BigIntType extends integer_1.default {
         for (const byte of new Uint8Array(buffer, offset + length, bytes)) {
             value = value << 8n | BigInt(byte);
         }
+        //Sign-extend the read bytes
         value = BigInt.asIntN(bytes << 3, value);
         length += bytes;
         return { value, length };

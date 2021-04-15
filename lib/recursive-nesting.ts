@@ -9,7 +9,7 @@ const recursiveNesting = new WeakMap<AppendableBuffer, number>()
  * @param buffer The buffer whose value to increment
  */
 export function increment(buffer: AppendableBuffer): void {
-	const lastValue = recursiveNesting.get(buffer) ?? 0
+	const lastValue = recursiveNesting.get(buffer) || 0
 	recursiveNesting.set(buffer, lastValue + 1)
 }
 /**

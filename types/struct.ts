@@ -134,7 +134,7 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E> {
 		let length = 0
-		const value = (baseValue ?? makeBaseValue(this)) as READ_E
+		const value = (baseValue || makeBaseValue(this)) as READ_E
 		for (const {name, type} of this.fields) {
 			const readField = type.consumeValue(buffer, offset + length)
 			value[name] = readField.value

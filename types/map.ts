@@ -84,7 +84,7 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>> {
 		//tslint:disable-next-line:prefer-const
 		let {value: size, length} = readFlexInt(buffer, offset)
-		const value = baseValue ?? makeBaseValue(this) as Map<READ_K, READ_V>
+		const value = baseValue || makeBaseValue(this) as Map<READ_K, READ_V>
 		for (let i = 0; i < size; i++) {
 			const keyElement = this.keyType.consumeValue(buffer, offset + length)
 			length += keyElement.length

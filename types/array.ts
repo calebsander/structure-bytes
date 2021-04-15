@@ -72,7 +72,7 @@ export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
 		//tslint:disable-next-line:prefer-const
 		let {value: arrayLength, length} = readFlexInt(buffer, offset)
-		const value = baseValue ?? makeBaseValue(this, arrayLength) as READ_E[]
+		const value = baseValue || makeBaseValue(this, arrayLength) as READ_E[]
 		for (let i = 0; i < arrayLength; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
 			length += element.length

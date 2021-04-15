@@ -6,7 +6,7 @@ const unsigned_1 = require("./unsigned");
 /**
  * A type storing an 8-byte unsigned integer
  * (`0` to `18446744073709551615`).
- * A value must be provided as a BigInt.
+ * Each value must be provided as a BigInt.
  *
  * Example:
  * ````javascript
@@ -22,7 +22,7 @@ class UnsignedLongType extends unsigned_1.default {
      *
      * Example:
      * ````javascript
-     * type.writeValue(buffer, 1234567890123456789n)
+     * type.writeValue(buffer, 12345678901234567890n)
      * ````
      * @param buffer The buffer to which to append
      * @param value The value to write

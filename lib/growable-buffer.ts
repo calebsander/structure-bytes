@@ -108,7 +108,9 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * @return The internal buffer trimmed to `this.length`
 	 */
 	toUint8Array(): Uint8Array {
-		return new Uint8Array(this.buffer, 0, this.pausePoints[0] ?? this.size)
+		let [pausePoint] = this.pausePoints as [number?]
+		if (pausePoint === undefined) pausePoint = this.size
+		return new Uint8Array(this.buffer, 0, pausePoint)
 	}
 	/**
 	 * Pauses the writing process, i.e.

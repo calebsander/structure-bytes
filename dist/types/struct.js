@@ -121,7 +121,7 @@ class StructType extends absolute_1.default {
     }
     consumeValue(buffer, offset, baseValue) {
         let length = 0;
-        const value = (baseValue ?? read_util_1.makeBaseValue(this));
+        const value = (baseValue || read_util_1.makeBaseValue(this));
         for (const { name, type } of this.fields) {
             const readField = type.consumeValue(buffer, offset + length);
             value[name] = readField.value;

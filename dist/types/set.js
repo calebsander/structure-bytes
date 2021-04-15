@@ -66,7 +66,7 @@ class SetType extends absolute_1.default {
     consumeValue(buffer, offset, baseValue) {
         //tslint:disable-next-line:prefer-const
         let { value: size, length } = read_util_1.readFlexInt(buffer, offset);
-        const value = baseValue ?? read_util_1.makeBaseValue(this);
+        const value = baseValue || read_util_1.makeBaseValue(this);
         for (let i = 0; i < size; i++) {
             const element = this.type.consumeValue(buffer, offset + length);
             length += element.length;

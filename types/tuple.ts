@@ -95,7 +95,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
 		let length = 0
-		const value = baseValue ?? makeBaseValue(this) as READ_E[]
+		const value = baseValue || makeBaseValue(this) as READ_E[]
 		for (let i = 0; i < this.length; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
 			length += element.length

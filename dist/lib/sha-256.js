@@ -99,4 +99,4 @@ exports.sha256Wasm = (() => {
  * [Wikipedia](https://en.wikipedia.org/wiki/SHA-2#Pseudocode).
  * @param input The input data
  */
-exports.default = exports.sha256Wasm ?? sha256JS;
+exports.default = exports.sha256Wasm || sha256JS;

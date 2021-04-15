@@ -66,7 +66,7 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>> {
 		//tslint:disable-next-line:prefer-const
 		let {value: size, length} = readFlexInt(buffer, offset)
-		const value = baseValue ?? makeBaseValue(this) as Set<READ_E>
+		const value = baseValue || makeBaseValue(this) as Set<READ_E>
 		for (let i = 0; i < size; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
 			length += element.length
