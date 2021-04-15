@@ -1,11 +1,13 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
+import {ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import type {Type} from './type'
 
 export interface SingletonParams<E> {
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	type: Type<E, any>
 	value: E
 }
@@ -46,7 +48,7 @@ export interface SingletonParams<E> {
  * @param E The type of the value
  */
 export class SingletonType<E> extends AbstractType<E> {
-	static get _value() {
+	static get _value(): number {
 		return 0x59
 	}
 	/** The type used to serialize the value */
@@ -71,7 +73,7 @@ export class SingletonType<E> extends AbstractType<E> {
 		}
 		return this.cachedValueBuffer
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -93,17 +95,17 @@ export class SingletonType<E> extends AbstractType<E> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E) {
+	writeValue(buffer: AppendableBuffer, value: E): void {
 		this.isBuffer(buffer)
 		if (!assert.equal.buffers(this.type.valueBuffer(value), this.singletonValueBuffer)) {
 			throw new Error(`Expected ${inspect(this.value)} but got ${inspect(value)}`)
 		}
 	}
-	consumeValue() {
+	consumeValue(): ReadResult<E> {
 		return {value: this.value, length: 0}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType)
 			&& this.type.equals(otherType.type)
 			&& assert.equal.buffers(this.singletonValueBuffer, otherType.singletonValueBuffer)
 	}

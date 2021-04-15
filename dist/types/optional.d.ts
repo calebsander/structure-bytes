@@ -55,5 +55,5 @@ export declare class OptionalType<E, READ_E extends E = E> extends AbsoluteType<
      */
     writeValue(buffer: AppendableBuffer, value: E | null | undefined): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E | null>;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
 }

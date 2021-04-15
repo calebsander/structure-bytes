@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toArrayBuffer = exports.asUint8Array = void 0;
 const assert = require("./assert");
 const INITIAL_LENGTH = 10;
-exports.asUint8Array = (buffer) => buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+const asUint8Array = (buffer) => buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+exports.asUint8Array = asUint8Array;
 function toArrayBuffer(buffer) {
     const { buffer: arrayBuffer, byteOffset, byteLength } = buffer;
     return !byteOffset && byteLength === arrayBuffer.byteLength

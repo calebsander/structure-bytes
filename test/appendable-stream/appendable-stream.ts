@@ -19,7 +19,8 @@ const testBasic = new Promise<void>((resolve, reject) => {
 		() => new AppendableStream(0 as any),
 		(err: Error) => err.message === '0 is not an instance of Writable or Duplex or OutgoingMessage'
 	)
-	const outStream = new CaptureStream().on('finish', () => {
+	const outStream = new CaptureStream
+	outStream.on('finish', () => {
 		try {
 			assert.deepEqual(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 5, 6, 7]))
 			resolve()
@@ -58,7 +59,8 @@ const testBasic = new Promise<void>((resolve, reject) => {
 	stream.end()
 })
 const testPause = new Promise<void>((resolve, reject) => {
-	const outStream = new CaptureStream().on('finish', () => {
+	const outStream = new CaptureStream
+	outStream.on('finish', () => {
 		try {
 			assert.deepEqual(outStream.getWritten(), Buffer.from([1, 2, 3, 4, 9, 10]))
 			resolve()

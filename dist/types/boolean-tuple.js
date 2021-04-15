@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BooleanTupleType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -59,7 +60,7 @@ class BooleanTupleType extends absolute_1.default {
         return read_util_1.readBooleans({ buffer, offset, count: this.length });
     }
     equals(otherType) {
-        return super.equals(otherType) && otherType.length === this.length;
+        return this.isSameType(otherType) && otherType.length === this.length;
     }
 }
 exports.BooleanTupleType = BooleanTupleType;

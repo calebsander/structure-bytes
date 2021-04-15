@@ -15,7 +15,7 @@ import AbsoluteType from './absolute'
  * ````
  */
 export class StringType extends AbsoluteType<string> {
-	static get _value() {
+	static get _value(): number {
 		return 0x41
 	}
 	/**
@@ -29,7 +29,7 @@ export class StringType extends AbsoluteType<string> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: string) {
+	writeValue(buffer: AppendableBuffer, value: string): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, String)
 		buffer

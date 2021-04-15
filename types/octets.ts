@@ -16,7 +16,7 @@ import AbsoluteType from './absolute'
  * ````
  */
 export class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuffer> {
-	static get _value() {
+	static get _value(): number {
 		return 0x42
 	}
 	/**
@@ -33,7 +33,7 @@ export class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuff
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: ArrayBuffer | Uint8Array) {
+	writeValue(buffer: AppendableBuffer, value: ArrayBuffer | Uint8Array): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, [ArrayBuffer, Uint8Array])
 		buffer
@@ -41,8 +41,9 @@ export class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuff
 			.addAll(value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<ArrayBuffer> {
-		//tslint:disable-next-line:prefer-const
-		let {value: octetsLength, length} = readFlexInt(buffer, offset)
+		const readOctetsLength = readFlexInt(buffer, offset)
+		const octetsLength = readOctetsLength.value
+		let {length} = readOctetsLength
 		const octetsStart = length
 		length += octetsLength
 		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)

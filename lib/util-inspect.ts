@@ -1,11 +1,12 @@
-const jsonTypes = new Set([String, Number, Boolean, Date])
+//eslint-disable-next-line @typescript-eslint/ban-types
+const JSON_TYPES = new Set<Function>([String, Number, Boolean, Date])
 
 /**
  * Converts a byte to a 2-digit hexadecimal string
  * @param n The byte value
  * @return `n` with a possible leading 0
  */
-export const hexByte = (n: number) => (n < 16 ? '0' : '') + n.toString(16)
+export const hexByte = (n: number): string => (n < 16 ? '0' : '') + n.toString(16)
 
 /**
  * A simple replacement for `util.inspect()`.
@@ -16,16 +17,18 @@ export const hexByte = (n: number) => (n < 16 ? '0' : '') + n.toString(16)
  * @param obj The value to inspect
  * @return A string expressing the given value
  */
-export const inspect = (obj: any): string => inspectWithSeen(obj, new Set)
-function inspectWithSeen(obj: any, seen: Set<object>): string {
-	if (obj === undefined) return 'undefined'
-	if (obj === null || jsonTypes.has(obj.constructor)) return JSON.stringify(obj)
-	if (obj.constructor === BigInt) return `${obj}n`
+export const inspect = (obj: unknown): string => inspectWithSeen(obj, new Set)
+function inspectWithSeen(obj: unknown, seen: Set<unknown>): string {
+	if (obj === undefined || obj == null) return `${obj}`
+	//eslint-disable-next-line @typescript-eslint/ban-types
+	const {constructor} = obj as object
+	if (obj === null || JSON_TYPES.has(constructor)) return JSON.stringify(obj)
+	if (constructor === BigInt) return `${obj}n`
 	if (obj instanceof ArrayBuffer || obj instanceof Uint8Array) {
 		return `<${obj.constructor.name} ${[...new Uint8Array(obj)].map(hexByte).join(' ')}>`
 	}
 	if (obj instanceof Function) {
-		return 'Function ' + (obj as Function).name
+		return 'Function ' + obj.name
 	}
 	//obj might have circular references
 	if (seen.has(obj)) return '[Circular]'
@@ -56,14 +59,15 @@ function inspectWithSeen(obj: any, seen: Set<object>): string {
 		seen.delete(obj)
 		return result
 	}
-	const {name} = (obj as object).constructor
+	const {name} = constructor
 	let objectResult = `${name && name !== 'Object' ? name + ' ' : ''}{`
-	for (const key in obj) {
+	const objRecord = obj as Record<string, unknown>
+	for (const key in objRecord) {
 		/*istanbul ignore else*/
 		if ({}.hasOwnProperty.call(obj, key)) {
 			if (firstElement) firstElement = false
 			else objectResult += ', '
-			objectResult += key + ': ' + inspectWithSeen(obj[key], seen)
+			objectResult += key + ': ' + inspectWithSeen(objRecord[key], seen)
 		}
 	}
 	seen.delete(obj)

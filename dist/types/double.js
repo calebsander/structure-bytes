@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DoubleType = void 0;
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");

@@ -16,7 +16,7 @@ import type {Type} from './type'
  * in this package
  */
 export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VALUE> implements Type<VALUE, READ_VALUE> {
-	private cachedBuffer?: ArrayBuffer | Uint8Array
+	private cachedBuffer?: ArrayBuffer
 	private cachedHash?: string
 	private cachedSignature?: string
 	private cachedTypeLocations?: WeakMap<AppendableBuffer, number>
@@ -28,7 +28,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	static get _value(): number {
 		throw new Error('Generic Type has no value byte')
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		this.isBuffer(buffer)
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
 			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
@@ -47,29 +47,29 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		buffer.add((this.constructor as typeof AbstractType)._value)
 		return true
 	}
-	toBuffer() {
+	toBuffer(): ArrayBuffer {
 		if (!this.cachedBuffer) this.cachedBuffer = this._toBuffer()
 		if (this.cachedBuffer instanceof Uint8Array) {
 			this.cachedBuffer = toArrayBuffer(this.cachedBuffer)
 		}
 		return this.cachedBuffer
 	}
-	getHash() {
+	getHash(): string {
 		if (!this.cachedHash) this.cachedHash = this._getHash()
 		return this.cachedHash
 	}
-	getSignature() {
+	getSignature(): string {
 		if (!this.cachedSignature) this.cachedSignature = this._getSignature()
 		return this.cachedSignature
 	}
 	abstract writeValue(buffer: AppendableBuffer, value: VALUE): void
-	valueBuffer(value: VALUE) {
+	valueBuffer(value: VALUE): ArrayBuffer {
 		const buffer = new GrowableBuffer
 		this.writeValue(buffer, value)
 		return buffer.toBuffer()
 	}
-	abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>
-	readValue(valueBuffer: ArrayBuffer | Uint8Array, offset = 0) {
+	abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: unknown): ReadResult<READ_VALUE>
+	readValue(valueBuffer: ArrayBuffer | Uint8Array, offset = 0): READ_VALUE {
 		assert.instanceOf(valueBuffer, [ArrayBuffer, Uint8Array])
 		assert.instanceOf(offset, Number)
 		const {buffer, byteOffset, byteLength} = asUint8Array(valueBuffer)
@@ -84,11 +84,20 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		Could also implement this by checking whether the 2 types' binary representations match,
 		but it is faster if we short-circuit when any fields don't match
 	*/
-	equals(otherType: unknown): otherType is this {
-		//Checks that otherType is not null or undefined, so constructor property exists
-		if (!otherType) return false
-		//Other type must have the same constructor
-		return this.constructor === (otherType as object).constructor
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType)
+	}
+	/**
+	 * Determines whether the input is a Type with the same class
+	 * @private
+	 * @param otherType A value, usually a Type instance
+	 * @returns whether `this` and `otherType` are instances of the same Type class
+	 */
+	protected isSameType(otherType: unknown): otherType is this {
+		//Check that otherType is not null or undefined, so constructor property exists.
+		//Then check that other type has the same constructor.
+		//eslint-disable-next-line @typescript-eslint/ban-types
+		return !!otherType && this.constructor === (otherType as object).constructor
 	}
 	/**
 	 * Requires that the buffer be a [[GrowableBuffer]]

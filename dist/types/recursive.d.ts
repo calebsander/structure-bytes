@@ -98,7 +98,7 @@ export declare class RecursiveType<E, READ_E extends E = E> extends AbstractType
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
     /**
      * An alternative to [[registerType]],
      * to avoid writing the type's name twice.

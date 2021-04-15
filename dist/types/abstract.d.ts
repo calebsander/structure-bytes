@@ -21,9 +21,16 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
     getSignature(): string;
     abstract writeValue(buffer: AppendableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
-    abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>;
+    abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: unknown): ReadResult<READ_VALUE>;
     readValue(valueBuffer: ArrayBuffer | Uint8Array, offset?: number): READ_VALUE;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
+    /**
+     * Determines whether the input is a Type with the same class
+     * @private
+     * @param otherType A value, usually a Type instance
+     * @returns whether `this` and `otherType` are instances of the same Type class
+     */
+    protected isSameType(otherType: unknown): otherType is this;
     /**
      * Requires that the buffer be a [[GrowableBuffer]]
      * or [[AppendableStream]]

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isRegistered = exports.getType = exports.registerType = void 0;
 const assert = require("./lib/assert");
 const types_1 = require("./types");
 //A map of names of recursive types to their types
@@ -84,4 +85,5 @@ exports.getType = getType;
  * @param name The name to check
  * @return Whether the name has been mapped to a type
  */
-exports.isRegistered = (name) => registeredTypes.has(name);
+const isRegistered = (name) => registeredTypes.has(name);
+exports.isRegistered = isRegistered;

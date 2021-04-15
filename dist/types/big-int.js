@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BigIntType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -53,17 +54,18 @@ class BigIntType extends integer_1.default {
         }
     }
     consumeValue(buffer, offset) {
-        //tslint:disable-next-line:prefer-const
-        let { value: bytes, length } = read_util_1.readFlexInt(buffer, offset);
-        if (buffer.byteLength < offset + length + bytes)
+        const readByteLength = read_util_1.readFlexInt(buffer, offset);
+        const byteLength = readByteLength.value;
+        let { length } = readByteLength;
+        if (buffer.byteLength < offset + length + byteLength)
             throw new Error(read_util_1.NOT_LONG_ENOUGH);
         let value = 0n;
-        for (const byte of new Uint8Array(buffer, offset + length, bytes)) {
+        for (const byte of new Uint8Array(buffer, offset + length, byteLength)) {
             value = value << 8n | BigInt(byte);
         }
         //Sign-extend the read bytes
-        value = BigInt.asIntN(bytes << 3, value);
-        length += bytes;
+        value = BigInt.asIntN(byteLength << 3, value);
+        length += byteLength;
         return { value, length };
     }
 }

@@ -180,7 +180,9 @@ export interface TypeAndFunc {
  * and an offset in the buffer and reads a `number`,
  * much like [[AbstractType.consumeValue]]
  */
-export function readNumber({func, type}: TypeAndFunc) {
+export function readNumber({func, type}: TypeAndFunc):
+	(buffer: ArrayBuffer, offset: number) => ReadResult<number>
+{
 	const length = type.BYTES_PER_ELEMENT
 	return (buffer: ArrayBuffer, offset: number): ReadResult<number> => {
 		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)

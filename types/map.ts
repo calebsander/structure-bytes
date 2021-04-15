@@ -27,7 +27,7 @@ import type {Type} from './type'
  * @param READ_V The type of values this type will read
  */
 export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends AbsoluteType<Map<K, V>, Map<READ_K, READ_V>> {
-	static get _value() {
+	static get _value(): number {
 		return 0x54
 	}
 	/**
@@ -39,7 +39,7 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 		assert.instanceOf(keyType, AbstractType)
 		assert.instanceOf(valueType, AbstractType)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.keyType.addToBuffer(buffer)
@@ -72,7 +72,7 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: Map<K, V>) {
+	writeValue(buffer: AppendableBuffer, value: Map<K, V>): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Map)
 		buffer.addAll(flexInt.makeValueBuffer(value.size))
@@ -82,8 +82,9 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>> {
-		//tslint:disable-next-line:prefer-const
-		let {value: size, length} = readFlexInt(buffer, offset)
+		const readSize = readFlexInt(buffer, offset)
+		const size = readSize.value
+		let {length} = readSize
 		const value = baseValue || makeBaseValue(this) as Map<READ_K, READ_V>
 		for (let i = 0; i < size; i++) {
 			const keyElement = this.keyType.consumeValue(buffer, offset + length)
@@ -94,8 +95,8 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 		}
 		return {value, length}
 	}
-	equals(otherType: any): otherType is this {
-		return super.equals(otherType)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType)
 			&& this.keyType.equals(otherType.keyType)
 			&& this.valueType.equals(otherType.valueType)
 	}

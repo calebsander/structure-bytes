@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MapType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -83,8 +84,9 @@ class MapType extends absolute_1.default {
         }
     }
     consumeValue(buffer, offset, baseValue) {
-        //tslint:disable-next-line:prefer-const
-        let { value: size, length } = read_util_1.readFlexInt(buffer, offset);
+        const readSize = read_util_1.readFlexInt(buffer, offset);
+        const size = readSize.value;
+        let { length } = readSize;
         const value = baseValue || read_util_1.makeBaseValue(this);
         for (let i = 0; i < size; i++) {
             const keyElement = this.keyType.consumeValue(buffer, offset + length);
@@ -96,7 +98,7 @@ class MapType extends absolute_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
+        return this.isSameType(otherType)
             && this.keyType.equals(otherType.keyType)
             && this.valueType.equals(otherType.valueType);
     }

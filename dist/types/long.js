@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LongType = void 0;
 const read_util_1 = require("../lib/read-util");
 const write_util_1 = require("../lib/write-util");
 const integer_1 = require("./integer");

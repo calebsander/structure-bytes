@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.readValueBuffer = exports.getByteCount = exports.makeValueBuffer = void 0;
 /**
  * See [[FlexUnsignedIntType]] for an explanation
  * of the `flexInt` format
@@ -43,6 +44,7 @@ function makeValueBuffer(value) {
         /*istanbul ignore next*/
         throw new Error(`Cannot represent ${value}`); //should never occur
     })();
+    //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     let writeValue = value - UPPER_BOUNDS.get(bytes - 1);
     const buffer = new Uint8Array(bytes);
     for (let writeByte = bytes - 1; writeByte >= 0; writeByte--) {
@@ -51,6 +53,7 @@ function makeValueBuffer(value) {
         //Can't use bitwise math here because number may not fit in 32 bits
         writeValue = Math.floor(writeValue / 0x100);
     }
+    //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     buffer[0] |= BYTE_MASKS.get(bytes);
     return buffer.buffer;
 }
@@ -83,11 +86,13 @@ function readValueBuffer(valueBuffer) {
     if (!bytes)
         throw new Error('Empty flex int buffer');
     const castBuffer = new Uint8Array(valueBuffer);
+    //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     let relativeValue = castBuffer[0] ^ BYTE_MASKS.get(bytes);
     for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
         //Can't use bitwise math here because number may not fit in 32 bits
         relativeValue = relativeValue * 0x100 + castBuffer[byteIndex];
     }
+    //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return UPPER_BOUNDS.get(bytes - 1) + relativeValue;
 }
 exports.readValueBuffer = readValueBuffer;

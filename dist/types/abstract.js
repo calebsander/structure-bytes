@@ -80,11 +80,19 @@ class AbstractType {
         but it is faster if we short-circuit when any fields don't match
     */
     equals(otherType) {
-        //Checks that otherType is not null or undefined, so constructor property exists
-        if (!otherType)
-            return false;
-        //Other type must have the same constructor
-        return this.constructor === otherType.constructor;
+        return this.isSameType(otherType);
+    }
+    /**
+     * Determines whether the input is a Type with the same class
+     * @private
+     * @param otherType A value, usually a Type instance
+     * @returns whether `this` and `otherType` are instances of the same Type class
+     */
+    isSameType(otherType) {
+        //Check that otherType is not null or undefined, so constructor property exists.
+        //Then check that other type has the same constructor.
+        //eslint-disable-next-line @typescript-eslint/ban-types
+        return !!otherType && this.constructor === otherType.constructor;
     }
     /**
      * Requires that the buffer be a [[GrowableBuffer]]

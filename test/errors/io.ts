@@ -4,7 +4,7 @@ import * as io from '../../dist'
 import * as t from '../../dist'
 import {assert, concat} from '../test-common'
 
-const invalidTypeBuffer = new Promise((resolve, reject) => {
+const invalidTypeBuffer = new Promise<void>((resolve, reject) => {
 	io.readTypeAndValue(
 		new BufferStream(new Uint8Array([t.ArrayType._value])),
 		(err, type, value) => {
@@ -18,7 +18,7 @@ const invalidTypeBuffer = new Promise((resolve, reject) => {
 		}
 	)
 })
-const tooLongTypeBuffer = new Promise((resolve, reject) => {
+const tooLongTypeBuffer = new Promise<void>((resolve, reject) => {
 	const type = new t.ArrayType(new t.UnsignedShortType)
 	const typeValueBuffer = concat([
 		new Uint8Array(type.toBuffer()),
@@ -34,7 +34,7 @@ const tooLongTypeBuffer = new Promise((resolve, reject) => {
 		catch (e) { reject(e) }
 	})
 })
-const enoentType = new Promise((resolve, reject) => {
+const enoentType = new Promise<void>((resolve, reject) => {
 	const errorStream = fs.createReadStream(__dirname + '/asdfasdf')
 	io.readType(errorStream, (err, type) => {
 		try {
@@ -45,7 +45,7 @@ const enoentType = new Promise((resolve, reject) => {
 		catch (e) { reject(e) }
 	})
 })
-const enoentValue = new Promise((resolve, reject) => {
+const enoentValue = new Promise<void>((resolve, reject) => {
 	const errorStream = fs.createReadStream(__dirname + '/asdfasdf')
 	io.readValue({type: new t.ByteType, inStream: errorStream}, (err, type) => {
 		try {
@@ -56,7 +56,7 @@ const enoentValue = new Promise((resolve, reject) => {
 		catch (e) { reject(e) }
 	})
 })
-const enoentTypeAndValue = new Promise((resolve, reject) => {
+const enoentTypeAndValue = new Promise<void>((resolve, reject) => {
 	const errorStream = fs.createReadStream(__dirname + '/asdfasdf')
 	io.readTypeAndValue(errorStream, (err, type) => {
 		try {
@@ -72,7 +72,7 @@ const intsType = new t.ArrayType(
 		new t.UnsignedIntType
 	)
 )
-const enoentWriteType = new Promise((resolve, reject) => {
+const enoentWriteType = new Promise<void>((resolve, reject) => {
 	const errorStream = fs.createWriteStream(__dirname + '/asdf/asdf')
 	assert.equal(errorStream.writable, true)
 	io.writeType({
@@ -88,7 +88,7 @@ const enoentWriteType = new Promise((resolve, reject) => {
 	})
 })
 const intsValue = [null, 10, 30, 20, null, 55]
-const enoentWriteValue = new Promise((resolve, reject) => {
+const enoentWriteValue = new Promise<void>((resolve, reject) => {
 	const errorStream = fs.createWriteStream(__dirname + '/asdf/asdf')
 	assert.equal(errorStream.writable, true)
 	io.writeValue({
@@ -104,7 +104,7 @@ const enoentWriteValue = new Promise((resolve, reject) => {
 		catch (e) { reject(e) }
 	})
 })
-const enoentWriteTypeAndValue = new Promise((resolve, reject) => {
+const enoentWriteTypeAndValue = new Promise<void>((resolve, reject) => {
 	const errorStream = fs.createWriteStream(__dirname + '/asdf/asdf')
 	assert.equal(errorStream.writable, true)
 	io.writeTypeAndValue({

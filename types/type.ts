@@ -58,7 +58,7 @@ export interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
 	 * Used by [[RecursiveType]].
 	 * @return The read value and the number of bytes read
 	 */
-	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: any): ReadResult<READ_VALUE>
+	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: unknown): ReadResult<READ_VALUE>
 	/**
 	 * Deserializes a value, i.e. takes
 	 * a buffer containing its binary form

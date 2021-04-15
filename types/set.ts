@@ -25,7 +25,7 @@ import type {Type} from './type'
  * in the read set
  */
 export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<READ_E>> {
-	static get _value() {
+	static get _value(): number {
 		return 0x53
 	}
 	/**
@@ -35,7 +35,7 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 		super()
 		assert.instanceOf(type, AbstractType)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -58,14 +58,15 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: Set<E>) {
+	writeValue(buffer: AppendableBuffer, value: Set<E>): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Set)
 		writeIterable({type: this.type, buffer, value, length: value.size})
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>> {
-		//tslint:disable-next-line:prefer-const
-		let {value: size, length} = readFlexInt(buffer, offset)
+		const readSize = readFlexInt(buffer, offset)
+		const size = readSize.value
+		let {length} = readSize
 		const value = baseValue || makeBaseValue(this) as Set<READ_E>
 		for (let i = 0; i < size; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
@@ -74,7 +75,7 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 		}
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType) && this.type.equals(otherType.type)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType) && this.type.equals(otherType.type)
 	}
 }

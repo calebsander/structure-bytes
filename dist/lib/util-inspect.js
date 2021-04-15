@@ -1,12 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonTypes = new Set([String, Number, Boolean, Date]);
+exports.inspect = exports.hexByte = void 0;
+//eslint-disable-next-line @typescript-eslint/ban-types
+const JSON_TYPES = new Set([String, Number, Boolean, Date]);
 /**
  * Converts a byte to a 2-digit hexadecimal string
  * @param n The byte value
  * @return `n` with a possible leading 0
  */
-exports.hexByte = (n) => (n < 16 ? '0' : '') + n.toString(16);
+const hexByte = (n) => (n < 16 ? '0' : '') + n.toString(16);
+exports.hexByte = hexByte;
 /**
  * A simple replacement for `util.inspect()`.
  * Makes little effort at readability.
@@ -16,13 +19,16 @@ exports.hexByte = (n) => (n < 16 ? '0' : '') + n.toString(16);
  * @param obj The value to inspect
  * @return A string expressing the given value
  */
-exports.inspect = (obj) => inspectWithSeen(obj, new Set);
+const inspect = (obj) => inspectWithSeen(obj, new Set);
+exports.inspect = inspect;
 function inspectWithSeen(obj, seen) {
-    if (obj === undefined)
-        return 'undefined';
-    if (obj === null || jsonTypes.has(obj.constructor))
+    if (obj === undefined || obj == null)
+        return `${obj}`;
+    //eslint-disable-next-line @typescript-eslint/ban-types
+    const { constructor } = obj;
+    if (obj === null || JSON_TYPES.has(constructor))
         return JSON.stringify(obj);
-    if (obj.constructor === BigInt)
+    if (constructor === BigInt)
         return `${obj}n`;
     if (obj instanceof ArrayBuffer || obj instanceof Uint8Array) {
         return `<${obj.constructor.name} ${[...new Uint8Array(obj)].map(exports.hexByte).join(' ')}>`;
@@ -64,16 +70,17 @@ function inspectWithSeen(obj, seen) {
         seen.delete(obj);
         return result;
     }
-    const { name } = obj.constructor;
+    const { name } = constructor;
     let objectResult = `${name && name !== 'Object' ? name + ' ' : ''}{`;
-    for (const key in obj) {
+    const objRecord = obj;
+    for (const key in objRecord) {
         /*istanbul ignore else*/
         if ({}.hasOwnProperty.call(obj, key)) {
             if (firstElement)
                 firstElement = false;
             else
                 objectResult += ', ';
-            objectResult += key + ': ' + inspectWithSeen(obj[key], seen);
+            objectResult += key + ': ' + inspectWithSeen(objRecord[key], seen);
         }
     }
     seen.delete(obj);

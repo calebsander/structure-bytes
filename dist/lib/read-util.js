@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.readNumber = exports.readLong = exports.readFlexInt = exports.readBooleans = exports.readBooleanByte = exports.makeBaseValue = exports.NOT_LONG_ENOUGH = void 0;
 const bit_math_1 = require("./bit-math");
 const flexInt = require("./flex-int");
 const util_inspect_1 = require("./util-inspect");

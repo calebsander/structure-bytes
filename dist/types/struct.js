@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StructType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -112,13 +113,13 @@ class StructType extends absolute_1.default {
             catch (writeError) {
                 //Reporting that field is missing is more useful than, for example,
                 //Saying "undefined is not an instance of Number"
-                //tslint:disable-next-line:strict-type-predicates
                 throw fieldValue === undefined
                     ? new Error(`Value for field "${name}" missing`)
                     : writeError; //throw original error if field is defined, but just invalid
             }
         }
     }
+    //eslint-disable-next-line @typescript-eslint/ban-types
     consumeValue(buffer, offset, baseValue) {
         let length = 0;
         const value = (baseValue || read_util_1.makeBaseValue(this));
@@ -130,7 +131,7 @@ class StructType extends absolute_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
+        return this.isSameType(otherType)
             && this.fields.length === otherType.fields.length
             && this.fields.every(({ name, type }, i) => {
                 const otherFields = otherType.fields[i];

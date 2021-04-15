@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SingletonType = void 0;
 const assert = require("../lib/assert");
 const util_inspect_1 = require("../lib/util-inspect");
 const absolute_1 = require("./absolute");
@@ -93,7 +94,7 @@ class SingletonType extends abstract_1.default {
         return { value: this.value, length: 0 };
     }
     equals(otherType) {
-        return super.equals(otherType)
+        return this.isSameType(otherType)
             && this.type.equals(otherType.type)
             && assert.equal.buffers(this.singletonValueBuffer, otherType.singletonValueBuffer);
     }

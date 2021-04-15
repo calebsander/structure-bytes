@@ -17,7 +17,7 @@ import AbsoluteType from './absolute'
  * ````
  */
 export class BooleanTupleType extends AbsoluteType<boolean[]> {
-	static get _value() {
+	static get _value(): number {
 		return 0x31
 	}
 	/**
@@ -27,7 +27,7 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 		super()
 		assert.nonNegativeInteger(length)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.addAll(flexInt.makeValueBuffer(this.length))
@@ -47,7 +47,7 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: boolean[]) {
+	writeValue(buffer: AppendableBuffer, value: boolean[]): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
@@ -56,7 +56,7 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]> {
 		return readBooleans({buffer, offset, count: this.length})
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType) && otherType.length === this.length
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType) && otherType.length === this.length
 	}
 }

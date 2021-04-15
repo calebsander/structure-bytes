@@ -9,7 +9,7 @@ import {inspect} from './util-inspect'
  * @param instance The value in question
  * @param constructors A constructor or array of constructors to test against
  */
-export function instanceOf(instance: unknown, constructors: Function | Function[]): void {
+export function instanceOf(instance: unknown, constructors: Function | Function[]): void { //eslint-disable-line @typescript-eslint/ban-types
 	if (!(constructors instanceof Array)) constructors = [constructors]
 	for (const constructor of constructors) {
 		if (
@@ -17,7 +17,8 @@ export function instanceOf(instance: unknown, constructors: Function | Function[
 			//Necessary for primitives
 			(
 				!(instance === undefined || instance === null) &&
-				(instance as any).constructor === constructor
+				//eslint-disable-next-line @typescript-eslint/ban-types
+				(instance as object).constructor === constructor
 			)
 		) return
 	}
@@ -63,7 +64,7 @@ export function nonNegativeInteger(value: unknown): asserts value is number {
 /** Equality comparisons */
 export const equal = {
 	/** Compares two `ArrayBuffer`s and returns whether they are equal */
-	buffers(actual: ArrayBuffer, expected: ArrayBuffer) {
+	buffers(actual: ArrayBuffer, expected: ArrayBuffer): boolean {
 		if (actual.byteLength !== expected.byteLength) return false
 		const castActual = new Uint8Array(actual)
 		const castExpected = new Uint8Array(expected)

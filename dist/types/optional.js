@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OptionalType = void 0;
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const write_util_1 = require("../lib/write-util");
@@ -73,12 +74,14 @@ class OptionalType extends absolute_1.default {
         this.isBuffer(buffer);
         const isNull = value === null || value === undefined;
         write_util_1.writeBooleanByte(buffer, !isNull);
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (!isNull)
             this.type.writeValue(buffer, value);
     }
     consumeValue(buffer, offset) {
-        //tslint:disable-next-line:prefer-const
-        let { value: nonNull, length } = read_util_1.readBooleanByte(buffer, offset);
+        const readNonNull = read_util_1.readBooleanByte(buffer, offset);
+        const nonNull = readNonNull.value;
+        let { length } = readNonNull;
         let value;
         if (nonNull) {
             const subValue = this.type.consumeValue(buffer, offset + length);
@@ -90,7 +93,7 @@ class OptionalType extends absolute_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType) && this.type.equals(otherType.type);
+        return this.isSameType(otherType) && this.type.equals(otherType.type);
     }
 }
 exports.OptionalType = OptionalType;

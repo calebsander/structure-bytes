@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.VERSION_STRING = void 0;
 const base64 = require("base64-js");
 const VERSION = 13;
 const VERSION_BYTES = 2;

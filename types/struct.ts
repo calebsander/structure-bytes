@@ -12,6 +12,7 @@ const stringType = new StringType
 
 export interface StructField<E> {
 	name: keyof E & string
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	type: Type<any>
 }
 /**
@@ -52,8 +53,8 @@ export type StructFields<E, READ_E extends E> = {
  * @param E The type of object values this type can write
  * @param READ_E The type of object values this type will read
  */
-export class StructType<E extends Record<string, any>, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
-	static get _value() {
+export class StructType<E extends Record<string, any>, READ_E extends E = E> extends AbsoluteType<E, READ_E> { //eslint-disable-line @typescript-eslint/no-explicit-any
+	static get _value(): number {
 		return 0x51
 	}
 	/**
@@ -88,7 +89,7 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 			return 0 //should never occur since names are distinct
 		})
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.addAll(flexInt.makeValueBuffer(this.fields.length))
@@ -116,7 +117,7 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E) {
+	writeValue(buffer: AppendableBuffer, value: E): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Object)
 		for (const {name, type} of this.fields) {
@@ -125,13 +126,13 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 			catch (writeError) {
 				//Reporting that field is missing is more useful than, for example,
 				//Saying "undefined is not an instance of Number"
-				//tslint:disable-next-line:strict-type-predicates
 				throw fieldValue === undefined
 					? new Error(`Value for field "${name}" missing`)
 					: writeError //throw original error if field is defined, but just invalid
 			}
 		}
 	}
+	//eslint-disable-next-line @typescript-eslint/ban-types
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E> {
 		let length = 0
 		const value = (baseValue || makeBaseValue(this)) as READ_E
@@ -142,8 +143,8 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 		}
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType)
 			&& this.fields.length === otherType.fields.length
 			&& this.fields.every(({name, type}, i) => {
 				const otherFields = otherType.fields[i]

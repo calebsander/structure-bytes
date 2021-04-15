@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BooleanArrayType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -42,8 +43,9 @@ class BooleanArrayType extends absolute_1.default {
         write_util_1.writeBooleans(buffer, value);
     }
     consumeValue(buffer, offset) {
-        //tslint:disable-next-line:prefer-const
-        let { value: count, length } = read_util_1.readFlexInt(buffer, offset);
+        const readCount = read_util_1.readFlexInt(buffer, offset);
+        const count = readCount.value;
+        let { length } = readCount;
         const booleans = read_util_1.readBooleans({ buffer, offset: offset + length, count });
         const { value } = booleans;
         length += booleans.length;

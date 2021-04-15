@@ -86,7 +86,7 @@ export function rewindBuffer(buffer: AppendableBuffer): void {
  * @param READ_E The type of value this type will read
  */
 export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
-	static get _value() {
+	static get _value(): number {
 		return 0x57
 	}
 	/**
@@ -100,7 +100,7 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 	get type(): RegisterableType & Type<E, READ_E> {
 		return recursiveRegistry.getType(this.name) as RegisterableType & Type<E, READ_E>
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			let bufferRecursiveIDs = recursiveIDs.get(buffer)
@@ -113,6 +113,7 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 				//Use the next number as the ID
 				bufferRecursiveIDs.set(this.name, recursiveID = bufferRecursiveIDs.size)
 			}
+			//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			buffer.addAll(flexInt.makeValueBuffer(recursiveID!))
 			if (firstOccurence) { //only define type if type has not already been defined
 				//Keep track of how far we are inside writing recursive types (see how this is used in AbstractType.addToBuffer())
@@ -148,7 +149,7 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`;
 	 * also throws if no type has been registered with this type's name
 	 */
-	writeValue(buffer: AppendableBuffer, value: E) {
+	writeValue(buffer: AppendableBuffer, value: E): void {
 		this.isBuffer(buffer)
 		let bufferRecursiveLocations = recursiveLocations.get(buffer)
 		if (bufferRecursiveLocations) {
@@ -173,12 +174,13 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
-		//tslint:disable-next-line:prefer-const
-		let {value: explicit, length} = readBooleanByte(buffer, offset)
+		let bufferReadRecursives = readRecursives.get(buffer)
+		const readExplicit = readBooleanByte(buffer, offset)
+		const explicit = readExplicit.value
+		let {length} = readExplicit
 		let value: READ_E
 		if (explicit) {
 			value = makeBaseValue(this.type) as READ_E
-			let bufferReadRecursives = readRecursives.get(buffer)
 			if (!bufferReadRecursives) {
 				readRecursives.set(buffer, bufferReadRecursives = new Map)
 			}
@@ -188,15 +190,15 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 		else {
 			const indexOffset = readFlexInt(buffer, offset + length)
 			const target = offset + length - indexOffset.value
-			const readValue = readRecursives.get(buffer)!.get(target) as READ_E | undefined
+			const readValue = bufferReadRecursives && bufferReadRecursives.get(target) as READ_E | undefined
 			if (!readValue) throw new Error(`Cannot find target at ${target}`)
 			value = readValue
 			length += indexOffset.length
 		}
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType) && this.name === otherType.name
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType) && this.name === otherType.name
 	}
 	/**
 	 * An alternative to [[registerType]],

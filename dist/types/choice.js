@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChoiceType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -107,14 +108,15 @@ class ChoiceType extends absolute_1.default {
             throw new Error('No types matched: ' + util_inspect_1.inspect(value));
     }
     consumeValue(buffer, offset) {
-        //tslint:disable-next-line:prefer-const
-        let { value: typeIndex, length } = read_util_1.readFlexInt(buffer, offset);
+        const readTypeIndex = read_util_1.readFlexInt(buffer, offset);
+        const typeIndex = readTypeIndex.value;
+        let { length } = readTypeIndex;
         const { value, length: subLength } = this.types[typeIndex].consumeValue(buffer, offset + length);
         length += subLength;
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
+        return this.isSameType(otherType)
             && this.types.length === otherType.types.length
             && this.types.every((type, i) => type.equals(otherType.types[i]));
     }

@@ -13,4 +13,4 @@ export declare const hexByte: (n: number) => string;
  * @param obj The value to inspect
  * @return A string expressing the given value
  */
-export declare const inspect: (obj: any) => string;
+export declare const inspect: (obj: unknown) => string;

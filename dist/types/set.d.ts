@@ -44,5 +44,5 @@ export declare class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E
      */
     writeValue(buffer: AppendableBuffer, value: Set<E>): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>>;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
 }

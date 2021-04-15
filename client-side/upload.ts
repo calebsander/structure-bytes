@@ -16,4 +16,4 @@ export function upload<E>({type, value, url, options}: UploadOptions<E>): Promis
 	return fetch(url, options)
 }
 export * from './common'
-(window as any).sb = exports
+(window as unknown as Record<string, unknown>).sb = exports

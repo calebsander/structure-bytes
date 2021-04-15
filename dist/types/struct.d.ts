@@ -76,5 +76,5 @@ export declare class StructType<E extends Record<string, any>, READ_E extends E 
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E>;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
 }

@@ -14,7 +14,7 @@ import UnsignedType from './unsigned'
  * ````
  */
 export class UnsignedLongType extends UnsignedType<bigint> {
-	static get _value() {
+	static get _value(): number {
 		return 0x14
 	}
 	/**
@@ -28,7 +28,7 @@ export class UnsignedLongType extends UnsignedType<bigint> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: bigint) {
+	writeValue(buffer: AppendableBuffer, value: bigint): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, BigInt)
 		if (value !== BigInt.asUintN(64, value)) throw new RangeError('Value out of range')

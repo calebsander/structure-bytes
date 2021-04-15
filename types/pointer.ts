@@ -53,7 +53,7 @@ export function rewindBuffer(buffer: AppendableBuffer): void {
  * @param READ_E The type of values that will be read
  */
 export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E> {
-	static get _value() {
+	static get _value(): number {
 		return 0x70
 	}
 	/**
@@ -63,7 +63,7 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		super()
 		assert.instanceOf(type, AbsoluteType)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -102,7 +102,7 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E) {
+	writeValue(buffer: AppendableBuffer, value: E): void {
 		this.isBuffer(buffer)
 		let bufferPointers = pointers.get(buffer)
 		if (!bufferPointers) {
@@ -150,7 +150,7 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		}
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType) && this.type.equals(otherType.type)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType) && this.type.equals(otherType.type)
 	}
 }

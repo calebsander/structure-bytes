@@ -9,7 +9,7 @@ const MAX_ARGUMENTS_LENGTH = 0x1000
  * The inverse of [[fromString]].
  * @param buffer The binary data to convert
  */
-export function toString(buffer: Uint8Array) {
+export function toString(buffer: Uint8Array): string {
 	assert.instanceOf(buffer, Uint8Array)
 	//Taken from https://github.com/feross/buffer/blob/da8a677bdb746ed9d6dae42ee1eaf236aad32ccb/index.js#L917-L988
 	const codePoints = []
@@ -27,7 +27,6 @@ export function toString(buffer: Uint8Array) {
 				thirdByte: number,
 				fourthByte: number,
 				tempCodePoint: number
-			//tslint:disable-next-line:switch-default
 			switch (bytesPerSequence) {
 				case 1:
 					if (firstByte < 0x80) codePoint = firstByte

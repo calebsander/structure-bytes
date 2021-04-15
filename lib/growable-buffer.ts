@@ -45,7 +45,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * The current number of bytes being occupied.
 	 * Note that this is NOT the size of the internal buffer.
 	 */
-	get length() {
+	get length(): number {
 		return this.size
 	}
 	/**
@@ -74,7 +74,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * occupied portion of the internal buffer
 	 * @param value The unsigned byte value to add
 	 */
-	add(value: number) {
+	add(value: number): this {
 		assert.integer(value)
 		assert.between(0, value, 0x100, `Not a byte: ${value}`)
 		return this.addAll(new Uint8Array([value]).buffer)
@@ -87,7 +87,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * The byte at position `i` in `buffer` will be written to
 	 * position `this.length + i` of the [[GrowableBuffer]]).
 	 */
-	addAll(buffer: ArrayBuffer | Uint8Array) {
+	addAll(buffer: ArrayBuffer | Uint8Array): this {
 		assert.instanceOf(buffer, [ArrayBuffer, Uint8Array])
 		const oldSize = this.size
 		const newSize = this.size + buffer.byteLength
@@ -136,7 +136,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
 	 * ````
 	 */
-	pause() {
+	pause(): this {
 		this.pausePoints.push(this.size)
 		return this
 	}
@@ -146,7 +146,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * and exits paused mode.
 	 * @throws If not currently paused
 	 */
-	resume() {
+	resume(): this {
 		if (this.pausePoints.pop() === undefined) throw new Error('Was not paused')
 		return this
 	}
@@ -158,7 +158,7 @@ export default class GrowableBuffer implements AppendableBuffer {
 	 * being flushed to the output.
 	 * @throws If not currently paused
 	 */
-	reset() {
+	reset(): this {
 		const [pausePoint] = this.pausePoints.slice(-1) as [number | undefined]
 		if (pausePoint === undefined) throw new Error('Was not paused')
 		this.size = pausePoint

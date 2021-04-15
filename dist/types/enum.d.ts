@@ -54,5 +54,5 @@ export declare class EnumType<E> extends AbstractType<E> {
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<E>;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
 }

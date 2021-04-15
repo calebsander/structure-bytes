@@ -1,4 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
+import { ReadResult } from '../lib/read-util';
 import AbstractType from './abstract';
 import type { Type } from './type';
 export interface SingletonParams<E> {
@@ -69,9 +70,6 @@ export declare class SingletonType<E> extends AbstractType<E> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
-    consumeValue(): {
-        value: E;
-        length: number;
-    };
-    equals(otherType: unknown): otherType is this;
+    consumeValue(): ReadResult<E>;
+    equals(otherType: unknown): boolean;
 }

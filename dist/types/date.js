@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DateType = void 0;
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const write_util_1 = require("../lib/write-util");

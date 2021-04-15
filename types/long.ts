@@ -14,7 +14,7 @@ import IntegerType from './integer'
  * ````
  */
 export class LongType extends IntegerType<bigint> {
-	static get _value() {
+	static get _value(): number {
 		return 0x04
 	}
 	/**
@@ -28,7 +28,7 @@ export class LongType extends IntegerType<bigint> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: bigint) {
+	writeValue(buffer: AppendableBuffer, value: bigint): void {
 		this.isBuffer(buffer)
 		writeLong(buffer, value)
 	}

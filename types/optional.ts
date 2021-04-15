@@ -28,7 +28,7 @@ import type {Type} from './type'
  * @param READ_E The type of non-`null` read values
  */
 export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null | undefined, READ_E | null> {
-	static get _value() {
+	static get _value(): number {
 		return 0x60
 	}
 	/**
@@ -39,7 +39,7 @@ export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null
 		super()
 		assert.instanceOf(type, AbstractType)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -69,15 +69,17 @@ export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E | null | undefined) {
+	writeValue(buffer: AppendableBuffer, value: E | null | undefined): void {
 		this.isBuffer(buffer)
 		const isNull = value === null || value === undefined
 		writeBooleanByte(buffer, !isNull)
+		//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		if (!isNull) this.type.writeValue(buffer, value!)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E | null> {
-		//tslint:disable-next-line:prefer-const
-		let {value: nonNull, length} = readBooleanByte(buffer, offset)
+		const readNonNull = readBooleanByte(buffer, offset)
+		const nonNull = readNonNull.value
+		let {length} = readNonNull
 		let value: READ_E | null
 		if (nonNull) {
 			const subValue = this.type.consumeValue(buffer, offset + length)
@@ -87,7 +89,7 @@ export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null
 		else value = null
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType) && this.type.equals(otherType.type)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType) && this.type.equals(otherType.type)
 	}
 }

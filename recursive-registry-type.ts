@@ -1,11 +1,12 @@
 import {ArrayType, MapType, SetType, StructType, TupleType} from './types'
 
 export type RegisterableType
-	= ArrayType<any>
-	| MapType<any, any>
-	| SetType<any>
+	= ArrayType<unknown>
+	| MapType<unknown, unknown>
+	| SetType<unknown>
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
 	| StructType<any>
-	| TupleType<any>
+	| TupleType<unknown>
 
 export interface TypeAndName {
 	type: RegisterableType

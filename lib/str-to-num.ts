@@ -6,9 +6,10 @@
  * considered invalid and `'NaN'` is considered valid.
  * @param str The string to convert
  */
-export default (str: any): number | undefined => {
+export default (str: unknown): number | undefined => {
 	if (str) { //avoid errors with undefined.constructor and null.constructor; also '' is invalid
-		if (str.constructor === String) {
+		//eslint-disable-next-line @typescript-eslint/ban-types
+		if ((str as object).constructor === String) {
 			const converted = Number(str)
 			if (!isNaN(converted) || str === 'NaN') return converted
 		}

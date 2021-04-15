@@ -14,7 +14,7 @@ import ChronoType from './chrono'
  * ````
  */
 export class DayType extends ChronoType {
-	static get _value() {
+	static get _value(): number {
 		return 0x1B
 	}
 	/**
@@ -29,7 +29,7 @@ export class DayType extends ChronoType {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: Date) {
+	writeValue(buffer: AppendableBuffer, value: Date): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		//Instead of taking value.getTime() / MILLIS_PER_DAY (which would act as if the date was measured at UTC),

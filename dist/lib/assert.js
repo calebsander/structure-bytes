@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.equal = exports.nonNegativeInteger = exports.between = exports.integer = exports.instanceOf = void 0;
 const util_inspect_1 = require("./util-inspect");
 //A number of useful assertion functions
 //Used for validations of types and values
@@ -16,6 +17,7 @@ function instanceOf(instance, constructors) {
         if (instance instanceof constructor ||
             //Necessary for primitives
             (!(instance === undefined || instance === null) &&
+                //eslint-disable-next-line @typescript-eslint/ban-types
                 instance.constructor === constructor))
             return;
     }

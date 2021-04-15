@@ -22,7 +22,7 @@ const K = new Uint32Array([
 const rightRotate = (value: number, bits: number): number =>
 	(value >>> bits) | (value << (32 - bits))
 
-export function sha256JS(input: Uint8Array) {
+export function sha256JS(input: Uint8Array): ArrayBuffer {
 	const lBytes = input.length
 	const extraBytes = 64 - ((lBytes + 72) & 63)
 	const messageLength = lBytes + extraBytes + 8

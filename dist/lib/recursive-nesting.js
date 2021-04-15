@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.get = exports.decrement = exports.increment = void 0;
 //Map of write buffers to the current number of levels deep in recursive types they are
 const recursiveNesting = new WeakMap();
 /**
@@ -19,6 +20,8 @@ exports.increment = increment;
  */
 function decrement(buffer) {
     const lastValue = recursiveNesting.get(buffer);
+    if (!lastValue)
+        throw new Error('Buffer has no recursive nesting');
     recursiveNesting.set(buffer, lastValue - 1);
 }
 exports.decrement = decrement;
@@ -29,4 +32,5 @@ exports.decrement = decrement;
  * @return The number of [[increment]]s minus
  * the number of [[decrement]]s called on the buffer
  */
-exports.get = (buffer) => recursiveNesting.get(buffer);
+const get = (buffer) => recursiveNesting.get(buffer);
+exports.get = get;

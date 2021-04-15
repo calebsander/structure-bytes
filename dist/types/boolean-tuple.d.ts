@@ -33,5 +33,5 @@ export declare class BooleanTupleType extends AbsoluteType<boolean[]> {
      */
     writeValue(buffer: AppendableBuffer, value: boolean[]): void;
     consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]>;
-    equals(otherType: unknown): otherType is this;
+    equals(otherType: unknown): boolean;
 }

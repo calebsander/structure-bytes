@@ -40,7 +40,7 @@ export interface TupleParams<E, READ_E extends E> {
  * in the read tuple
  */
 export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
-	static get _value() {
+	static get _value(): number {
 		return 0x50
 	}
 	/**
@@ -62,7 +62,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		this.type = type
 		this.length = length
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -87,7 +87,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E[]) {
+	writeValue(buffer: AppendableBuffer, value: E[]): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
@@ -103,8 +103,8 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		}
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType)
 			&& this.type.equals(otherType.type)
 			&& this.length === otherType.length
 	}

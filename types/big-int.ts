@@ -14,7 +14,7 @@ import IntegerType from './integer'
  * ````
  */
 export class BigIntType extends IntegerType<bigint> {
-	static get _value() {
+	static get _value(): number {
 		return 0x05
 	}
 	/**
@@ -32,7 +32,7 @@ export class BigIntType extends IntegerType<bigint> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: bigint) {
+	writeValue(buffer: AppendableBuffer, value: bigint): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, BigInt)
 		const bytes: number[] = []
@@ -53,16 +53,17 @@ export class BigIntType extends IntegerType<bigint> {
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
-		//tslint:disable-next-line:prefer-const
-		let {value: bytes, length} = readFlexInt(buffer, offset)
-		if (buffer.byteLength < offset + length + bytes) throw new Error(NOT_LONG_ENOUGH)
+		const readByteLength = readFlexInt(buffer, offset)
+		const byteLength = readByteLength.value
+		let {length} = readByteLength
+		if (buffer.byteLength < offset + length + byteLength) throw new Error(NOT_LONG_ENOUGH)
 		let value = 0n
-		for (const byte of new Uint8Array(buffer, offset + length, bytes)) {
+		for (const byte of new Uint8Array(buffer, offset + length, byteLength)) {
 			value = value << 8n | BigInt(byte)
 		}
 		//Sign-extend the read bytes
-		value = BigInt.asIntN(bytes << 3, value)
-		length += bytes
+		value = BigInt.asIntN(byteLength << 3, value)
+		length += byteLength
 		return {value, length}
 	}
 }

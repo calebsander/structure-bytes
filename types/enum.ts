@@ -33,7 +33,7 @@ export interface EnumParams<E> {
  * @param E The type of each value in the enum
  */
 export class EnumType<E> extends AbstractType<E> {
-	static get _value() {
+	static get _value(): number {
 		return 0x55
 	}
 	/** The list of possible values */
@@ -54,7 +54,7 @@ export class EnumType<E> extends AbstractType<E> {
 		this.type = type
 		this.values = values //used when reading to get constant-time lookup of value index into value
 	}
-	private get valueIndices() {
+	private get valueIndices(): Map<string, number> {
 		if (!this.cachedValueIndices) {
 			const {type, values} = this
 			const valueIndices = new Map<string, number>()
@@ -68,7 +68,7 @@ export class EnumType<E> extends AbstractType<E> {
 		}
 		return this.cachedValueIndices
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -92,7 +92,7 @@ export class EnumType<E> extends AbstractType<E> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E) {
+	writeValue(buffer: AppendableBuffer, value: E): void {
 		this.isBuffer(buffer)
 		const valueBuffer = this.type.valueBuffer(value)
 		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer))
@@ -106,8 +106,8 @@ export class EnumType<E> extends AbstractType<E> {
 		if (value === undefined) throw new Error(`Index ${valueIndex} is invalid`)
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		if (!super.equals(otherType)) return false
+	equals(otherType: unknown): boolean {
+		if (!this.isSameType(otherType)) return false
 		if (!this.type.equals(otherType.type)) return false
 		if (this.values.length !== otherType.values.length) return false
 		const otherIndices = otherType.valueIndices

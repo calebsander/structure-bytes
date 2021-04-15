@@ -13,7 +13,7 @@ import AbsoluteType from './absolute'
  * ````
  */
 export class CharType extends AbsoluteType<string> {
-	static get _value() {
+	static get _value(): number {
 		return 0x40
 	}
 	/**
@@ -27,7 +27,7 @@ export class CharType extends AbsoluteType<string> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: string) {
+	writeValue(buffer: AppendableBuffer, value: string): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, String)
 		if (value.length !== 1) throw new Error('String must contain only 1 character')

@@ -35,7 +35,7 @@ export default class AppendableStream implements AppendableBuffer {
 	 * of the written data
 	 * @param value The unsigned byte value to add
 	 */
-	add(value: number) {
+	add(value: number): this {
 		assert.integer(value)
 		assert.between(0, value, 0x100, `Not a byte: ${value}`)
 		return this.addAll(new Uint8Array([value]))
@@ -45,7 +45,7 @@ export default class AppendableStream implements AppendableBuffer {
 	 * to the end of the written data
 	 * @param buffer The bytes to add
 	 */
-	addAll(buffer: ArrayBuffer | Uint8Array) {
+	addAll(buffer: ArrayBuffer | Uint8Array): this {
 		assert.instanceOf(buffer, [ArrayBuffer, Uint8Array])
 		if (this.pauseCount) this.paused.addAll(buffer)
 		else this.outStream.write(Buffer.from(buffer))
@@ -61,7 +61,7 @@ export default class AppendableStream implements AppendableBuffer {
 	/**
 	 * The number of bytes that have been written
 	 */
-	get length() {
+	get length(): number {
 		return this.writtenBytes
 	}
 	/**
@@ -88,7 +88,7 @@ export default class AppendableStream implements AppendableBuffer {
 	 * console.log(new Uint8Array(gb.toBuffer())) //Uint8Array [ 1, 2, 3 ]
 	 * ````
 	 */
-	pause() {
+	pause(): this {
 		this.paused.pause()
 		this.pauseCount++
 		return this
@@ -99,7 +99,7 @@ export default class AppendableStream implements AppendableBuffer {
 	 * and exits paused mode.
 	 * @throws If not currently paused
 	 */
-	resume() {
+	resume(): this {
 		if (!this.pauseCount) throw new Error('Was not paused')
 		this.pauseCount--
 		this.paused.resume()
@@ -117,7 +117,7 @@ export default class AppendableStream implements AppendableBuffer {
 	 * being flushed to the output.
 	 * @throws If not currently paused
 	 */
-	reset() {
+	reset(): this {
 		if (!this.pauseCount) throw new Error('Was not paused')
 		const lengthBeforeReset = this.paused.length
 		this.paused.reset()

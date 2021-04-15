@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.writeLong = exports.writeIterable = exports.writeBooleans = exports.writeBooleanByte = void 0;
 const assert = require("./assert");
 const bit_math_1 = require("./bit-math");
 const flexInt = require("./flex-int");
@@ -9,7 +10,8 @@ const flexInt = require("./flex-int");
  * @param buffer The buffer to which to append the byte
  * @param value The boolean value to write
  */
-exports.writeBooleanByte = (buffer, value) => buffer.add(value ? 0xFF : 0x00); //set all bits for good measure
+const writeBooleanByte = (buffer, value) => buffer.add(value ? 0xFF : 0x00); //set all bits for good measure
+exports.writeBooleanByte = writeBooleanByte;
 /**
  * Writes an array of booleans for [[BooleanTupleType]]
  * or [[BooleanArrayType]].

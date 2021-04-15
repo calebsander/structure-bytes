@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OctetsType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -41,8 +42,9 @@ class OctetsType extends absolute_1.default {
             .addAll(value);
     }
     consumeValue(buffer, offset) {
-        //tslint:disable-next-line:prefer-const
-        let { value: octetsLength, length } = read_util_1.readFlexInt(buffer, offset);
+        const readOctetsLength = read_util_1.readFlexInt(buffer, offset);
+        const octetsLength = readOctetsLength.value;
+        let { length } = readOctetsLength;
         const octetsStart = length;
         length += octetsLength;
         if (buffer.byteLength < offset + length)

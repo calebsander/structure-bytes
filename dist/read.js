@@ -1,6 +1,7 @@
 "use strict";
 //This file contains functions for reading types from bytes
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.type = exports._consumeType = void 0;
 const assert = require("./lib/assert");
 const constants_1 = require("./lib/constants");
 const read_util_1 = require("./lib/read-util");
@@ -13,7 +14,6 @@ const SINGLE_BYTE_TYPES = [];
 {
     const defaultAddToBuffer = abstract_1.default.prototype.addToBuffer;
     const tTypes = t;
-    //tslint:disable-next-line:forin
     for (const typeName in tTypes) {
         const testType = tTypes[typeName];
         if (testType.prototype.addToBuffer === defaultAddToBuffer)

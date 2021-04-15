@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fromBinaryString = exports.toBinaryString = exports.fromString = exports.toString = void 0;
 const assert = require("./assert");
 const growable_buffer_1 = require("./growable-buffer");
 //Arbitrarily set; fairly low to be safe
@@ -22,7 +23,6 @@ function toString(buffer) {
                     : 1;
         if (i + bytesPerSequence <= buffer.length) {
             let secondByte, thirdByte, fourthByte, tempCodePoint;
-            //tslint:disable-next-line:switch-default
             switch (bytesPerSequence) {
                 case 1:
                     if (firstByte < 0x80)

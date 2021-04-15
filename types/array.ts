@@ -31,7 +31,7 @@ import type {Type} from './type'
  * in the read array
  */
 export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E[]> {
-	static get _value() {
+	static get _value(): number {
 		return 0x52
 	}
 	/**
@@ -41,7 +41,7 @@ export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		super()
 		assert.instanceOf(type, AbstractType)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			this.type.addToBuffer(buffer)
@@ -64,14 +64,15 @@ export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E[]) {
+	writeValue(buffer: AppendableBuffer, value: E[]): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		writeIterable({type: this.type, buffer, value, length: value.length})
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
-		//tslint:disable-next-line:prefer-const
-		let {value: arrayLength, length} = readFlexInt(buffer, offset)
+		const readArrayLength = readFlexInt(buffer, offset)
+		const arrayLength = readArrayLength.value
+		let {length} = readArrayLength
 		const value = baseValue || makeBaseValue(this, arrayLength) as READ_E[]
 		for (let i = 0; i < arrayLength; i++) {
 			const element = this.type.consumeValue(buffer, offset + length)
@@ -80,7 +81,7 @@ export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		}
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType) && this.type.equals(otherType.type)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType) && this.type.equals(otherType.type)
 	}
 }

@@ -20,7 +20,7 @@ import ChronoType from './chrono'
  * ````
  */
 export class TimeType extends ChronoType {
-	static get _value() {
+	static get _value(): number {
 		return 0x1C
 	}
 	/**
@@ -34,7 +34,7 @@ export class TimeType extends ChronoType {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: Date) {
+	writeValue(buffer: AppendableBuffer, value: Date): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		const byteBuffer = new ArrayBuffer(4)

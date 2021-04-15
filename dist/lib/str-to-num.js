@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 exports.default = (str) => {
     if (str) { //avoid errors with undefined.constructor and null.constructor; also '' is invalid
+        //eslint-disable-next-line @typescript-eslint/ban-types
         if (str.constructor === String) {
             const converted = Number(str);
             if (!isNaN(converted) || str === 'NaN')

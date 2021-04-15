@@ -38,7 +38,7 @@ import type {Type} from './type'
  * @param READ_E The type of values this type will read
  */
 export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E> {
-	static get _value() {
+	static get _value(): number {
 		return 0x56
 	}
 	/**
@@ -52,7 +52,7 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		assert.instanceOf(types, Array)
 		for (const type of types) assert.instanceOf(type, AbstractType)
 	}
-	addToBuffer(buffer: AppendableBuffer) {
+	addToBuffer(buffer: AppendableBuffer): boolean {
 		/*istanbul ignore else*/
 		if (super.addToBuffer(buffer)) {
 			buffer.addAll(flexInt.makeValueBuffer(this.types.length))
@@ -81,7 +81,7 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: E) {
+	writeValue(buffer: AppendableBuffer, value: E): void {
 		this.isBuffer(buffer)
 		buffer.pause()
 		let success = false
@@ -104,14 +104,15 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		if (!success) throw new Error('No types matched: ' + inspect(value))
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
-		//tslint:disable-next-line:prefer-const
-		let {value: typeIndex, length} = readFlexInt(buffer, offset)
+		const readTypeIndex = readFlexInt(buffer, offset)
+		const typeIndex = readTypeIndex.value
+		let {length} = readTypeIndex
 		const {value, length: subLength} = this.types[typeIndex].consumeValue(buffer, offset + length)
 		length += subLength
 		return {value, length}
 	}
-	equals(otherType: unknown): otherType is this {
-		return super.equals(otherType)
+	equals(otherType: unknown): boolean {
+		return this.isSameType(otherType)
 			&& this.types.length === otherType.types.length
 			&& this.types.every((type, i) => type.equals(otherType.types[i]))
 	}

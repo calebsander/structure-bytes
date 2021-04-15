@@ -17,7 +17,7 @@ import AbsoluteType from './absolute'
  * ````
  */
 export class BooleanArrayType extends AbsoluteType<boolean[]> {
-	static get _value() {
+	static get _value(): number {
 		return 0x32
 	}
 	/**
@@ -35,15 +35,16 @@ export class BooleanArrayType extends AbsoluteType<boolean[]> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: boolean[]) {
+	writeValue(buffer: AppendableBuffer, value: boolean[]): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		buffer.addAll(flexInt.makeValueBuffer(value.length))
 		writeBooleans(buffer, value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]> {
-		//tslint:disable-next-line:prefer-const
-		let {value: count, length} = readFlexInt(buffer, offset)
+		const readCount = readFlexInt(buffer, offset)
+		const count = readCount.value
+		let {length} = readCount
 		const booleans = readBooleans({buffer, offset: offset + length, count})
 		const {value} = booleans
 		length += booleans.length

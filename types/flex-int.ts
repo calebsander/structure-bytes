@@ -43,7 +43,7 @@ const MAX_SAFE = fromUnsigned(Number.MAX_SAFE_INTEGER - 1) + 1 //> 0; exclusive
  * ````
  */
 export class FlexIntType extends IntegerType<number | string, number> {
-	static get _value() {
+	static get _value(): number {
 		return 0x07
 	}
 	/**
@@ -58,7 +58,7 @@ export class FlexIntType extends IntegerType<number | string, number> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: number | string) {
+	writeValue(buffer: AppendableBuffer, value: number | string): void {
 		this.isBuffer(buffer)
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue

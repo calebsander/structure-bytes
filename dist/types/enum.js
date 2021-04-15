@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EnumType = void 0;
 const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const flexInt = require("../lib/flex-int");
@@ -99,7 +100,7 @@ class EnumType extends abstract_1.default {
         return { value, length };
     }
     equals(otherType) {
-        if (!super.equals(otherType))
+        if (!this.isSameType(otherType))
             return false;
         if (!this.type.equals(otherType.type))
             return false;

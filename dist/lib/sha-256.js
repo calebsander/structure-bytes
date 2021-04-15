@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.sha256Wasm = exports.sha256JS = void 0;
 const bit_math_1 = require("./bit-math");
 const sha256_load_1 = require("./sha256-load");
 const K = new Uint32Array([

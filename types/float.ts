@@ -17,7 +17,7 @@ const readFloat = readNumber({type: Float32Array, func: 'getFloat32'})
  * ````
  */
 export class FloatType extends FloatingPointType {
-	static get _value() {
+	static get _value(): number {
 		return 0x20
 	}
 	/**
@@ -39,7 +39,7 @@ export class FloatType extends FloatingPointType {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: number | string) {
+	writeValue(buffer: AppendableBuffer, value: number | string): void {
 		this.isBuffer(buffer)
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue

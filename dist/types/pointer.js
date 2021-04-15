@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PointerType = exports.rewindBuffer = void 0;
 const assert = require("../lib/assert");
 const bufferString = require("../lib/buffer-string");
 const flexInt = require("../lib/flex-int");
@@ -155,7 +156,7 @@ class PointerType extends abstract_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType) && this.type.equals(otherType.type);
+        return this.isSameType(otherType) && this.type.equals(otherType.type);
     }
 }
 exports.PointerType = PointerType;

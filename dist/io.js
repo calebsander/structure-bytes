@@ -2,6 +2,7 @@
 //This file contains functions for performing I/O;
 //specifically, reads and writes of types and values and HTTP responses
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.httpRespond = exports.readTypeAndValue = exports.readValue = exports.readType = exports.writeTypeAndValue = exports.writeValue = exports.writeType = void 0;
 const http = require("http");
 const stream_1 = require("stream");
 const util_1 = require("util");
@@ -18,6 +19,7 @@ function concatStream(stream, callback) {
         .on('data', chunk => segments.push(chunk instanceof Buffer ? chunk : Buffer.from(chunk)))
         .on('error', err => {
         stream.destroy();
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         callback(err, null);
     })
         .on('end', () => callback(null, growable_buffer_1.toArrayBuffer(Buffer.concat(segments))));
@@ -60,11 +62,12 @@ function concatStream(stream, callback) {
 function writeType({ type, outStream }, callback) {
     assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = _ => { };
+        callback = () => { };
     assert.instanceOf(callback, Function);
     let error = null;
     outStream
         .on('error', callback)
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .on('finish', () => callback(error));
     const typeStream = new appendable_stream_1.default(outStream);
     try {
@@ -113,11 +116,12 @@ exports.writeType = writeType;
 function writeValue({ type, value, outStream }, callback) {
     assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = _ => { };
+        callback = () => { };
     assert.instanceOf(callback, Function);
     let error = null;
     outStream
         .on('error', callback)
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .on('finish', () => callback(error));
     const valueStream = new appendable_stream_1.default(outStream);
     try {
@@ -167,11 +171,12 @@ exports.writeValue = writeValue;
 function writeTypeAndValue({ type, value, outStream }, callback) {
     assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = _ => { };
+        callback = () => { };
     assert.instanceOf(callback, Function);
     let error = null;
     outStream
         .on('error', callback)
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .on('finish', () => callback(error));
     const typeValueStream = new appendable_stream_1.default(outStream);
     try {
@@ -211,12 +216,14 @@ function readType(inStream, callback) {
     assert.instanceOf(inStream, stream_1.Readable);
     assert.instanceOf(callback, Function);
     concatStream(inStream, (err, buffer) => {
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (err)
             return callback(err, null);
         let type;
         try {
             type = r.type(buffer, false);
         }
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         catch (e) {
             return callback(e, null);
         }
@@ -260,12 +267,14 @@ function readValue({ type, inStream }, callback) {
     assert.instanceOf(inStream, stream_1.Readable);
     assert.instanceOf(callback, Function);
     concatStream(inStream, (err, buffer) => {
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (err)
             return callback(err, null);
         let value;
         try {
             value = type.readValue(buffer);
         }
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         catch (e) {
             return callback(e, null);
         }
@@ -295,10 +304,11 @@ exports.readValue = readValue;
  * @param inStream The stream to read from
  * @param callback The callback to call with the read result
  */
-function readTypeAndValue(inStream, callback) {
+exports.readTypeAndValue = ((inStream, callback) => {
     assert.instanceOf(inStream, stream_1.Readable);
     assert.instanceOf(callback, Function);
     concatStream(inStream, (err, buffer) => {
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (err)
             return callback(err, null, null);
         let type;
@@ -306,6 +316,7 @@ function readTypeAndValue(inStream, callback) {
         try {
             type = r._consumeType(buffer, 0);
         }
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         catch (e) {
             return callback(e, null, null);
         }
@@ -313,19 +324,19 @@ function readTypeAndValue(inStream, callback) {
         try {
             value = type.value.readValue(buffer, type.length);
         }
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         catch (e) {
             return callback(e, null, null);
         }
         callback(null, type.value, value);
     });
-}
-exports.readTypeAndValue = readTypeAndValue;
+});
 //Custom promisifiy function because Promise cannot resolve to 2 values
-readTypeAndValue[util_1.promisify.custom] = (inStream) => new Promise((resolve, reject) => readTypeAndValue(inStream, (err, type, value) => {
+exports.readTypeAndValue[util_1.promisify.custom] = (inStream) => new Promise((resolve, reject) => exports.readTypeAndValue(inStream, (err, type, value) => {
     if (err)
         reject(err);
     else
-        resolve({ type: type, value: value });
+        resolve({ type, value });
 }));
 /**
  * Responds to an HTTP(S) request for a value.
@@ -354,7 +365,7 @@ readTypeAndValue[util_1.promisify.custom] = (inStream) => new Promise((resolve, 
 function httpRespond({ req, res, type, value }, callback) {
     assert.instanceOf(type, abstract_1.default);
     if (callback === undefined)
-        callback = _ => { };
+        callback = () => { };
     assert.instanceOf(callback, Function);
     assert.instanceOf(req, http.IncomingMessage);
     assert.instanceOf(res, http.OutgoingMessage);
@@ -369,12 +380,14 @@ function httpRespond({ req, res, type, value }, callback) {
         }
         else
             outStream = res;
-        function writeEndCallback(err) {
+        const writeEndCallback = (err) => {
+            //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             if (err)
                 callback(err);
+            //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             else if (!acceptsGzip)
                 callback(null);
-        }
+        };
         if (req.headers.sig && req.headers.sig === type.getSignature()) { //if client already has type, only value needs to be sent
             writeValue({ type, value, outStream }, writeEndCallback);
         }
@@ -382,6 +395,7 @@ function httpRespond({ req, res, type, value }, callback) {
             writeTypeAndValue({ type, value, outStream }, writeEndCallback); //otherwise, type and value need to be sent
         if (acceptsGzip) { //don't pipe until writing begins
             outStream.pipe(res)
+                //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 .on('finish', () => callback(null));
         }
     }

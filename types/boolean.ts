@@ -13,7 +13,7 @@ import AbsoluteType from './absolute'
  * ````
  */
 export class BooleanType extends AbsoluteType<boolean> {
-	static get _value() {
+	static get _value(): number {
 		return 0x30
 	}
 	/**
@@ -27,7 +27,7 @@ export class BooleanType extends AbsoluteType<boolean> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: boolean) {
+	writeValue(buffer: AppendableBuffer, value: boolean): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, Boolean)
 		writeBooleanByte(buffer, value)

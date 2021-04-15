@@ -57,5 +57,5 @@ export declare class MapType<K, V, READ_K extends K = K, READ_V extends V = V> e
      */
     writeValue(buffer: AppendableBuffer, value: Map<K, V>): void;
     consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>>;
-    equals(otherType: any): otherType is this;
+    equals(otherType: unknown): boolean;
 }

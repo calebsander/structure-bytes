@@ -1,4 +1,4 @@
-declare const _default: (str: any) => number | undefined;
+declare const _default: (str: unknown) => number | undefined;
 /**
  * Converts strings to their number representation,
  * or `undefined` if they are invalid.

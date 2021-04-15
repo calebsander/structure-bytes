@@ -14,7 +14,7 @@ import UnsignedType from './unsigned'
  * ````
  */
 export class BigUnsignedIntType extends UnsignedType<bigint> {
-	static get _value() {
+	static get _value(): number {
 		return 0x15
 	}
 	/**
@@ -32,7 +32,7 @@ export class BigUnsignedIntType extends UnsignedType<bigint> {
 	 * @param value The value to write
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
-	writeValue(buffer: AppendableBuffer, value: bigint) {
+	writeValue(buffer: AppendableBuffer, value: bigint): void {
 		this.isBuffer(buffer)
 		assert.instanceOf(value, BigInt)
 		if (value < 0n) throw new RangeError('Value out of range')
@@ -48,14 +48,15 @@ export class BigUnsignedIntType extends UnsignedType<bigint> {
 		}
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
-		//tslint:disable-next-line:prefer-const
-		let {value: bytes, length} = readFlexInt(buffer, offset)
-		if (buffer.byteLength < offset + length + bytes) throw new Error(NOT_LONG_ENOUGH)
+		const readByteLength = readFlexInt(buffer, offset)
+		const byteLength = readByteLength.value
+		let {length} = readByteLength
+		if (buffer.byteLength < offset + length + byteLength) throw new Error(NOT_LONG_ENOUGH)
 		let value = 0n
-		for (const byte of new Uint8Array(buffer, offset + length, bytes)) {
+		for (const byte of new Uint8Array(buffer, offset + length, byteLength)) {
 			value = value << 8n | BigInt(byte)
 		}
-		length += bytes
+		length += byteLength
 		return {value, length}
 	}
 }

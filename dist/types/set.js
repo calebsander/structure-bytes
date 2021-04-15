@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SetType = void 0;
 const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const write_util_1 = require("../lib/write-util");
@@ -64,8 +65,9 @@ class SetType extends absolute_1.default {
         write_util_1.writeIterable({ type: this.type, buffer, value, length: value.size });
     }
     consumeValue(buffer, offset, baseValue) {
-        //tslint:disable-next-line:prefer-const
-        let { value: size, length } = read_util_1.readFlexInt(buffer, offset);
+        const readSize = read_util_1.readFlexInt(buffer, offset);
+        const size = readSize.value;
+        let { length } = readSize;
         const value = baseValue || read_util_1.makeBaseValue(this);
         for (let i = 0; i < size; i++) {
             const element = this.type.consumeValue(buffer, offset + length);
@@ -75,7 +77,7 @@ class SetType extends absolute_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType) && this.type.equals(otherType.type);
+        return this.isSameType(otherType) && this.type.equals(otherType.type);
     }
 }
 exports.SetType = SetType;

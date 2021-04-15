@@ -14,7 +14,6 @@ const SINGLE_BYTE_TYPES: (typeof AbstractType)[] = []
 {
 	const defaultAddToBuffer = AbstractType.prototype.addToBuffer
 	const tTypes = t as unknown as Record<string, typeof AbstractType>
-	//tslint:disable-next-line:forin
 	for (const typeName in tTypes) {
 		const testType = tTypes[typeName]
 		if (testType.prototype.addToBuffer === defaultAddToBuffer) SINGLE_BYTE_TYPES.push(testType)

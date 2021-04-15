@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TupleType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -85,7 +86,7 @@ class TupleType extends absolute_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType)
+        return this.isSameType(otherType)
             && this.type.equals(otherType.type)
             && this.length === otherType.length;
     }

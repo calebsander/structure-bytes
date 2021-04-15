@@ -42,6 +42,7 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 		/*istanbul ignore next*/
 		throw new Error(`Cannot represent ${value}`) //should never occur
 	})()
+	//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	let writeValue = value - UPPER_BOUNDS.get(bytes - 1)!
 	const buffer = new Uint8Array(bytes)
 	for (let writeByte = bytes - 1; writeByte >= 0; writeByte--) {
@@ -50,6 +51,7 @@ export function makeValueBuffer(value: number): ArrayBuffer {
 		//Can't use bitwise math here because number may not fit in 32 bits
 		writeValue = Math.floor(writeValue / 0x100)
 	}
+	//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	buffer[0] |= BYTE_MASKS.get(bytes)!
 	return buffer.buffer
 }
@@ -78,10 +80,12 @@ export function readValueBuffer(valueBuffer: ArrayBuffer): number {
 	const bytes = valueBuffer.byteLength
 	if (!bytes) throw new Error('Empty flex int buffer')
 	const castBuffer = new Uint8Array(valueBuffer)
+	//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	let relativeValue = castBuffer[0] ^ BYTE_MASKS.get(bytes)!
 	for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
 		//Can't use bitwise math here because number may not fit in 32 bits
 		relativeValue = relativeValue * 0x100 + castBuffer[byteIndex]
 	}
+	//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	return UPPER_BOUNDS.get(bytes - 1)! + relativeValue
 }

@@ -6,7 +6,7 @@ interface Sig {
 	sig: string
 }
 interface SigAndType extends Sig {
-	type: Type<any>
+	type: Type<unknown>
 }
 interface TypeCache {
 	[name: string]: SigAndType
@@ -44,7 +44,7 @@ export interface DownloadOptions {
 	url: string
 	options?: RequestInit
 }
-export function download({name, url, options}: DownloadOptions): Promise<any> {
+export function download({name, url, options}: DownloadOptions): Promise<unknown> {
 	if (typeof name !== 'string') throw new Error('Name is not a string')
 	if (typeof url !== 'string') throw new Error('URL is not a string')
 	options = options || {}
@@ -62,7 +62,8 @@ export function download({name, url, options}: DownloadOptions): Promise<any> {
 	return fetch(url, options)
 		.then(response => {
 			if (!response.ok) throw new Error(`Received status of ${response.status}`)
-			const sig = response.headers.get('sig')!
+			const sig = response.headers.get('sig')
+			if (!sig) throw new Error('Missing type signature')
 			return response.arrayBuffer()
 				.then(buffer => {
 					if (typeInCache && typeInCache.sig === sig) {
@@ -79,4 +80,4 @@ export function download({name, url, options}: DownloadOptions): Promise<any> {
 		})
 }
 export * from './common'
-(window as any).sb = exports
+(window as unknown as Record<string, unknown>).sb = exports

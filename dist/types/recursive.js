@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RecursiveType = exports.rewindBuffer = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
@@ -112,6 +113,7 @@ class RecursiveType extends abstract_1.default {
                 //Use the next number as the ID
                 bufferRecursiveIDs.set(this.name, recursiveID = bufferRecursiveIDs.size);
             }
+            //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             buffer.addAll(flexInt.makeValueBuffer(recursiveID));
             if (firstOccurence) { //only define type if type has not already been defined
                 //Keep track of how far we are inside writing recursive types (see how this is used in AbstractType.addToBuffer())
@@ -174,12 +176,13 @@ class RecursiveType extends abstract_1.default {
         }
     }
     consumeValue(buffer, offset) {
-        //tslint:disable-next-line:prefer-const
-        let { value: explicit, length } = read_util_1.readBooleanByte(buffer, offset);
+        let bufferReadRecursives = readRecursives.get(buffer);
+        const readExplicit = read_util_1.readBooleanByte(buffer, offset);
+        const explicit = readExplicit.value;
+        let { length } = readExplicit;
         let value;
         if (explicit) {
             value = read_util_1.makeBaseValue(this.type);
-            let bufferReadRecursives = readRecursives.get(buffer);
             if (!bufferReadRecursives) {
                 readRecursives.set(buffer, bufferReadRecursives = new Map);
             }
@@ -189,7 +192,7 @@ class RecursiveType extends abstract_1.default {
         else {
             const indexOffset = read_util_1.readFlexInt(buffer, offset + length);
             const target = offset + length - indexOffset.value;
-            const readValue = readRecursives.get(buffer).get(target);
+            const readValue = bufferReadRecursives && bufferReadRecursives.get(target);
             if (!readValue)
                 throw new Error(`Cannot find target at ${target}`);
             value = readValue;
@@ -198,7 +201,7 @@ class RecursiveType extends abstract_1.default {
         return { value, length };
     }
     equals(otherType) {
-        return super.equals(otherType) && this.name === otherType.name;
+        return this.isSameType(otherType) && this.name === otherType.name;
     }
     /**
      * An alternative to [[registerType]],
