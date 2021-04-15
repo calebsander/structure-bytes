@@ -1,11 +1,9 @@
 language: node_js
 node_js:
   - node
+  - 14
   - 12
-  - 11
   - 10
-  - 9
-  - 8
 before_install:
   - sudo apt-get install -y ninja-build
 after_success:
