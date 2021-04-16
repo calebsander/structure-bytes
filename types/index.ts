@@ -1,3 +1,5 @@
+/*istanbul ignore next*/ //for TypeScript's auto-generated code
+
 export * from './type'
 
 export * from './byte'
