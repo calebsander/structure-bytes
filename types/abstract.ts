@@ -29,20 +29,22 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	}
 	addToBuffer(buffer: AppendableBuffer): boolean {
 		assert.isBuffer(buffer)
+		let location: number | undefined
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
 			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
-				const location = this.cachedTypeLocations.get(buffer)
-				if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
-					// TODO: use most recent location
-					buffer
-						.add(REPEATED_TYPE)
-						.addAll(flexInt.makeValueBuffer(buffer.length - location))
-					return false
-				}
+				location = this.cachedTypeLocations.get(buffer)
 			}
 		}
 		else this.cachedTypeLocations = new WeakMap
-		this.cachedTypeLocations.set(buffer, buffer.length) //future uses of this type will be able to point to this position in the buffer
+		const currentLocation = buffer.length
+		this.cachedTypeLocations.set(buffer, currentLocation) //future uses of this type will be able to point to this position in the buffer
+		if (location !== undefined) { //if type has already been written to this buffer, can create a pointer to it
+			buffer
+				.add(REPEATED_TYPE)
+				.addAll(flexInt.makeValueBuffer(currentLocation - location))
+			return false
+		}
+
 		buffer.add((this.constructor as typeof AbstractType)._value)
 		return true
 	}

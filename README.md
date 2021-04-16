@@ -478,7 +478,7 @@ For example, `new sb.UnsignedIntType` translates into `[0x13]`, and `new sb.Stru
 If the type has already been written to the buffer, it is also valid to serialize the type as:
 
 - `0xFF`
-- `offset` ([position of first byte of `offset` in buffer] - [position of type in buffer]) - `flexInt`
+- `offset` ([position of `0xFF` in buffer] - [position of type in buffer]) - `flexInt`
 
 For example:
 ````javascript
@@ -500,7 +500,7 @@ const type = new sb.StructType({
 					3 /*3 floats in the tuple*/,
 			/*second field's name*/, 0x74 /*t*/, 0x77 /*w*/, 0x6f /*o*/, 0,
 				0xff, /*type is defined previously*/
-					8 /*type is defined 8 bytes before this byte*/
+					7 /*type is defined 7 bytes before the 0xff byte*/
 ]
 ````
 In the following definitions, `type` means the binary type format.
