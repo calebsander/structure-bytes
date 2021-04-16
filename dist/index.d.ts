@@ -3,18 +3,18 @@
  *
  * - **From** `io`
  *   - [[writeType]]
- *   - [writeValue](_io_.html#writevalue)
+ *   - [[writeValue]]
  *   - [[writeTypeAndValue]]
- *   - [readType](_io_.html#readtype)
+ *   - [[readType]]
  *   - [[readValue]]
  *   - [[readTypeAndValue]]
  *   - [[httpRespond]]
  * - **From** `read`
- *   - [type](_read_.html#type) as `r.type`
+ *   - [type](read.html#type) as `r.type`
  * - **From** `recursive-registry`
- *   - [registerType](_recursive_registry_.html#registertype)
- *   - [getType](_recursive_registry_.html#gettype)
- *   - [isRegistered](_recursive_registry_.html#isregistered)
+ *   - [[registerType]]
+ *   - [[getType]]
+ *   - [[isRegistered]]
  * - **From** `types`
  *   - [[Type]]
  *   - Signed integer types

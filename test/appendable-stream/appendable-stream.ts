@@ -1,5 +1,5 @@
 import {Writable} from 'stream'
-import AppendableStream from '../../dist/lib/appendable-stream'
+import {AppendableStream} from '../../dist/lib/appendable-stream'
 import {assert} from '../test-common'
 
 class CaptureStream extends Writable {

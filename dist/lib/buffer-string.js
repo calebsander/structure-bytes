@@ -87,7 +87,7 @@ exports.toString = toString;
 function fromString(str) {
     assert.instanceOf(str, String);
     //Taken from http://stackoverflow.com/a/18729931
-    const utf8 = new growable_buffer_1.default;
+    const utf8 = new growable_buffer_1.GrowableBuffer;
     for (const char of str) {
         let charcode = char.charCodeAt(0);
         if (charcode < 0x80)

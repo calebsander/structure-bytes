@@ -31,7 +31,7 @@
 		"build": "npm run wat2wasm && rm -rf dist && tsc",
 		"build-client": "rm -rf compiled && webpack",
 		"clientside": "(cat client-side/upload.ts | grep -v window; cat client-side/download.ts | grep -v \"from './common'\") > client-side/upload-download.ts && npm run build-client",
-		"docs": "rm -rf docs && typedoc --out docs --name structure-bytes --readme README.md --listInvalidSymbolLinks *.ts && touch docs/.nojekyll",
+		"docs": "rm -rf docs && typedoc --out docs --name structure-bytes --readme README.md --listInvalidSymbolLinks index.ts io.ts lib/appendable.ts lib/appendable-stream.ts lib/growable-buffer.ts read.ts types/index.ts && touch docs/.nojekyll",
 		"test": "npm run build && tsc -p test/tsconfig.json && node test/main && npm run lint",
 		"test-travis": "nyc --reporter=lcov node test/main && coveralls < coverage/lcov.info",
 		"lint": "eslint --ext .ts ."

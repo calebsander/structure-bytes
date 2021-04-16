@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toArrayBuffer = exports.asUint8Array = void 0;
+exports.GrowableBuffer = exports.toArrayBuffer = exports.asUint8Array = void 0;
 const appendable_1 = require("./appendable");
 const assert = require("./assert");
 const INITIAL_LENGTH = 10;
@@ -166,4 +166,4 @@ class GrowableBuffer extends appendable_1.AppendableBuffer {
         return this;
     }
 }
-exports.default = GrowableBuffer;
+exports.GrowableBuffer = GrowableBuffer;

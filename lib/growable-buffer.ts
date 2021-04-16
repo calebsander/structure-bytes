@@ -19,7 +19,7 @@ export function toArrayBuffer(buffer: Uint8Array): ArrayBuffer {
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-export default class GrowableBuffer extends AppendableBuffer {
+export class GrowableBuffer extends AppendableBuffer {
 	private buffer: ArrayBuffer
 	private size: number
 	//A stack, containing lengths when buffer was paused

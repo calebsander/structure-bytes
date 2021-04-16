@@ -2,7 +2,7 @@ import {OutgoingMessage} from 'http'
 import {Duplex, Writable} from 'stream'
 import {AppendableBuffer} from './appendable'
 import * as assert from './assert'
-import GrowableBuffer from './growable-buffer'
+import {GrowableBuffer} from './growable-buffer'
 
 const WRITABLE_STREAMS = [Writable, Duplex, OutgoingMessage]
 
@@ -13,7 +13,7 @@ const WRITABLE_STREAMS = [Writable, Duplex, OutgoingMessage]
  * by calling [[end]] after all bytes
  * have been written.
  */
-export default class AppendableStream extends AppendableBuffer {
+export class AppendableStream extends AppendableBuffer {
 	private readonly outStream: Writable
 	private writtenBytes: number
 	private pauseCount: number //number of pauses deep in the pause stack

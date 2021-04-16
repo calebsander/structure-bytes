@@ -69,7 +69,7 @@ function writeType({ type, outStream }, callback) {
         .on('error', callback)
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .on('finish', () => callback(error));
-    const typeStream = new appendable_stream_1.default(outStream);
+    const typeStream = new appendable_stream_1.AppendableStream(outStream);
     try {
         type.addToBuffer(typeStream);
     }
@@ -123,7 +123,7 @@ function writeValue({ type, value, outStream }, callback) {
         .on('error', callback)
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .on('finish', () => callback(error));
-    const valueStream = new appendable_stream_1.default(outStream);
+    const valueStream = new appendable_stream_1.AppendableStream(outStream);
     try {
         type.writeValue(valueStream, value);
     }
@@ -178,7 +178,7 @@ function writeTypeAndValue({ type, value, outStream }, callback) {
         .on('error', callback)
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .on('finish', () => callback(error));
-    const typeValueStream = new appendable_stream_1.default(outStream);
+    const typeValueStream = new appendable_stream_1.AppendableStream(outStream);
     try {
         type.addToBuffer(typeValueStream);
         type.writeValue(typeValueStream, value);

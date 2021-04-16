@@ -1,0 +1,551 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Type | structure-bytes</title>
+	<meta name="description" content="Documentation for structure-bytes">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">structure-bytes</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">structure-bytes</a>
+				</li>
+				<li>
+					<a href="../modules/index.html">index</a>
+				</li>
+				<li>
+					<a href="index.type.html">Type</a>
+				</li>
+			</ul>
+			<h1>Interface Type&lt;VALUE, READ_VALUE&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>An interface representing an object that can serialize values of a certain type.
+						The object must also be able to serialize itself.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>VALUE</h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of values this object can serialize</p>
+							</div>
+						</div>
+					</li>
+					<li>
+						<h4>READ_VALUE<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span> = <span class="tsd-signature-type">VALUE</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of values this object deserializes.
+								Must be a subset of <code>VALUE</code>. Defaults to <code>VALUE</code>.</p>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Type</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#equals" class="tsd-kind-icon">equals</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="index.type.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="addtobuffer" class="tsd-anchor"></a>
+					<h3>add<wbr>ToBuffer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>ToBuffer<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../classes/lib_appendable.appendablebuffer.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableBuffer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L17">types/type.ts:17</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Appends the type information to an <a href="../classes/lib_appendable.appendablebuffer.html">AppendableBuffer</a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <a href="../classes/lib_appendable.appendablebuffer.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableBuffer</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer to append to</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p><code>false</code> if it wrote a pointer to a previous instance, <code>true</code> if it wrote the type byte. For internal use.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="consumevalue" class="tsd-anchor"></a>
+					<h3>consume<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">consume<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, baseValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L61">types/type.ts:61</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Reads a value from the specified bytes
+										at the specified offset.
+										Returns the value that was read
+									and the number of bytes consumed.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer containing the value bytes</p>
+									</div>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The position in the buffer to read from</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> baseValue: <span class="tsd-signature-type">unknown</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A value to mutate into the read value.
+										Used by <a href="../classes/index.recursivetype.html">RecursiveType</a>.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">READ_VALUE</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>The read value and the number of bytes read</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="equals" class="tsd-anchor"></a>
+					<h3>equals</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">(</span>otherType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L93">types/type.ts:93</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns whether this type object represents the same type as another object</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>otherType: <span class="tsd-signature-type">unknown</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Another object to compare with</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p><code>true</code> iff the types would be serialized to the same bytes</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="gethash" class="tsd-anchor"></a>
+					<h3>get<wbr>Hash</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Hash<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L28">types/type.ts:28</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets a base-64 SHA256 hash of the type, using a cached value if present</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>A hash of the buffer given by <a href="index.type.html#tobuffer">toBuffer</a></p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getsignature" class="tsd-anchor"></a>
+					<h3>get<wbr>Signature</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Signature<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L35">types/type.ts:35</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets a signature string for the type, using a cached value if present.
+										This string encodes the specification version and the type hash.
+									Represented as a base-64 string.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>A signature for the type</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="readvalue" class="tsd-anchor"></a>
+					<h3>read<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">read<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">READ_VALUE</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L87">types/type.ts:87</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Deserializes a value, i.e. takes
+										a buffer containing its binary form
+										and returns the value.
+										The inverse of <a href="index.type.html#valuebuffer">valueBuffer</a>.
+									Requires the type (<code>this</code>) to be known.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code class="language-javascript"><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">type</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ArrayType</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FlexUnsignedIntType</span>
+<span style="color: #000000">)</span>
+<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">value</span><span style="color: #000000"> = [</span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">10</span><span style="color: #000000">, </span><span style="color: #098658">100</span><span style="color: #000000">, </span><span style="color: #098658">1000</span><span style="color: #000000">, </span><span style="color: #098658">10000</span><span style="color: #000000">]</span>
+<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">buffer</span><span style="color: #000000"> = </span><span style="color: #001080">type</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #001080">value</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">readValue</span><span style="color: #000000"> = </span><span style="color: #001080">type</span><span style="color: #000000">.</span><span style="color: #795E26">readValue</span><span style="color: #000000">(</span><span style="color: #001080">buffer</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">readValue</span><span style="color: #000000">) </span><span style="color: #008000">// [ 0, 10, 100, 1000, 10000 ]</span>
+</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If the value does not occupy all of the buffer
+										from index <code>offset</code> to the end</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer containing the value bytes</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> offset: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The position in the buffer to read from
+										(defaults to <code>0</code>)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">READ_VALUE</span></h4>
+							<p>A value equivalent to the one that was written</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="tobuffer" class="tsd-anchor"></a>
+					<h3>to<wbr>Buffer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>Buffer<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L23">types/type.ts:23</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets the type in buffer form, using a cached value if present.
+									Since types are immutable, the result should never change from the cached value.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
+							<p>A buffer containing the type bytes</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="valuebuffer" class="tsd-anchor"></a>
+					<h3>value<wbr>Buffer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">value<wbr>Buffer<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L49">types/type.ts:49</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets an <code>ArrayBuffer</code> containing the value in binary format.
+									See this type&#39;s <a href="index.type.html#writevalue">writeValue</a> documentation for examples of values.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">VALUE</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The value to write</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ArrayBuffer</span></h4>
+							<p>An <code>ArrayBuffer</code> storing the value</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="writevalue" class="tsd-anchor"></a>
+					<h3>write<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>Value<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../classes/lib_appendable.appendablebuffer.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableBuffer</a>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">VALUE</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/types/type.ts#L42">types/type.ts:42</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Appends value bytes to an <a href="../classes/lib_appendable.appendablebuffer.html">AppendableBuffer</a> according to the type</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If the value doesn&#39;t match the type, e.g. <code>new sb.StringType().writeValue(buffer, 23)</code></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <a href="../classes/lib_appendable.appendablebuffer.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableBuffer</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The buffer to which to append</p>
+									</div>
+								</li>
+								<li>
+									<h5>value: <span class="tsd-signature-type">VALUE</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The value to write</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/index.html">index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/io.html">io</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/lib_appendable.html">lib/appendable</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/lib_appendable_stream.html">lib/appendable-<wbr>stream</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/lib_growable_buffer.html">lib/growable-<wbr>buffer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/read.html">read</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/types.html">types</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="index.type.html" class="tsd-kind-icon">Type</a>
+						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#addtobuffer" class="tsd-kind-icon">add<wbr>ToBuffer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#consumevalue" class="tsd-kind-icon">consume<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#equals" class="tsd-kind-icon">equals</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#gethash" class="tsd-kind-icon">get<wbr>Hash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#getsignature" class="tsd-kind-icon">get<wbr>Signature</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#readvalue" class="tsd-kind-icon">read<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#valuebuffer" class="tsd-kind-icon">value<wbr>Buffer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="index.type.html#writevalue" class="tsd-kind-icon">write<wbr>Value</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -4,16 +4,17 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>structure-bytes</title>
-	<meta name="description" content="">
+	<meta name="description" content="Documentation for structure-bytes">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -51,12 +50,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
-			<h1> structure-bytes</h1>
+			<h1>structure-bytes</h1>
 		</div>
 	</div>
 </header>
@@ -64,14 +58,18 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="structure-bytes">structure-bytes</h1>
+				<a href="#structure-bytes" id="structure-bytes" style="color: inherit; text-decoration: none;">
+					<h1>structure-bytes</h1>
+				</a>
 				<p>A TypeScript library for efficient data serialization, achieved by separating data structure from their values and storing each in compact binary formats.</p>
 				<p><a href="https://www.npmjs.com/package/structure-bytes"><img src="https://img.shields.io/npm/v/structure-bytes.svg" alt="npm Version"></a>
 					<a href="https://travis-ci.org/calebsander/structure-bytes"><img src="https://travis-ci.org/calebsander/structure-bytes.svg?branch=master" alt="Build Status"></a>
 					<a href="https://coveralls.io/github/calebsander/structure-bytes?branch=master"><img src="https://coveralls.io/repos/github/calebsander/structure-bytes/badge.svg?branch=master" alt="Coverage Status"></a>
 					<a href="https://david-dm.org/calebsander/structure-bytes"><img src="https://david-dm.org/calebsander/structure-bytes/status.svg" alt="Dependencies"></a>
 				<a href="https://david-dm.org/calebsander/structure-bytes?type=dev"><img src="https://david-dm.org/calebsander/structure-bytes/dev-status.svg" alt="Dev Dependencies"></a></p>
-				<h2 id="concept">Concept</h2>
+				<a href="#concept" id="concept" style="color: inherit; text-decoration: none;">
+					<h2>Concept</h2>
+				</a>
 				<p>Most modern data serialization formats fall into one of two categories:</p>
 				<ul>
 					<li>Formats like JSON which can represent a wide range of simple and compound data types. Serialized values in these formats implicitly serialize their type so the deserializer doesn&#39;t need knowledge of the type.</li>
@@ -88,20 +86,26 @@
 					<li>One type can be used to serialize many different values. For example, when sending multiple values of the same type across a network, the type can sent along with the first value and only values need to be sent afterwards.</li>
 				</ul>
 				<p>This project is somewhat similar to Google&#39;s <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>, but was not designed to match its functionality.</p>
-				<h2 id="use-cases">Use cases</h2>
+				<a href="#use-cases" id="use-cases" style="color: inherit; text-decoration: none;">
+					<h2>Use cases</h2>
+				</a>
 				<ul>
 					<li>Use when the structure of the data is complicated. For example, if you are serializing plaintext, this can easily be accomplished without redundancy by writing to files or sockets.</li>
 					<li>Use when there is a lot of repetition in the data. If you don&#39;t have any arrays, sets, or maps, there is less redundancy for <code>structure-bytes</code> to eliminate.</li>
 					<li>Use when serializing many values for the type (e.g. many files storing the same type of value, or many communications of the same type). This will give you the benefit of being able to keep only a single copy of the type spec.</li>
 				</ul>
-				<h2 id="differences-from-protocol-buffers">Differences from Protocol Buffers</h2>
+				<a href="#differences-from-protocol-buffers" id="differences-from-protocol-buffers" style="color: inherit; text-decoration: none;">
+					<h2>Differences from Protocol Buffers</h2>
+				</a>
 				<ul>
 					<li>Types have binary serializations, not just values. (Protocol Buffers requires both the serializer and deserializer to have <code>.proto</code> definition files, which are not designed to be transmitted like values.) This compactly stores complex types and allows values to be written along with their types so they can be read without knowing their types beforehand.</li>
 					<li>Types are generated programmatically rather than by reading <code>.proto</code> files. This allows, for example, for a function which turns a type into another type that either contains an error message or an instance of the original type.</li>
 					<li>This project is designed with downloading data over HTTP in mind. If the client has already received values of the same type, the server only sends the value and the client reads it using its cached type. If the client doesn&#39;t know the type, the server serializes it along with the value and the client caches the type. This way, the type does not need to be specified in the client-side JavaScript and repeated requests to the same endpoint are very efficient.</li>
 					<li><code>structure-bytes</code> provides a larger set of primitive and compound types.</li>
 				</ul>
-				<h2 id="data-types">Data types</h2>
+				<a href="#data-types" id="data-types" style="color: inherit; text-decoration: none;">
+					<h2>Data types</h2>
+				</a>
 				<ul>
 					<li>Primitive types<ul>
 							<li><code>Byte</code> (1-byte signed integer)</li>
@@ -131,13 +135,12 @@
 					</li>
 					<li>Compound/recursive types<ul>
 							<li><code>Tuple&lt;Type&gt;</code> (a constant-length array of <code>Type</code>s)</li>
-							<li><code>Struct</code> (an object with up to 255 fields, each with a fixed name and type)</li>
+							<li><code>Struct</code> (an object with a fixed set of fields, each with a fixed name and type)</li>
 							<li><code>Array&lt;Type&gt;</code> (a variable-length array of <code>Type</code>s)</li>
 							<li><code>Set&lt;Type&gt;</code> (like an <code>Array</code>, except creates a set when read)</li>
 							<li><code>Map&lt;KeyType, ValueType&gt;</code> (a mapping of <code>KeyType</code> instances to <code>ValueType</code> instances)</li>
-							<li><code>Enum&lt;Type&gt;</code> (a fixed set of up to 255 <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
-							<li><code>Choice</code> (a fixed set of up to 255 types that values can take on)</li>
-							<li><code>NamedChoice</code> (a fixed set of up to 255 named types that values can take on, each associated with a constructor)</li>
+							<li><code>Enum&lt;Type&gt;</code> (a fixed set of <code>Type</code>s; useful when only a small subset of <code>Type</code> instances represent possible values, especially with <code>String</code>s)</li>
+							<li><code>Choice</code> (a fixed set of types that values can take on)</li>
 							<li><code>Recursive&lt;Type&gt;</code> (a type that can reference itself and be used to serialize circular data structures)</li>
 							<li><code>Singleton&lt;Type&gt;</code> (a type that serializes only one value)</li>
 							<li><code>Optional&lt;Type&gt;</code> (either <code>null</code> or <code>undefined</code> or an instance of <code>Type</code>)</li>
@@ -145,217 +148,245 @@
 						</ul>
 					</li>
 				</ul>
-				<h2 id="documentation">Documentation</h2>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h2>Documentation</h2>
+				</a>
 				<p>The <code>docs</code> folder is hosted at
 				<a href="https://calebsander.github.io/structure-bytes/modules/_index_.html">https://calebsander.github.io/structure-bytes</a>.</p>
-				<h2 id="examples">Examples</h2>
-				<h3 id="type-creation">Type creation</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
+				<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+					<h2>Examples</h2>
+				</a>
+				<a href="#type-creation" id="type-creation" style="color: inherit; text-decoration: none;">
+					<h3>Type creation</h3>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sb</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;structure-bytes&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-keyword">const</span> colorType = <span class="hljs-keyword">new</span> sb.TupleType({
-    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
-    <span class="hljs-attr">length</span>: <span class="hljs-number">3</span>
-})
-<span class="hljs-keyword">const</span> routeAttributesType = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">color</span>: colorType,
-    <span class="hljs-attr">description</span>: <span class="hljs-keyword">new</span> sb.PointerType(<span class="hljs-keyword">new</span> sb.StringType),
-    <span class="hljs-attr">direction_names</span>: <span class="hljs-keyword">new</span> sb.PointerType(
-        <span class="hljs-keyword">new</span> sb.ArrayType(<span class="hljs-keyword">new</span> sb.StringType)
-    ),
-    <span class="hljs-attr">long_name</span>: <span class="hljs-keyword">new</span> sb.StringType,
-    <span class="hljs-attr">text_color</span>: colorType,
-    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType
-})
-<span class="hljs-keyword">const</span> routesType = <span class="hljs-keyword">new</span> sb.ArrayType(
-    <span class="hljs-keyword">new</span> sb.StructType({
-        <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.StringType,
-        <span class="hljs-attr">attributes</span>: routeAttributesType
-    })
-)</code></pre>
-				<h3 id="converting-types-and-values-to-binary-data">Converting types and values to binary data</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">colorType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">TupleType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">UnsignedByteType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">length:</span><span style="color: #000000"> </span><span style="color: #098658">3</span>
+<span style="color: #000000">})</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">routeAttributesType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">color:</span><span style="color: #000000"> </span><span style="color: #001080">colorType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">description:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">PointerType</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #001080">direction_names:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">PointerType</span><span style="color: #000000">(</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ArrayType</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">)</span>
+<span style="color: #000000">    ),</span>
+<span style="color: #000000">    </span><span style="color: #001080">long_name:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">text_color:</span><span style="color: #000000"> </span><span style="color: #001080">colorType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">UnsignedByteType</span>
+<span style="color: #000000">})</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">routesType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ArrayType</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">({</span>
+<span style="color: #000000">        </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">attributes:</span><span style="color: #000000"> </span><span style="color: #001080">routeAttributesType</span>
+<span style="color: #000000">    })</span>
+<span style="color: #000000">)</span>
+</code></pre>
+				<a href="#converting-types-and-values-to-binary-data" id="converting-types-and-values-to-binary-data" style="color: inherit; text-decoration: none;">
+					<h3>Converting types and values to binary data</h3>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sb</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;structure-bytes&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-keyword">const</span> colorType = <span class="hljs-keyword">new</span> sb.TupleType({
-    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType,
-    <span class="hljs-attr">length</span>: <span class="hljs-number">3</span>
-})
-<span class="hljs-keyword">const</span> routeAttributesType = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">color</span>: colorType,
-    <span class="hljs-attr">description</span>: <span class="hljs-keyword">new</span> sb.PointerType(<span class="hljs-keyword">new</span> sb.StringType),
-    <span class="hljs-attr">direction_names</span>: <span class="hljs-keyword">new</span> sb.PointerType(
-        <span class="hljs-keyword">new</span> sb.ArrayType(<span class="hljs-keyword">new</span> sb.StringType)
-    ),
-    <span class="hljs-attr">long_name</span>: <span class="hljs-keyword">new</span> sb.StringType,
-    <span class="hljs-attr">text_color</span>: colorType,
-    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.UnsignedByteType
-})
-<span class="hljs-keyword">const</span> routesType = <span class="hljs-keyword">new</span> sb.ArrayType(
-    <span class="hljs-keyword">new</span> sb.StructType({
-        <span class="hljs-attr">id</span>: <span class="hljs-keyword">new</span> sb.StringType,
-        <span class="hljs-attr">attributes</span>: routeAttributesType
-    })
-)
-<span class="hljs-keyword">const</span> typeBuffer = routesType.toBuffer()
-<span class="hljs-comment">// ArrayBuffer { byteLength: 92 }</span>
-<span class="hljs-built_in">console</span>.log(Buffer.from(typeBuffer))
-<span class="hljs-comment">// &lt;Buffer 52 51 02 0a 61 74 74 72 69 62 75 74 65 73 51 06 05 63 6f 6c 6f 72 50 11 03 0b 64 65 73 63 72 69 70 74 69 6f 6e 70 41 0f 64 69 72 65 63 74 69 6f 6e 5f ... &gt;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">colorType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">TupleType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">UnsignedByteType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">length:</span><span style="color: #000000"> </span><span style="color: #098658">3</span>
+<span style="color: #000000">})</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">routeAttributesType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">color:</span><span style="color: #000000"> </span><span style="color: #001080">colorType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">description:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">PointerType</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #001080">direction_names:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">PointerType</span><span style="color: #000000">(</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ArrayType</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">)</span>
+<span style="color: #000000">    ),</span>
+<span style="color: #000000">    </span><span style="color: #001080">long_name:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">text_color:</span><span style="color: #000000"> </span><span style="color: #001080">colorType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">UnsignedByteType</span>
+<span style="color: #000000">})</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">routesType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ArrayType</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">({</span>
+<span style="color: #000000">        </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">attributes:</span><span style="color: #000000"> </span><span style="color: #001080">routeAttributesType</span>
+<span style="color: #000000">    })</span>
+<span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">typeBuffer</span><span style="color: #000000"> = </span><span style="color: #001080">routesType</span><span style="color: #000000">.</span><span style="color: #795E26">toBuffer</span><span style="color: #000000">()</span>
+<span style="color: #008000">// ArrayBuffer { byteLength: 92 }</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">Buffer</span><span style="color: #000000">.</span><span style="color: #795E26">from</span><span style="color: #000000">(</span><span style="color: #001080">typeBuffer</span><span style="color: #000000">))</span>
+<span style="color: #008000">// &lt;Buffer 52 51 02 0a 61 74 74 72 69 62 75 74 65 73 51 06 05 63 6f 6c 6f 72 50 11 03 0b 64 65 73 63 72 69 70 74 69 6f 6e 70 41 0f 64 69 72 65 63 74 69 6f 6e 5f ... &gt;</span>
 
-<span class="hljs-keyword">const</span> toRGB = <span class="hljs-function"><span class="hljs-params">hex</span> =&gt;</span> [
-    <span class="hljs-built_in">parseInt</span>(hex.slice(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>), <span class="hljs-number">16</span>),
-    <span class="hljs-built_in">parseInt</span>(hex.slice(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>), <span class="hljs-number">16</span>),
-    <span class="hljs-built_in">parseInt</span>(hex.slice(<span class="hljs-number">4</span>, <span class="hljs-number">6</span>), <span class="hljs-number">16</span>)
-]
-fetch(<span class="hljs-string">'https://api-v3.mbta.com/routes?filter[type]=0,1'</span>)
-    .then(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> res.json())
-    .then(<span class="hljs-function">(<span class="hljs-params">{data}</span>) =&gt;</span> {
-        <span class="hljs-keyword">const</span> routes = data.map(<span class="hljs-function">(<span class="hljs-params">{id, attributes}</span>) =&gt;</span> {
-            <span class="hljs-keyword">delete</span> attributes.short_name
-            <span class="hljs-keyword">delete</span> attributes.sort_order
-            attributes.color = toRGB(attributes.color)
-            attributes.text_color = toRGB(attributes.text_color)
-            <span class="hljs-keyword">return</span> {id, attributes}
-        })
-        <span class="hljs-keyword">const</span> valueBuffer = routesType.valueBuffer(routes)
-        <span class="hljs-comment">// ArrayBuffer { byteLength: 306 }</span>
-        <span class="hljs-comment">// (for comparison, JSON.stringify(routes).length == 1498)</span>
-    })</code></pre>
-				<h3 id="reading-from-type-and-value-buffers">Reading from type and value buffers</h3>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">toRGB</span><span style="color: #000000"> = </span><span style="color: #001080">hex</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> [</span>
+<span style="color: #000000">    </span><span style="color: #795E26">parseInt</span><span style="color: #000000">(</span><span style="color: #001080">hex</span><span style="color: #000000">.</span><span style="color: #795E26">slice</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">), </span><span style="color: #098658">16</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #795E26">parseInt</span><span style="color: #000000">(</span><span style="color: #001080">hex</span><span style="color: #000000">.</span><span style="color: #795E26">slice</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #098658">4</span><span style="color: #000000">), </span><span style="color: #098658">16</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #795E26">parseInt</span><span style="color: #000000">(</span><span style="color: #001080">hex</span><span style="color: #000000">.</span><span style="color: #795E26">slice</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">, </span><span style="color: #098658">6</span><span style="color: #000000">), </span><span style="color: #098658">16</span><span style="color: #000000">)</span>
+<span style="color: #000000">]</span>
+<span style="color: #795E26">fetch</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;https://api-v3.mbta.com/routes?filter[type]=0,1&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">then</span><span style="color: #000000">(</span><span style="color: #001080">res</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">json</span><span style="color: #000000">())</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">then</span><span style="color: #000000">(({</span><span style="color: #001080">data</span><span style="color: #000000">}) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">routes</span><span style="color: #000000"> = </span><span style="color: #001080">data</span><span style="color: #000000">.</span><span style="color: #795E26">map</span><span style="color: #000000">(({</span><span style="color: #001080">id</span><span style="color: #000000">, </span><span style="color: #001080">attributes</span><span style="color: #000000">}) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">            </span><span style="color: #0000FF">delete</span><span style="color: #000000"> </span><span style="color: #001080">attributes</span><span style="color: #000000">.</span><span style="color: #001080">short_name</span>
+<span style="color: #000000">            </span><span style="color: #0000FF">delete</span><span style="color: #000000"> </span><span style="color: #001080">attributes</span><span style="color: #000000">.</span><span style="color: #001080">sort_order</span>
+<span style="color: #000000">            </span><span style="color: #001080">attributes</span><span style="color: #000000">.</span><span style="color: #001080">color</span><span style="color: #000000"> = </span><span style="color: #795E26">toRGB</span><span style="color: #000000">(</span><span style="color: #001080">attributes</span><span style="color: #000000">.</span><span style="color: #001080">color</span><span style="color: #000000">)</span>
+<span style="color: #000000">            </span><span style="color: #001080">attributes</span><span style="color: #000000">.</span><span style="color: #001080">text_color</span><span style="color: #000000"> = </span><span style="color: #795E26">toRGB</span><span style="color: #000000">(</span><span style="color: #001080">attributes</span><span style="color: #000000">.</span><span style="color: #001080">text_color</span><span style="color: #000000">)</span>
+<span style="color: #000000">            </span><span style="color: #AF00DB">return</span><span style="color: #000000"> {</span><span style="color: #001080">id</span><span style="color: #000000">, </span><span style="color: #001080">attributes</span><span style="color: #000000">}</span>
+<span style="color: #000000">        })</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">valueBuffer</span><span style="color: #000000"> = </span><span style="color: #001080">routesType</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #001080">routes</span><span style="color: #000000">)</span>
+<span style="color: #000000">        </span><span style="color: #008000">// ArrayBuffer { byteLength: 306 }</span>
+<span style="color: #000000">        </span><span style="color: #008000">// (for comparison, JSON.stringify(routes).length == 1498)</span>
+<span style="color: #000000">    })</span>
+</code></pre>
+				<a href="#reading-from-type-and-value-buffers" id="reading-from-type-and-value-buffers" style="color: inherit; text-decoration: none;">
+					<h3>Reading from type and value buffers</h3>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sb</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;structure-bytes&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-comment">// Buffer obtained somehow</span>
-<span class="hljs-keyword">const</span> typeBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x50</span>, <span class="hljs-number">0x11</span>, <span class="hljs-number">0x03</span>]).buffer
-<span class="hljs-keyword">const</span> type = sb.r.type(typeBuffer)
-<span class="hljs-built_in">console</span>.log(type)
-<span class="hljs-comment">// TupleType { type: UnsignedByteType {}, length: 3 }</span>
+<span style="color: #008000">// Buffer obtained somehow</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">typeBuffer</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Uint8Array</span><span style="color: #000000">([</span><span style="color: #098658">0x50</span><span style="color: #000000">, </span><span style="color: #098658">0x11</span><span style="color: #000000">, </span><span style="color: #098658">0x03</span><span style="color: #000000">]).</span><span style="color: #001080">buffer</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">type</span><span style="color: #000000"> = </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">r</span><span style="color: #000000">.</span><span style="color: #795E26">type</span><span style="color: #000000">(</span><span style="color: #001080">typeBuffer</span><span style="color: #000000">)</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">type</span><span style="color: #000000">)</span>
+<span style="color: #008000">// TupleType { type: UnsignedByteType {}, length: 3 }</span>
 
-<span class="hljs-comment">// Buffer obtained somehow</span>
-<span class="hljs-keyword">const</span> valueBuffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>([<span class="hljs-number">0x00</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>]).buffer
-<span class="hljs-built_in">console</span>.log(type.readValue(valueBuffer))
-<span class="hljs-comment">// [ 0, 128, 255 ]</span></code></pre>
-				<h3 id="file-i-o">File I/O</h3>
+<span style="color: #008000">// Buffer obtained somehow</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">valueBuffer</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Uint8Array</span><span style="color: #000000">([</span><span style="color: #098658">0x00</span><span style="color: #000000">, </span><span style="color: #098658">0x80</span><span style="color: #000000">, </span><span style="color: #098658">0xFF</span><span style="color: #000000">]).</span><span style="color: #001080">buffer</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">type</span><span style="color: #000000">.</span><span style="color: #795E26">readValue</span><span style="color: #000000">(</span><span style="color: #001080">valueBuffer</span><span style="color: #000000">))</span>
+<span style="color: #008000">// [ 0, 128, 255 ]</span>
+</code></pre>
+				<a href="#file-io" id="file-io" style="color: inherit; text-decoration: none;">
+					<h3>File I/O</h3>
+				</a>
 				<p>The I/O functions are implemented with callbacks, but can all be used with <a href="https://nodejs.org/api/util.html#util_util_promisify_original"><code>util.promisify()</code></a> if you prefer to use <code>Promise</code>s instead.
 				See the documentation for examples.</p>
 				<p>I recommend the file extensions <code>.sbt</code> for a serialized type, <code>.sbv</code> for a serialized value, and <code>.sbtv</code> for a serialized type and value.</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>)
-<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">fs</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;fs&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sb</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;structure-bytes&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.EnumType({
-    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.StringType,
-    <span class="hljs-attr">values</span>: [
-        <span class="hljs-string">'ON_TIME'</span>,
-        <span class="hljs-string">'LATE'</span>,
-        <span class="hljs-string">'CANCELLED'</span>,
-        <span class="hljs-string">'UNKNOWN'</span>
-    ]
-})
-sb.writeType({
-    type,
-    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'status.sbt'</span>)
-}, err =&gt; {
-    sb.readType(fs.createReadStream(<span class="hljs-string">'status.sbt'</span>), (err, readType) =&gt;
-        <span class="hljs-built_in">console</span>.log(readType)
-        <span class="hljs-comment">/*
-        EnumType {
-            type: StringType {},
-            values: [ 'ON_TIME', 'LATE', 'CANCELLED', 'UNKNOWN' ] }
-        */</span>
-    )
-})
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">type</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">EnumType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">values:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&#039;ON_TIME&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&#039;LATE&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&#039;CANCELLED&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&#039;UNKNOWN&#039;</span>
+<span style="color: #000000">    ]</span>
+<span style="color: #000000">})</span>
+<span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">writeType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">outStream:</span><span style="color: #000000"> </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">createWriteStream</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;status.sbt&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">}, </span><span style="color: #001080">err</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">readType</span><span style="color: #000000">(</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">createReadStream</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;status.sbt&#039;</span><span style="color: #000000">), (</span><span style="color: #001080">err</span><span style="color: #000000">, </span><span style="color: #001080">readType</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">readType</span><span style="color: #000000">)</span>
+<span style="color: #000000">        </span><span style="color: #008000">/*</span>
+<span style="color: #008000">        EnumType {</span>
+<span style="color: #008000">            type: StringType {},</span>
+<span style="color: #008000">            values: [ &#039;ON_TIME&#039;, &#039;LATE&#039;, &#039;CANCELLED&#039;, &#039;UNKNOWN&#039; ] }</span>
+<span style="color: #008000">        */</span>
+<span style="color: #000000">    )</span>
+<span style="color: #000000">})</span>
 
-<span class="hljs-keyword">const</span> value = <span class="hljs-string">'CANCELLED'</span>
-sb.writeValue({
-    type,
-    value,
-    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'status.sbv'</span>)
-}, err =&gt; {
-    sb.readValue({
-        type,
-        <span class="hljs-attr">inStream</span>: fs.createReadStream(<span class="hljs-string">'status.sbv'</span>)
-    }, (err, value) =&gt;
-        <span class="hljs-built_in">console</span>.log(value)
-        <span class="hljs-comment">// 'CANCELLED'</span>
-    )
-})
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">value</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;CANCELLED&#039;</span>
+<span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">writeValue</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">value</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">outStream:</span><span style="color: #000000"> </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">createWriteStream</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;status.sbv&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">}, </span><span style="color: #001080">err</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">readValue</span><span style="color: #000000">({</span>
+<span style="color: #000000">        </span><span style="color: #001080">type</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">inStream:</span><span style="color: #000000"> </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">createReadStream</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;status.sbv&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">    }, (</span><span style="color: #001080">err</span><span style="color: #000000">, </span><span style="color: #001080">value</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">value</span><span style="color: #000000">)</span>
+<span style="color: #000000">        </span><span style="color: #008000">// &#039;CANCELLED&#039;</span>
+<span style="color: #000000">    )</span>
+<span style="color: #000000">})</span>
 
-sb.writeTypeAndValue({
-    type,
-    value,
-    <span class="hljs-attr">outStream</span>: fs.createWriteStream(<span class="hljs-string">'status.sbtv'</span>)
-}, err =&gt; {
-    sb.readTypeAndValue(fs.createReadStream(<span class="hljs-string">'status.sbtv'</span>), (err, type, value) =&gt;
-        <span class="hljs-built_in">console</span>.log(value)
-        <span class="hljs-comment">// 'CANCELLED'</span>
-    )
-})</code></pre>
-				<h3 id="http-get-value">HTTP GET value</h3>
+<span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">writeTypeAndValue</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">value</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">outStream:</span><span style="color: #000000"> </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">createWriteStream</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;status.sbtv&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">}, </span><span style="color: #001080">err</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">readTypeAndValue</span><span style="color: #000000">(</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">createReadStream</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;status.sbtv&#039;</span><span style="color: #000000">), (</span><span style="color: #001080">err</span><span style="color: #000000">, </span><span style="color: #001080">type</span><span style="color: #000000">, </span><span style="color: #001080">value</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">value</span><span style="color: #000000">)</span>
+<span style="color: #000000">        </span><span style="color: #008000">// &#039;CANCELLED&#039;</span>
+<span style="color: #000000">    )</span>
+<span style="color: #000000">})</span>
+</code></pre>
+				<a href="#http-get-value" id="http-get-value" style="color: inherit; text-decoration: none;">
+					<h3>HTTP GET value</h3>
+				</a>
 				<p>Server-side:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>)
-<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">http</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;http&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sb</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;structure-bytes&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.DateType
-http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
-    sb.httpRespond({req, res, type, <span class="hljs-attr">value</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>}, err =&gt;
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Responded'</span>)
-    )
-}).listen(<span class="hljs-number">80</span>)</code></pre>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">type</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">DateType</span>
+<span style="color: #001080">http</span><span style="color: #000000">.</span><span style="color: #795E26">createServer</span><span style="color: #000000">((</span><span style="color: #001080">req</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">httpRespond</span><span style="color: #000000">({</span><span style="color: #001080">req</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">, </span><span style="color: #001080">type</span><span style="color: #000000">, </span><span style="color: #001080">value:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">}, </span><span style="color: #001080">err</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Responded&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">    )</span>
+<span style="color: #000000">}).</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #098658">80</span><span style="color: #000000">)</span>
+</code></pre>
 				<p>Client-side:</p>
-				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/download.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
-    <span class="hljs-comment">// 'date' specifies the name of the type being transferred so it can be cached for future requests</span>
-    sb.download({
-        <span class="hljs-attr">name</span>: <span class="hljs-string">'date'</span>,
-        <span class="hljs-attr">url</span>: <span class="hljs-string">'/'</span>,
-        <span class="hljs-attr">options</span>: {} <span class="hljs-comment">// optional options to pass to fetch() (e.g. cookies, headers, etc.)</span>
-    })
-        .then(<span class="hljs-function"><span class="hljs-params">value</span> =&gt;</span>
-            <span class="hljs-built_in">console</span>.log(value.getFullYear())
-            <span class="hljs-comment">// 2017</span>
-        )
-</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
-				<h3 id="http-post-value">HTTP POST value</h3>
+				<pre><code class="language-html"><span style="color: #800000">&lt;script</span><span style="color: #000000FF"> </span><span style="color: #FF0000">src</span><span style="color: #000000FF"> = </span><span style="color: #0000FF">&#039;/structure-bytes/compiled/download.js&#039;</span><span style="color: #800000">&gt;&lt;/script&gt;</span>
+<span style="color: #800000">&lt;script&gt;</span>
+<span style="color: #000000FF">    </span><span style="color: #008000">// &#039;date&#039; specifies the name of the type being transferred so it can be cached for future requests</span>
+<span style="color: #000000FF">    </span><span style="color: #001080">sb</span><span style="color: #000000FF">.</span><span style="color: #795E26">download</span><span style="color: #000000FF">({</span>
+<span style="color: #000000FF">        </span><span style="color: #001080">name:</span><span style="color: #000000FF"> </span><span style="color: #A31515">&#039;date&#039;</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">        </span><span style="color: #001080">url:</span><span style="color: #000000FF"> </span><span style="color: #A31515">&#039;/&#039;</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">        </span><span style="color: #001080">options:</span><span style="color: #000000FF"> {} </span><span style="color: #008000">// optional options to pass to fetch() (e.g. cookies, headers, etc.)</span>
+<span style="color: #000000FF">    })</span>
+<span style="color: #000000FF">        .</span><span style="color: #795E26">then</span><span style="color: #000000FF">(</span><span style="color: #001080">value</span><span style="color: #000000FF"> </span><span style="color: #0000FF">=&gt;</span>
+<span style="color: #000000FF">            </span><span style="color: #001080">console</span><span style="color: #000000FF">.</span><span style="color: #795E26">log</span><span style="color: #000000FF">(</span><span style="color: #001080">value</span><span style="color: #000000FF">.</span><span style="color: #795E26">getFullYear</span><span style="color: #000000FF">())</span>
+<span style="color: #000000FF">            </span><span style="color: #008000">// 2017</span>
+<span style="color: #000000FF">        )</span>
+<span style="color: #800000">&lt;/script&gt;</span>
+</code></pre>
+				<a href="#http-post-value" id="http-post-value" style="color: inherit; text-decoration: none;">
+					<h3>HTTP POST value</h3>
+				</a>
 				<p>Server-side:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>)
-<span class="hljs-keyword">const</span> sb = <span class="hljs-built_in">require</span>(<span class="hljs-string">'structure-bytes'</span>)
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">http</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;http&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sb</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;structure-bytes&#039;</span><span style="color: #000000">)</span>
 
-http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
-    sb.readValue({<span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType, <span class="hljs-attr">inStream</span>: req}, (err, value) =&gt; {
-        res.end(<span class="hljs-built_in">String</span>(value))
-    })
-}).listen(<span class="hljs-number">80</span>)</code></pre>
+<span style="color: #001080">http</span><span style="color: #000000">.</span><span style="color: #795E26">createServer</span><span style="color: #000000">((</span><span style="color: #001080">req</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">readValue</span><span style="color: #000000">({</span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FlexUnsignedIntType</span><span style="color: #000000">, </span><span style="color: #001080">inStream:</span><span style="color: #000000"> </span><span style="color: #001080">req</span><span style="color: #000000">}, (</span><span style="color: #001080">err</span><span style="color: #000000">, </span><span style="color: #001080">value</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">end</span><span style="color: #000000">(</span><span style="color: #267F99">String</span><span style="color: #000000">(</span><span style="color: #001080">value</span><span style="color: #000000">))</span>
+<span style="color: #000000">    })</span>
+<span style="color: #000000">}).</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #098658">80</span><span style="color: #000000">)</span>
+</code></pre>
 				<p>Client-side:</p>
-				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span> = <span class="hljs-string">'/structure-bytes/compiled/upload.js'</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span> = <span class="hljs-string">'upload()'</span>&gt;</span>Click me<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
-    <span class="hljs-keyword">let</span> clickCount = <span class="hljs-number">0</span>
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload</span>(<span class="hljs-params"></span>) </span>{
-        clickCount++
-        sb.upload({
-            <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FlexUnsignedIntType,
-            <span class="hljs-attr">value</span>: clickCount,
-            <span class="hljs-attr">url</span>: <span class="hljs-string">'/click'</span>,
-            <span class="hljs-attr">options</span>: {<span class="hljs-attr">method</span>: <span class="hljs-string">'POST'</span>} <span class="hljs-comment">// options to pass to fetch(); method 'POST' is required</span>
-        })
-            .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> response.text())
-            .then(alert)
-    }
-</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
-				<h2 id="using-with-typescript">Using with TypeScript</h2>
+				<pre><code class="language-html"><span style="color: #800000">&lt;script</span><span style="color: #000000FF"> </span><span style="color: #FF0000">src</span><span style="color: #000000FF"> = </span><span style="color: #0000FF">&#039;/structure-bytes/compiled/upload.js&#039;</span><span style="color: #800000">&gt;&lt;/script&gt;</span>
+<span style="color: #800000">&lt;button</span><span style="color: #000000"> </span><span style="color: #FF0000">onclick</span><span style="color: #000000"> = </span><span style="color: #0000FF">&#039;</span><span style="color: #795E26">upload</span><span style="color: #0000FF">()&#039;</span><span style="color: #800000">&gt;</span><span style="color: #000000">Click me</span><span style="color: #800000">&lt;/button&gt;</span>
+<span style="color: #800000">&lt;script&gt;</span>
+<span style="color: #000000FF">    </span><span style="color: #0000FF">let</span><span style="color: #000000FF"> </span><span style="color: #001080">clickCount</span><span style="color: #000000FF"> </span><span style="color: #000000">=</span><span style="color: #000000FF"> </span><span style="color: #098658">0</span>
+<span style="color: #000000FF">    </span><span style="color: #0000FF">function</span><span style="color: #000000FF"> </span><span style="color: #795E26">upload</span><span style="color: #000000FF">() {</span>
+<span style="color: #000000FF">        </span><span style="color: #001080">clickCount</span><span style="color: #000000">++</span>
+<span style="color: #000000FF">        </span><span style="color: #001080">sb</span><span style="color: #000000FF">.</span><span style="color: #795E26">upload</span><span style="color: #000000FF">({</span>
+<span style="color: #000000FF">            </span><span style="color: #001080">type:</span><span style="color: #000000FF"> </span><span style="color: #0000FF">new</span><span style="color: #000000FF"> </span><span style="color: #001080">sb</span><span style="color: #000000FF">.</span><span style="color: #001080">FlexUnsignedIntType</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">            </span><span style="color: #001080">value:</span><span style="color: #000000FF"> </span><span style="color: #001080">clickCount</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">            </span><span style="color: #001080">url:</span><span style="color: #000000FF"> </span><span style="color: #A31515">&#039;/click&#039;</span><span style="color: #000000FF">,</span>
+<span style="color: #000000FF">            </span><span style="color: #001080">options:</span><span style="color: #000000FF"> {</span><span style="color: #001080">method:</span><span style="color: #000000FF"> </span><span style="color: #A31515">&#039;POST&#039;</span><span style="color: #000000FF">} </span><span style="color: #008000">// options to pass to fetch(); method &#039;POST&#039; is required</span>
+<span style="color: #000000FF">        })</span>
+<span style="color: #000000FF">            .</span><span style="color: #795E26">then</span><span style="color: #000000FF">(</span><span style="color: #001080">response</span><span style="color: #000000FF"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000FF"> </span><span style="color: #001080">response</span><span style="color: #000000FF">.</span><span style="color: #795E26">text</span><span style="color: #000000FF">())</span>
+<span style="color: #000000FF">            .</span><span style="color: #795E26">then</span><span style="color: #000000FF">(</span><span style="color: #001080">alert</span><span style="color: #000000FF">)</span>
+<span style="color: #000000FF">    }</span>
+<span style="color: #800000">&lt;/script&gt;</span>
+</code></pre>
+				<a href="#using-with-typescript" id="using-with-typescript" style="color: inherit; text-decoration: none;">
+					<h2>Using with TypeScript</h2>
+				</a>
 				<p>The entire project is written in TypeScript and declaration files are automatically generated. That means that if you are using TypeScript, the compiler can automatically infer the type of the various values exported from <code>structure-bytes</code>. To import the package, use:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> sb <span class="hljs-keyword">from</span> <span class="hljs-string">'structure-bytes'</span></code></pre>
+				<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;structure-bytes&#039;</span>
+</code></pre>
 				<p>The typings allow the compiler to automatically infer what types of values a <code>Type</code> can serialize. For example:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">abc</span>: <span class="hljs-keyword">new</span> sb.DoubleType,
-    <span class="hljs-attr">def</span>: <span class="hljs-keyword">new</span> sb.MapType(
-        <span class="hljs-keyword">new</span> sb.StringType,
-        <span class="hljs-keyword">new</span> sb.DayType
-    )
-})
-type.valueBuffer(<span class="hljs-comment">/*...*/</span>)
-<span class="hljs-comment">/*
-If you hover over "valueBuffer", you can see
-that it requires the value to be of type:
-{ abc: number | string, def: Map&lt;string, Date&gt; }
-*/</span></code></pre>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">type</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">abc:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">DoubleType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">def:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">MapType</span><span style="color: #000000">(</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">DayType</span>
+<span style="color: #000000">    )</span>
+<span style="color: #000000">})</span>
+<span style="color: #001080">type</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #008000">/*...*/</span><span style="color: #000000">)</span>
+<span style="color: #008000">/*</span>
+<span style="color: #008000">If you hover over &quot;valueBuffer&quot;, you can see</span>
+<span style="color: #008000">that it requires the value to be of type:</span>
+<span style="color: #008000">{ abc: number | string, def: Map&lt;string, Date&gt; }</span>
+<span style="color: #008000">*/</span>
+</code></pre>
 				<p>You can also add explicit <code>VALUE</code> generics to make the compiler check that your <code>Type</code> serializes the correct types of values.
 					Many non-primitive types (e.g. <code>ArrayType</code>, <code>MapType</code>, <code>StructType</code>) can take either one or two generics.
 					The first, <code>VALUE</code>, specifies the type of values the type can serialize.
@@ -363,121 +394,130 @@ that it requires the value to be of type:
 					<code>READ_VALUE</code> must extend <code>VALUE</code>.
 				Generally the two generics are the same, except in the case of numeric types (which write <code>number | string</code> but read <code>number</code>) and <code>OptionalType</code> (which writes <code>E | null | undefined</code> but reads <code>E | null</code>).</p>
 				<p>With <code>StructType</code>:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">class</span> Car {
-    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
-        <span class="hljs-keyword">public</span> make: <span class="hljs-built_in">string</span>,
-        <span class="hljs-keyword">public</span> model: <span class="hljs-built_in">string</span>,
-        <span class="hljs-keyword">public</span> year: <span class="hljs-built_in">number</span>
-    </span>) {}
-}
-<span class="hljs-keyword">const</span> carType = <span class="hljs-keyword">new</span> sb.StructType&lt;Car&gt;({
-    make: <span class="hljs-keyword">new</span> sb.StringType,
-    model: <span class="hljs-keyword">new</span> sb.StringType,
-    year: <span class="hljs-keyword">new</span> sb.UnsignedShortType
-})
-<span class="hljs-comment">// The compiler would have complained if one of the fields were missing</span>
-<span class="hljs-comment">// or one of the field's types didn't match the type of the field's values,</span>
-<span class="hljs-comment">// e.g. "make: new sb.BooleanType"</span></code></pre>
+				<pre><code class="language-typescript"><span style="color: #0000FF">class</span><span style="color: #000000"> </span><span style="color: #267F99">Car</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">constructor</span><span style="color: #000000">(</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">make</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">model</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">year</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">    ) {}</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">carType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">Car</span><span style="color: #000000">&gt;({</span>
+<span style="color: #000000">    </span><span style="color: #001080">make:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">model:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">year:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">UnsignedShortType</span>
+<span style="color: #000000">})</span>
+<span style="color: #008000">// The compiler would have complained if one of the fields were missing</span>
+<span style="color: #008000">// or one of the field&#039;s types didn&#039;t match the type of the field&#039;s values,</span>
+<span style="color: #008000">// e.g. &quot;make: new sb.BooleanType&quot;</span>
+</code></pre>
 				<p>If you have transient fields (i.e. they shouldn&#39;t be serialized), you can create a separate interface for the fields that should be serialized:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> SerializedCar {
-    make: <span class="hljs-built_in">string</span>
-    model: <span class="hljs-built_in">string</span>
-    year: <span class="hljs-built_in">number</span>
-}
-<span class="hljs-keyword">class</span> Car <span class="hljs-keyword">implements</span> SerializedCar {
-    <span class="hljs-keyword">public</span> id: <span class="hljs-built_in">number</span> <span class="hljs-comment">// transient field</span>
-    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">public</span> make: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">public</span> model: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">public</span> year: <span class="hljs-built_in">number</span></span>) {
-        <span class="hljs-keyword">this</span>.id = <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">1e6</span>)
-    }
-}
-<span class="hljs-keyword">const</span> carType = <span class="hljs-keyword">new</span> sb.StructType&lt;SerializedCar&gt;({
-    make: <span class="hljs-keyword">new</span> sb.StringType,
-    model: <span class="hljs-keyword">new</span> sb.StringType,
-    year: <span class="hljs-keyword">new</span> sb.UnsignedShortType
-})</code></pre>
-				<p>With <code>ChoiceType</code> (and similarly for <code>NamedChoiceType</code>), you can let the type be inferred automatically if each of the possible types writes the same type of values:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> choiceType = <span class="hljs-keyword">new</span> sb.ChoiceType([ <span class="hljs-comment">// Type&lt;number | string, number&gt;</span>
-    <span class="hljs-keyword">new</span> sb.ByteType,
-    <span class="hljs-keyword">new</span> sb.ShortType,
-    <span class="hljs-keyword">new</span> sb.IntType,
-    <span class="hljs-keyword">new</span> sb.DoubleType
-])</code></pre>
+				<pre><code class="language-typescript"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">SerializedCar</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">make</span><span style="color: #000000">: </span><span style="color: #267F99">string</span>
+<span style="color: #000000">    </span><span style="color: #001080">model</span><span style="color: #000000">: </span><span style="color: #267F99">string</span>
+<span style="color: #000000">    </span><span style="color: #001080">year</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">class</span><span style="color: #000000"> </span><span style="color: #267F99">Car</span><span style="color: #000000"> </span><span style="color: #0000FF">implements</span><span style="color: #000000"> </span><span style="color: #267F99">SerializedCar</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">id</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000"> </span><span style="color: #008000">// transient field</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">constructor</span><span style="color: #000000">(</span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">make</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">, </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">model</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">, </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #001080">year</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">id</span><span style="color: #000000"> = </span><span style="color: #267F99">Math</span><span style="color: #000000">.</span><span style="color: #795E26">floor</span><span style="color: #000000">(</span><span style="color: #267F99">Math</span><span style="color: #000000">.</span><span style="color: #795E26">random</span><span style="color: #000000">() * </span><span style="color: #098658">1e6</span><span style="color: #000000">)</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">carType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">SerializedCar</span><span style="color: #000000">&gt;({</span>
+<span style="color: #000000">    </span><span style="color: #001080">make:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">model:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">year:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">UnsignedShortType</span>
+<span style="color: #000000">})</span>
+</code></pre>
+				<p>With <code>ChoiceType</code>, you can let the type be inferred automatically if each of the possible types writes the same type of values:</p>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">choiceType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ChoiceType</span><span style="color: #000000">([ </span><span style="color: #008000">// Type&lt;number | string, number&gt;</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">ByteType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">ShortType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">IntType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">DoubleType</span>
+<span style="color: #000000">])</span>
+</code></pre>
 				<p>However, if the value types are not the same, TypeScript will complain about them not matching, and you should express the union type explicitly:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> RGB {
-    r: <span class="hljs-built_in">number</span>
-    g: <span class="hljs-built_in">number</span>
-    b: <span class="hljs-built_in">number</span>
-}
-<span class="hljs-keyword">interface</span> HSV {
-    h: <span class="hljs-built_in">number</span>
-    s: <span class="hljs-built_in">number</span>
-    v: <span class="hljs-built_in">number</span>
-}
-<span class="hljs-keyword">type</span> CSSColor = <span class="hljs-built_in">string</span>
+				<pre><code class="language-typescript"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">RGB</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">r</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">    </span><span style="color: #001080">g</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">    </span><span style="color: #001080">b</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">HSV</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">h</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">    </span><span style="color: #001080">s</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">    </span><span style="color: #001080">v</span><span style="color: #000000">: </span><span style="color: #267F99">number</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">type</span><span style="color: #000000"> </span><span style="color: #267F99">CSSColor</span><span style="color: #000000"> = </span><span style="color: #267F99">string</span>
 
-<span class="hljs-keyword">const</span> choiceType = <span class="hljs-keyword">new</span> sb.ChoiceType&lt;RGB | HSV | CSSColor&gt;([
-    <span class="hljs-keyword">new</span> sb.StructType&lt;RGB&gt;({
-        r: <span class="hljs-keyword">new</span> sb.FloatType,
-        g: <span class="hljs-keyword">new</span> sb.FloatType,
-        b: <span class="hljs-keyword">new</span> sb.FloatType
-    }),
-    <span class="hljs-keyword">new</span> sb.StructType&lt;HSV&gt;({
-        h: <span class="hljs-keyword">new</span> sb.FloatType,
-        s: <span class="hljs-keyword">new</span> sb.FloatType,
-        v: <span class="hljs-keyword">new</span> sb.FloatType
-    }),
-    <span class="hljs-keyword">new</span> sb.StringType
-])</code></pre>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">choiceType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">ChoiceType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">RGB</span><span style="color: #000000"> | </span><span style="color: #267F99">HSV</span><span style="color: #000000"> | </span><span style="color: #267F99">CSSColor</span><span style="color: #000000">&gt;([</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">RGB</span><span style="color: #000000">&gt;({</span>
+<span style="color: #000000">        </span><span style="color: #001080">r:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">g:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">b:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span>
+<span style="color: #000000">    }),</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">HSV</span><span style="color: #000000">&gt;({</span>
+<span style="color: #000000">        </span><span style="color: #001080">h:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">s:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">v:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span>
+<span style="color: #000000">    }),</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span>
+<span style="color: #000000">])</span>
+</code></pre>
 				<p>A <code>RecursiveType</code> has no way to infer its value type, so you should always provide the <code>VALUE</code> generic:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> Cons&lt;A&gt; {
-    head: A
-    tail: List&lt;A&gt;
-}
-<span class="hljs-keyword">interface</span> List&lt;A&gt; {
-    list: Cons&lt;A&gt; | <span class="hljs-literal">null</span> <span class="hljs-comment">// null for empty list</span>
-}
+				<pre><code class="language-typescript"><span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">Cons</span><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">&gt; {</span>
+<span style="color: #000000">    </span><span style="color: #001080">head</span><span style="color: #000000">: </span><span style="color: #267F99">A</span>
+<span style="color: #000000">    </span><span style="color: #001080">tail</span><span style="color: #000000">: </span><span style="color: #267F99">List</span><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">&gt;</span>
+<span style="color: #000000">}</span>
+<span style="color: #0000FF">interface</span><span style="color: #000000"> </span><span style="color: #267F99">List</span><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">&gt; {</span>
+<span style="color: #000000">    </span><span style="color: #001080">list</span><span style="color: #000000">: </span><span style="color: #267F99">Cons</span><span style="color: #000000">&lt;</span><span style="color: #267F99">A</span><span style="color: #000000">&gt; | </span><span style="color: #267F99">null</span><span style="color: #000000"> </span><span style="color: #008000">// null for empty list</span>
+<span style="color: #000000">}</span>
 
-<span class="hljs-keyword">const</span> recursiveType = <span class="hljs-keyword">new</span> sb.RecursiveType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;(<span class="hljs-string">'linked-list'</span>)
-recursiveType.setType(<span class="hljs-keyword">new</span> sb.StructType&lt;List&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
-    list: <span class="hljs-keyword">new</span> sb.OptionalType(
-        <span class="hljs-keyword">new</span> sb.StructType&lt;Cons&lt;<span class="hljs-built_in">string</span>&gt;&gt;({
-            head: <span class="hljs-keyword">new</span> sb.StringType,
-            tail: recursiveType
-        })
-    )
-}))
-recursiveType.valueBuffer({
-    list: {
-        head: <span class="hljs-string">'1'</span>,
-        tail: {
-            list: {
-                head: <span class="hljs-string">'2'</span>,
-                tail: {list: <span class="hljs-literal">null</span>}
-            }
-        }
-    }
-})</code></pre>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">recursiveType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">RecursiveType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">List</span><span style="color: #000000">&lt;</span><span style="color: #267F99">string</span><span style="color: #000000">&gt;&gt;(</span><span style="color: #A31515">&#039;linked-list&#039;</span><span style="color: #000000">)</span>
+<span style="color: #001080">recursiveType</span><span style="color: #000000">.</span><span style="color: #795E26">setType</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">List</span><span style="color: #000000">&lt;</span><span style="color: #267F99">string</span><span style="color: #000000">&gt;&gt;({</span>
+<span style="color: #000000">    </span><span style="color: #001080">list:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">OptionalType</span><span style="color: #000000">(</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">&lt;</span><span style="color: #267F99">Cons</span><span style="color: #000000">&lt;</span><span style="color: #267F99">string</span><span style="color: #000000">&gt;&gt;({</span>
+<span style="color: #000000">            </span><span style="color: #001080">head:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">StringType</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #001080">tail:</span><span style="color: #000000"> </span><span style="color: #001080">recursiveType</span>
+<span style="color: #000000">        })</span>
+<span style="color: #000000">    )</span>
+<span style="color: #000000">}))</span>
+<span style="color: #001080">recursiveType</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">list:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">head:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;1&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">tail:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">            </span><span style="color: #001080">list:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">                </span><span style="color: #001080">head:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;2&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">                </span><span style="color: #001080">tail:</span><span style="color: #000000"> {</span><span style="color: #001080">list:</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">}</span>
+<span style="color: #000000">            }</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">})</span>
+</code></pre>
 				<p>When reading types from buffers and streams, they will be of type <code>Type&lt;any&gt;</code>.
 				You should specify their value types before using them to write values:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> booleanType = <span class="hljs-keyword">new</span> sb.BooleanType
-<span class="hljs-keyword">const</span> readType = sb.r.type(booleanType.toBuffer()) <span class="hljs-comment">// Type&lt;any&gt;</span>
-<span class="hljs-comment">// Will throw a runtime error</span>
-readType.valueBuffer(<span class="hljs-string">'abc'</span>)
+				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">booleanType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">BooleanType</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">readType</span><span style="color: #000000"> = </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">r</span><span style="color: #000000">.</span><span style="color: #795E26">type</span><span style="color: #000000">(</span><span style="color: #001080">booleanType</span><span style="color: #000000">.</span><span style="color: #795E26">toBuffer</span><span style="color: #000000">()) </span><span style="color: #008000">// Type&lt;any&gt;</span>
+<span style="color: #008000">// Will throw a runtime error</span>
+<span style="color: #001080">readType</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;abc&#039;</span><span style="color: #000000">)</span>
 
-<span class="hljs-comment">//vs.</span>
+<span style="color: #008000">//vs.</span>
 
-<span class="hljs-keyword">const</span> castReadType: sb.Type&lt;<span class="hljs-built_in">boolean</span>&gt; = sb.r.type(booleanType.toBuffer())
-<span class="hljs-comment">// Will throw a compiler error</span>
-castReadType.valueBuffer(<span class="hljs-string">'abc'</span>)</code></pre>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">castReadType</span><span style="color: #000000">: </span><span style="color: #267F99">sb</span><span style="color: #000000">.</span><span style="color: #267F99">Type</span><span style="color: #000000">&lt;</span><span style="color: #267F99">boolean</span><span style="color: #000000">&gt; = </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">r</span><span style="color: #000000">.</span><span style="color: #795E26">type</span><span style="color: #000000">(</span><span style="color: #001080">booleanType</span><span style="color: #000000">.</span><span style="color: #795E26">toBuffer</span><span style="color: #000000">())</span>
+<span style="color: #008000">// Will throw a compiler error</span>
+<span style="color: #001080">castReadType</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;abc&#039;</span><span style="color: #000000">)</span>
+</code></pre>
 				<p>It may also sometimes be useful to be more specific about what types of values you want to be able to serialize.
 				For example, if you want to serialize integer values that will always be represented as numbers (and never in string form), you can force the compiler to error out if you try to serialize a string value with the following:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> intType: sb.Type&lt;<span class="hljs-built_in">number</span>&gt; = <span class="hljs-keyword">new</span> sb.IntType
-<span class="hljs-comment">// Now this is valid:</span>
-intType.valueBuffer(<span class="hljs-number">100</span>)
-<span class="hljs-comment">// But this is not, even though it would be if you omitted the type annotation on intType:</span>
-intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
-				<h2 id="binary-formats">Binary formats</h2>
-				<p>In the following definitions, <code>uint8_t</code> means an 8-bit unsigned integer. <code>flexInt</code> means a variable-length unsigned integer with the following format, where <code>X</code> represents either <code>0</code> or <code>1</code>:</p>
+				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">intType</span><span style="color: #000000">: </span><span style="color: #267F99">sb</span><span style="color: #000000">.</span><span style="color: #267F99">Type</span><span style="color: #000000">&lt;</span><span style="color: #267F99">number</span><span style="color: #000000">&gt; = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">IntType</span>
+<span style="color: #008000">// Now this is valid:</span>
+<span style="color: #001080">intType</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #098658">100</span><span style="color: #000000">)</span>
+<span style="color: #008000">// But this is not, even though it would be if you omitted the type annotation on intType:</span>
+<span style="color: #001080">intType</span><span style="color: #000000">.</span><span style="color: #795E26">valueBuffer</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;100&#039;</span><span style="color: #000000">)</span>
+</code></pre>
+				<a href="#binary-formats" id="binary-formats" style="color: inherit; text-decoration: none;">
+					<h2>Binary formats</h2>
+				</a>
+				<p>In the following definitions, <code>flexInt</code> means a variable-length unsigned integer with the following format, where <code>X</code> represents either <code>0</code> or <code>1</code>:</p>
 				<ul>
 					<li><code>[0b0XXXXXXX]</code> stores values from <code>0</code> to <code>2**7 - 1</code> in their unsigned 7-bit integer representations</li>
 					<li><code>[0b10XXXXXX, 0bXXXXXXXX]</code> stores values from <code>2**7</code> to <code>2**7 + 2**14 - 1</code>, where a value <code>x</code> is encoded into the unsigned 14-bit representation of <code>x - 2**7</code></li>
@@ -485,41 +525,45 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 					<li>and so on, up to 8-byte representations</li>
 				</ul>
 				<p>All numbers are stored in big-endian format.</p>
-				<h3 id="type">Type</h3>
+				<a href="#type" id="type" style="color: inherit; text-decoration: none;">
+					<h3>Type</h3>
+				</a>
 				<p>The binary format of a type contains a byte identifying the class of the type followed by additional information to describe the type, if necessary.
 				For example, <code>new sb.UnsignedIntType</code> translates into <code>[0x13]</code>, and <code>new sb.StructType({abc: new sb.ByteType, def: new sb.StringType})</code> translates into:</p>
-				<pre><code class="language-javascript">[
-    <span class="hljs-number">0x51</span> <span class="hljs-comment">/*StructType*/</span>,
-        <span class="hljs-number">2</span> <span class="hljs-comment">/*2 fields*/</span>,
-            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in first field's name*/</span>, <span class="hljs-number">0x61</span> <span class="hljs-comment">/*a*/</span>, <span class="hljs-number">0x62</span> <span class="hljs-comment">/*b*/</span>, <span class="hljs-number">0x63</span> <span class="hljs-comment">/*c*/</span>, <span class="hljs-number">0x01</span> <span class="hljs-comment">/*ByteType*/</span>,
-            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in second field's name*/</span>, <span class="hljs-number">0x64</span> <span class="hljs-comment">/*d*/</span>, <span class="hljs-number">0x65</span> <span class="hljs-comment">/*e*/</span>, <span class="hljs-number">0x66</span> <span class="hljs-comment">/*f*/</span>, <span class="hljs-number">0x41</span> <span class="hljs-comment">/*StringType*/</span>
-]</code></pre>
+				<pre><code class="language-javascript"><span style="color: #000000">[</span>
+<span style="color: #000000">    </span><span style="color: #098658">0x51</span><span style="color: #000000"> </span><span style="color: #008000">/*StructType*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #098658">2</span><span style="color: #000000"> </span><span style="color: #008000">/*2 fields*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #008000">/*first field&#039;s name*/</span><span style="color: #000000">, </span><span style="color: #098658">0x61</span><span style="color: #000000"> </span><span style="color: #008000">/*a*/</span><span style="color: #000000">, </span><span style="color: #098658">0x62</span><span style="color: #000000"> </span><span style="color: #008000">/*b*/</span><span style="color: #000000">, </span><span style="color: #098658">0x63</span><span style="color: #000000"> </span><span style="color: #008000">/*c*/</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">0x01</span><span style="color: #000000"> </span><span style="color: #008000">/*ByteType*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #008000">/*second field&#039;s name*/</span><span style="color: #000000">, </span><span style="color: #098658">0x64</span><span style="color: #000000"> </span><span style="color: #008000">/*d*/</span><span style="color: #000000">, </span><span style="color: #098658">0x65</span><span style="color: #000000"> </span><span style="color: #008000">/*e*/</span><span style="color: #000000">, </span><span style="color: #098658">0x66</span><span style="color: #000000"> </span><span style="color: #008000">/*f*/</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">0x41</span><span style="color: #000000"> </span><span style="color: #008000">/*StringType*/</span>
+<span style="color: #000000">]</span>
+</code></pre>
 				<p>If the type has already been written to the buffer, it is also valid to serialize the type as:</p>
 				<ul>
 					<li><code>0xFF</code></li>
 					<li><code>offset</code> ([position of first byte of <code>offset</code> in buffer] - [position of type in buffer]) - <code>flexInt</code></li>
 				</ul>
 				<p>For example:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> someType = <span class="hljs-keyword">new</span> sb.TupleType({
-    <span class="hljs-attr">type</span>: <span class="hljs-keyword">new</span> sb.FloatType,
-    <span class="hljs-attr">length</span>: <span class="hljs-number">3</span>
-})
-<span class="hljs-keyword">const</span> type = <span class="hljs-keyword">new</span> sb.StructType({
-    <span class="hljs-attr">one</span>: someType,
-    <span class="hljs-attr">two</span>: someType
-})
-<span class="hljs-comment">// type serializes to</span>
-[
-    <span class="hljs-number">0x51</span> <span class="hljs-comment">/*StructType*/</span>,
-        <span class="hljs-number">2</span> <span class="hljs-comment">/*2 fields*/</span>,
-            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in first field's name*/</span>, <span class="hljs-number">0x6f</span> <span class="hljs-comment">/*o*/</span>, <span class="hljs-number">0x6e</span> <span class="hljs-comment">/*n*/</span>, <span class="hljs-number">0x65</span> <span class="hljs-comment">/*e*/</span>,
-                <span class="hljs-number">0x50</span> <span class="hljs-comment">/*TupleType*/</span>,
-                    <span class="hljs-number">0x20</span> <span class="hljs-comment">/*FloatType*/</span>,
-                    <span class="hljs-number">3</span> <span class="hljs-comment">/*3 floats in the tuple*/</span>,
-            <span class="hljs-number">3</span> <span class="hljs-comment">/*3 characters in second field's name*/</span>, <span class="hljs-number">0x74</span> <span class="hljs-comment">/*t*/</span>, <span class="hljs-number">0x77</span> <span class="hljs-comment">/*w*/</span>, <span class="hljs-number">0x6f</span> <span class="hljs-comment">/*o*/</span>,
-                <span class="hljs-number">0xff</span>, <span class="hljs-comment">/*type is defined previously*/</span>
-                    <span class="hljs-number">8</span> <span class="hljs-comment">/*type is defined 8 bytes before this byte*/</span>
-]</code></pre>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">someType</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">TupleType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #001080">FloatType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">length:</span><span style="color: #000000"> </span><span style="color: #098658">3</span>
+<span style="color: #000000">})</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">type</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">sb</span><span style="color: #000000">.</span><span style="color: #795E26">StructType</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">one:</span><span style="color: #000000"> </span><span style="color: #001080">someType</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">two:</span><span style="color: #000000"> </span><span style="color: #001080">someType</span>
+<span style="color: #000000">})</span>
+<span style="color: #008000">// type serializes to</span>
+<span style="color: #000000">[</span>
+<span style="color: #000000">    </span><span style="color: #098658">0x51</span><span style="color: #000000"> </span><span style="color: #008000">/*StructType*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #098658">2</span><span style="color: #000000"> </span><span style="color: #008000">/*2 fields*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #008000">/*first field&#039;s name*/</span><span style="color: #000000">, </span><span style="color: #098658">0x6f</span><span style="color: #000000"> </span><span style="color: #008000">/*o*/</span><span style="color: #000000">, </span><span style="color: #098658">0x6e</span><span style="color: #000000"> </span><span style="color: #008000">/*n*/</span><span style="color: #000000">, </span><span style="color: #098658">0x65</span><span style="color: #000000"> </span><span style="color: #008000">/*e*/</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">,</span>
+<span style="color: #000000">                </span><span style="color: #098658">0x50</span><span style="color: #000000"> </span><span style="color: #008000">/*TupleType*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">                    </span><span style="color: #098658">0x20</span><span style="color: #000000"> </span><span style="color: #008000">/*FloatType*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">                    </span><span style="color: #098658">3</span><span style="color: #000000"> </span><span style="color: #008000">/*3 floats in the tuple*/</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #008000">/*second field&#039;s name*/</span><span style="color: #000000">, </span><span style="color: #098658">0x74</span><span style="color: #000000"> </span><span style="color: #008000">/*t*/</span><span style="color: #000000">, </span><span style="color: #098658">0x77</span><span style="color: #000000"> </span><span style="color: #008000">/*w*/</span><span style="color: #000000">, </span><span style="color: #098658">0x6f</span><span style="color: #000000"> </span><span style="color: #008000">/*o*/</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">,</span>
+<span style="color: #000000">                </span><span style="color: #098658">0xff</span><span style="color: #000000">, </span><span style="color: #008000">/*type is defined previously*/</span>
+<span style="color: #000000">                    </span><span style="color: #098658">8</span><span style="color: #000000"> </span><span style="color: #008000">/*type is defined 8 bytes before this byte*/</span>
+<span style="color: #000000">]</span>
+</code></pre>
 				<p>In the following definitions, <code>type</code> means the binary type format.</p>
 				<ul>
 					<li><code>ByteType</code>: identifier <code>0x01</code></li>
@@ -541,7 +585,7 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 					<li><code>DoubleType</code>: identifier <code>0x21</code></li>
 					<li><code>BooleanType</code>: identifier <code>0x30</code></li>
 					<li><code>BooleanTupleType</code>: identifier <code>0x31</code>, payload:<ul>
-							<li><code>length</code> - <code>uint8_t</code></li>
+							<li><code>length</code> - <code>flexInt</code></li>
 						</ul>
 					</li>
 					<li><code>BooleanArrayType</code>: identifier <code>0x32</code></li>
@@ -550,14 +594,13 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 					<li><code>OctetsType</code>: identifier <code>0x42</code></li>
 					<li><code>TupleType</code>: identifier <code>0x50</code>, payload:<ul>
 							<li><code>elementType</code> - <code>type</code></li>
-							<li><code>length</code> - <code>uint8_t</code></li>
+							<li><code>length</code> - <code>flexInt</code></li>
 						</ul>
 					</li>
 					<li><code>StructType</code>: identifier <code>0x51</code>, payload:<ul>
-							<li><code>fieldCount</code> - <code>uint8_t</code></li>
+							<li><code>fieldCount</code> - <code>flexInt</code></li>
 							<li><code>fieldCount</code> instances of <code>field</code>:<ul>
-									<li><code>nameLength</code> - <code>uint8_t</code></li>
-									<li><code>name</code> - a UTF-8 string containing <code>nameLength</code> bytes</li>
+									<li><code>name</code> - a serialized <code>StringType</code> value</li>
 									<li><code>fieldType</code> - <code>type</code></li>
 								</ul>
 							</li>
@@ -578,7 +621,7 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 					</li>
 					<li><code>EnumType</code>: identifier <code>0x55</code>, payload:<ul>
 							<li><code>valueType</code> - <code>type</code></li>
-							<li><code>valueCount</code> - <code>uint8_t</code></li>
+							<li><code>valueCount</code> - <code>flexInt</code></li>
 							<li><code>valueCount</code> instances of <code>value</code>:<ul>
 									<li><code>value</code> - a value that conforms to <code>valueType</code></li>
 								</ul>
@@ -586,19 +629,9 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 						</ul>
 					</li>
 					<li><code>ChoiceType</code>: identifier <code>0x56</code>, payload:<ul>
-							<li><code>typeCount</code> - <code>uint8_t</code></li>
+							<li><code>typeCount</code> - <code>flexInt</code></li>
 							<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
 									<li><code>possibleType</code> - <code>type</code></li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-					<li><code>NamedChoiceType</code>: identifier <code>0x58</code>, payload:<ul>
-							<li><code>typeCount</code> - <code>uint8_t</code></li>
-							<li><code>typeCount</code> instances of <code>possibleType</code>:<ul>
-									<li><code>typeNameLength</code> - <code>uint8_t</code></li>
-									<li><code>typeName</code> - a UTF-8 string containing <code>typeNameLength</code> bytes</li>
-									<li><code>typeType</code> - <code>type</code></li>
 								</ul>
 							</li>
 						</ul>
@@ -625,7 +658,9 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 						</ul>
 					</li>
 				</ul>
-				<h3 id="value">Value</h3>
+				<a href="#value" id="value" style="color: inherit; text-decoration: none;">
+					<h3>Value</h3>
+				</a>
 				<ul>
 					<li><code>ByteType</code>: 1-byte integer</li>
 					<li><code>ShortType</code>: 2-byte integer</li>
@@ -701,16 +736,11 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 						</ul>
 					</li>
 					<li><code>EnumType</code>:<ul>
-							<li><code>index</code> of value in values array - <code>uint8_t</code></li>
+							<li><code>index</code> of value in values array - <code>flexInt</code></li>
 						</ul>
 					</li>
 					<li><code>ChoiceType</code>:<ul>
-							<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
-							<li><code>value</code> - value serialized by specified type</li>
-						</ul>
-					</li>
-					<li><code>NamedChoiceType</code>:<ul>
-							<li><code>index</code> of type in possible types array - <code>uint8_t</code></li>
+							<li><code>index</code> of type in possible types array - <code>flexInt</code></li>
 							<li><code>value</code> - value serialized by specified type</li>
 						</ul>
 					</li>
@@ -751,14 +781,18 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 						</ul>
 					</li>
 				</ul>
-				<h2 id="versioning">Versioning</h2>
+				<a href="#versioning" id="versioning" style="color: inherit; text-decoration: none;">
+					<h2>Versioning</h2>
+				</a>
 				<p>Versions will be of the form <code>x.y.z</code>. They are in the <code>semver</code> format:</p>
 				<ul>
 					<li><code>x</code> is the major release; changes to it represent significant or breaking changes to the API, or to the type or value binary specification.</li>
 					<li><code>y</code> is the minor release; changes to it represent new features that do not break backwards compatibility.</li>
 					<li><code>z</code> is the patch release; changes to it represent bug fixes that do not change the documented API.</li>
 				</ul>
-				<h2 id="testing">Testing</h2>
+				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+					<h2>Testing</h2>
+				</a>
 				<p>To test the Node.js code, run <code>npm test</code>.
 				To test the HTTP transaction code, run <code>node client-test/server.js</code> and open <code>localhost:8080</code> in your browser. Open each link in a new page. <code>Upload</code> and <code>Download</code> should each alert <code>Success</code>, while <code>Upload &amp; Download</code> should alert <code>Upload: Success</code> and <code>Download: Success</code>.</p>
 				<p><em>Caleb Sander, 2017</em></p>
@@ -767,221 +801,29 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
+					<li class=" tsd-kind-module">
+						<a href="modules/index.html">index</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_config_.html">"config"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/io.html">io</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_index_.html">"index"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/lib_appendable.html">lib/appendable</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_io_.html">"io"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/lib_appendable_stream.html">lib/appendable-<wbr>stream</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_read_.html">"read"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/lib_growable_buffer.html">lib/growable-<wbr>buffer</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_recursive_registry_.html">"recursive-<wbr>registry"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/read.html">read</a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_recursive_registry_type_.html">"recursive-<wbr>registry-<wbr>type"</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_appendable_.html">"lib/appendable"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_appendable_stream_.html">"lib/appendable-<wbr>stream"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_assert_.html">"lib/assert"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_bit_math_.html">"lib/bit-<wbr>math"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_buffer_string_.html">"lib/buffer-<wbr>string"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_constants_.html">"lib/constants"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_constructor_registry_.html">"lib/constructor-<wbr>registry"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_date_.html">"lib/date"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_flex_int_.html">"lib/flex-<wbr>int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_growable_buffer_.html">"lib/growable-<wbr>buffer"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_read_util_.html">"lib/read-<wbr>util"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_recursive_nesting_.html">"lib/recursive-<wbr>nesting"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_sha_256_.html">"lib/sha-<wbr>256"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_sha256_load_.html">"lib/sha256-<wbr>load"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_str_to_num_.html">"lib/str-<wbr>to-<wbr>num"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_strint_.html">"lib/strint"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_util_inspect_.html">"lib/util-<wbr>inspect"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_write_booleans_.html">"lib/write-<wbr>booleans"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_write_iterable_.html">"lib/write-<wbr>iterable"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_lib_write_long_.html">"lib/write-<wbr>long"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_absolute_.html">"types/absolute"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_abstract_.html">"types/abstract"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_array_.html">"types/array"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_big_int_.html">"types/big-<wbr>int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_big_unsigned_int_.html">"types/big-<wbr>unsigned-<wbr>int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_boolean_.html">"types/boolean"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_boolean_array_.html">"types/boolean-<wbr>array"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_boolean_tuple_.html">"types/boolean-<wbr>tuple"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_byte_.html">"types/byte"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_char_.html">"types/char"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_choice_.html">"types/choice"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_chrono_.html">"types/chrono"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_date_.html">"types/date"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_day_.html">"types/day"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_double_.html">"types/double"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_enum_.html">"types/enum"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_flex_int_.html">"types/flex-<wbr>int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_flex_unsigned_int_.html">"types/flex-<wbr>unsigned-<wbr>int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_float_.html">"types/float"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_floating_.html">"types/floating"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_index_.html">"types/index"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_int_.html">"types/int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_integer_.html">"types/integer"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_long_.html">"types/long"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_map_.html">"types/map"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_named_choice_.html">"types/named-<wbr>choice"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_octets_.html">"types/octets"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_optional_.html">"types/optional"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_pointer_.html">"types/pointer"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_recursive_.html">"types/recursive"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_set_.html">"types/set"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_short_.html">"types/short"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_singleton_.html">"types/singleton"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_string_.html">"types/string"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_struct_.html">"types/struct"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_time_.html">"types/time"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_tuple_.html">"types/tuple"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_type_.html">"types/type"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_unsigned_.html">"types/unsigned"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_unsigned_byte_.html">"types/unsigned-<wbr>byte"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_unsigned_int_.html">"types/unsigned-<wbr>int"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_unsigned_long_.html">"types/unsigned-<wbr>long"</a>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="modules/_types_unsigned_short_.html">"types/unsigned-<wbr>short"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/types.html">types</a>
 					</li>
 				</ul>
 			</nav>
@@ -997,65 +839,26 @@ intType.valueBuffer(<span class="hljs-string">'100'</span>)</code></pre>
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 			</ul>
 		</div>
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>

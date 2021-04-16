@@ -1,0 +1,541 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>AppendableStream | structure-bytes</title>
+	<meta name="description" content="Documentation for structure-bytes">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">structure-bytes</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">structure-bytes</a>
+				</li>
+				<li>
+					<a href="../modules/lib_appendable_stream.html">lib/appendable-stream</a>
+				</li>
+				<li>
+					<a href="lib_appendable_stream.appendablestream.html">AppendableStream</a>
+				</li>
+			</ul>
+			<h1>Class AppendableStream</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A wrapper around a writable stream
+							to implement <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.
+							The stream must be explicitly closed
+							by calling <a href="lib_appendable_stream.appendablestream.html#end">end</a> after all bytes
+						have been written.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<a href="lib_appendable.appendablebuffer.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableBuffer</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">AppendableStream</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="lib_appendable_stream.appendablestream.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="lib_appendable_stream.appendablestream.html#outstream" class="tsd-kind-icon">out<wbr>Stream</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="lib_appendable_stream.appendablestream.html#pausecount" class="tsd-kind-icon">pause<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="lib_appendable_stream.appendablestream.html#paused" class="tsd-kind-icon">paused</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="lib_appendable_stream.appendablestream.html#writtenbytes" class="tsd-kind-icon">written<wbr>Bytes</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="lib_appendable_stream.appendablestream.html#length" class="tsd-kind-icon">length</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="lib_appendable_stream.appendablestream.html#add" class="tsd-kind-icon">add</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="lib_appendable_stream.appendablestream.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="lib_appendable_stream.appendablestream.html#end" class="tsd-kind-icon">end</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="lib_appendable_stream.appendablestream.html#pause" class="tsd-kind-icon">pause</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="lib_appendable_stream.appendablestream.html#reset" class="tsd-kind-icon">reset</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="lib_appendable_stream.appendablestream.html#resume" class="tsd-kind-icon">resume</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Appendable<wbr>Stream<span class="tsd-signature-symbol">(</span>outStream<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Writable</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.<a href="lib_appendable.appendablebuffer.html#constructor">constructor</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L20">lib/appendable-stream.ts:20</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>outStream: <span class="tsd-signature-type">Writable</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The underlying writable stream</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="outstream" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> out<wbr>Stream</h3>
+					<div class="tsd-signature tsd-kind-icon">out<wbr>Stream<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Writable</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L17">lib/appendable-stream.ts:17</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pausecount" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pause<wbr>Count</h3>
+					<div class="tsd-signature tsd-kind-icon">pause<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L19">lib/appendable-stream.ts:19</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="paused" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> paused</h3>
+					<div class="tsd-signature tsd-kind-icon">paused<span class="tsd-signature-symbol">:</span> <a href="lib_growable_buffer.growablebuffer.html" class="tsd-signature-type" data-tsd-kind="Class">GrowableBuffer</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L20">lib/appendable-stream.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="writtenbytes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> written<wbr>Bytes</h3>
+					<div class="tsd-signature tsd-kind-icon">written<wbr>Bytes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L18">lib/appendable-stream.ts:18</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="length" class="tsd-anchor"></a>
+					<h3>length</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> length<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L65">lib/appendable-stream.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The number of bytes that have been written</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="add" class="tsd-anchor"></a>
+					<h3>add</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.<a href="lib_appendable.appendablebuffer.html#add">add</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L39">lib/appendable-stream.ts:39</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Appends a byte to the end
+									of the written data</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The unsigned byte value to add</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="addall" class="tsd-anchor"></a>
+					<h3>add<wbr>All</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>All<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.<a href="lib_appendable.appendablebuffer.html#addall">addAll</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L49">lib/appendable-stream.ts:49</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Appends a contiguous set of bytes
+									to the end of the written data</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The bytes to add</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="end" class="tsd-anchor"></a>
+					<h3>end</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">end<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L59">lib/appendable-stream.ts:59</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Closes the underlying stream</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="pause" class="tsd-anchor"></a>
+					<h3>pause</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">pause<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.<a href="lib_appendable.appendablebuffer.html#pause">pause</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L92">lib/appendable-stream.ts:92</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Pauses the writing process, i.e.
+										bytes added are not written
+										to the underlying output until
+										<a href="lib_appendable_stream.appendablestream.html#resume">resume</a> is next called and
+										can be cancelled from being written
+									by calling <a href="lib_appendable_stream.appendablestream.html#reset">reset</a>.</p>
+								</div>
+								<p>If called multiple times, <a href="lib_appendable_stream.appendablestream.html#resume">resume</a>
+									and <a href="lib_appendable_stream.appendablestream.html#reset">reset</a> only act on bytes added
+								since the most recent pause. Example:</p>
+								<pre><code class="language-javascript"><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">gb</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">GrowableBuffer</span>
+<span style="color: #001080">gb</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">pause</span><span style="color: #000000">()</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">).</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #098658">2</span><span style="color: #000000">).</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #098658">3</span><span style="color: #000000">)</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">pause</span><span style="color: #000000">()</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">).</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #098658">5</span><span style="color: #000000">).</span><span style="color: #795E26">add</span><span style="color: #000000">(</span><span style="color: #098658">6</span><span style="color: #000000">)</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">reset</span><span style="color: #000000">() </span><span style="color: #008000">//cancels [4, 5, 6]</span>
+<span style="color: #000000">    .</span><span style="color: #795E26">resume</span><span style="color: #000000">()</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">resume</span><span style="color: #000000">() </span><span style="color: #008000">//resumes [1, 2, 3]</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Uint8Array</span><span style="color: #000000">(</span><span style="color: #001080">gb</span><span style="color: #000000">.</span><span style="color: #795E26">toBuffer</span><span style="color: #000000">())) </span><span style="color: #008000">//Uint8Array [ 1, 2, 3 ]</span>
+</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="reset" class="tsd-anchor"></a>
+					<h3>reset</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.<a href="lib_appendable.appendablebuffer.html#reset">reset</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L121">lib/appendable-stream.ts:121</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>See <a href="lib_appendable_stream.appendablestream.html#pause">pause</a>.
+										Restores state to immediately after
+										this <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a> was paused.
+										Prevents paused data from ever
+									being flushed to the output.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If not currently paused</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="resume" class="tsd-anchor"></a>
+					<h3>resume</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">resume<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="lib_appendable.appendablebuffer.html">AppendableBuffer</a>.<a href="lib_appendable.appendablebuffer.html#resume">resume</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/calebsander/structure-bytes/blob/1cdacdd/lib/appendable-stream.ts#L103">lib/appendable-stream.ts:103</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>See <a href="lib_appendable_stream.appendablestream.html#pause">pause</a>.
+										Flushes all paused data to the output
+									and exits paused mode.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If not currently paused</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="lib_appendable_stream.appendablestream.html" class="tsd-signature-type" data-tsd-kind="Class">AppendableStream</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/index.html">index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/io.html">io</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/lib_appendable.html">lib/appendable</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/lib_appendable_stream.html">lib/appendable-<wbr>stream</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/lib_growable_buffer.html">lib/growable-<wbr>buffer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/read.html">read</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/types.html">types</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module">
+						<a href="lib_appendable_stream.appendablestream.html" class="tsd-kind-icon">Appendable<wbr>Stream</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="lib_appendable_stream.appendablestream.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="lib_appendable_stream.appendablestream.html#outstream" class="tsd-kind-icon">out<wbr>Stream</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="lib_appendable_stream.appendablestream.html#pausecount" class="tsd-kind-icon">pause<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="lib_appendable_stream.appendablestream.html#paused" class="tsd-kind-icon">paused</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="lib_appendable_stream.appendablestream.html#writtenbytes" class="tsd-kind-icon">written<wbr>Bytes</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="lib_appendable_stream.appendablestream.html#length" class="tsd-kind-icon">length</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="lib_appendable_stream.appendablestream.html#add" class="tsd-kind-icon">add</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="lib_appendable_stream.appendablestream.html#addall" class="tsd-kind-icon">add<wbr>All</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="lib_appendable_stream.appendablestream.html#end" class="tsd-kind-icon">end</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="lib_appendable_stream.appendablestream.html#pause" class="tsd-kind-icon">pause</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="lib_appendable_stream.appendablestream.html#reset" class="tsd-kind-icon">reset</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="lib_appendable_stream.appendablestream.html#resume" class="tsd-kind-icon">resume</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

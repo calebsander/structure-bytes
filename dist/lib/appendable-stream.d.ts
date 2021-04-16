@@ -8,7 +8,7 @@ import { AppendableBuffer } from './appendable';
  * by calling [[end]] after all bytes
  * have been written.
  */
-export default class AppendableStream extends AppendableBuffer {
+export declare class AppendableStream extends AppendableBuffer {
     private readonly outStream;
     private writtenBytes;
     private pauseCount;

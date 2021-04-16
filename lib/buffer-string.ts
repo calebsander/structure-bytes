@@ -1,5 +1,5 @@
 import * as assert from './assert'
-import GrowableBuffer from './growable-buffer'
+import {GrowableBuffer} from './growable-buffer'
 
 //Arbitrarily set; fairly low to be safe
 const MAX_ARGUMENTS_LENGTH = 0x1000

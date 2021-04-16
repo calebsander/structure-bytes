@@ -60,7 +60,7 @@ class AbstractType {
         return this.cachedSignature;
     }
     valueBuffer(value) {
-        const buffer = new growable_buffer_1.default;
+        const buffer = new growable_buffer_1.GrowableBuffer;
         this.writeValue(buffer, value);
         return buffer.toBuffer();
     }
@@ -109,7 +109,7 @@ class AbstractType {
      * @return An `ArrayBuffer` containing the type bytes
      */
     _toBuffer() {
-        const buffer = new growable_buffer_1.default;
+        const buffer = new growable_buffer_1.GrowableBuffer;
         this.addToBuffer(buffer);
         return buffer.toUint8Array();
     }

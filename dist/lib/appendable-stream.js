@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppendableStream = void 0;
 const http_1 = require("http");
 const stream_1 = require("stream");
 const appendable_1 = require("./appendable");
@@ -23,7 +24,7 @@ class AppendableStream extends appendable_1.AppendableBuffer {
         this.outStream = outStream;
         this.writtenBytes = 0;
         this.pauseCount = 0;
-        this.paused = new growable_buffer_1.default;
+        this.paused = new growable_buffer_1.GrowableBuffer;
     }
     /**
      * Appends a byte to the end
@@ -103,7 +104,7 @@ class AppendableStream extends appendable_1.AppendableBuffer {
         this.paused.resume();
         if (!this.pauseCount) { //emptied pause stack
             this.outStream.write(this.paused.toUint8Array());
-            this.paused = new growable_buffer_1.default; //must use a new buffer to avoid overwriting data sent to outStream
+            this.paused = new growable_buffer_1.GrowableBuffer; //must use a new buffer to avoid overwriting data sent to outStream
         }
         return this;
     }
@@ -125,4 +126,4 @@ class AppendableStream extends appendable_1.AppendableBuffer {
         return this;
     }
 }
-exports.default = AppendableStream;
+exports.AppendableStream = AppendableStream;

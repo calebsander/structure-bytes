@@ -1,5 +1,5 @@
 import * as bufferString from '../../dist/lib/buffer-string'
-import GrowableBuffer from '../../dist/lib/growable-buffer'
+import {GrowableBuffer} from '../../dist/lib/growable-buffer'
 import {assert} from '../test-common'
 
 export = () => {

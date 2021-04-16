@@ -1,5 +1,5 @@
 import * as flexInt from '../../dist/lib/flex-int'
-import GrowableBuffer from '../../dist/lib/growable-buffer'
+import {GrowableBuffer} from '../../dist/lib/growable-buffer'
 import * as t from '../../dist'
 import {assert, concat} from '../test-common'
 
