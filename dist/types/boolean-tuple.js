@@ -50,7 +50,7 @@ class BooleanTupleType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Array);
         if (value.length !== this.length)
             throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`);

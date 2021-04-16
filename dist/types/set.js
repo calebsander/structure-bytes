@@ -60,7 +60,7 @@ class SetType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Set);
         write_util_1.writeIterable({ type: this.type, buffer, value, length: value.size });
     }

@@ -118,7 +118,7 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Object)
 		for (const {name, type} of this.fields) {
 			const fieldValue = value[name]

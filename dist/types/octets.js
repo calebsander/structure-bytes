@@ -35,7 +35,7 @@ class OctetsType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, [ArrayBuffer, Uint8Array]);
         buffer
             .addAll(flexInt.makeValueBuffer(value.byteLength))

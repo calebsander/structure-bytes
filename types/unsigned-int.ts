@@ -31,7 +31,7 @@ export class UnsignedIntType extends UnsignedType<number | string, number> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: number | string): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		const convertedValue = strToNum(value)
 		if (convertedValue !== undefined) value = convertedValue
 		assert.integer(value)

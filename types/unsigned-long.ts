@@ -29,7 +29,7 @@ export class UnsignedLongType extends UnsignedType<bigint> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: bigint): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, BigInt)
 		if (value !== BigInt.asUintN(64, value)) throw new RangeError('Value out of range')
 		const byteBuffer = new ArrayBuffer(8)

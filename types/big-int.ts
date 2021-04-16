@@ -1,5 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
+import {timesEight} from '../lib/bit-math'
 import * as flexInt from '../lib/flex-int'
 import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
 import IntegerType from './integer'
@@ -33,7 +34,7 @@ export class BigIntType extends IntegerType<bigint> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: bigint): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, BigInt)
 		const bytes: number[] = []
 		let signBit = 0n
@@ -62,7 +63,7 @@ export class BigIntType extends IntegerType<bigint> {
 			value = value << 8n | BigInt(byte)
 		}
 		//Sign-extend the read bytes
-		value = BigInt.asIntN(byteLength << 3, value)
+		value = BigInt.asIntN(timesEight(byteLength), value)
 		length += byteLength
 		return {value, length}
 	}

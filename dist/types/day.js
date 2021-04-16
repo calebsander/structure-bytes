@@ -31,7 +31,7 @@ class DayType extends chrono_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Date);
         //Instead of taking value.getTime() / MILLIS_PER_DAY (which would act as if the date was measured at UTC),
         //we round down the date in the current time zone

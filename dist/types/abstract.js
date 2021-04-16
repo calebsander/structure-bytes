@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const base64 = require("base64-js");
 const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
-const appendable_1 = require("../lib/appendable");
 const assert = require("../lib/assert");
 const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
@@ -22,7 +21,7 @@ class AbstractType {
         throw new Error('Generic Type has no value byte');
     }
     addToBuffer(buffer) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
             if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
                 const location = this.cachedTypeLocations.get(buffer);
@@ -93,15 +92,6 @@ class AbstractType {
         //Then check that other type has the same constructor.
         //eslint-disable-next-line @typescript-eslint/ban-types
         return !!otherType && this.constructor === otherType.constructor;
-    }
-    /**
-     * Requires that the buffer be a [[GrowableBuffer]]
-     * or [[AppendableStream]]
-     * @private
-     * @param buffer The value to assert is an [[AppendableBuffer]]
-     */
-    isBuffer(buffer) {
-        assert.instanceOf(buffer, appendable_1.AppendableBuffer);
     }
     /**
      * Generates the type buffer, recomputed each time

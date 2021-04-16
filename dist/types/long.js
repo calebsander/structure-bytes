@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LongType = void 0;
+const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const write_util_1 = require("../lib/write-util");
 const integer_1 = require("./integer");
@@ -30,7 +31,7 @@ class LongType extends integer_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         write_util_1.writeLong(buffer, value);
     }
     consumeValue(buffer, offset) {

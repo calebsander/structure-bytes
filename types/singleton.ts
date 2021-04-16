@@ -96,7 +96,7 @@ export class SingletonType<E> extends AbstractType<E> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		if (!assert.equal.buffers(this.type.valueBuffer(value), this.singletonValueBuffer)) {
 			throw new Error(`Expected ${inspect(this.value)} but got ${inspect(value)}`)
 		}

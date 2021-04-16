@@ -85,7 +85,7 @@ class SingletonType extends abstract_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         if (!assert.equal.buffers(this.type.valueBuffer(value), this.singletonValueBuffer)) {
             throw new Error(`Expected ${util_inspect_1.inspect(this.value)} but got ${util_inspect_1.inspect(value)}`);
         }

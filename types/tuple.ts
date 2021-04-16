@@ -88,7 +88,7 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E[]): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
 		for (const instance of value) this.type.writeValue(buffer, instance)

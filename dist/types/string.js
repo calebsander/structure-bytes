@@ -31,7 +31,7 @@ class StringType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, String);
         buffer
             .addAll(bufferString.fromString(value))

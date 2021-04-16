@@ -59,7 +59,7 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: Set<E>): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Set)
 		writeIterable({type: this.type, buffer, value, length: value.size})
 	}

@@ -32,13 +32,6 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
      */
     protected isSameType(otherType: unknown): otherType is this;
     /**
-     * Requires that the buffer be a [[GrowableBuffer]]
-     * or [[AppendableStream]]
-     * @private
-     * @param buffer The value to assert is an [[AppendableBuffer]]
-     */
-    protected isBuffer(buffer: AppendableBuffer): void;
-    /**
      * Generates the type buffer, recomputed each time
      * @private
      * @return An `ArrayBuffer` containing the type bytes

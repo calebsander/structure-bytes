@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BigIntType = void 0;
 const assert = require("../lib/assert");
+const bit_math_1 = require("../lib/bit-math");
 const flexInt = require("../lib/flex-int");
 const read_util_1 = require("../lib/read-util");
 const integer_1 = require("./integer");
@@ -34,7 +35,7 @@ class BigIntType extends integer_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, BigInt);
         const bytes = [];
         let signBit = 0n;
@@ -64,7 +65,7 @@ class BigIntType extends integer_1.default {
             value = value << 8n | BigInt(byte);
         }
         //Sign-extend the read bytes
-        value = BigInt.asIntN(byteLength << 3, value);
+        value = BigInt.asIntN(bit_math_1.timesEight(byteLength), value);
         length += byteLength;
         return { value, length };
     }

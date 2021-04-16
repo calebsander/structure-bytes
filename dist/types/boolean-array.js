@@ -37,7 +37,7 @@ class BooleanArrayType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Array);
         buffer.addAll(flexInt.makeValueBuffer(value.length));
         write_util_1.writeBooleans(buffer, value);

@@ -150,7 +150,7 @@ class RecursiveType extends abstract_1.default {
      * also throws if no type has been registered with this type's name
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         let bufferRecursiveLocations = recursiveLocations.get(buffer);
         if (bufferRecursiveLocations) {
             const targetLocation = bufferRecursiveLocations.get(value);

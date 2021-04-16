@@ -103,7 +103,7 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		let bufferPointers = pointers.get(buffer)
 		if (!bufferPointers) {
 			//Initialize pointers map if it doesn't exist

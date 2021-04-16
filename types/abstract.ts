@@ -28,7 +28,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		throw new Error('Generic Type has no value byte')
 	}
 	addToBuffer(buffer: AppendableBuffer): boolean {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		if (this.cachedTypeLocations) { //only bother checking if type has already been written if there are cached locations
 			if (!recursiveNesting.get(buffer)) { //avoid referencing types that are ancestors of a recursive type because it creates infinite recursion on read
 				const location = this.cachedTypeLocations.get(buffer)
@@ -97,15 +97,6 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		//Then check that other type has the same constructor.
 		//eslint-disable-next-line @typescript-eslint/ban-types
 		return !!otherType && this.constructor === (otherType as object).constructor
-	}
-	/**
-	 * Requires that the buffer be a [[GrowableBuffer]]
-	 * or [[AppendableStream]]
-	 * @private
-	 * @param buffer The value to assert is an [[AppendableBuffer]]
-	 */
-	protected isBuffer(buffer: AppendableBuffer): void {
-		assert.instanceOf(buffer, AppendableBuffer)
 	}
 	/**
 	 * Generates the type buffer, recomputed each time

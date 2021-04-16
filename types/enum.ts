@@ -93,7 +93,7 @@ export class EnumType<E> extends AbstractType<E> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		const valueBuffer = this.type.valueBuffer(value)
 		const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer))
 		if (index === undefined) throw new Error('Not a valid enum value: ' + inspect(value))

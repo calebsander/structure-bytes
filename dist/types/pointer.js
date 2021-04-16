@@ -104,7 +104,7 @@ class PointerType extends abstract_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         let bufferPointers = pointers.get(buffer);
         if (!bufferPointers) {
             //Initialize pointers map if it doesn't exist

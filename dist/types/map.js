@@ -75,7 +75,7 @@ class MapType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Map);
         buffer.addAll(flexInt.makeValueBuffer(value.size));
         for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value

@@ -1,3 +1,4 @@
+import {AppendableBuffer} from './appendable'
 import {inspect} from './util-inspect'
 
 //A number of useful assertion functions
@@ -60,6 +61,15 @@ export function between(lower: number, value: number, upper: number, message?: s
 export function nonNegativeInteger(value: unknown): asserts value is number {
 	integer(value)
 	between(0, value, Infinity)
+}
+/**
+ * Requires that the buffer be a [[GrowableBuffer]]
+ * or [[AppendableStream]]
+ * @private
+ * @param buffer The value to assert is an [[AppendableBuffer]]
+ */
+export function isBuffer(value: unknown): asserts value is AppendableBuffer {
+	instanceOf(value, AppendableBuffer)
 }
 /** Equality comparisons */
 export const equal = {

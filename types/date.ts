@@ -29,7 +29,7 @@ export class DateType extends ChronoType {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: Date): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Date)
 		writeLong(buffer, BigInt(value.getTime()))
 	}

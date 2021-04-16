@@ -73,7 +73,7 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: Map<K, V>): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Map)
 		buffer.addAll(flexInt.makeValueBuffer(value.size))
 		for (const [mapKey, mapValue] of value) { //for each key-value pairing, write key and value

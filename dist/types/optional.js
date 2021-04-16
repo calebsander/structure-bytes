@@ -71,7 +71,7 @@ class OptionalType extends absolute_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         const isNull = value === null || value === undefined;
         write_util_1.writeBooleanByte(buffer, !isNull);
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion

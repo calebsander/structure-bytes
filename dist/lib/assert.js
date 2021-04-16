@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.equal = exports.nonNegativeInteger = exports.between = exports.integer = exports.instanceOf = void 0;
+exports.equal = exports.isBuffer = exports.nonNegativeInteger = exports.between = exports.integer = exports.instanceOf = void 0;
+const appendable_1 = require("./appendable");
 const util_inspect_1 = require("./util-inspect");
 //A number of useful assertion functions
 //Used for validations of types and values
@@ -62,6 +63,16 @@ function nonNegativeInteger(value) {
     between(0, value, Infinity);
 }
 exports.nonNegativeInteger = nonNegativeInteger;
+/**
+ * Requires that the buffer be a [[GrowableBuffer]]
+ * or [[AppendableStream]]
+ * @private
+ * @param buffer The value to assert is an [[AppendableBuffer]]
+ */
+function isBuffer(value) {
+    instanceOf(value, appendable_1.AppendableBuffer);
+}
+exports.isBuffer = isBuffer;
 /** Equality comparisons */
 exports.equal = {
     /** Compares two `ArrayBuffer`s and returns whether they are equal */

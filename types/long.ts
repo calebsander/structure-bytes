@@ -1,3 +1,4 @@
+import * as assert from '../lib/assert'
 import type {AppendableBuffer} from '../lib/appendable'
 import {readLong, ReadResult} from '../lib/read-util'
 import {writeLong} from '../lib/write-util'
@@ -29,7 +30,7 @@ export class LongType extends IntegerType<bigint> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: bigint): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		writeLong(buffer, value)
 	}
 	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {

@@ -70,7 +70,7 @@ export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E | null | undefined): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		const isNull = value === null || value === undefined
 		writeBooleanByte(buffer, !isNull)
 		//eslint-disable-next-line @typescript-eslint/no-non-null-assertion

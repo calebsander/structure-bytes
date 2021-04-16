@@ -84,7 +84,7 @@ class EnumType extends abstract_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         const valueBuffer = this.type.valueBuffer(value);
         const index = this.valueIndices.get(bufferString.toBinaryString(valueBuffer));
         if (index === undefined)

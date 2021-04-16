@@ -36,7 +36,7 @@ class TimeType extends chrono_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Date);
         const byteBuffer = new ArrayBuffer(4);
         new DataView(byteBuffer).setUint32(0, value.getTime() % date_1.MILLIS_PER_DAY);

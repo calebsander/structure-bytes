@@ -28,7 +28,7 @@ export class CharType extends AbsoluteType<string> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: string): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, String)
 		if (value.length !== 1) throw new Error('String must contain only 1 character')
 		buffer.addAll(bufferString.fromString(value))

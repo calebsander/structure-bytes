@@ -30,7 +30,7 @@ class DateType extends chrono_1.default {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer, value) {
-        this.isBuffer(buffer);
+        assert.isBuffer(buffer);
         assert.instanceOf(value, Date);
         write_util_1.writeLong(buffer, BigInt(value.getTime()));
     }

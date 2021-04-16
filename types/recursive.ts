@@ -150,7 +150,7 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 	 * also throws if no type has been registered with this type's name
 	 */
 	writeValue(buffer: AppendableBuffer, value: E): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		let bufferRecursiveLocations = recursiveLocations.get(buffer)
 		if (bufferRecursiveLocations) {
 			const targetLocation = bufferRecursiveLocations.get(value)

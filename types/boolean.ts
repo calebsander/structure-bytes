@@ -28,7 +28,7 @@ export class BooleanType extends AbsoluteType<boolean> {
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: boolean): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Boolean)
 		writeBooleanByte(buffer, value)
 	}

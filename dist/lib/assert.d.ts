@@ -1,3 +1,4 @@
+import { AppendableBuffer } from './appendable';
 /**
  * Throws an error if the given value is not an instance
  * of any of the provided constructors
@@ -25,6 +26,13 @@ export declare function between(lower: number, value: number, upper: number, mes
  * @param value The value in question
  */
 export declare function nonNegativeInteger(value: unknown): asserts value is number;
+/**
+ * Requires that the buffer be a [[GrowableBuffer]]
+ * or [[AppendableStream]]
+ * @private
+ * @param buffer The value to assert is an [[AppendableBuffer]]
+ */
+export declare function isBuffer(value: unknown): asserts value is AppendableBuffer;
 /** Equality comparisons */
 export declare const equal: {
     /** Compares two `ArrayBuffer`s and returns whether they are equal */

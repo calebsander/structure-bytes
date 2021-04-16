@@ -65,7 +65,7 @@ export class ArrayType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: E[]): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, Array)
 		writeIterable({type: this.type, buffer, value, length: value.length})
 	}

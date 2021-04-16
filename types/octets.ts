@@ -34,7 +34,7 @@ export class OctetsType extends AbsoluteType<ArrayBuffer | Uint8Array, ArrayBuff
 	 * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
 	 */
 	writeValue(buffer: AppendableBuffer, value: ArrayBuffer | Uint8Array): void {
-		this.isBuffer(buffer)
+		assert.isBuffer(buffer)
 		assert.instanceOf(value, [ArrayBuffer, Uint8Array])
 		buffer
 			.addAll(flexInt.makeValueBuffer(value.byteLength))
