@@ -39,8 +39,8 @@ class UnsignedByteType extends unsigned_1.default {
         assert.between(0, value, 0x100, 'Value out of range');
         buffer.add(value);
     }
-    consumeValue(buffer, offset) {
-        return readByte(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readByte(bufferOffset);
     }
 }
 exports.UnsignedByteType = UnsignedByteType;

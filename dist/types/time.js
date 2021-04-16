@@ -42,14 +42,9 @@ class TimeType extends chrono_1.default {
         new DataView(byteBuffer).setUint32(0, value.getTime() % date_1.MILLIS_PER_DAY);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        const length = 4;
-        if (buffer.byteLength < offset + length)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: new Date(new DataView(buffer).getUint32(offset)),
-            length
-        };
+    consumeValue(bufferOffset) {
+        const value = read_util_1.readUnsignedInt(bufferOffset);
+        return new Date(value);
     }
 }
 exports.TimeType = TimeType;

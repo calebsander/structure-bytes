@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import type { ReadResult } from '../lib/read-util';
+import type { BufferOffset } from '../lib/read-util';
 /**
  * An interface representing an object that can serialize values of a certain type.
  * The object must also be able to serialize itself.
@@ -57,7 +57,7 @@ export interface Type<VALUE, READ_VALUE extends VALUE = VALUE> {
      * Used by [[RecursiveType]].
      * @return The read value and the number of bytes read
      */
-    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: unknown): ReadResult<READ_VALUE>;
+    consumeValue(bufferOffset: BufferOffset, baseValue?: unknown): READ_VALUE;
     /**
      * Deserializes a value, i.e. takes
      * a buffer containing its binary form

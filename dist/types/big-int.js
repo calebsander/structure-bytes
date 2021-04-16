@@ -54,20 +54,15 @@ class BigIntType extends integer_1.default {
             buffer.add(bytes[i]);
         }
     }
-    consumeValue(buffer, offset) {
-        const readByteLength = read_util_1.readFlexInt(buffer, offset);
-        const byteLength = readByteLength.value;
-        let { length } = readByteLength;
-        if (buffer.byteLength < offset + length + byteLength)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
+    consumeValue(bufferOffset) {
+        const byteLength = read_util_1.readFlexInt(bufferOffset);
+        const bytes = read_util_1.readBytes(bufferOffset, byteLength);
         let value = 0n;
-        for (const byte of new Uint8Array(buffer, offset + length, byteLength)) {
+        for (const byte of bytes)
             value = value << 8n | BigInt(byte);
-        }
         //Sign-extend the read bytes
         value = BigInt.asIntN(bit_math_1.timesEight(byteLength), value);
-        length += byteLength;
-        return { value, length };
+        return value;
     }
 }
 exports.BigIntType = BigIntType;

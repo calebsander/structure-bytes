@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, readFlexInt} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -103,13 +103,9 @@ export class ChoiceType<E, READ_E extends E = E> extends AbsoluteType<E, READ_E>
 		buffer.resume()
 		if (!success) throw new Error('No types matched: ' + inspect(value))
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
-		const readTypeIndex = readFlexInt(buffer, offset)
-		const typeIndex = readTypeIndex.value
-		let {length} = readTypeIndex
-		const {value, length: subLength} = this.types[typeIndex].consumeValue(buffer, offset + length)
-		length += subLength
-		return {value, length}
+	consumeValue(bufferOffset: BufferOffset): READ_E {
+		const typeIndex = readFlexInt(bufferOffset)
+		return this.types[typeIndex].consumeValue(bufferOffset)
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType)

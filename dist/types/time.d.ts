@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import ChronoType from './chrono';
 /**
  * A type storing a specific time of day,
@@ -30,5 +30,5 @@ export declare class TimeType extends ChronoType {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: Date): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date>;
+    consumeValue(bufferOffset: BufferOffset): Date;
 }

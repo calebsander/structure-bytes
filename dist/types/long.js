@@ -34,8 +34,8 @@ class LongType extends integer_1.default {
         assert.isBuffer(buffer);
         write_util_1.writeLong(buffer, value);
     }
-    consumeValue(buffer, offset) {
-        return read_util_1.readLong(buffer, offset);
+    consumeValue(bufferOffset) {
+        return read_util_1.readLong(bufferOffset);
     }
 }
 exports.LongType = LongType;

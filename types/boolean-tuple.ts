@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {readBooleans, ReadResult} from '../lib/read-util'
+import {BufferOffset, readBooleans} from '../lib/read-util'
 import {writeBooleans} from '../lib/write-util'
 import AbsoluteType from './absolute'
 
@@ -53,8 +53,8 @@ export class BooleanTupleType extends AbsoluteType<boolean[]> {
 		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
 		writeBooleans(buffer, value)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]> {
-		return readBooleans({buffer, offset, count: this.length})
+	consumeValue(bufferOffset: BufferOffset): boolean[] {
+		return readBooleans({bufferOffset, count: this.length})
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType) && otherType.length === this.length

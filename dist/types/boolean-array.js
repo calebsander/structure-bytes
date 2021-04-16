@@ -42,14 +42,9 @@ class BooleanArrayType extends absolute_1.default {
         buffer.addAll(flexInt.makeValueBuffer(value.length));
         write_util_1.writeBooleans(buffer, value);
     }
-    consumeValue(buffer, offset) {
-        const readCount = read_util_1.readFlexInt(buffer, offset);
-        const count = readCount.value;
-        let { length } = readCount;
-        const booleans = read_util_1.readBooleans({ buffer, offset: offset + length, count });
-        const { value } = booleans;
-        length += booleans.length;
-        return { value, length };
+    consumeValue(bufferOffset) {
+        const count = read_util_1.readFlexInt(bufferOffset);
+        return read_util_1.readBooleans({ bufferOffset, count });
     }
 }
 exports.BooleanArrayType = BooleanArrayType;

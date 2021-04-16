@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {MILLIS_PER_DAY} from '../lib/date'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {BufferOffset, readUnsignedInt} from '../lib/read-util'
 import ChronoType from './chrono'
 
 /**
@@ -41,12 +41,8 @@ export class TimeType extends ChronoType {
 		new DataView(byteBuffer).setUint32(0, value.getTime() % MILLIS_PER_DAY)
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {
-		const length = 4
-		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-		return {
-			value: new Date(new DataView(buffer).getUint32(offset)),
-			length
-		}
+	consumeValue(bufferOffset: BufferOffset): Date {
+		const value = readUnsignedInt(bufferOffset)
+		return new Date(value)
 	}
 }

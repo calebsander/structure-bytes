@@ -75,16 +75,15 @@ export function getByteCount(firstByte: number): number {
  * @param valueBuffer The binary `flexInt` representation
  * @return The number used to generate the `flexInt` buffer
  */
-export function readValueBuffer(valueBuffer: ArrayBuffer): number {
-	assert.instanceOf(valueBuffer, ArrayBuffer)
+export function readValueBuffer(valueBuffer: Uint8Array): number {
+	assert.instanceOf(valueBuffer, Uint8Array)
 	const bytes = valueBuffer.byteLength
 	if (!bytes) throw new Error('Empty flex int buffer')
-	const castBuffer = new Uint8Array(valueBuffer)
 	//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	let relativeValue = castBuffer[0] ^ BYTE_MASKS.get(bytes)!
+	let relativeValue = valueBuffer[0] ^ BYTE_MASKS.get(bytes)!
 	for (let byteIndex = 1; byteIndex < bytes; byteIndex++) {
 		//Can't use bitwise math here because number may not fit in 32 bits
-		relativeValue = relativeValue * 0x100 + castBuffer[byteIndex]
+		relativeValue = relativeValue * 0x100 + valueBuffer[byteIndex]
 	}
 	//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	return UPPER_BOUNDS.get(bytes - 1)! + relativeValue

@@ -1,5 +1,5 @@
 import { AppendableBuffer } from '../lib/appendable';
-import type { ReadResult } from '../lib/read-util';
+import type { BufferOffset } from '../lib/read-util';
 import type { Type } from './type';
 /**
  * The superclass of all [[Type]] classes
@@ -21,14 +21,14 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
     getSignature(): string;
     abstract writeValue(buffer: AppendableBuffer, value: VALUE): void;
     valueBuffer(value: VALUE): ArrayBuffer;
-    abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: unknown): ReadResult<READ_VALUE>;
+    abstract consumeValue(bufferOffset: BufferOffset, baseValue?: unknown): READ_VALUE;
     readValue(valueBuffer: ArrayBuffer | Uint8Array, offset?: number): READ_VALUE;
     equals(otherType: unknown): boolean;
     /**
      * Determines whether the input is a Type with the same class
      * @private
      * @param otherType A value, usually a Type instance
-     * @returns whether `this` and `otherType` are instances of the same Type class
+     * @return whether `this` and `otherType` are instances of the same Type class
      */
     protected isSameType(otherType: unknown): otherType is this;
     /**

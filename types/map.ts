@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, makeBaseValue, readFlexInt} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import type {Type} from './type'
@@ -81,19 +81,15 @@ export class MapType<K, V, READ_K extends K = K, READ_V extends V = V> extends A
 			this.valueType.writeValue(buffer, mapValue)
 		}
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>> {
-		const readSize = readFlexInt(buffer, offset)
-		const size = readSize.value
-		let {length} = readSize
+	consumeValue(bufferOffset: BufferOffset, baseValue?: Map<READ_K, READ_V>): Map<READ_K, READ_V> {
+		const size = readFlexInt(bufferOffset)
 		const value = baseValue || makeBaseValue(this) as Map<READ_K, READ_V>
 		for (let i = 0; i < size; i++) {
-			const keyElement = this.keyType.consumeValue(buffer, offset + length)
-			length += keyElement.length
-			const valueElement = this.valueType.consumeValue(buffer, offset + length)
-			length += valueElement.length
-			value.set(keyElement.value, valueElement.value)
+			const keyElement = this.keyType.consumeValue(bufferOffset)
+			const valueElement = this.valueType.consumeValue(bufferOffset)
+			value.set(keyElement, valueElement)
 		}
-		return {value, length}
+		return value
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType)

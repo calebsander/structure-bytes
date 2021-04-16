@@ -39,8 +39,8 @@ class ByteType extends integer_1.default {
         assert.between(-128, value, 128, 'Value out of range');
         buffer.addAll(new Int8Array([value]).buffer);
     }
-    consumeValue(buffer, offset) {
-        return readByte(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readByte(bufferOffset);
     }
 }
 exports.ByteType = ByteType;

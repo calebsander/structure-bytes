@@ -45,4 +45,19 @@ export = () => {
 		new Uint8Array([0x52, 0x52, 0x52, 0x56, 4, 0x01, 0x13, 0x41, 0x60]),
 		new Uint8Array(personType.toBuffer()) //ensure that no repeated type is used
 	]))
+
+	assert.throws(
+		() => r.type(new Uint8Array([REPEATED_TYPE, 0])),
+		({message}: Error) => message === 'Buffer has no repeated types'
+	)
+	const tupleType = new t.TupleType({type: new t.ByteType, length: 10})
+	const tupleTypeBuffer = new Uint8Array(tupleType.toBuffer())
+	assert.deepEqual(tupleTypeBuffer, new Uint8Array([0x50, 0x01, 10]))
+	assert.throws(
+		() => r.type(concat([
+			// new MapType(tupleType, invalidRepeatedType)
+			new Uint8Array([0x54]), tupleTypeBuffer, new Uint8Array([REPEATED_TYPE, 1])
+		])),
+		({message}: Error) => message === 'No type was read at offset 3'
+	)
 }

@@ -41,8 +41,8 @@ class ShortType extends integer_1.default {
         new DataView(byteBuffer).setInt16(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        return readShort(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readShort(bufferOffset);
     }
 }
 exports.ShortType = ShortType;

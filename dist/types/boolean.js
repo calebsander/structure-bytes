@@ -33,8 +33,8 @@ class BooleanType extends absolute_1.default {
         assert.instanceOf(value, Boolean);
         write_util_1.writeBooleanByte(buffer, value);
     }
-    consumeValue(buffer, offset) {
-        return read_util_1.readBooleanByte(buffer, offset);
+    consumeValue(bufferOffset) {
+        return read_util_1.readBooleanByte(bufferOffset);
     }
 }
 exports.BooleanType = BooleanType;

@@ -9,7 +9,6 @@ import * as accepts from 'accepts'
 import {AppendableStream} from './lib/appendable-stream'
 import * as assert from './lib/assert'
 import {toArrayBuffer} from './lib/growable-buffer'
-import type {ReadResult} from './lib/read-util'
 import * as r from './read'
 import AbstractType from './types/abstract'
 import type {Type} from './types'
@@ -339,16 +338,17 @@ export const readTypeAndValue = (
 			//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			if (err) return callback(err, null!, null!)
 
-			let type: ReadResult<Type<E>>
+			const bufferOffset = {buffer, offset: 0}
+			let type: Type<E>
 			//Using consumeType() in order to get the length of the type (the start of the value)
-			try { type = r._consumeType(buffer, 0) as ReadResult<Type<E>> }
+			try { type = r.consumeType(bufferOffset) as Type<E> }
 			//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			catch (e) { return callback(e, null!, null!) }
 			let value: E
-			try { value = type.value.readValue(buffer, type.length) }
+			try { value = type.readValue(buffer, bufferOffset.offset) }
 			//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			catch (e) { return callback(e, null!, null!) }
-			callback(null, type.value, value)
+			callback(null, type, value)
 		})
 	}
 ) as (<E>(inStream: Readable, callback: TypeAndValueCallback<E>) => void) &

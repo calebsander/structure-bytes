@@ -19,4 +19,4 @@ export declare function getByteCount(firstByte: number): number;
  * @param valueBuffer The binary `flexInt` representation
  * @return The number used to generate the `flexInt` buffer
  */
-export declare function readValueBuffer(valueBuffer: ArrayBuffer): number;
+export declare function readValueBuffer(valueBuffer: Uint8Array): number;

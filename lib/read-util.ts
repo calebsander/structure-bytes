@@ -11,18 +11,28 @@ import {TupleType} from '../types/tuple'
 export const NOT_LONG_ENOUGH = 'Buffer is not long enough'
 
 /**
- * The result of reading a value from bytes
- * @param E The type of value read
+ * Represents a location in a read buffer.
+ * By wrapping `offset` in an object, it can be easily mutated.
+ *
+ * Example:
+ * ```js
+ * const {buffer} = new Uint8Array([1, 2, 3])
+ * const bufferOffset = {buffer, offset: 0}
+ * console.log(readBytes(bufferOffset, 1)) //new Uint8Array([1])
+ * console.log(readBytes(bufferOffset, 2)) //new Uint8Array([2, 3])
+ * ```
  */
-export interface ReadResult<E> {
+export interface BufferOffset {
 	/**
-	 * The value read
+	 * The buffer being read from
 	 */
-	value: E
+	buffer: ArrayBuffer
 	/**
-	 * The number of bytes used to store the value
+	 * The current position in the buffer.
+	 * Reads can be made anywhere in the buffer, but generally read the buffer in order.
+	 * By incrementing `offset`, consecutive read operations can use the same BufferOffset.
 	 */
-	length: number
+	offset: number
 }
 
 /**
@@ -48,91 +58,92 @@ export function makeBaseValue(readType: RegisterableType, count?: number): unkno
 }
 
 /**
+ * Reads a given number of bytes at the given buffer offset
+ * and advances the offset in the buffer
+ * @param bufferOffset The buffer and its current offset
+ * @param length The number of bytes to read
+ * @return A Uint8Array view of the read bytes
+ */
+export function readBytes(bufferOffset: BufferOffset, length: number): Uint8Array {
+	const {buffer, offset} = bufferOffset
+	const newOffset = offset + length
+	if (buffer.byteLength < newOffset) throw new Error(NOT_LONG_ENOUGH)
+
+	bufferOffset.offset = newOffset
+	return new Uint8Array(buffer, offset, length)
+}
+
+/**
  * Reads a byte from the buffer,
  * requires it to be `0x00` or `0xFF`,
  * and returns its boolean value
- * @param buffer The buffer to read from
- * @param offset The position in `buffer`
- * of the byte to read
+ * @param bufferOffset The buffer and its current offset, the byte to read
  * @return `true` if the byte is `0xFF`,
  * `false` if it is `0x00`
  */
-export function readBooleanByte(buffer: ArrayBuffer, offset: number): ReadResult<boolean> {
-	if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
-	let value: boolean
-	const readByte = new Uint8Array(buffer)[offset]
+export function readBooleanByte(offset: BufferOffset): boolean {
+	const [readByte] = readBytes(offset, 1)
 	switch (readByte) {
 		case 0x00:
 		case 0xFF:
-			value = !!readByte
-			break
+			return !!readByte
 		default:
 			throw new Error(`0x${hexByte(readByte)} is an invalid Boolean value`)
 	}
-	return {value, length: 1}
 }
 
 export interface ReadBooleansParams {
-	buffer: ArrayBuffer
-	offset: number
+	bufferOffset: BufferOffset
 	count: number
 }
 /**
  * Inverse of `writeBooleans()`, i.e. reads
  * a given number of booleans from binary data
- * @param buffer The bytes to read from
- * @param offset The position in `buffer`
- * of the first byte containing the booleans
+ * @param bufferOffset The buffer and its current offset, the first byte of booleans
  * @param count The number of boolean values to read
  * @return The array of booleans read
  */
-export function readBooleans({buffer, offset, count}: ReadBooleansParams): ReadResult<boolean[]> {
+export function readBooleans({bufferOffset, count}: ReadBooleansParams): boolean[] {
 	const value = new Array<boolean>(count)
 	const incompleteBytes = modEight(count)
-	const bytes = dividedByEight(count)
-	const length = incompleteBytes ? bytes + 1 : bytes
-	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-	const castBuffer = new Uint8Array(buffer, offset)
+	const fullBytes = dividedByEight(count)
+	const length = incompleteBytes ? fullBytes + 1 : fullBytes
+	const bytes = readBytes(bufferOffset, length)
 	for (let i = 0; i < length; i++) {
-		const byte = castBuffer[i]
+		const byte = bytes[i]
 		for (let bit = 0; bit < 8; bit++) {
 			const index = timesEight(i) | bit
 			if (index === count) break
-			value[index] = Boolean(byte & (1 << (7 - bit)))
+			value[index] = Boolean(byte >> (7 - bit) & 1)
 		}
 	}
-	return {value, length}
+	return value
 }
 
 /**
  * Reads an unsigned integer in `flexInt` format
- * @param buffer The binary data to read from
- * @param offset The position of the first byte
- * of the `flexInt`
+ * @param bufferOffset The buffer and its current offset, the first byte of the `flexInt`
  * @return The number stored in the `flexInt`
  */
-export function readFlexInt(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-	if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
-	const castBuffer = new Uint8Array(buffer, offset)
-	const length = flexInt.getByteCount(castBuffer[0])
-	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-	return {
-		value: flexInt.readValueBuffer(castBuffer.slice(0, length).buffer),
-		length
-	}
+export function readFlexInt(bufferOffset: BufferOffset): number {
+	const {offset} = bufferOffset
+	const [firstByte] = readBytes(bufferOffset, 1)
+	bufferOffset.offset = offset
+	const length = flexInt.getByteCount(firstByte)
+	const bytes = readBytes(bufferOffset, length)
+	return flexInt.readValueBuffer(bytes)
 }
 
 /**
  * Reads a signed long
- * @param buffer The binary data to read from
- * @param offset The position of the first byte to read
+ * @param bufferOffset The buffer and its current offset
  * @return The value stored in the `8` bytes
- * starting at `offset`, in string form
+ * starting at `bufferOffset.offset`, in string form
  */
-export function readLong(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
-	const length = 8
-	if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-	return {value: new DataView(buffer, offset).getBigInt64(0), length}
+export function readLong(bufferOffset: BufferOffset): bigint {
+	const {buffer, offset} = bufferOffset
+	readBytes(bufferOffset, 8)
+	return new DataView(buffer).getBigInt64(offset)
 }
 
 /**
@@ -176,19 +187,23 @@ export interface TypeAndFunc {
  * e.g. `'getUint8'`
  * @param type The corresponding `TypedArray` constructor,
  * e.g. `Uint8Array`
- * @return A function that takes in an `ArrayBuffer`
- * and an offset in the buffer and reads a `number`,
+ * @return A function that takes in a [[BufferOffset]] and reads a `number`,
  * much like [[AbstractType.consumeValue]]
  */
 export function readNumber({func, type}: TypeAndFunc):
-	(buffer: ArrayBuffer, offset: number) => ReadResult<number>
+	(bufferOffset: BufferOffset) => number
 {
 	const length = type.BYTES_PER_ELEMENT
-	return (buffer: ArrayBuffer, offset: number): ReadResult<number> => {
-		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-		return {
-			value: new DataView(buffer)[func](offset),
-			length
-		}
+	return bufferOffset => {
+		const {buffer, offset} = bufferOffset
+		readBytes(bufferOffset, length)
+		return new DataView(buffer)[func](offset)
 	}
 }
+
+/**
+ * Reads an unsigned 32-bit integer from a buffer
+ * @param bufferOffset The buffer and its current offset
+ * @return The integer read from the buffer
+ */
+export const readUnsignedInt = readNumber({type: Uint32Array, func: 'getUint32'})

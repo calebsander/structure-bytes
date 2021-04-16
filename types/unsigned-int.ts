@@ -1,10 +1,8 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readNumber, ReadResult} from '../lib/read-util'
+import {BufferOffset, readUnsignedInt} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
-
-const readInt = readNumber({type: Uint32Array, func: 'getUint32'})
 
 /**
  * A type storing a 4-byte unsigned integer (`0` to `4294967295`).
@@ -40,7 +38,7 @@ export class UnsignedIntType extends UnsignedType<number | string, number> {
 		new DataView(byteBuffer).setUint32(0, value)
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readInt(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readUnsignedInt(bufferOffset)
 	}
 }

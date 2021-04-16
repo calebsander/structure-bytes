@@ -65,9 +65,9 @@ class FlexIntType extends integer_1.default {
         assert.between(MIN_SAFE, value, MAX_SAFE);
         buffer.addAll(flexInt.makeValueBuffer(toUnsigned(value)));
     }
-    consumeValue(buffer, offset) {
-        const { value, length } = read_util_1.readFlexInt(buffer, offset);
-        return { value: fromUnsigned(value), length };
+    consumeValue(bufferOffset) {
+        const value = read_util_1.readFlexInt(bufferOffset);
+        return fromUnsigned(value);
     }
 }
 exports.FlexIntType = FlexIntType;

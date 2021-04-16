@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {BufferOffset, NOT_LONG_ENOUGH} from '../lib/read-util'
 import AbsoluteType from './absolute'
 
 /**
@@ -33,10 +33,12 @@ export class CharType extends AbsoluteType<string> {
 		if (value.length !== 1) throw new Error('String must contain only 1 character')
 		buffer.addAll(bufferString.fromString(value))
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
-		if (buffer.byteLength <= offset) throw new Error(NOT_LONG_ENOUGH)
-		//UTF-8 codepoint can't be more than 4 bytes
-		const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4))
-		return {value, length: bufferString.fromString(value).byteLength}
+	consumeValue(bufferOffset: BufferOffset): string {
+		const {buffer, offset} = bufferOffset
+		const [value] = bufferString.toString(new Uint8Array(buffer, offset), 1)
+		if (!value) throw new Error(NOT_LONG_ENOUGH)
+
+		bufferOffset.offset += bufferString.fromString(value).byteLength
+		return value
 	}
 }

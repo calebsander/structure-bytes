@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OctetsType = void 0;
 const assert = require("../lib/assert");
 const flexInt = require("../lib/flex-int");
+const growable_buffer_1 = require("../lib/growable-buffer");
 const read_util_1 = require("../lib/read-util");
 const absolute_1 = require("./absolute");
 /**
@@ -41,18 +42,10 @@ class OctetsType extends absolute_1.default {
             .addAll(flexInt.makeValueBuffer(value.byteLength))
             .addAll(value);
     }
-    consumeValue(buffer, offset) {
-        const readOctetsLength = read_util_1.readFlexInt(buffer, offset);
-        const octetsLength = readOctetsLength.value;
-        let { length } = readOctetsLength;
-        const octetsStart = length;
-        length += octetsLength;
-        if (buffer.byteLength < offset + length)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        return {
-            value: buffer.slice(offset + octetsStart, offset + length),
-            length
-        };
+    consumeValue(bufferOffset) {
+        const octetsLength = read_util_1.readFlexInt(bufferOffset);
+        const bytes = read_util_1.readBytes(bufferOffset, octetsLength);
+        return growable_buffer_1.toArrayBuffer(bytes);
     }
 }
 exports.OctetsType = OctetsType;

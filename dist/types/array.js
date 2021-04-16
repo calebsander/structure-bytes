@@ -70,17 +70,13 @@ class ArrayType extends absolute_1.default {
         assert.instanceOf(value, Array);
         write_util_1.writeIterable({ type: this.type, buffer, value, length: value.length });
     }
-    consumeValue(buffer, offset, baseValue) {
-        const readArrayLength = read_util_1.readFlexInt(buffer, offset);
-        const arrayLength = readArrayLength.value;
-        let { length } = readArrayLength;
+    consumeValue(bufferOffset, baseValue) {
+        const arrayLength = read_util_1.readFlexInt(bufferOffset);
         const value = baseValue || read_util_1.makeBaseValue(this, arrayLength);
         for (let i = 0; i < arrayLength; i++) {
-            const element = this.type.consumeValue(buffer, offset + length);
-            length += element.length;
-            value[i] = element.value;
+            value[i] = this.type.consumeValue(bufferOffset);
         }
-        return { value, length };
+        return value;
     }
     equals(otherType) {
         return this.isSameType(otherType) && this.type.equals(otherType.type);

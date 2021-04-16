@@ -91,7 +91,7 @@ class SingletonType extends abstract_1.default {
         }
     }
     consumeValue() {
-        return { value: this.value, length: 0 };
+        return this.value;
     }
     equals(otherType) {
         return this.isSameType(otherType)

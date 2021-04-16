@@ -123,18 +123,9 @@ class PointerType extends abstract_1.default {
         else
             buffer.addAll(flexInt.makeValueBuffer(length - index));
     }
-    consumeValue(buffer, offset) {
-        let length;
-        let explicitValue = true;
-        for (;;) {
-            const { value: offsetDiff, length: offsetDiffLength } = read_util_1.readFlexInt(buffer, offset);
-            if (length === undefined)
-                length = offsetDiffLength;
-            if (!offsetDiff)
-                break;
-            offset -= offsetDiff;
-            explicitValue = false;
-        }
+    consumeValue(bufferOffset) {
+        const { buffer, offset } = bufferOffset;
+        const offsetDiff = read_util_1.readFlexInt(bufferOffset);
         let bufferPointerReads = pointerReads.get(buffer);
         if (!bufferPointerReads) {
             pointerReads.set(buffer, bufferPointerReads = new Map);
@@ -143,17 +134,17 @@ class PointerType extends abstract_1.default {
         if (!bufferTypePointerReads) {
             bufferPointerReads.set(this, bufferTypePointerReads = new Map);
         }
-        let value = bufferTypePointerReads.get(offset);
+        const location = offset - offsetDiff;
+        let value = bufferTypePointerReads.get(location);
         if (value === undefined) {
-            const explicitRead = this.type.consumeValue(buffer, offset + length) //skip the flexInt
-            ;
-            ({ value } = explicitRead);
-            if (explicitValue)
-                length += explicitRead.length;
-            // TODO: store current location in map
-            bufferTypePointerReads.set(offset, value);
+            value = offsetDiff
+                //This value does exist, but it was serialized by a different type
+                ? this.consumeValue({ buffer, offset: location })
+                //This value is serialized here instead
+                : this.type.consumeValue(bufferOffset);
         }
-        return { value, length };
+        bufferTypePointerReads.set(offset, value);
+        return value;
     }
     equals(otherType) {
         return this.isSameType(otherType) && this.type.equals(otherType.type);

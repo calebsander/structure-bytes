@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
  * A type storing a fixed-length array of `Boolean` values.
@@ -32,6 +32,6 @@ export declare class BooleanTupleType extends AbsoluteType<boolean[]> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: boolean[]): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean[]>;
+    consumeValue(bufferOffset: BufferOffset): boolean[];
     equals(otherType: unknown): boolean;
 }

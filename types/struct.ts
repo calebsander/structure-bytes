@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {makeBaseValue, ReadResult} from '../lib/read-util'
+import {BufferOffset, makeBaseValue} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -133,15 +133,12 @@ export class StructType<E extends Record<string, any>, READ_E extends E = E> ext
 		}
 	}
 	//eslint-disable-next-line @typescript-eslint/ban-types
-	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: object): ReadResult<READ_E> {
-		let length = 0
+	consumeValue(bufferOffset: BufferOffset, baseValue?: object): READ_E {
 		const value = (baseValue || makeBaseValue(this)) as READ_E
 		for (const {name, type} of this.fields) {
-			const readField = type.consumeValue(buffer, offset + length)
-			value[name] = readField.value
-			length += readField.length
+			value[name] = type.consumeValue(bufferOffset)
 		}
-		return {value, length}
+		return value
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType)

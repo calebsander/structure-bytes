@@ -10,11 +10,11 @@ const MAX_ARGUMENTS_LENGTH = 0x1000;
  * The inverse of [[fromString]].
  * @param buffer The binary data to convert
  */
-function toString(buffer) {
+function toString(buffer, maxLength = Infinity) {
     assert.instanceOf(buffer, Uint8Array);
     //Taken from https://github.com/feross/buffer/blob/da8a677bdb746ed9d6dae42ee1eaf236aad32ccb/index.js#L917-L988
     const codePoints = [];
-    for (let i = 0; i < buffer.length;) {
+    for (let i = 0; i < buffer.length && codePoints.length < maxLength;) {
         const firstByte = buffer[i];
         let codePoint;
         let bytesPerSequence = firstByte > 0xEF ? 4

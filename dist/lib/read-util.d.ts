@@ -1,18 +1,28 @@
 import type { RegisterableType } from '../recursive-registry-type';
 export declare const NOT_LONG_ENOUGH = "Buffer is not long enough";
 /**
- * The result of reading a value from bytes
- * @param E The type of value read
+ * Represents a location in a read buffer.
+ * By wrapping `offset` in an object, it can be easily mutated.
+ *
+ * Example:
+ * ```js
+ * const {buffer} = new Uint8Array([1, 2, 3])
+ * const bufferOffset = {buffer, offset: 0}
+ * console.log(readBytes(bufferOffset, 1)) //new Uint8Array([1])
+ * console.log(readBytes(bufferOffset, 2)) //new Uint8Array([2, 3])
+ * ```
  */
-export interface ReadResult<E> {
+export interface BufferOffset {
     /**
-     * The value read
+     * The buffer being read from
      */
-    value: E;
+    buffer: ArrayBuffer;
     /**
-     * The number of bytes used to store the value
+     * The current position in the buffer.
+     * Reads can be made anywhere in the buffer, but generally read the buffer in order.
+     * By incrementing `offset`, consecutive read operations can use the same BufferOffset.
      */
-    length: number;
+    offset: number;
 }
 /**
  * Creates a value that can be mutated into a read value
@@ -26,47 +36,47 @@ export interface ReadResult<E> {
  */
 export declare function makeBaseValue(readType: RegisterableType, count?: number): unknown;
 /**
+ * Reads a given number of bytes at the given buffer offset
+ * and advances the offset in the buffer
+ * @param bufferOffset The buffer and its current offset
+ * @param length The number of bytes to read
+ * @return A Uint8Array view of the read bytes
+ */
+export declare function readBytes(bufferOffset: BufferOffset, length: number): Uint8Array;
+/**
  * Reads a byte from the buffer,
  * requires it to be `0x00` or `0xFF`,
  * and returns its boolean value
- * @param buffer The buffer to read from
- * @param offset The position in `buffer`
- * of the byte to read
+ * @param bufferOffset The buffer and its current offset, the byte to read
  * @return `true` if the byte is `0xFF`,
  * `false` if it is `0x00`
  */
-export declare function readBooleanByte(buffer: ArrayBuffer, offset: number): ReadResult<boolean>;
+export declare function readBooleanByte(offset: BufferOffset): boolean;
 export interface ReadBooleansParams {
-    buffer: ArrayBuffer;
-    offset: number;
+    bufferOffset: BufferOffset;
     count: number;
 }
 /**
  * Inverse of `writeBooleans()`, i.e. reads
  * a given number of booleans from binary data
- * @param buffer The bytes to read from
- * @param offset The position in `buffer`
- * of the first byte containing the booleans
+ * @param bufferOffset The buffer and its current offset, the first byte of booleans
  * @param count The number of boolean values to read
  * @return The array of booleans read
  */
-export declare function readBooleans({ buffer, offset, count }: ReadBooleansParams): ReadResult<boolean[]>;
+export declare function readBooleans({ bufferOffset, count }: ReadBooleansParams): boolean[];
 /**
  * Reads an unsigned integer in `flexInt` format
- * @param buffer The binary data to read from
- * @param offset The position of the first byte
- * of the `flexInt`
+ * @param bufferOffset The buffer and its current offset, the first byte of the `flexInt`
  * @return The number stored in the `flexInt`
  */
-export declare function readFlexInt(buffer: ArrayBuffer, offset: number): ReadResult<number>;
+export declare function readFlexInt(bufferOffset: BufferOffset): number;
 /**
  * Reads a signed long
- * @param buffer The binary data to read from
- * @param offset The position of the first byte to read
+ * @param bufferOffset The buffer and its current offset
  * @return The value stored in the `8` bytes
- * starting at `offset`, in string form
+ * starting at `bufferOffset.offset`, in string form
  */
-export declare function readLong(buffer: ArrayBuffer, offset: number): ReadResult<bigint>;
+export declare function readLong(bufferOffset: BufferOffset): bigint;
 /**
  * A `TypedArray` constructor, e.g. `Uint8Array`
  */
@@ -92,8 +102,13 @@ export interface TypeAndFunc {
  * e.g. `'getUint8'`
  * @param type The corresponding `TypedArray` constructor,
  * e.g. `Uint8Array`
- * @return A function that takes in an `ArrayBuffer`
- * and an offset in the buffer and reads a `number`,
+ * @return A function that takes in a [[BufferOffset]] and reads a `number`,
  * much like [[AbstractType.consumeValue]]
  */
-export declare function readNumber({ func, type }: TypeAndFunc): (buffer: ArrayBuffer, offset: number) => ReadResult<number>;
+export declare function readNumber({ func, type }: TypeAndFunc): (bufferOffset: BufferOffset) => number;
+/**
+ * Reads an unsigned 32-bit integer from a buffer
+ * @param bufferOffset The buffer and its current offset
+ * @return The integer read from the buffer
+ */
+export declare const readUnsignedInt: (bufferOffset: BufferOffset) => number;

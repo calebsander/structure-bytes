@@ -311,10 +311,11 @@ exports.readTypeAndValue = ((inStream, callback) => {
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (err)
             return callback(err, null, null);
+        const bufferOffset = { buffer, offset: 0 };
         let type;
         //Using consumeType() in order to get the length of the type (the start of the value)
         try {
-            type = r._consumeType(buffer, 0);
+            type = r.consumeType(bufferOffset);
         }
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         catch (e) {
@@ -322,13 +323,13 @@ exports.readTypeAndValue = ((inStream, callback) => {
         }
         let value;
         try {
-            value = type.value.readValue(buffer, type.length);
+            value = type.readValue(buffer, bufferOffset.offset);
         }
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         catch (e) {
             return callback(e, null, null);
         }
-        callback(null, type.value, value);
+        callback(null, type, value);
     });
 });
 //Custom promisifiy function because Promise cannot resolve to 2 values

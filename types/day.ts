@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as date from '../lib/date'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {BufferOffset, readBytes} from '../lib/read-util'
 import ChronoType from './chrono'
 
 /**
@@ -42,14 +42,9 @@ export class DayType extends ChronoType {
 		dataView.setUint8(2, day /*& 0xFF*/) //DataView will only use last 8 bits anyways
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<Date> {
-		const length = 3
-		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-		const dataView = new DataView(buffer, offset)
-		const day = (dataView.getInt16(0) << 8) | dataView.getUint8(2)
-		return {
-			value: date.fromUTC(day * date.MILLIS_PER_DAY),
-			length
-		}
+	consumeValue(bufferOffset: BufferOffset): Date {
+		const bytes = readBytes(bufferOffset, 3)
+		const day = new Int8Array(bytes)[0] << 16 | bytes[1] << 8 | bytes[2]
+		return date.fromUTC(day * date.MILLIS_PER_DAY)
 	}
 }

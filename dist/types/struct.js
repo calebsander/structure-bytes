@@ -120,15 +120,12 @@ class StructType extends absolute_1.default {
         }
     }
     //eslint-disable-next-line @typescript-eslint/ban-types
-    consumeValue(buffer, offset, baseValue) {
-        let length = 0;
+    consumeValue(bufferOffset, baseValue) {
         const value = (baseValue || read_util_1.makeBaseValue(this));
         for (const { name, type } of this.fields) {
-            const readField = type.consumeValue(buffer, offset + length);
-            value[name] = readField.value;
-            length += readField.length;
+            value[name] = type.consumeValue(bufferOffset);
         }
-        return { value, length };
+        return value;
     }
     equals(otherType) {
         return this.isSameType(otherType)

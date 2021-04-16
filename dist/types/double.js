@@ -49,8 +49,8 @@ class DoubleType extends floating_1.default {
         new DataView(byteBuffer).setFloat64(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        return readDouble(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readDouble(bufferOffset);
     }
 }
 exports.DoubleType = DoubleType;

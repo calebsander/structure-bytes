@@ -37,19 +37,14 @@ class StringType extends absolute_1.default {
             .addAll(bufferString.fromString(value))
             .add(0); //add a null byte to indicate end
     }
-    consumeValue(buffer, offset) {
-        const castBuffer = new Uint8Array(buffer, offset);
-        let length = 0;
-        for (;;) {
-            if (castBuffer.length <= length)
-                throw new Error(read_util_1.NOT_LONG_ENOUGH);
-            if (!castBuffer[length])
-                break;
-            length++;
-        }
-        const value = bufferString.toString(castBuffer.subarray(0, length));
-        length++; //account for null byte
-        return { value, length };
+    consumeValue(bufferOffset) {
+        const { buffer, offset } = bufferOffset;
+        let byte;
+        do {
+            [byte] = read_util_1.readBytes(bufferOffset, 1);
+        } while (byte);
+        const bytes = new Uint8Array(buffer).subarray(offset, bufferOffset.offset - 1);
+        return bufferString.toString(bytes);
     }
 }
 exports.StringType = StringType;

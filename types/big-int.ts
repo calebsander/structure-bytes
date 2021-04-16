@@ -2,7 +2,7 @@ import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {timesEight} from '../lib/bit-math'
 import * as flexInt from '../lib/flex-int'
-import {NOT_LONG_ENOUGH, readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, readBytes, readFlexInt} from '../lib/read-util'
 import IntegerType from './integer'
 
 /**
@@ -53,18 +53,13 @@ export class BigIntType extends IntegerType<bigint> {
 			buffer.add(bytes[i])
 		}
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
-		const readByteLength = readFlexInt(buffer, offset)
-		const byteLength = readByteLength.value
-		let {length} = readByteLength
-		if (buffer.byteLength < offset + length + byteLength) throw new Error(NOT_LONG_ENOUGH)
+	consumeValue(bufferOffset: BufferOffset): bigint {
+		const byteLength = readFlexInt(bufferOffset)
+		const bytes = readBytes(bufferOffset, byteLength)
 		let value = 0n
-		for (const byte of new Uint8Array(buffer, offset + length, byteLength)) {
-			value = value << 8n | BigInt(byte)
-		}
+		for (const byte of bytes) value = value << 8n | BigInt(byte)
 		//Sign-extend the read bytes
 		value = BigInt.asIntN(timesEight(byteLength), value)
-		length += byteLength
-		return {value, length}
+		return value
 	}
 }

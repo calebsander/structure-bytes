@@ -56,8 +56,8 @@ class BooleanTupleType extends absolute_1.default {
             throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`);
         write_util_1.writeBooleans(buffer, value);
     }
-    consumeValue(buffer, offset) {
-        return read_util_1.readBooleans({ buffer, offset, count: this.length });
+    consumeValue(bufferOffset) {
+        return read_util_1.readBooleans({ bufferOffset, count: this.length });
     }
     equals(otherType) {
         return this.isSameType(otherType) && otherType.length === this.length;

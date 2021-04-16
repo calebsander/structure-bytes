@@ -3,7 +3,7 @@
  * The inverse of [[fromString]].
  * @param buffer The binary data to convert
  */
-export declare function toString(buffer: Uint8Array): string;
+export declare function toString(buffer: Uint8Array, maxLength?: number): string;
 /**
  * Converts a JavaScript string to UTF-8 bytes.
  * The inverse of [[toString]].

@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import type { Type } from './type';
 /**
@@ -56,6 +56,6 @@ export declare class MapType<K, V, READ_K extends K = K, READ_V extends V = V> e
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: Map<K, V>): void;
-    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Map<READ_K, READ_V>): ReadResult<Map<READ_K, READ_V>>;
+    consumeValue(bufferOffset: BufferOffset, baseValue?: Map<READ_K, READ_V>): Map<READ_K, READ_V>;
     equals(otherType: unknown): boolean;
 }

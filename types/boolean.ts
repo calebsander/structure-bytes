@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readBooleanByte, ReadResult} from '../lib/read-util'
+import {BufferOffset, readBooleanByte} from '../lib/read-util'
 import {writeBooleanByte} from '../lib/write-util'
 import AbsoluteType from './absolute'
 
@@ -32,7 +32,7 @@ export class BooleanType extends AbsoluteType<boolean> {
 		assert.instanceOf(value, Boolean)
 		writeBooleanByte(buffer, value)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<boolean> {
-		return readBooleanByte(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): boolean {
+		return readBooleanByte(bufferOffset)
 	}
 }

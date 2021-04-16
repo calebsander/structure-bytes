@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {makeBaseValue, readBooleanByte, readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, makeBaseValue, readBooleanByte, readFlexInt} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import {writeBooleanByte} from '../lib/write-util'
 import * as recursiveRegistry from '../recursive-registry'
@@ -173,29 +173,27 @@ export class RecursiveType<E, READ_E extends E = E> extends AbstractType<E, READ
 			throw e
 		}
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
+	consumeValue(bufferOffset: BufferOffset): READ_E {
+		const {buffer} = bufferOffset
 		let bufferReadRecursives = readRecursives.get(buffer)
-		const readExplicit = readBooleanByte(buffer, offset)
-		const explicit = readExplicit.value
-		let {length} = readExplicit
-		let value: READ_E
+		const explicit = readBooleanByte(bufferOffset)
 		if (explicit) {
-			value = makeBaseValue(this.type) as READ_E
+			const value = makeBaseValue(this.type) as READ_E
 			if (!bufferReadRecursives) {
 				readRecursives.set(buffer, bufferReadRecursives = new Map)
 			}
-			bufferReadRecursives.set(offset + length, value)
-			length += this.type.consumeValue(buffer, offset + length, value).length
+			bufferReadRecursives.set(bufferOffset.offset, value)
+			this.type.consumeValue(bufferOffset, value)
+			return value
 		}
 		else {
-			const indexOffset = readFlexInt(buffer, offset + length)
-			const target = offset + length - indexOffset.value
+			const {offset} = bufferOffset
+			const indexOffset = readFlexInt(bufferOffset)
+			const target = offset - indexOffset
 			const readValue = bufferReadRecursives && bufferReadRecursives.get(target) as READ_E | undefined
 			if (!readValue) throw new Error(`Cannot find target at ${target}`)
-			value = readValue
-			length += indexOffset.length
+			return readValue
 		}
-		return {value, length}
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType) && this.name === otherType.name

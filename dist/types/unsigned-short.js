@@ -41,8 +41,8 @@ class UnsignedShortType extends unsigned_1.default {
         new DataView(byteBuffer).setUint16(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        return readShort(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readShort(bufferOffset);
     }
 }
 exports.UnsignedShortType = UnsignedShortType;

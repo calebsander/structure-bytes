@@ -83,19 +83,15 @@ class MapType extends absolute_1.default {
             this.valueType.writeValue(buffer, mapValue);
         }
     }
-    consumeValue(buffer, offset, baseValue) {
-        const readSize = read_util_1.readFlexInt(buffer, offset);
-        const size = readSize.value;
-        let { length } = readSize;
+    consumeValue(bufferOffset, baseValue) {
+        const size = read_util_1.readFlexInt(bufferOffset);
         const value = baseValue || read_util_1.makeBaseValue(this);
         for (let i = 0; i < size; i++) {
-            const keyElement = this.keyType.consumeValue(buffer, offset + length);
-            length += keyElement.length;
-            const valueElement = this.valueType.consumeValue(buffer, offset + length);
-            length += valueElement.length;
-            value.set(keyElement.value, valueElement.value);
+            const keyElement = this.keyType.consumeValue(bufferOffset);
+            const valueElement = this.valueType.consumeValue(bufferOffset);
+            value.set(keyElement, valueElement);
         }
-        return { value, length };
+        return value;
     }
     equals(otherType) {
         return this.isSameType(otherType)

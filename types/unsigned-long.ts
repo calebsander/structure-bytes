@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {BufferOffset, readLong} from '../lib/read-util'
 import UnsignedType from './unsigned'
 
 /**
@@ -33,12 +33,11 @@ export class UnsignedLongType extends UnsignedType<bigint> {
 		assert.instanceOf(value, BigInt)
 		if (value !== BigInt.asUintN(64, value)) throw new RangeError('Value out of range')
 		const byteBuffer = new ArrayBuffer(8)
-		new DataView(byteBuffer).setBigInt64(0, value)
+		new DataView(byteBuffer).setBigUint64(0, value)
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
-		const length = 8
-		if (buffer.byteLength < offset + length) throw new Error(NOT_LONG_ENOUGH)
-		return {value: new DataView(buffer, offset).getBigUint64(0), length}
+	consumeValue(bufferOffset: BufferOffset): bigint {
+		const value = readLong(bufferOffset)
+		return BigInt.asUintN(64, value)
 	}
 }

@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import AbsoluteType from './absolute';
 import type { Type } from './type';
 /**
@@ -67,6 +67,6 @@ export declare class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[]
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E[]): void;
-    consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]>;
+    consumeValue(bufferOffset: BufferOffset, baseValue?: READ_E[]): READ_E[];
     equals(otherType: unknown): boolean;
 }

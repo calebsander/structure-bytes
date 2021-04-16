@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readBooleanByte, ReadResult} from '../lib/read-util'
+import {BufferOffset, readBooleanByte} from '../lib/read-util'
 import {writeBooleanByte} from '../lib/write-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -76,18 +76,11 @@ export class OptionalType<E, READ_E extends E = E> extends AbsoluteType<E | null
 		//eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		if (!isNull) this.type.writeValue(buffer, value!)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E | null> {
-		const readNonNull = readBooleanByte(buffer, offset)
-		const nonNull = readNonNull.value
-		let {length} = readNonNull
-		let value: READ_E | null
-		if (nonNull) {
-			const subValue = this.type.consumeValue(buffer, offset + length)
-			;({value} = subValue)
-			length += subValue.length
-		}
-		else value = null
-		return {value, length}
+	consumeValue(bufferOffset: BufferOffset): READ_E | null {
+		const nonNull = readBooleanByte(bufferOffset)
+		if (!nonNull) return null
+
+		return this.type.consumeValue(bufferOffset)
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType) && this.type.equals(otherType.type)

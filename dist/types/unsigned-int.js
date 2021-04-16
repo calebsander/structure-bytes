@@ -5,7 +5,6 @@ const assert = require("../lib/assert");
 const read_util_1 = require("../lib/read-util");
 const str_to_num_1 = require("../lib/str-to-num");
 const unsigned_1 = require("./unsigned");
-const readInt = read_util_1.readNumber({ type: Uint32Array, func: 'getUint32' });
 /**
  * A type storing a 4-byte unsigned integer (`0` to `4294967295`).
  * Can specify values to write as numbers or strings.
@@ -41,8 +40,8 @@ class UnsignedIntType extends unsigned_1.default {
         new DataView(byteBuffer).setUint32(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        return readInt(buffer, offset);
+    consumeValue(bufferOffset) {
+        return read_util_1.readUnsignedInt(bufferOffset);
     }
 }
 exports.UnsignedIntType = UnsignedIntType;

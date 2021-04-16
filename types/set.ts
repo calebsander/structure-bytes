@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {makeBaseValue, readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, makeBaseValue, readFlexInt} from '../lib/read-util'
 import {writeIterable} from '../lib/write-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -63,17 +63,14 @@ export class SetType<E, READ_E extends E = E> extends AbsoluteType<Set<E>, Set<R
 		assert.instanceOf(value, Set)
 		writeIterable({type: this.type, buffer, value, length: value.size})
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: Set<READ_E>): ReadResult<Set<READ_E>> {
-		const readSize = readFlexInt(buffer, offset)
-		const size = readSize.value
-		let {length} = readSize
+	consumeValue(bufferOffset: BufferOffset, baseValue?: Set<READ_E>): Set<READ_E> {
+		const size = readFlexInt(bufferOffset)
 		const value = baseValue || makeBaseValue(this) as Set<READ_E>
 		for (let i = 0; i < size; i++) {
-			const element = this.type.consumeValue(buffer, offset + length)
-			length += element.length
-			value.add(element.value)
+			const element = this.type.consumeValue(bufferOffset)
+			value.add(element)
 		}
-		return {value, length}
+		return value
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType) && this.type.equals(otherType.type)

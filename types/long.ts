@@ -1,6 +1,6 @@
 import * as assert from '../lib/assert'
 import type {AppendableBuffer} from '../lib/appendable'
-import {readLong, ReadResult} from '../lib/read-util'
+import {BufferOffset, readLong} from '../lib/read-util'
 import {writeLong} from '../lib/write-util'
 import IntegerType from './integer'
 
@@ -33,7 +33,7 @@ export class LongType extends IntegerType<bigint> {
 		assert.isBuffer(buffer)
 		writeLong(buffer, value)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint> {
-		return readLong(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): bigint {
+		return readLong(bufferOffset)
 	}
 }

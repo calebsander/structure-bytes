@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readNumber, ReadResult} from '../lib/read-util'
+import {BufferOffset, readNumber} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import IntegerType from './integer'
 
@@ -40,7 +40,7 @@ export class IntType extends IntegerType<number | string, number> {
 		new DataView(byteBuffer).setInt32(0, value)
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readInt(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readInt(bufferOffset)
 	}
 }

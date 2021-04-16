@@ -2,7 +2,7 @@ import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import * as flexInt from '../lib/flex-int'
-import {readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, readFlexInt} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import {Type} from './type'
@@ -121,17 +121,9 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		}
 		else buffer.addAll(flexInt.makeValueBuffer(length - index))
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E> {
-		let length: number | undefined
-		let explicitValue = true
-		for (;;) {
-			const {value: offsetDiff, length: offsetDiffLength} = readFlexInt(buffer, offset)
-			if (length === undefined) length = offsetDiffLength
-			if (!offsetDiff) break
-
-			offset -= offsetDiff
-			explicitValue = false
-		}
+	consumeValue(bufferOffset: BufferOffset): READ_E {
+		const {buffer, offset} = bufferOffset
+		const offsetDiff = readFlexInt(bufferOffset)
 		let bufferPointerReads = pointerReads.get(buffer)
 		if (!bufferPointerReads) {
 			pointerReads.set(buffer, bufferPointerReads = new Map)
@@ -140,15 +132,17 @@ export class PointerType<E, READ_E extends E = E> extends AbstractType<E, READ_E
 		if (!bufferTypePointerReads) {
 			bufferPointerReads.set(this, bufferTypePointerReads = new Map)
 		}
-		let value = bufferTypePointerReads.get(offset) as READ_E | undefined
+		const location = offset - offsetDiff
+		let value = bufferTypePointerReads.get(location) as READ_E | undefined
 		if (value === undefined) {
-			const explicitRead = this.type.consumeValue(buffer, offset + length) //skip the flexInt
-			;({value} = explicitRead)
-			if (explicitValue) length += explicitRead.length
-			// TODO: store current location in map
-			bufferTypePointerReads.set(offset, value)
+			value = offsetDiff
+				//This value does exist, but it was serialized by a different type
+				? this.consumeValue({buffer, offset: location})
+				//This value is serialized here instead
+				: this.type.consumeValue(bufferOffset)
 		}
-		return {value, length}
+		bufferTypePointerReads.set(offset, value)
+		return value
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType) && this.type.equals(otherType.type)

@@ -35,14 +35,12 @@ class UnsignedLongType extends unsigned_1.default {
         if (value !== BigInt.asUintN(64, value))
             throw new RangeError('Value out of range');
         const byteBuffer = new ArrayBuffer(8);
-        new DataView(byteBuffer).setBigInt64(0, value);
+        new DataView(byteBuffer).setBigUint64(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        const length = 8;
-        if (buffer.byteLength < offset + length)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        return { value: new DataView(buffer, offset).getBigUint64(0), length };
+    consumeValue(bufferOffset) {
+        const value = read_util_1.readLong(bufferOffset);
+        return BigInt.asUintN(64, value);
     }
 }
 exports.UnsignedLongType = UnsignedLongType;

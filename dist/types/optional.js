@@ -78,19 +78,11 @@ class OptionalType extends absolute_1.default {
         if (!isNull)
             this.type.writeValue(buffer, value);
     }
-    consumeValue(buffer, offset) {
-        const readNonNull = read_util_1.readBooleanByte(buffer, offset);
-        const nonNull = readNonNull.value;
-        let { length } = readNonNull;
-        let value;
-        if (nonNull) {
-            const subValue = this.type.consumeValue(buffer, offset + length);
-            ({ value } = subValue);
-            length += subValue.length;
-        }
-        else
-            value = null;
-        return { value, length };
+    consumeValue(bufferOffset) {
+        const nonNull = read_util_1.readBooleanByte(bufferOffset);
+        if (!nonNull)
+            return null;
+        return this.type.consumeValue(bufferOffset);
     }
     equals(otherType) {
         return this.isSameType(otherType) && this.type.equals(otherType.type);

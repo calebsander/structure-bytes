@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import UnsignedType from './unsigned';
 /**
  * A type storing any unsigned integer
@@ -57,5 +57,5 @@ export declare class FlexUnsignedIntType extends UnsignedType<number | string, n
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: number | string): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number>;
+    consumeValue(bufferOffset: BufferOffset): number;
 }

@@ -68,8 +68,9 @@ class AbstractType {
         assert.instanceOf(valueBuffer, [ArrayBuffer, Uint8Array]);
         assert.instanceOf(offset, Number);
         const { buffer, byteOffset, byteLength } = growable_buffer_1.asUint8Array(valueBuffer);
-        const { value, length } = this.consumeValue(buffer, byteOffset + offset);
-        if (offset + length !== byteLength) {
+        const bufferOffset = { buffer, offset: byteOffset + offset };
+        const value = this.consumeValue(bufferOffset);
+        if (bufferOffset.offset !== byteOffset + byteLength) {
             throw new Error('Did not consume all of buffer');
         }
         return value;
@@ -86,7 +87,7 @@ class AbstractType {
      * Determines whether the input is a Type with the same class
      * @private
      * @param otherType A value, usually a Type instance
-     * @returns whether `this` and `otherType` are instances of the same Type class
+     * @return whether `this` and `otherType` are instances of the same Type class
      */
     isSameType(otherType) {
         //Check that otherType is not null or undefined, so constructor property exists.

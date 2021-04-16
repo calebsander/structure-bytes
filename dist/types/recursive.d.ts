@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import type { RegisterableType } from '../recursive-registry-type';
 import AbstractType from './abstract';
 import type { Type } from './type';
@@ -97,7 +97,7 @@ export declare class RecursiveType<E, READ_E extends E = E> extends AbstractType
      * also throws if no type has been registered with this type's name
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
+    consumeValue(bufferOffset: BufferOffset): READ_E;
     equals(otherType: unknown): boolean;
     /**
      * An alternative to [[registerType]],

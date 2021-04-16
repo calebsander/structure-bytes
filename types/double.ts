@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readNumber, ReadResult} from '../lib/read-util'
+import {BufferOffset, readNumber} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import FloatingPointType from './floating'
 
@@ -48,7 +48,7 @@ export class DoubleType extends FloatingPointType {
 		new DataView(byteBuffer).setFloat64(0, value as number)
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readDouble(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readDouble(bufferOffset)
 	}
 }

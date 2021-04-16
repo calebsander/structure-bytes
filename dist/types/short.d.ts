@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import IntegerType from './integer';
 /**
  * A type storing a 2-byte signed integer (`-32768` to `32767`).
@@ -24,5 +24,5 @@ export declare class ShortType extends IntegerType<number | string, number> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: number | string): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number>;
+    consumeValue(bufferOffset: BufferOffset): number;
 }

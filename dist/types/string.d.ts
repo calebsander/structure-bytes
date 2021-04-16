@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import AbsoluteType from './absolute';
 /**
  * A type storing a string of UTF-8 characters, with no bound on length.
@@ -25,5 +25,5 @@ export declare class StringType extends AbsoluteType<string> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: string): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string>;
+    consumeValue(bufferOffset: BufferOffset): string;
 }

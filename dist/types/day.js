@@ -43,16 +43,10 @@ class DayType extends chrono_1.default {
         dataView.setUint8(2, day /*& 0xFF*/); //DataView will only use last 8 bits anyways
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        const length = 3;
-        if (buffer.byteLength < offset + length)
-            throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        const dataView = new DataView(buffer, offset);
-        const day = (dataView.getInt16(0) << 8) | dataView.getUint8(2);
-        return {
-            value: date.fromUTC(day * date.MILLIS_PER_DAY),
-            length
-        };
+    consumeValue(bufferOffset) {
+        const bytes = read_util_1.readBytes(bufferOffset, 3);
+        const day = new Int8Array(bytes)[0] << 16 | bytes[1] << 8 | bytes[2];
+        return date.fromUTC(day * date.MILLIS_PER_DAY);
     }
 }
 exports.DayType = DayType;

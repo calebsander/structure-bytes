@@ -71,8 +71,8 @@ class FlexUnsignedIntType extends unsigned_1.default {
         assert.integer(value);
         buffer.addAll(flexInt.makeValueBuffer(value));
     }
-    consumeValue(buffer, offset) {
-        return read_util_1.readFlexInt(buffer, offset);
+    consumeValue(bufferOffset) {
+        return read_util_1.readFlexInt(bufferOffset);
     }
 }
 exports.FlexUnsignedIntType = FlexUnsignedIntType;

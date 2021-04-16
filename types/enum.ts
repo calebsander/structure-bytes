@@ -2,7 +2,7 @@ import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
 import * as flexInt from '../lib/flex-int'
-import {readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, readFlexInt} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -100,11 +100,10 @@ export class EnumType<E> extends AbstractType<E> {
 		//Write the index to the requested value in the values array
 		buffer.addAll(flexInt.makeValueBuffer(index))
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<E> {
-		const {value: valueIndex, length} = readFlexInt(buffer, offset)
-		const value = this.values[valueIndex] as E | undefined
-		if (value === undefined) throw new Error(`Index ${valueIndex} is invalid`)
-		return {value, length}
+	consumeValue(bufferOffset: BufferOffset): E {
+		const valueIndex = readFlexInt(bufferOffset)
+		if (!(valueIndex in this.values)) throw new Error(`Index ${valueIndex} is invalid`)
+		return this.values[valueIndex]
 	}
 	equals(otherType: unknown): boolean {
 		if (!this.isSameType(otherType)) return false

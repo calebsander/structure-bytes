@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {makeBaseValue, ReadResult} from '../lib/read-util'
+import {BufferOffset, makeBaseValue} from '../lib/read-util'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
 import type {Type} from './type'
@@ -93,15 +93,12 @@ export class TupleType<E, READ_E extends E = E> extends AbsoluteType<E[], READ_E
 		if (value.length !== this.length) throw new Error(`Length does not match: expected ${this.length} but got ${value.length}`)
 		for (const instance of value) this.type.writeValue(buffer, instance)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: READ_E[]): ReadResult<READ_E[]> {
-		let length = 0
+	consumeValue(bufferOffset: BufferOffset, baseValue?: READ_E[]): READ_E[] {
 		const value = baseValue || makeBaseValue(this) as READ_E[]
 		for (let i = 0; i < this.length; i++) {
-			const element = this.type.consumeValue(buffer, offset + length)
-			length += element.length
-			value[i] = element.value
+			value[i] = this.type.consumeValue(bufferOffset)
 		}
-		return {value, length}
+		return value
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType)

@@ -49,8 +49,8 @@ class FloatType extends floating_1.default {
         new DataView(byteBuffer).setFloat32(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        return readFloat(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readFloat(bufferOffset);
     }
 }
 exports.FloatType = FloatType;

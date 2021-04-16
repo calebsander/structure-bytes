@@ -107,13 +107,9 @@ class ChoiceType extends absolute_1.default {
         if (!success)
             throw new Error('No types matched: ' + util_inspect_1.inspect(value));
     }
-    consumeValue(buffer, offset) {
-        const readTypeIndex = read_util_1.readFlexInt(buffer, offset);
-        const typeIndex = readTypeIndex.value;
-        let { length } = readTypeIndex;
-        const { value, length: subLength } = this.types[typeIndex].consumeValue(buffer, offset + length);
-        length += subLength;
-        return { value, length };
+    consumeValue(bufferOffset) {
+        const typeIndex = read_util_1.readFlexInt(bufferOffset);
+        return this.types[typeIndex].consumeValue(bufferOffset);
     }
     equals(otherType) {
         return this.isSameType(otherType)

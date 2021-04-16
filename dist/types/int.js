@@ -41,8 +41,8 @@ class IntType extends integer_1.default {
         new DataView(byteBuffer).setInt32(0, value);
         buffer.addAll(byteBuffer);
     }
-    consumeValue(buffer, offset) {
-        return readInt(buffer, offset);
+    consumeValue(bufferOffset) {
+        return readInt(bufferOffset);
     }
 }
 exports.IntType = IntType;

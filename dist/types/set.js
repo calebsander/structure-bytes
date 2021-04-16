@@ -64,17 +64,14 @@ class SetType extends absolute_1.default {
         assert.instanceOf(value, Set);
         write_util_1.writeIterable({ type: this.type, buffer, value, length: value.size });
     }
-    consumeValue(buffer, offset, baseValue) {
-        const readSize = read_util_1.readFlexInt(buffer, offset);
-        const size = readSize.value;
-        let { length } = readSize;
+    consumeValue(bufferOffset, baseValue) {
+        const size = read_util_1.readFlexInt(bufferOffset);
         const value = baseValue || read_util_1.makeBaseValue(this);
         for (let i = 0; i < size; i++) {
-            const element = this.type.consumeValue(buffer, offset + length);
-            length += element.length;
-            value.add(element.value);
+            const element = this.type.consumeValue(bufferOffset);
+            value.add(element);
         }
-        return { value, length };
+        return value;
     }
     equals(otherType) {
         return this.isSameType(otherType) && this.type.equals(otherType.type);

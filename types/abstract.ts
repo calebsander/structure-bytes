@@ -6,7 +6,7 @@ import * as assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
 import * as flexInt from '../lib/flex-int'
 import {GrowableBuffer, asUint8Array, toArrayBuffer} from '../lib/growable-buffer'
-import type {ReadResult} from '../lib/read-util'
+import type {BufferOffset} from '../lib/read-util'
 import * as recursiveNesting from '../lib/recursive-nesting'
 import type {Type} from './type'
 
@@ -69,13 +69,14 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 		this.writeValue(buffer, value)
 		return buffer.toBuffer()
 	}
-	abstract consumeValue(buffer: ArrayBuffer, offset: number, baseValue?: unknown): ReadResult<READ_VALUE>
+	abstract consumeValue(bufferOffset: BufferOffset, baseValue?: unknown): READ_VALUE
 	readValue(valueBuffer: ArrayBuffer | Uint8Array, offset = 0): READ_VALUE {
 		assert.instanceOf(valueBuffer, [ArrayBuffer, Uint8Array])
 		assert.instanceOf(offset, Number)
 		const {buffer, byteOffset, byteLength} = asUint8Array(valueBuffer)
-		const {value, length} = this.consumeValue(buffer, byteOffset + offset)
-		if (offset + length !== byteLength) {
+		const bufferOffset = {buffer, offset: byteOffset + offset}
+		const value = this.consumeValue(bufferOffset)
+		if (bufferOffset.offset !== byteOffset + byteLength) {
 			throw new Error('Did not consume all of buffer')
 		}
 		return value
@@ -92,7 +93,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	 * Determines whether the input is a Type with the same class
 	 * @private
 	 * @param otherType A value, usually a Type instance
-	 * @returns whether `this` and `otherType` are instances of the same Type class
+	 * @return whether `this` and `otherType` are instances of the same Type class
 	 */
 	protected isSameType(otherType: unknown): otherType is this {
 		//Check that otherType is not null or undefined, so constructor property exists.

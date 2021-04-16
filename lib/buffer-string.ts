@@ -8,12 +8,14 @@ const MAX_ARGUMENTS_LENGTH = 0x1000
  * Converts UTF-8 bytes to a JavaScript string.
  * The inverse of [[fromString]].
  * @param buffer The binary data to convert
+ * @param maxLength The maximum number of characters to read.
+ * If omitted, reads the entire buffer.
  */
-export function toString(buffer: Uint8Array): string {
+export function toString(buffer: Uint8Array, maxLength = Infinity): string {
 	assert.instanceOf(buffer, Uint8Array)
 	//Taken from https://github.com/feross/buffer/blob/da8a677bdb746ed9d6dae42ee1eaf236aad32ccb/index.js#L917-L988
 	const codePoints = []
-	for (let i = 0; i < buffer.length;) {
+	for (let i = 0; i < buffer.length && codePoints.length < maxLength;) {
 		const firstByte = buffer[i]
 		let codePoint: number | undefined
 		let bytesPerSequence: 1 | 2 | 3 | 4

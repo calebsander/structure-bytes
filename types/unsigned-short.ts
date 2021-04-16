@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readNumber, ReadResult} from '../lib/read-util'
+import {BufferOffset, readNumber} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
 
@@ -40,7 +40,7 @@ export class UnsignedShortType extends UnsignedType<number | string, number> {
 		new DataView(byteBuffer).setUint16(0, value)
 		buffer.addAll(byteBuffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readShort(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readShort(bufferOffset)
 	}
 }

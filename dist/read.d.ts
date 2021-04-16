@@ -1,7 +1,13 @@
-import { ReadResult } from './lib/read-util';
+import { BufferOffset } from './lib/read-util';
 import * as t from './types';
-declare function consumeType(typeBuffer: ArrayBuffer, offset: number): ReadResult<t.Type<unknown>>;
-export { consumeType as _consumeType };
+declare type Type = t.Type<unknown>;
+declare type TypeReader = (bufferOffset: BufferOffset) => Type;
+/**
+ * Reads a type from a buffer and advances its offset
+ * @param bufferOffset The buffer and its current offset
+ * @return The deserialized type
+ */
+export declare const consumeType: TypeReader;
 /**
  * Deserializes a type, i.e. takes a buffer
  * containing its binary form and creates the type object.
@@ -17,9 +23,10 @@ export { consumeType as _consumeType };
  * console.log(readType) // ArrayType { type: FlexUnsignedIntType {} }
  * ````
  *
- * @param typeBuffer The buffer containing the type bytes
+ * @param buffer The buffer containing the type bytes
  * @param fullBuffer Whether to assert that the whole buffer was read.
  * In most use cases, this argument should be be omitted.
  * @return The type that was read
  */
-export declare function type(typeBuffer: ArrayBuffer | Uint8Array, fullBuffer?: boolean): t.Type<unknown>;
+export declare function type(buffer: ArrayBuffer | Uint8Array, fullBuffer?: boolean): Type;
+export {};

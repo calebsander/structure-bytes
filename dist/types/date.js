@@ -34,9 +34,9 @@ class DateType extends chrono_1.default {
         assert.instanceOf(value, Date);
         write_util_1.writeLong(buffer, BigInt(value.getTime()));
     }
-    consumeValue(buffer, offset) {
-        const { value, length } = read_util_1.readLong(buffer, offset);
-        return { value: new Date(Number(value)), length };
+    consumeValue(bufferOffset) {
+        const value = read_util_1.readLong(bufferOffset);
+        return new Date(Number(value));
     }
 }
 exports.DateType = DateType;

@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readNumber, ReadResult} from '../lib/read-util'
+import {BufferOffset, readNumber} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
 
@@ -38,7 +38,7 @@ export class UnsignedByteType extends UnsignedType<number | string, number> {
 		assert.between(0, value, 0x100, 'Value out of range')
 		buffer.add(value)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readByte(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readByte(bufferOffset)
 	}
 }

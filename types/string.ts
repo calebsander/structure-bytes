@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as bufferString from '../lib/buffer-string'
-import {NOT_LONG_ENOUGH, ReadResult} from '../lib/read-util'
+import {BufferOffset, readBytes} from '../lib/read-util'
 import AbsoluteType from './absolute'
 
 /**
@@ -36,17 +36,13 @@ export class StringType extends AbsoluteType<string> {
 			.addAll(bufferString.fromString(value))
 			.add(0) //add a null byte to indicate end
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<string> {
-		const castBuffer = new Uint8Array(buffer, offset)
-		let length = 0
-		for (;;) {
-			if (castBuffer.length <= length) throw new Error(NOT_LONG_ENOUGH)
-			if (!castBuffer[length]) break
-
-			length++
-		}
-		const value = bufferString.toString(castBuffer.subarray(0, length))
-		length++ //account for null byte
-		return {value, length}
+	consumeValue(bufferOffset: BufferOffset): string {
+		const {buffer, offset} = bufferOffset
+		let byte: number
+		do {
+			[byte] = readBytes(bufferOffset, 1)
+		} while (byte)
+		const bytes = new Uint8Array(buffer).subarray(offset, bufferOffset.offset - 1)
+		return bufferString.toString(bytes)
 	}
 }

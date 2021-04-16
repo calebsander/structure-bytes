@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import AbstractType from './abstract';
 import { Type } from './type';
 export declare function rewindBuffer(buffer: AppendableBuffer): void;
@@ -72,6 +72,6 @@ export declare class PointerType<E, READ_E extends E = E> extends AbstractType<E
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: E): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<READ_E>;
+    consumeValue(bufferOffset: BufferOffset): READ_E;
     equals(otherType: unknown): boolean;
 }

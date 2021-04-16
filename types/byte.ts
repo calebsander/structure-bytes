@@ -1,6 +1,6 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {readNumber, ReadResult} from '../lib/read-util'
+import {BufferOffset, readNumber} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import IntegerType from './integer'
 
@@ -38,7 +38,7 @@ export class ByteType extends IntegerType<number | string, number> {
 		assert.between(-128, value, 128, 'Value out of range')
 		buffer.addAll(new Int8Array([value]).buffer)
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readByte(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readByte(bufferOffset)
 	}
 }

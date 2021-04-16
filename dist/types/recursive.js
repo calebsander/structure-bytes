@@ -175,30 +175,28 @@ class RecursiveType extends abstract_1.default {
             throw e;
         }
     }
-    consumeValue(buffer, offset) {
+    consumeValue(bufferOffset) {
+        const { buffer } = bufferOffset;
         let bufferReadRecursives = readRecursives.get(buffer);
-        const readExplicit = read_util_1.readBooleanByte(buffer, offset);
-        const explicit = readExplicit.value;
-        let { length } = readExplicit;
-        let value;
+        const explicit = read_util_1.readBooleanByte(bufferOffset);
         if (explicit) {
-            value = read_util_1.makeBaseValue(this.type);
+            const value = read_util_1.makeBaseValue(this.type);
             if (!bufferReadRecursives) {
                 readRecursives.set(buffer, bufferReadRecursives = new Map);
             }
-            bufferReadRecursives.set(offset + length, value);
-            length += this.type.consumeValue(buffer, offset + length, value).length;
+            bufferReadRecursives.set(bufferOffset.offset, value);
+            this.type.consumeValue(bufferOffset, value);
+            return value;
         }
         else {
-            const indexOffset = read_util_1.readFlexInt(buffer, offset + length);
-            const target = offset + length - indexOffset.value;
+            const { offset } = bufferOffset;
+            const indexOffset = read_util_1.readFlexInt(bufferOffset);
+            const target = offset - indexOffset;
             const readValue = bufferReadRecursives && bufferReadRecursives.get(target);
             if (!readValue)
                 throw new Error(`Cannot find target at ${target}`);
-            value = readValue;
-            length += indexOffset.length;
+            return readValue;
         }
-        return { value, length };
     }
     equals(otherType) {
         return this.isSameType(otherType) && this.name === otherType.name;

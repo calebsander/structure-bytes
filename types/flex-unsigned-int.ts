@@ -1,7 +1,7 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import * as flexInt from '../lib/flex-int'
-import {readFlexInt, ReadResult} from '../lib/read-util'
+import {BufferOffset, readFlexInt} from '../lib/read-util'
 import strToNum from '../lib/str-to-num'
 import UnsignedType from './unsigned'
 
@@ -69,7 +69,7 @@ export class FlexUnsignedIntType extends UnsignedType<number | string, number> {
 		assert.integer(value)
 		buffer.addAll(flexInt.makeValueBuffer(value))
 	}
-	consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<number> {
-		return readFlexInt(buffer, offset)
+	consumeValue(bufferOffset: BufferOffset): number {
+		return readFlexInt(bufferOffset)
 	}
 }

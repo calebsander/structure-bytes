@@ -1,6 +1,5 @@
 import type {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
-import {ReadResult} from '../lib/read-util'
 import {inspect} from '../lib/util-inspect'
 import AbsoluteType from './absolute'
 import AbstractType from './abstract'
@@ -101,8 +100,8 @@ export class SingletonType<E> extends AbstractType<E> {
 			throw new Error(`Expected ${inspect(this.value)} but got ${inspect(value)}`)
 		}
 	}
-	consumeValue(): ReadResult<E> {
-		return {value: this.value, length: 0}
+	consumeValue(): E {
+		return this.value
 	}
 	equals(otherType: unknown): boolean {
 		return this.isSameType(otherType)

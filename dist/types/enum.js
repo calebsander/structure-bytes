@@ -92,12 +92,11 @@ class EnumType extends abstract_1.default {
         //Write the index to the requested value in the values array
         buffer.addAll(flexInt.makeValueBuffer(index));
     }
-    consumeValue(buffer, offset) {
-        const { value: valueIndex, length } = read_util_1.readFlexInt(buffer, offset);
-        const value = this.values[valueIndex];
-        if (value === undefined)
+    consumeValue(bufferOffset) {
+        const valueIndex = read_util_1.readFlexInt(bufferOffset);
+        if (!(valueIndex in this.values))
             throw new Error(`Index ${valueIndex} is invalid`);
-        return { value, length };
+        return this.values[valueIndex];
     }
     equals(otherType) {
         if (!this.isSameType(otherType))

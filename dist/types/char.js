@@ -35,12 +35,13 @@ class CharType extends absolute_1.default {
             throw new Error('String must contain only 1 character');
         buffer.addAll(bufferString.fromString(value));
     }
-    consumeValue(buffer, offset) {
-        if (buffer.byteLength <= offset)
+    consumeValue(bufferOffset) {
+        const { buffer, offset } = bufferOffset;
+        const [value] = bufferString.toString(new Uint8Array(buffer, offset), 1);
+        if (!value)
             throw new Error(read_util_1.NOT_LONG_ENOUGH);
-        //UTF-8 codepoint can't be more than 4 bytes
-        const [value] = bufferString.toString(new Uint8Array(buffer, offset).subarray(0, 4));
-        return { value, length: bufferString.fromString(value).byteLength };
+        bufferOffset.offset += bufferString.fromString(value).byteLength;
+        return value;
     }
 }
 exports.CharType = CharType;

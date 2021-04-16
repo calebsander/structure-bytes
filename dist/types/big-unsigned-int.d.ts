@@ -1,5 +1,5 @@
 import type { AppendableBuffer } from '../lib/appendable';
-import { ReadResult } from '../lib/read-util';
+import { BufferOffset } from '../lib/read-util';
 import UnsignedType from './unsigned';
 /**
  * A type storing an arbitrary precision unsigned integer.
@@ -28,5 +28,5 @@ export declare class BigUnsignedIntType extends UnsignedType<bigint> {
      * @throws If the value doesn't match the type, e.g. `new sb.StringType().writeValue(buffer, 23)`
      */
     writeValue(buffer: AppendableBuffer, value: bigint): void;
-    consumeValue(buffer: ArrayBuffer, offset: number): ReadResult<bigint>;
+    consumeValue(bufferOffset: BufferOffset): bigint;
 }
