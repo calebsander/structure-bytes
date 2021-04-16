@@ -79,7 +79,7 @@ This project is somewhat similar to Google's [Protocol Buffers](https://develope
 
 ## Documentation
 The `docs` folder is hosted at
-[https://calebsander.github.io/structure-bytes](https://calebsander.github.io/structure-bytes/modules/_index_.html).
+[calebsander.github.io/structure-bytes](https://calebsander.github.io/structure-bytes/modules/index.html).
 
 ## Examples
 
