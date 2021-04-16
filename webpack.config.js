@@ -20,9 +20,6 @@ module.exports = {
 			}
 		}]
 	},
-	node: {
-		Buffer: false
-	},
 	resolve: {
 		extensions: ['.ts', '.js']
 	}

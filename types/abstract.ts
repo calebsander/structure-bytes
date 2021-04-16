@@ -1,8 +1,7 @@
 import * as base64 from 'base64-js'
 import sha256 from '../lib/sha-256'
 import {VERSION_STRING} from '../config'
-import type {AppendableBuffer} from '../lib/appendable'
-import AppendableStream from '../lib/appendable-stream'
+import {AppendableBuffer} from '../lib/appendable'
 import * as assert from '../lib/assert'
 import {REPEATED_TYPE} from '../lib/constants'
 import * as flexInt from '../lib/flex-int'
@@ -106,7 +105,7 @@ export default abstract class AbstractType<VALUE, READ_VALUE extends VALUE = VAL
 	 * @param buffer The value to assert is an [[AppendableBuffer]]
 	 */
 	protected isBuffer(buffer: AppendableBuffer): void {
-		assert.instanceOf(buffer, [AppendableStream, GrowableBuffer])
+		assert.instanceOf(buffer, AppendableBuffer)
 	}
 	/**
 	 * Generates the type buffer, recomputed each time

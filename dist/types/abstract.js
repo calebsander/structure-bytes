@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const base64 = require("base64-js");
 const sha_256_1 = require("../lib/sha-256");
 const config_1 = require("../config");
-const appendable_stream_1 = require("../lib/appendable-stream");
+const appendable_1 = require("../lib/appendable");
 const assert = require("../lib/assert");
 const constants_1 = require("../lib/constants");
 const flexInt = require("../lib/flex-int");
@@ -101,7 +101,7 @@ class AbstractType {
      * @param buffer The value to assert is an [[AppendableBuffer]]
      */
     isBuffer(buffer) {
-        assert.instanceOf(buffer, [appendable_stream_1.default, growable_buffer_1.default]);
+        assert.instanceOf(buffer, appendable_1.AppendableBuffer);
     }
     /**
      * Generates the type buffer, recomputed each time

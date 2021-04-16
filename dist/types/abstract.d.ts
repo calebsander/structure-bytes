@@ -1,4 +1,4 @@
-import type { AppendableBuffer } from '../lib/appendable';
+import { AppendableBuffer } from '../lib/appendable';
 import type { ReadResult } from '../lib/read-util';
 import type { Type } from './type';
 /**

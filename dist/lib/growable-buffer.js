@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toArrayBuffer = exports.asUint8Array = void 0;
+const appendable_1 = require("./appendable");
 const assert = require("./assert");
 const INITIAL_LENGTH = 10;
 const asUint8Array = (buffer) => buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
@@ -19,13 +20,14 @@ exports.toArrayBuffer = toArrayBuffer;
  * Used extensively throughout the project for building up buffers.
  * See [[GrowableBuffer.grow]] for an explanation of the growing process.
  */
-class GrowableBuffer {
+class GrowableBuffer extends appendable_1.AppendableBuffer {
     /**
      * @param initialLength
      * The number of bytes in the internal buffer at start
      * (defaults to 10)
      */
     constructor(initialLength = INITIAL_LENGTH) {
+        super();
         try {
             assert.integer(initialLength);
             assert.between(0, initialLength, Infinity);

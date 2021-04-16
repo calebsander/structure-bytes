@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { Writable } from 'stream';
-import type { AppendableBuffer } from './appendable';
+import { AppendableBuffer } from './appendable';
 /**
  * A wrapper around a writable stream
  * to implement [[AppendableBuffer]].
@@ -8,7 +8,7 @@ import type { AppendableBuffer } from './appendable';
  * by calling [[end]] after all bytes
  * have been written.
  */
-export default class AppendableStream implements AppendableBuffer {
+export default class AppendableStream extends AppendableBuffer {
     private readonly outStream;
     private writtenBytes;
     private pauseCount;
